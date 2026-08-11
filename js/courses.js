@@ -1,7 +1,7 @@
 /**
  * Course Materials Data
  * Auto-generated from D:\课程 and E:\杂项\学习
- * Total: 45 courses, 2483 files
+ * Total: 45 courses
  */
 
 const COURSES = [
@@ -79,7 +79,8 @@ const COURSES = [
         "sizeFormatted": "1.2 MB"
       }
     ],
-    "totalSizeFormatted": "22.8 MB"
+    "totalSizeFormatted": "22.8 MB",
+    "description": "机器人学基础课程，涵盖机器人运动学、动力学建模与控制。从坐标变换到正逆运动学求解，是进入机器人领域的入门必修。"
   },
   {
     "id": "本科课程|机器运动与传感-(EE413)",
@@ -187,7 +188,8 @@ const COURSES = [
         "sizeFormatted": "2.8 MB"
       }
     ],
-    "totalSizeFormatted": "21.5 MB"
+    "totalSizeFormatted": "21.5 MB",
+    "description": "系统讲解机器人传感器原理、执行器驱动、轨迹规划与运动控制，涵盖分散式/集中式控制策略及移动机器人定位技术。"
   },
   {
     "id": "本科课程|自主移动机器人",
@@ -311,7 +313,8 @@ const COURSES = [
         "sizeFormatted": "2.3 MB"
       }
     ],
-    "totalSizeFormatted": "13.1 MB"
+    "totalSizeFormatted": "13.1 MB",
+    "description": "自主移动机器人核心课程，涵盖运动学建模、传感器感知、定位算法（卡尔曼滤波、粒子滤波）及自主导航技术。"
   },
   {
     "id": "香港大学|GRCNN-抓取检测",
@@ -1219,7 +1222,8 @@ const COURSES = [
         "sizeFormatted": "12.8 KB"
       }
     ],
-    "totalSizeFormatted": "101.5 MB"
+    "totalSizeFormatted": "101.5 MB",
+    "description": "基于生成残差卷积神经网络（GRCNN）的机器人抓取检测项目。包含完整训练代码、Cornell/Jacquard 数据集处理、UR5 机械臂实机抓取及 RealSense 深度相机集成。"
   },
   {
     "id": "香港大学|MECH7010-机器人学",
@@ -2015,7 +2019,8 @@ const COURSES = [
         "sizeFormatted": "2.1 MB"
       }
     ],
-    "totalSizeFormatted": "267.4 MB"
+    "totalSizeFormatted": "267.4 MB",
+    "description": "港大机器人学研究生课程，全面覆盖机器人建模、状态估计（EKF）、控制理论、SLAM（ORB-SLAM/VINS-Mono/FAST-LIO2）及软体机器人前沿，含历年试题与 MATLAB 实践代码。"
   },
   {
     "id": "香港大学|ROS机械臂开发视频教程",
@@ -2699,7 +2704,8 @@ const COURSES = [
         "sizeFormatted": "69 B"
       }
     ],
-    "totalSizeFormatted": "73.9 MB"
+    "totalSizeFormatted": "73.9 MB",
+    "description": "基于 ROS + MoveIt 的六轴机械臂开发实战教程，包含完整 URDF 模型、运动规划配置、Gazebo 仿真环境搭建，从零开始搭建可运动的机械臂系统。"
   },
   {
     "id": "香港大学|无人机系统-(UAV)",
@@ -3095,7 +3101,8 @@ const COURSES = [
         "sizeFormatted": "272.9 KB"
       }
     ],
-    "totalSizeFormatted": "188.4 MB"
+    "totalSizeFormatted": "188.4 MB",
+    "description": "无人机系统课程，涵盖多旋翼飞行器建模、姿态控制、传感器融合、路径规划及自主导航，含飞控代码与仿真实验。"
   },
   {
     "id": "香港大学|机器人大使-(Robotic-Ambassador)",
@@ -3827,7 +3834,8 @@ const COURSES = [
         "sizeFormatted": "13.3 KB"
       }
     ],
-    "totalSizeFormatted": "295.1 MB"
+    "totalSizeFormatted": "295.1 MB",
+    "description": "港大机器人大使项目资料，包含机器人技术展示、STEM 教育推广活动及机器人竞赛实践内容。"
   },
   {
     "id": "香港大学|机器人学-(国立交通大学·杨谷洋)",
@@ -3911,7 +3919,8 @@ const COURSES = [
         "sizeFormatted": "1.5 MB"
       }
     ],
-    "totalSizeFormatted": "3.7 MB"
+    "totalSizeFormatted": "3.7 MB",
+    "description": "国立交通大学杨谷洋教授机器人学公开课，以直观方式讲解机器人基础理论、运动学与控制概念。"
   },
   {
     "id": "本科课程|现代智能与互联机器-(EE220)",
@@ -4027,7 +4036,8 @@ const COURSES = [
         "sizeFormatted": "4.5 MB"
       }
     ],
-    "totalSizeFormatted": "29.6 MB"
+    "totalSizeFormatted": "29.6 MB",
+    "description": "智能系统与物联网入门课程，涵盖智能传感器、嵌入式系统、无线通信协议及工业物联网应用场景。"
   },
   {
     "id": "本科课程|机器学习与神经网络",
@@ -4087,7 +4097,8 @@ const COURSES = [
         "sizeFormatted": "618.6 KB"
       }
     ],
-    "totalSizeFormatted": "8.3 MB"
+    "totalSizeFormatted": "8.3 MB",
+    "description": "机器学习与神经网络入门课程，涵盖监督学习、神经网络结构、反向传播算法及深度学习基础实践。"
   },
   {
     "id": "香港大学|IDAT-7215-Python与机器学习",
@@ -6651,7 +6662,8 @@ const COURSES = [
         "sizeFormatted": "3.3 KB"
       }
     ],
-    "totalSizeFormatted": "287.9 MB"
+    "totalSizeFormatted": "287.9 MB",
+    "description": "港大 Python 编程与机器学习课程，从 Python 基础到 NumPy/Pandas 数据处理，再到线性回归、SVM、神经网络等 ML 算法实践，含 319 个文件包括大量编程作业与项目代码。"
   },
   {
     "id": "本科课程|系统与控制导论",
@@ -7087,7 +7099,8 @@ const COURSES = [
         "sizeFormatted": "296.4 KB"
       }
     ],
-    "totalSizeFormatted": "70.2 MB"
+    "totalSizeFormatted": "70.2 MB",
+    "description": "控制工程入门课程，介绍系统建模、拉普拉斯变换、传递函数、反馈控制原理及系统稳定性分析。"
   },
   {
     "id": "本科课程|信号处理导论-(EE213)",
@@ -7355,7 +7368,8 @@ const COURSES = [
         "sizeFormatted": "1.3 MB"
       }
     ],
-    "totalSizeFormatted": "31.8 MB"
+    "totalSizeFormatted": "31.8 MB",
+    "description": "信号处理基础课程，涵盖连续与离散信号分析、傅里叶变换、采样定理及 LTI 系统时频域响应。"
   },
   {
     "id": "本科课程|信号与系统",
@@ -7567,7 +7581,8 @@ const COURSES = [
         "sizeFormatted": "443.9 KB"
       }
     ],
-    "totalSizeFormatted": "3.1 MB"
+    "totalSizeFormatted": "3.1 MB",
+    "description": "信号与系统核心课程，深入讲解信号时频域分析、系统传递函数、滤波器设计及 Z 变换在工程中的应用。"
   },
   {
     "id": "本科课程|控制系统设计-(EE311)",
@@ -7723,7 +7738,8 @@ const COURSES = [
         "sizeFormatted": "1.1 MB"
       }
     ],
-    "totalSizeFormatted": "23.7 MB"
+    "totalSizeFormatted": "23.7 MB",
+    "description": "控制系统设计课程，涵盖根轨迹法、频域分析（Bode图/Nyquist图）、PID 控制器设计及状态空间方法。"
   },
   {
     "id": "本科课程|数字信号处理",
@@ -7847,7 +7863,8 @@ const COURSES = [
         "sizeFormatted": "467.1 KB"
       }
     ],
-    "totalSizeFormatted": "7.0 MB"
+    "totalSizeFormatted": "7.0 MB",
+    "description": "数字信号处理高级课程，涵盖 DFT/FFT 算法、数字滤波器设计（FIR/IIR）、多采样率信号处理及 DSP 实际应用。"
   },
   {
     "id": "本科课程|计算机科学导论",
@@ -8731,7 +8748,8 @@ const COURSES = [
         "sizeFormatted": "835.7 KB"
       }
     ],
-    "totalSizeFormatted": "302.1 MB"
+    "totalSizeFormatted": "302.1 MB",
+    "description": "计算机科学入门课程，涵盖计算机基础原理、数据表示、操作系统概念、网络基础及编程思维入门。"
   },
   {
     "id": "本科课程|工程计算-(EE108,-C语言)",
@@ -8863,7 +8881,8 @@ const COURSES = [
         "sizeFormatted": "1.1 MB"
       }
     ],
-    "totalSizeFormatted": "12.3 MB"
+    "totalSizeFormatted": "12.3 MB",
+    "description": "C 语言编程与工程计算课程，涵盖 C 语法、指针、数组、函数、结构体及工程问题的数值求解方法。"
   },
   {
     "id": "本科课程|算法与数据结构",
@@ -9083,7 +9102,8 @@ const COURSES = [
         "sizeFormatted": "1.4 MB"
       }
     ],
-    "totalSizeFormatted": "202.0 MB"
+    "totalSizeFormatted": "202.0 MB",
+    "description": "数据结构与算法核心课程，涵盖链表、栈队列、树、图、排序算法、搜索算法及时间复杂度分析。"
   },
   {
     "id": "本科课程|计算机与通信网络",
@@ -9135,7 +9155,8 @@ const COURSES = [
         "sizeFormatted": "2.3 MB"
       }
     ],
-    "totalSizeFormatted": "13.2 MB"
+    "totalSizeFormatted": "13.2 MB",
+    "description": "计算机网络与通信课程，涵盖网络协议栈（TCP/IP）、路由算法、数据通信原理及网络安全基础。"
   },
   {
     "id": "本科课程|计算机图形学-(CS428)",
@@ -9195,7 +9216,8 @@ const COURSES = [
         "sizeFormatted": "815.7 KB"
       }
     ],
-    "totalSizeFormatted": "8.0 MB"
+    "totalSizeFormatted": "8.0 MB",
+    "description": "计算机图形学课程，涵盖图形渲染管线、三维变换矩阵、光照模型、纹理映射及 OpenGL 实践。"
   },
   {
     "id": "香港大学|IDAT-7216",
@@ -9455,7 +9477,8 @@ const COURSES = [
         "sizeFormatted": "176.1 KB"
       }
     ],
-    "totalSizeFormatted": "210.7 MB"
+    "totalSizeFormatted": "210.7 MB",
+    "description": "港大数据科学与智能系统课程，涵盖数据分析方法、机器学习工程应用及智能系统架构设计。"
   },
   {
     "id": "本科课程|数字系统",
@@ -9867,7 +9890,8 @@ const COURSES = [
         "sizeFormatted": "418.1 KB"
       }
     ],
-    "totalSizeFormatted": "65.0 MB"
+    "totalSizeFormatted": "65.0 MB",
+    "description": "数字逻辑与数字系统设计课程，涵盖布尔代数、组合/时序逻辑电路、有限状态机及 Verilog/FPGA 开发实践。"
   },
   {
     "id": "本科课程|电子工程基础",
@@ -10167,7 +10191,8 @@ const COURSES = [
         "sizeFormatted": "903.0 KB"
       }
     ],
-    "totalSizeFormatted": "33.7 MB"
+    "totalSizeFormatted": "33.7 MB",
+    "description": "电子工程基础课程，涵盖电路理论（基尔霍夫定律）、信号与噪声分析、调制复用技术、无线电传播及电力系统概论。"
   },
   {
     "id": "本科课程|模拟电子-(EE204)",
@@ -10403,7 +10428,8 @@ const COURSES = [
         "sizeFormatted": "17.8 MB"
       }
     ],
-    "totalSizeFormatted": "67.1 MB"
+    "totalSizeFormatted": "67.1 MB",
+    "description": "模拟电子技术课程，涵盖 PN 结原理、JFET/MOSFET 特性、放大器设计与分析、运算放大器应用及偏置电路设计。"
   },
   {
     "id": "香港大学|微系统",
@@ -10567,7 +10593,8 @@ const COURSES = [
         "sizeFormatted": "752.8 KB"
       }
     ],
-    "totalSizeFormatted": "116.9 MB"
+    "totalSizeFormatted": "116.9 MB",
+    "description": "MEMS 微机电系统课程，涵盖微结构力学、静电驱动原理、压阻/压电效应及微流体能量收集技术。"
   },
   {
     "id": "本科课程|工程数学-(EE106-EE112)",
@@ -11123,7 +11150,8 @@ const COURSES = [
         "sizeFormatted": "65.7 KB"
       }
     ],
-    "totalSizeFormatted": "274.3 MB"
+    "totalSizeFormatted": "274.3 MB",
+    "description": "工程数学基础课程，涵盖复数运算、微积分、拉普拉斯变换、矩阵运算、特征值与特征向量、向量分析及常微分方程。"
   },
   {
     "id": "本科课程|工程物理-(EE104-EE110)",
@@ -12695,7 +12723,8 @@ const COURSES = [
         "sizeFormatted": "7.2 MB"
       }
     ],
-    "totalSizeFormatted": "1.72 GB"
+    "totalSizeFormatted": "1.72 GB",
+    "description": "工程物理全覆盖课程，包含力学（运动学/牛顿定律/功与能）、旋转运动、流体力学、热学、电磁学、波动声学及几何光学，含实验手册与历年试题。"
   },
   {
     "id": "本科课程|微分方程及其变换-(EE206)",
@@ -13019,7 +13048,8 @@ const COURSES = [
         "sizeFormatted": "563.4 KB"
       }
     ],
-    "totalSizeFormatted": "151.6 MB"
+    "totalSizeFormatted": "151.6 MB",
+    "description": "微分方程与积分变换课程，涵盖一阶/二阶微分方程求解、傅里叶级数与变换、DTFT、Z 变换及其在工程信号分析中的应用。"
   },
   {
     "id": "本科课程|概率论-(EE304)",
@@ -13223,7 +13253,8 @@ const COURSES = [
         "sizeFormatted": "41.8 KB"
       }
     ],
-    "totalSizeFormatted": "4.1 MB"
+    "totalSizeFormatted": "4.1 MB",
+    "description": "概率论与数理统计课程，涵盖概率公理、条件概率与贝叶斯定理、随机变量、常见分布（二项/泊松/正态）、参数估计、假设检验及线性回归。"
   },
   {
     "id": "设计课程|PS技巧",
@@ -13323,7 +13354,8 @@ const COURSES = [
         "sizeFormatted": "5.0 MB"
       }
     ],
-    "totalSizeFormatted": "30.5 MB"
+    "totalSizeFormatted": "30.5 MB",
+    "description": "Photoshop 技巧合集，包含 167 个实用小技巧、快速抠图方法、2000+ 渐变素材包及调色合成实战教程。"
   },
   {
     "id": "设计课程|PS提升课程",
@@ -15831,7 +15863,8 @@ const COURSES = [
         "sizeFormatted": "396.8 KB"
       }
     ],
-    "totalSizeFormatted": "498.2 MB"
+    "totalSizeFormatted": "498.2 MB",
+    "description": "Photoshop 进阶提升课程，涵盖人像精修调色、通道磨皮技法、二次曝光合成、扁平化插画设计及 Portraiture 磨皮插件使用，含完整练习素材。"
   },
   {
     "id": "设计课程|PS精通课程",
@@ -18491,7 +18524,8 @@ const COURSES = [
         "sizeFormatted": "24.1 KB"
       }
     ],
-    "totalSizeFormatted": "357.0 MB"
+    "totalSizeFormatted": "357.0 MB",
+    "description": "Photoshop 精通系统课程，涵盖布尔运算、图层混合模式、钢笔工具精通、色彩理论、字体设计及海报合成全流程，含大量素材与分节笔记。"
   },
   {
     "id": "设计课程|广告设计",
@@ -18791,7 +18825,8 @@ const COURSES = [
         "sizeFormatted": "67.8 KB"
       }
     ],
-    "totalSizeFormatted": "333.2 MB"
+    "totalSizeFormatted": "333.2 MB",
+    "description": "广告设计课程，涵盖广告设计概述、Illustrator 基础应用、字体选择与排版原则、代金券设计及商业海报案例实战。"
   },
   {
     "id": "设计课程|网页设计",
@@ -19059,7 +19094,8 @@ const COURSES = [
         "sizeFormatted": "751.2 KB"
       }
     ],
-    "totalSizeFormatted": "171.7 MB"
+    "totalSizeFormatted": "171.7 MB",
+    "description": "网页设计课程，涵盖网站结构组成、导航设计原则、UI 组件设计（搜索/购物车/标志）及思源黑体等设计字体的应用实践。"
   },
   {
     "id": "设计课程|网页设计-(HTML)",
@@ -19111,7 +19147,8 @@ const COURSES = [
         "sizeFormatted": "3.1 KB"
       }
     ],
-    "totalSizeFormatted": "19.3 KB"
+    "totalSizeFormatted": "19.3 KB",
+    "description": "HTML 网页设计实践项目，包含完整 HTML/CSS 源码示例，从基础页面结构到样式表编写的入门实操练习。"
   },
   {
     "id": "设计课程|设计笔记",
@@ -19235,7 +19272,8 @@ const COURSES = [
         "sizeFormatted": "209.1 KB"
       }
     ],
-    "totalSizeFormatted": "5.4 MB"
+    "totalSizeFormatted": "5.4 MB",
+    "description": "设计课程学习笔记合集，涵盖 13 节课的核心知识点总结与表格化整理，方便快速回顾复习。"
   },
   {
     "id": "本科课程|大学生心理健康",
@@ -19287,7 +19325,8 @@ const COURSES = [
         "sizeFormatted": "1.6 MB"
       }
     ],
-    "totalSizeFormatted": "3.3 MB"
+    "totalSizeFormatted": "3.3 MB",
+    "description": "大学生心理健康教育课程，涵盖心理调适方法、压力管理技巧、人际关系处理及大学生常见心理问题应对。"
   },
   {
     "id": "本科课程|期末考试",
@@ -19323,7 +19362,8 @@ const COURSES = [
         "sizeFormatted": "766.4 KB"
       }
     ],
-    "totalSizeFormatted": "1.5 MB"
+    "totalSizeFormatted": "1.5 MB",
+    "description": "大一夏季期末考试试卷合集（CS162 计算机/EE110 物理/EE112 数学），用于期末复习备考参考。"
   },
   {
     "id": "本科课程|英语",
@@ -19471,7 +19511,8 @@ const COURSES = [
         "sizeFormatted": "1.8 MB"
       }
     ],
-    "totalSizeFormatted": "19.2 MB"
+    "totalSizeFormatted": "19.2 MB",
+    "description": "学术英语课程，涵盖科技英语阅读、雅思听力练习、学术写作（优缺点论述文）及港珠澳大桥等主题讨论材料。"
   },
   {
     "id": "香港大学|IDAT-7212",
@@ -19619,7 +19660,8 @@ const COURSES = [
         "sizeFormatted": "5.4 MB"
       }
     ],
-    "totalSizeFormatted": "45.6 MB"
+    "totalSizeFormatted": "45.6 MB",
+    "description": "港大机电一体化课程，涵盖微控制器原理、Arduino 传感器编程、执行器驱动、运算放大器电路及鲁棒控制系统设计。"
   },
   {
     "id": "香港大学|材料科学",
@@ -19935,7 +19977,8 @@ const COURSES = [
         "sizeFormatted": "42.6 KB"
       }
     ],
-    "totalSizeFormatted": "215.3 MB"
+    "totalSizeFormatted": "215.3 MB",
+    "description": "港大材料科学课程（MECH6010），涵盖断裂力学、疲劳失效、蠕变、复合材料、工程塑料、腐蚀防护及材料选型，含历年试题与复习文档。"
   },
   {
     "id": "香港大学|计算机辅助产品设计-(CAPD)",
@@ -20267,7 +20310,8 @@ const COURSES = [
         "sizeFormatted": "3.2 MB"
       }
     ],
-    "totalSizeFormatted": "161.1 MB"
+    "totalSizeFormatted": "161.1 MB",
+    "description": "港大计算机辅助产品设计课程（MECH6034），涵盖结构化设计方法、TRIZ 创新理论、CAD/CAM 技术及 3D 打印全流程实践，含历年试题与作业。"
   },
   {
     "id": "香港大学|铁路工程",
@@ -20407,41 +20451,7 @@ const COURSES = [
         "sizeFormatted": "7.2 MB"
       }
     ],
-    "totalSizeFormatted": "43.7 MB"
+    "totalSizeFormatted": "43.7 MB",
+    "description": "港大铁路工程课程（MECH7014），涵盖铁路系统设计、轨道结构、列车动力学及铁路运营管理，含 12 个模块完整讲义与历年试卷。"
   }
 ];
-
-const COURSE_CATEGORIES = {
-  "机器人与自动化": {
-    "count": 9,
-    "files": 475
-  },
-  "人工智能与机器学习": {
-    "count": 3,
-    "files": 338
-  },
-  "信号与控制": {
-    "count": 5,
-    "files": 142
-  },
-  "计算机科学": {
-    "count": 6,
-    "files": 192
-  },
-  "电子与硬件": {
-    "count": 4,
-    "files": 133
-  },
-  "数理基础": {
-    "count": 4,
-    "files": 326
-  },
-  "设计": {
-    "count": 7,
-    "files": 741
-  },
-  "其他课程": {
-    "count": 7,
-    "files": 136
-  }
-};

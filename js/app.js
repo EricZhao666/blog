@@ -384,6 +384,7 @@ function renderCourses() {
               <div class="course-card-title">${escapeHtml(course.name)}</div>
               <span class="course-card-source">${escapeHtml(course.source)}</span>
             </div>
+            ${course.description ? `<div class="course-card-desc">${escapeHtml(course.description)}</div>` : ''}
             <div class="course-card-meta">
               <span class="meta-item">📁 ${course.fileCount} 个文件</span>
               <span class="meta-item">💾 ${course.totalSizeFormatted}</span>
@@ -430,6 +431,7 @@ function renderCourseDetail(courseId) {
           <span class="meta-item">💾 ${course.totalSizeFormatted}</span>
         </div>
       </div>
+      ${course.description ? `<div class="course-description">${escapeHtml(course.description)}</div>` : ''}
       <div class="file-list">
         <div class="file-list-header">文件列表 (${course.files.length})</div>
   `;
