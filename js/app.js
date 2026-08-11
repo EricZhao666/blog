@@ -90,9 +90,13 @@ function filterPosts(posts, query, tag) {
 }
 
 function escapeHtml(text) {
-  const div = document.createElement('div');
-  div.textContent = text;
-  return div.innerHTML;
+  if (!text) return '';
+  return String(text)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;');
 }
 
 // ============================================
@@ -441,16 +445,16 @@ function renderCourseDetail(courseId) {
   const visibleFiles = course.files.slice(0, courseFileLimit);
   for (const file of visibleFiles) {
     const typeClass = getFileTypeClass(file.type);
-    const fileUrl = 'file:///' + (file.path || '').replace(/\\/g, '/');
+    const filePath = (file.path || '').replace(/\\/g, '/');
     const relPath = file.relPath || file.path || '';
     html += `
-      <a class="file-item file-item-link" href="${encodeURI(fileUrl)}" target="_blank" title="点击打开: ${escapeHtml(file.path || '')}">
+      <div class="file-item file-item-link" data-filepath="${escapeHtml(filePath)}" title="点击打开: ${escapeHtml(file.path || '')}">
         <span class="file-type-badge ${typeClass}">${escapeHtml(file.type)}</span>
         <span class="file-name">${escapeHtml(file.name)}</span>
         <span class="file-path">${escapeHtml(relPath)}</span>
         <span class="file-size">${file.sizeFormatted}</span>
         <span class="file-open-icon" title="本地打开">🔗</span>
-      </a>
+      </div>
     `;
   }
 
@@ -580,7 +584,7 @@ function renderPapersTab() {
       for (const paper of grouped[cat]) {
         const typeClass = paper.type || 'other';
         const pdfLink = paper.pdfPath
-          ? `<a class="paper-pdf-link" href="${encodeURI('file:///' + paper.pdfPath.replace(/\\/g, '/'))}" target="_blank" onclick="event.stopPropagation()">🔗 PDF</a>`
+          ? `<span class="paper-pdf-link" data-filepath="${escapeHtml(paper.pdfPath.replace(/\\/g, '/'))}" onclick="event.stopPropagation(); window.open('file:///' + encodeURI(this.getAttribute('data-filepath')), '_blank');">🔗 PDF</span>`
           : '';
         const venue = paper.venue ? `<span class="meta-item">📰 ${escapeHtml(paper.venue)}</span>` : '';
         const date = paper.date ? `<span class="meta-item">📅 ${escapeHtml(paper.date)}</span>` : '';
@@ -649,15 +653,15 @@ function renderMaterialsTab() {
       `;
       for (const m of materials) {
         const typeClass = getFileTypeClass(m.type);
-        const fileUrl = 'file:///' + (m.path || '').replace(/\\/g, '/');
+        const filePath = (m.path || '').replace(/\\/g, '/');
         html += `
-          <a class="file-item file-item-link" href="${encodeURI(fileUrl)}" target="_blank" title="${escapeHtml(m.path || '')}">
+          <div class="file-item file-item-link" data-filepath="${escapeHtml(filePath)}" title="${escapeHtml(m.path || '')}">
             <span class="file-type-badge ${typeClass}">${escapeHtml(m.type)}</span>
             <span class="file-name">${escapeHtml(m.name)}</span>
             ${m.subcategory ? `<span class="file-path">${escapeHtml(m.subcategory)}</span>` : ''}
             <span class="file-size">${m.sizeFormatted}</span>
             <span class="file-open-icon">🔗</span>
-          </a>
+          </div>
         `;
       }
       html += '</div></div>';
@@ -788,13 +792,16 @@ function router() {
     courseFileLimit = 50;
     const id = decodeURIComponent(hash.slice('/course/'.length));
     app.innerHTML = renderCourseDetail(id);
+    attachFileOpenHandlers();
   } else if (hash === '/papers') {
     app.innerHTML = renderPapers();
+    attachFileOpenHandlers();
     const paperSearchInput = document.getElementById('paperSearchInput');
     if (paperSearchInput) {
       paperSearchInput.addEventListener('input', (e) => {
         paperSearchQuery = e.target.value;
         app.innerHTML = renderPapers();
+        attachFileOpenHandlers();
         const newInput = document.getElementById('paperSearchInput');
         if (newInput) {
           newInput.focus();
@@ -842,6 +849,19 @@ window.setCategory = function(cat) {
   }
 };
 
+window.attachFileOpenHandlers = function() {
+  document.querySelectorAll('.file-item-link[data-filepath]').forEach(el => {
+    if (el._fileHandlerAttached) return;
+    el._fileHandlerAttached = true;
+    el.addEventListener('click', function() {
+      const fp = this.getAttribute('data-filepath');
+      if (fp) {
+        window.open('file:///' + encodeURI(fp), '_blank');
+      }
+    });
+  });
+};
+
 window.loadMoreCourseFiles = function(courseId) {
   const course = COURSES.find(c => c.id === courseId);
   if (!course) return;
@@ -855,19 +875,20 @@ window.loadMoreCourseFiles = function(courseId) {
   let html = '';
   for (const file of nextBatch) {
     const typeClass = getFileTypeClass(file.type);
-    const fileUrl = 'file:///' + (file.path || '').replace(/\\/g, '/');
+    const filePath = (file.path || '').replace(/\\/g, '/');
     const relPath = file.relPath || file.path || '';
     html += `
-      <a class="file-item file-item-link" href="${encodeURI(fileUrl)}" target="_blank" title="点击打开: ${escapeHtml(file.path || '')}">
+      <div class="file-item file-item-link" data-filepath="${escapeHtml(filePath)}" title="点击打开: ${escapeHtml(file.path || '')}">
         <span class="file-type-badge ${typeClass}">${escapeHtml(file.type)}</span>
         <span class="file-name">${escapeHtml(file.name)}</span>
         <span class="file-path">${escapeHtml(relPath)}</span>
         <span class="file-size">${file.sizeFormatted}</span>
         <span class="file-open-icon" title="本地打开">🔗</span>
-      </a>
+      </div>
     `;
   }
   container.insertAdjacentHTML('beforeend', html);
+  attachFileOpenHandlers();
 
   const loadMoreDiv = document.getElementById('course-load-more');
   if (courseFileLimit >= course.files.length) {

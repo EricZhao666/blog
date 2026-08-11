@@ -953,6 +953,7 @@ main {
   border-radius: 6px;
   background: #fee2e2;
   transition: all var(--transition);
+  cursor: pointer;
 }
 
 .paper-pdf-link:hover {
