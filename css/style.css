@@ -828,6 +828,29 @@ main {
   opacity: 1;
 }
 
+.load-more-btn {
+  display: inline-block;
+  padding: 10px 28px;
+  background: var(--color-primary);
+  color: #fff;
+  border: none;
+  border-radius: var(--radius-sm);
+  font-size: 0.88rem;
+  cursor: pointer;
+  transition: all var(--transition);
+  font-family: var(--font-sans);
+}
+
+.load-more-btn:hover {
+  background: var(--color-primary-dark, #5849bb);
+  transform: translateY(-1px);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
+}
+
+.load-more-btn:active {
+  transform: translateY(0);
+}
+
 /* ============================================
    Papers Page
    ============================================ */

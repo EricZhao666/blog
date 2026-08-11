@@ -25,6 +25,7 @@ let searchQuery = '';
 let activeTag = null;
 let activeCategory = null;
 let courseSearchQuery = '';
+let courseFileLimit = 50;
 let paperTab = 'papers';
 let paperSearchQuery = '';
 let activePaperCategory = null;
@@ -434,9 +435,11 @@ function renderCourseDetail(courseId) {
       ${course.description ? `<div class="course-description">${escapeHtml(course.description)}</div>` : ''}
       <div class="file-list">
         <div class="file-list-header">文件列表 (${course.files.length})</div>
+        <div id="course-file-container">
   `;
 
-  for (const file of course.files) {
+  const visibleFiles = course.files.slice(0, courseFileLimit);
+  for (const file of visibleFiles) {
     const typeClass = getFileTypeClass(file.type);
     const fileUrl = 'file:///' + (file.path || '').replace(/\\/g, '/');
     const relPath = file.relPath || file.path || '';
@@ -448,6 +451,18 @@ function renderCourseDetail(courseId) {
         <span class="file-size">${file.sizeFormatted}</span>
         <span class="file-open-icon" title="本地打开">🔗</span>
       </a>
+    `;
+  }
+
+  html += `</div>`;
+
+  if (course.files.length > courseFileLimit) {
+    html += `
+      <div id="course-load-more" style="text-align: center; padding: 16px;">
+        <button class="load-more-btn" onclick="loadMoreCourseFiles('${escapeHtml(courseId)}')">
+          加载更多（剩余 ${course.files.length - courseFileLimit} 个文件）
+        </button>
+      </div>
     `;
   }
 
@@ -770,6 +785,7 @@ function router() {
       });
     }
   } else if (hash.startsWith('/course/')) {
+    courseFileLimit = 50;
     const id = decodeURIComponent(hash.slice('/course/'.length));
     app.innerHTML = renderCourseDetail(id);
   } else if (hash === '/papers') {
@@ -809,6 +825,7 @@ function router() {
 // Category filter for courses
 window.setCategory = function(cat) {
   activeCategory = cat;
+  courseFileLimit = 50;
   const app = document.getElementById('app');
   app.innerHTML = renderCourses();
   const courseSearchInput = document.getElementById('courseSearchInput');
@@ -822,6 +839,47 @@ window.setCategory = function(cat) {
         newInput.setSelectionRange(newInput.value.length, newInput.value.length);
       }
     });
+  }
+};
+
+window.loadMoreCourseFiles = function(courseId) {
+  const course = COURSES.find(c => c.id === courseId);
+  if (!course) return;
+  const container = document.getElementById('course-file-container');
+  if (!container) return;
+
+  const prevLimit = courseFileLimit;
+  courseFileLimit += 50;
+  const nextBatch = course.files.slice(prevLimit, courseFileLimit);
+
+  let html = '';
+  for (const file of nextBatch) {
+    const typeClass = getFileTypeClass(file.type);
+    const fileUrl = 'file:///' + (file.path || '').replace(/\\/g, '/');
+    const relPath = file.relPath || file.path || '';
+    html += `
+      <a class="file-item file-item-link" href="${encodeURI(fileUrl)}" target="_blank" title="点击打开: ${escapeHtml(file.path || '')}">
+        <span class="file-type-badge ${typeClass}">${escapeHtml(file.type)}</span>
+        <span class="file-name">${escapeHtml(file.name)}</span>
+        <span class="file-path">${escapeHtml(relPath)}</span>
+        <span class="file-size">${file.sizeFormatted}</span>
+        <span class="file-open-icon" title="本地打开">🔗</span>
+      </a>
+    `;
+  }
+  container.insertAdjacentHTML('beforeend', html);
+
+  const loadMoreDiv = document.getElementById('course-load-more');
+  if (courseFileLimit >= course.files.length) {
+    if (loadMoreDiv) loadMoreDiv.remove();
+  } else {
+    if (loadMoreDiv) {
+      loadMoreDiv.innerHTML = `
+        <button class="load-more-btn" onclick="loadMoreCourseFiles('${escapeHtml(courseId)}')">
+          加载更多（剩余 ${course.files.length - courseFileLimit} 个文件）
+        </button>
+      `;
+    }
   }
 };
 
