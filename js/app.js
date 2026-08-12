@@ -42,11 +42,11 @@ let activePaperCategory = null;
 //          2) 在仓库 Settings 开启 Discussions 功能
 //          3) 把下面 repoId / categoryId 填上，enabled 改为 true
 const GISCUS_CONFIG = {
-  enabled: false,
+  enabled: true,
   repo: 'EricZhao666/blog',
-  repoId: '',          // 从 giscus.app 获取
+  repoId: 'R_kgDOT07xhQ',          // 从 giscus.app 获取
   category: 'Announcements',
-  categoryId: ''       // 从 giscus.app 获取
+  categoryId: 'DIC_kwDOT07xhc4DDLr3'       // 从 giscus.app 获取
 };
 
 function loadGiscus(term) {
