@@ -757,6 +757,7 @@ function renderCode() {
             <span class="meta-item">💾 ${lib.totalSizeFormatted}</span>
           </div>
           ${lib.description ? `<div class="course-card-desc">${escapeHtml(lib.description)}</div>` : ''}
+          ${lib.guide ? `<div class="course-card-badge-row"><span class="course-card-badge">📖 有导读</span></div>` : ''}
         </div>
       `;
     }
@@ -792,6 +793,7 @@ function renderCodeDetail(libId) {
           <span class="meta-item">💾 ${lib.totalSizeFormatted}</span>
         </div>
         ${lib.description ? `<div class="course-description">${escapeHtml(lib.description)}</div>` : ''}
+        ${lib.guide ? `<div class="code-lib-guide"><div class="code-lib-guide-title">📖 代码库导读</div>${marked.parse(lib.guide)}</div>` : ''}
       </div>
       <div class="file-list">
         <div class="file-list-header">文件列表 (${lib.files.length})</div>
