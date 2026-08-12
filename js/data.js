@@ -1421,8 +1421,1678 @@ PLC程序 → 连接数字孪生仿真 → 模拟各种工况 → 验证逻辑�
 ## 总结
 
 数字孪生不是目的，是手段。如果你的数字孪生项目最后只产出了一个 3D 大屏，那是失败的。真正的数字孪生应该是一个**活的、与真实产线同步的虚拟模型**，能够指导决策、优化工艺、预防故障——这才是它该有的样子。`
+  },
+
+  {
+    id: 'ml-fundamentals-overview',
+    title: '机器学习入门：从线性回归到深度学习',
+    date: '2026-08-10',
+    tags: ['机器学习', '深度学习', '技术笔记'],
+    excerpt: '机器学习的概念满天飞，但底层逻辑其实很朴素。本文从一个线性回归讲起，一步步到深度学习，帮你建立完整的认知框架。',
+    content: `# 机器学习入门：从线性回归到深度学习
+
+机器学习的概念满天飞，但底层逻辑其实很朴素——从数据中学习规律，然后用规律做预测。
+
+## 核心思想
+
+传统编程：你写规则，计算机执行。
+机器学习：你给数据，计算机自己找规则。
+
+\`\`\`
+传统编程:  数据 + 规则 → 答案
+机器学习:  数据 + 答案 → 规则
+\`\`\`
+
+## 学习范式分类
+
+| 范式 | 训练数据 | 目标 | 典型算法 |
+|------|---------|------|---------|
+| 监督学习 | (x, y) 标签对 | 学习 x→y 映射 | 线性回归、SVM、CNN |
+| 无监督学习 | 只有 x | 发现数据结构 | K-Means、PCA、自编码器 |
+| 自监督学习 | x 自造标签 | 学习表征 | MAE、SimCLR、GPT |
+| 强化学习 | 状态+奖励序列 | 学习最优策略 | Q-Learning、PPO |
+
+## 从线性回归说起
+
+最小二乘法——最古老的机器学习算法。
+
+\`\`\`python
+import numpy as np
+
+# 生成数据: y = 2x + 1 + noise
+X = np.random.randn(100, 1)
+y = 2 * X + 1 + 0.1 * np.random.randn(100, 1)
+
+# 闭式解: w = (X^T X)^{-1} X^T y
+X_b = np.c_[np.ones((100, 1)), X]  # 加偏置项
+w = np.linalg.inv(X_b.T @ X_b) @ X_b.T @ y
+print(f"w = {w}")  # ≈ [1, 2]
+\`\`\`
+
+线性回归的三个核心要素，也是所有机器学习的三要素：
+1. **模型**（假设空间）：y = wx + b
+2. **损失函数**：均方误差 MSE
+3. **优化方法**：梯度下降（或闭式解）
+
+## 梯度下降：优化的引擎
+
+\`\`\`python
+def gradient_descent(X, y, lr=0.01, epochs=1000):
+    """梯度下降法训练线性回归"""
+    w = np.zeros(X.shape[1])
+    b = 0
+    
+    for epoch in range(epochs):
+        # 前向传播
+        y_pred = X @ w + b
+        
+        # 计算梯度
+        dw = 2 * X.T @ (y_pred - y) / len(y)
+        db = 2 * np.mean(y_pred - y)
+        
+        # 参数更新
+        w -= lr * dw
+        b -= lr * db
+    
+    return w, b
+\`\`\`
+
+梯度下降的变体：
+
+| 方法 | 每次用多少数据 | 特点 |
+|------|--------------|------|
+| BGD | 全部 | 稳定但慢 |
+| SGD | 1个 | 快但不稳定 |
+| Mini-batch | 32~256 | 实际最常用 |
+
+## 从线性模型到神经网络
+
+线性模型的局限：无法拟合非线性关系。加一个非线性激活函数就行。
+
+\`\`\`
+线性:  y = Wx + b
+MLP:   y = W2 * sigmoid(W1 * x + b1) + b2
+\`\`\`
+
+\`\`\`python
+import torch
+import torch.nn as nn
+
+class MLP(nn.Module):
+    def __init__(self, in_dim, hidden_dim, out_dim):
+        super().__init__()
+        self.fc1 = nn.Linear(in_dim, hidden_dim)
+        self.fc2 = nn.Linear(hidden_dim, out_dim)
+        self.relu = nn.ReLU()
+    
+    def forward(self, x):
+        x = self.relu(self.fc1(x))
+        return self.fc2(x)
+
+# 训练循环
+model = MLP(10, 64, 1)
+optimizer = torch.optim.Adam(model.parameters(), lr=1e-3)
+criterion = nn.MSELoss()
+
+for epoch in range(100):
+    pred = model(X_train)
+    loss = criterion(pred, y_train)
+    optimizer.zero_grad()
+    loss.backward()  # 自动求导
+    optimizer.step()
+\`\`\`
+
+**反向传播**本质就是链式法则——从输出层往回逐层计算梯度。PyTorch 的 \`autograd\` 把这件事自动化了。
+
+## 深度学习的三板斧
+
+### 1. CNN（卷积神经网络）
+
+处理图像的标准武器。核心是卷积核——一个在图像上滑动的小窗口，提取局部特征。
+
+\`\`\`python
+class SimpleCNN(nn.Module):
+    def __init__(self, num_classes=10):
+        super().__init__()
+        self.conv1 = nn.Conv2d(3, 32, 3, padding=1)  # 3通道→32通道
+        self.conv2 = nn.Conv2d(32, 64, 3, padding=1)
+        self.pool = nn.MaxPool2d(2)
+        self.fc = nn.Linear(64 * 8 * 8, num_classes)
+    
+    def forward(self, x):
+        x = self.pool(torch.relu(self.conv1(x)))  # 32x32→16x16
+        x = self.pool(torch.relu(self.conv2(x)))  # 16x16→8x8
+        x = x.view(x.size(0), -1)
+        return self.fc(x)
+\`\`\`
+
+### 2. RNN / Transformer
+
+处理序列数据。RNN 有记忆，但梯度消失严重。Transformer 用注意力机制替代了循环结构，成为了当今大模型的基石。
+
+\`\`\`python
+# 自注意力机制（简化版）
+def self_attention(Q, K, V):
+    """Q, K, V: [batch, seq_len, dim]"""
+    d_k = K.size(-1)
+    scores = Q @ K.transpose(-2, -1) / np.sqrt(d_k)  # [batch, seq, seq]
+    attn = torch.softmax(scores, dim=-1)
+    return attn @ V  # [batch, seq, dim]
+\`\`\`
+
+### 3. 生成模型
+
+GAN（对抗生成）、VAE（变分自编码器）、Diffusion（扩散模型）——从判别到生成的跨越。
+
+## 过拟合与正则化
+
+机器学习最核心的矛盾：**拟合训练数据 vs 泛化到新数据**。
+
+\`\`\`
+欠拟合: 训练误差高，测试误差高 → 模型太简单
+刚好:   训练误差低，测试误差低
+过拟合: 训练误差低，测试误差高 → 模型太复杂
+\`\`\`
+
+常用正则化手段：
+
+| 方法 | 原理 | 适用场景 |
+|------|------|---------|
+| L2 正则 | 惩罚大权重 | 通用 |
+| Dropout | 随机丢弃神经元 | 深层网络 |
+| 数据增强 | 扩充训练数据 | 图像、语音 |
+| 早停 | 验证集变差就停 | 所有场景 |
+| BatchNorm | 归一化中间层 | 深层网络 |
+
+## 工业场景的 ML 实践建议
+
+1. **从简单模型开始**：线性回归/随机森林能解决 80% 的问题，别一上来就深度学习
+2. **数据 > 模型**：花 70% 时间在数据清洗和特征工程上
+3. **可解释性**：产线上模型必须可解释——出了问题要知道为什么
+4. **在线学习**：产线数据分布会漂移，模型需要持续更新
+5. **部署成本**：大模型推理慢，边缘端用蒸馏/量化后的轻量模型
+
+## 学习路径建议
+
+\`\`\`
+入门: 吴恩达 Machine Learning → 手写线性回归/逻辑回归
+进阶: 《动手学深度学习》(d2l.ai) → PyTorch 实战
+深入: 读论文 (ResNet, Transformer, BERT) → 复现
+应用: Kaggle 比赛 → 自己的项目
+\`\`\`
+
+机器学习的核心不是调包，而是理解"数据→特征→模型→评估"这条链路。工具会变，但这条链路不会变。`
+  },
+
+  {
+    id: 'rl-from-mdp-to-ppo',
+    title: '强化学习入门：从MDP到PPO',
+    date: '2026-08-03',
+    tags: ['强化学习', '机器学习', '技术笔记'],
+    excerpt: '强化学习是让AI学会"做决策"的框架。本文从马尔可夫决策过程讲起，一步步到当前最主流的PPO算法，帮你建立完整认知。',
+    content: `# 强化学习入门：从MDP到PPO
+
+强化学习（RL）是让智能体通过试错来学习最优策略的框架。AlphaGo、ChatGPT的RLHF、机器人控制——背后都是RL。
+
+## 核心概念
+
+\`\`\`
+环境 ← 状态 s_t → 智能体
+环境 ← 奖励 r_t ← 动作 a_t ← 智能体
+\`\`\`
+
+| 概念 | 含义 | 例子（机器人抓取） |
+|------|------|-------------------|
+| 状态 s | 环境的描述 | 关节角度+物体位置 |
+| 动作 a | 智能体的输出 | 关节力矩 |
+| 奖励 r | 即时反馈 | 抓住+1，掉落-1 |
+| 策略 π | 决策规则 | π(a\|s) |
+| 价值 V | 长期回报期望 | 当前状态有多"好" |
+
+## 马尔可夫决策过程（MDP）
+
+RL 的数学基础是 MDP，定义为五元组 \`(S, A, P, R, γ)\`：
+
+- **S**：状态空间
+- **A**：动作空间
+- **P(s'\|s,a)**：转移概率
+- **R(s,a)**：奖励函数
+- **γ**：折扣因子（0~1），越接近1越看重长远回报
+
+**马尔可夫性**：未来只取决于当前状态，与历史无关。
+
+## 贝尔曼方程：RL 的核心等式
+
+价值函数的递归定义：
+
+\`\`\`
+状态价值:  V(s) = E[r + γ * V(s')]
+动作价值:  Q(s,a) = E[r + γ * max_a' Q(s', a')]
+\`\`\`
+
+直觉理解：当前状态的价值 = 即时奖励 + 下一状态价值（折扣后）。
+
+\`\`\`python
+def value_iteration(states, actions, transitions, rewards, gamma=0.9, theta=1e-6):
+    """值迭代算法——求解最优价值函数"""
+    V = {s: 0 for s in states}
+    
+    while True:
+        delta = 0
+        for s in states:
+            v = V[s]
+            # 对每个动作计算Q值，取最大
+            V[s] = max(
+                sum(transitions[s][a][s'] * (rewards[s][a] + gamma * V[s'])
+                    for s_prime in states)
+                for a in actions
+            )
+            delta = max(delta, abs(v - V[s]))
+        
+        if delta < theta:
+            break
+    
+    return V
+\`\`\`
+
+## Q-Learning：无模型RL的开端
+
+不需要知道环境模型（转移概率），直接从经验中学习Q值。
+
+\`\`\`python
+import numpy as np
+
+class QLearning:
+    def __init__(self, n_states, n_actions, lr=0.1, gamma=0.9, epsilon=0.1):
+        self.Q = np.zeros((n_states, n_actions))
+        self.lr = lr       # 学习率
+        self.gamma = gamma  # 折扣因子
+        self.epsilon = epsilon  # 探索率
+    
+    def act(self, state):
+        """ε-greedy 策略"""
+        if np.random.random() < self.epsilon:
+            return np.random.randint(self.Q.shape[1])  # 探索
+        return np.argmax(self.Q[state])  # 利用
+    
+    def learn(self, s, a, r, s_next, done):
+        """Q值更新"""
+        target = r + (0 if done else self.gamma * np.max(self.Q[s_next]))
+        self.Q[s, a] += self.lr * (target - self.Q[s, a])
+\`\`\`
+
+**ε-greedy** 是RL最核心的权衡——探索（Exploration）vs 利用（Exploitation）。
+
+## Deep Q-Network (DQN)
+
+Q-Learning 用表格存Q值，状态空间一大就炸了。DQN 用神经网络近似Q函数。
+
+\`\`\`python
+import torch
+import torch.nn as nn
+
+class DQN(nn.Module):
+    def __init__(self, state_dim, action_dim):
+        super().__init__()
+        self.net = nn.Sequential(
+            nn.Linear(state_dim, 128),
+            nn.ReLU(),
+            nn.Linear(128, 128),
+            nn.ReLU(),
+            nn.Linear(128, action_dim)
+        )
+    
+    def forward(self, state):
+        return self.net(state)  # 输出每个动作的Q值
+
+# DQN 的两个关键技巧:
+# 1. Experience Replay: 存经验到buffer，随机采样训练（去相关）
+# 2. Target Network: 用延迟更新的target网络计算target（稳定训练）
+\`\`\`
+
+## Policy Gradient：直接优化策略
+
+DQN 学习Q值再间接推出策略。Policy Gradient 直接优化策略本身。
+
+\`\`\`python
+class PolicyNetwork(nn.Module):
+    def __init__(self, state_dim, action_dim):
+        super().__init__()
+        self.net = nn.Sequential(
+            nn.Linear(state_dim, 128),
+            nn.ReLU(),
+            nn.Linear(128, action_dim),
+            nn.Softmax(dim=-1)  # 输出动作概率
+        )
+    
+    def forward(self, state):
+        return self.net(state)
+
+def policy_gradient_loss(log_probs, rewards, gamma=0.9):
+    """REINFORCE 算法的损失函数"""
+    # 计算折扣累积奖励
+    returns = []
+    R = 0
+    for r in reversed(rewards):
+        R = r + gamma * R
+        returns.insert(0, R)
+    returns = torch.tensor(returns)
+    returns = (returns - returns.mean()) / (returns.std() + 1e-8)  # 标准化
+    
+    # 损失 = -log(π(a|s)) * G_t
+    loss = -torch.stack(log_probs) * returns
+    return loss.sum()
+\`\`\`
+
+核心思想：**好的动作（高回报）增大其概率，差的动作（低回报）减小其概率**。
+
+## PPO：当前工业级RL的标准选择
+
+Proximal Policy Optimization（PPO）是 OpenAI 的默认算法，也是 ChatGPT RLHF 使用的算法。
+
+解决了 Policy Gradient 的两个问题：
+1. **训练不稳定**：策略更新太大导致崩溃
+2. **样本效率低**：on-policy 方法数据用一次就扔
+
+\`\`\`python
+def ppo_loss(old_log_probs, new_log_probs, advantages, epsilon=0.2):
+    """PPO 的 Clipped Surrogate Loss"""
+    # 重要性采样比率
+    ratio = torch.exp(new_log_probs - old_log_probs)
+    
+    # 裁剪：限制策略更新幅度
+    surr1 = ratio * advantages
+    surr2 = torch.clamp(ratio, 1 - epsilon, 1 + epsilon) * advantages
+    
+    # 取较小值 = 悲观更新
+    loss = -torch.min(surr1, surr2).mean()
+    return loss
+\`\`\`
+
+PPO 的精妙之处在于：用一个简单的 clip 操作，就实现了"信任区域"的效果——不让策略更新太激进。
+
+## RL 算法演进总结
+
+| 算法 | 类型 | 核心创新 | 适用场景 |
+|------|------|---------|---------|
+| Q-Learning | Value-based | 无模型Q值迭代 | 离散动作 |
+| DQN | Value-based | 神经网络+Replay | 离散动作 |
+| DDPG | Actor-Critic | 确定性策略梯度 | 连续动作 |
+| SAC | Actor-Critic | 最大熵RL | 连续动作 |
+| PPO | Policy-based | 裁剪目标函数 | 通用 |
+
+## RL 在机器人中的应用
+
+这也是我最关心的方向。RL 在机器人控制中有独特优势——不需要精确的动力学模型。
+
+\`\`\`python
+# 机器人RL训练的典型设置
+env = RobotEnv()  # 仿真环境 (Isaac Gym / MuJoCo)
+
+# 1. 定义奖励函数（最关键的部分）
+def reward(state, action, next_state):
+    r = 0
+    r += distance_bonus(state, next_state)    # 接近目标+奖励
+    r -= action_penalty(action)               # 动作幅度惩罚
+    r -= energy_cost(action)                  # 能耗惩罚
+    if task_success(next_state):
+        r += 10  # 成功大奖励
+    return r
+
+# 2. Domain Randomization（sim-to-real关键）
+env.randomize(
+    friction=(0.3, 1.2),
+    mass=(0.8, 1.2),
+    gravity=(9.6, 10.0)
+)
+
+# 3. 训练
+model = PPO('MlpPolicy', env, verbose=1)
+model.learn(total_timesteps=1_000_000)
+\`\`\`
+
+但 RL 在工业机器人的落地还有很长的路：
+- **安全约束**：RL 的探索天性在产线上不可接受
+- **训练成本**：仿真到真实的迁移仍是难题
+- **可解释性**：策略网络是黑盒
+
+## 学习资源推荐
+
+\`\`\`
+入门: OpenAI Spinning Up → David Silver RL 课
+进阶: 《Reinforcement Learning: An Introduction》(Sutton & Barto)
+实战: Stable-Baselines3 → Isaac Gym
+论文: PPO → SAC → Dreamer 系列
+\`\`\`
+
+强化学习的学习曲线很陡，但一旦理解了"智能体通过试错优化策略"这个框架，后面的算法都是在这个框架上的改进。`
+  },
+
+  {
+    id: 'slam-overview-filtering-to-graph',
+    title: 'SLAM技术全景：从滤波到图优化',
+    date: '2026-07-28',
+    tags: ['SLAM', '机器人', '技术笔记'],
+    excerpt: 'SLAM（同时定位与建图）是移动机器人的核心技术。本文从贝叶斯滤波讲到因子图优化，梳理SLAM的完整技术脉络。',
+    content: `# SLAM技术全景：从滤波到图优化
+
+SLAM（Simultaneous Localization and Mapping）——机器人在未知环境中一边建图一边定位自己的技术。这是自动驾驶、扫地机器人、AGV 的基础能力。
+
+## 问题定义
+
+给定：
+- 传感器观测（激光/相机/IMU）
+- 控制输入（里程计/速度）
+
+求：
+- 机器人轨迹：x_1, x_2, ..., x_n
+- 地图：m
+
+\`\`\`
+SLAM = 定位（我在哪？）+ 建图（周围长什么样？）
+\`\`\`
+
+这是一个**鸡生蛋蛋生鸡**的问题：定位需要地图，建图需要定位。
+
+## SLAM 的传感器分类
+
+| 传感器 | 类型 | 优势 | 劣势 |
+|--------|------|------|------|
+| 激光雷达 (LiDAR) | 主动 | 精度高、不受光照影响 | 贵、结构化场景退化 |
+| 单目相机 | 被动 | 便宜、信息丰富 | 尺度不确定 |
+| 双目相机 | 被动 | 有深度 | 受光照影响 |
+| RGB-D | 主动 | 直接出深度 | 距离有限、受光照影响 |
+| IMU | 惯性 | 高频、不受环境干扰 | 长期漂移 |
+| 轮式里程计 | 惯性 | 便宜 | 打滑、累积误差 |
+
+实际系统通常是**多传感器融合**：相机+IMU（VIO）、LiDAR+IMU（LIO）。
+
+## 第一阶段：基于滤波的SLAM
+
+### 贝叶斯滤波框架
+
+SLAM 本质是一个**状态估计**问题。贝叶斯滤波是其数学基础：
+
+\`\`\`
+预测:  p(x_t | z_{1:t-1}) = ∫ p(x_t | x_{t-1}) p(x_{t-1} | z_{1:t-1}) dx_{t-1}
+更新:  p(x_t | z_{1:t}) ∝ p(z_t | x_t) p(x_t | z_{1:t-1})
+\`\`\`
+
+### EKF-SLAM（扩展卡尔曼滤波）
+
+最经典的SLAM算法。用高斯分布近似状态，通过线性化处理非线性问题。
+
+\`\`\`python
+import numpy as np
+
+class EKF_SLAM:
+    def __init__(self, n_landmarks):
+        # 状态: [x, y, θ, m1x, m1y, ..., mnx, mny]
+        self.mu = np.zeros(3 + 2 * n_landmarks)
+        self.Sigma = np.eye(3 + 2 * n_landmarks) * 1e6  # 初始不确定度大
+        self.n = n_landmarks
+    
+    def predict(self, u, dt):
+        """运动模型预测"""
+        x, y, theta = self.mu[:3]
+        v, omega = u
+        
+        # 运动模型
+        self.mu[0] += v * np.cos(theta) * dt
+        self.mu[1] += v * np.sin(theta) * dt
+        self.mu[2] += omega * dt
+        
+        # 雅可比矩阵
+        G = np.eye(len(self.mu))
+        G[0, 2] = -v * np.sin(theta) * dt
+        G[1, 2] = v * np.cos(theta) * dt
+        
+        # 运动噪声
+        R = np.diag([0.1, 0.1, 0.01])
+        
+        # 协方差更新
+        Gx = G[:, :3]
+        self.Sigma = G @ self.Sigma @ G.T
+        self.Sigma[:3, :3] += R
+    
+    def update(self, z, landmark_idx):
+        """观测更新"""
+        # z = [距离, 角度]
+        x, y, theta = self.mu[:3]
+        mx, my = self.mu[3 + 2*landmark_idx : 3 + 2*landmark_idx + 2]
+        
+        # 预测观测
+        dx = mx - x
+        dy = my - y
+        q = dx**2 + dy**2
+        z_pred = np.array([np.sqrt(q), np.arctan2(dy, dx) - theta])
+        
+        # 雅可比
+        H = np.zeros((2, len(self.mu)))
+        H[0, 0] = -dx / np.sqrt(q)
+        H[0, 1] = -dy / np.sqrt(q)
+        H[0, 3+2*landmark_idx] = dx / np.sqrt(q)
+        H[0, 4+2*landmark_idx] = dy / np.sqrt(q)
+        H[1, 0] = dy / q
+        H[1, 1] = -dx / q
+        H[1, 2] = -1
+        H[1, 3+2*landmark_idx] = -dy / q
+        H[1, 4+2*landmark_idx] = dx / q
+        
+        # 卡尔曼增益
+        Q = np.diag([0.1, 0.01])  # 观测噪声
+        K = self.Sigma @ H.T @ np.linalg.inv(H @ self.Sigma @ H.T + Q)
+        
+        # 状态更新
+        self.mu += K @ (z - z_pred)
+        self.Sigma = (np.eye(len(self.mu)) - K @ H) @ self.Sigma
+\`\`\`
+
+**EKF-SLAM 的问题**：
+- 状态维度随路标数线性增长 → 计算量 O(n²)
+- 高斯线性化假设在高度非线性场景不成立
+- 对数据关联错误敏感
+
+### 粒子滤波SLAM（FastSLAM）
+
+用粒子滤波表示位姿分布，每个粒子维护自己的地图。
+
+\`\`\`python
+class FastSLAM:
+    def __init__(self, n_particles=100):
+        self.particles = [Particle() for _ in range(n_particles)]
+    
+    def update(self, u, z):
+        for p in self.particles:
+            # 1. 采样新位姿
+            p.pose = motion_model(p.pose, u)
+            
+            # 2. 更新该粒子的地图（EKF per landmark）
+            for obs in z:
+                p.update_landmark(obs)
+            
+            # 3. 计算权重
+            p.weight = p.likelihood(z)
+        
+        # 4. 重采样（避免粒子退化）
+        self.resample()
+\`\`\`
+
+FastSLAM 把高维状态分解为"位姿（粒子滤波）+ 地图（EKF）"，计算效率更高。
+
+## 第二阶段：基于图优化的SLAM
+
+现代SLAM的主流方法。把SLAM建模为一个**因子图优化**问题。
+
+### 核心思想
+
+\`\`\`
+SLAM → 构建因子图 → 最大后验估计（MAP）→ 非线性最小二乘
+\`\`\`
+
+节点：机器人位姿 + 路标位置
+边：约束（运动约束 + 观测约束 + 闭环约束）
+
+\`\`\`
+minimize  Σ ||r_motion(x_{t-1}, x_t, u_t)||²_{Σ_m}
+        + Σ ||r_obs(x_t, m_j, z_t)||²_{Σ_o}
+        + Σ ||r_loop(x_i, x_j)||²_{Σ_l}
+\`\`\`
+
+### 前端 + 后端架构
+
+\`\`\`
+传感器数据 → [前端] → 初始位姿估计 + 因子图 → [后端] → 优化后的轨迹和地图
+             ↑                                        ↑
+          逐帧处理                               全局优化
+\`\`\`
+
+**前端**负责数据关联和初始估计：
+- 特征提取与匹配（视觉）或扫描匹配（激光）
+- 里程计积分
+
+**后端**负责全局优化：
+- 因子图构建
+- 非线性最小二乘求解
+
+### g2o / GTSAM / Ceres
+
+主流的图优化框架：
+
+\`\`\`python
+# GTSAM 示例 (Python)
+from gtsam import NonlinearFactorGraph, Values, Pose2, BetweenFactorPose2
+
+graph = NonlinearFactorGraph()
+initial = Values()
+
+# 添加位姿变量
+initial.insert(0, Pose2(0, 0, 0))
+initial.insert(1, Pose2(1, 0, 0))
+
+# 添加里程计约束（边）
+odom_noise = gtsam.noiseModel.Diagonal.Sigmas(np.array([0.1, 0.1, 0.05]))
+graph.add(BetweenFactorPose2(0, 1, Pose2(1, 0, 0), odom_noise))
+
+# 添加闭环约束
+graph.add(BetweenFactorPose2(0, 1, Pose2(1.05, 0.02, 0.01), odom_noise))
+
+# 求解
+optimizer = gtsam.LevenbergMarquardtOptimizer(graph, initial)
+result = optimizer.optimize()
+\`\`\`
+
+### 闭环检测（Loop Closure）
+
+闭环检测是SLAM中**最关键也最容易出问题**的环节。
+
+\`\`\`
+没有闭环:  累积误差一直增大 → 地图漂移
+有闭环:    检测到回到去过的地方 → 修正累积误差
+\`\`\`
+
+闭环检测的核心是**位置识别**：
+- 激光：扫描匹配 + 距离阈值
+- 视觉：词袋模型（Bag of Words）→ DBoW2 / NetVLAD
+
+\`\`\`python
+def loop_closure_detection(current_frame, keyframes, threshold=0.8):
+    """基于词袋的闭环检测"""
+    scores = []
+    for kf in keyframes:
+        # 计算视觉相似度
+        score = bow_similarity(current_frame.bow, kf.bow)
+        scores.append((kf.id, score))
+    
+    # 取相似度最高且超过阈值的
+    scores.sort(key=lambda x: x[1], reverse=True)
+    if scores[0][1] > threshold:
+        return scores[0][0]  # 返回闭环候选帧
+    return None
+\`\`\`
+
+**假阳性闭环**是SLAM的噩梦——一个错误的闭环检测可以让整个地图崩溃。所以必须有几何验证（RANSAC）作为二次确认。
+
+## 第三阶段：学习增强SLAM
+
+传统SLAM的瓶颈在于：前端依赖手工特征，后端是纯几何优化。
+
+### 深度学习在前端
+
+- **特征提取**：SuperPoint / DISK 替代 ORB/SIFT
+- **特征匹配**：SuperGlue / LightGlue 替代暴力匹配
+- **位置识别**：NetVLAD 替代 DBoW
+
+### 端到端 SLAM
+
+\`\`\`python
+# PoseNet: 直接从图像回归位姿
+class PoseNet(nn.Module):
+    def __init__(self):
+        super().__init__()
+        self.backbone = models.resnet18(pretrained=True)
+        self.backbone.fc = nn.Linear(512, 7)  # 3平移 + 4旋转(四元数)
+    
+    def forward(self, img):
+        return self.backbone(img)
+\`\`\`
+
+端到端方法简洁但泛化能力差，目前还不能替代传统方法。
+
+## SLAM 系统选型
+
+| 系统 | 传感器 | 方法 | 特点 |
+|------|--------|------|------|
+| ORB-SLAM3 | 单目/双目/RGB-D+IMU | 特征+图优化 | 最成熟的开源VSLAM |
+| Cartographer | LiDAR | 子图+图优化 | Google出品，工业级 |
+| LIO-SAM | LiDAR+IMU | 紧耦合因子图 | 激光惯导融合标杆 |
+| VINS-Fusion | 视觉+IMU | 滑窗优化 | VIO经典 |
+| FAST-LIO2 | LiDAR+IMU | 直接法+IEKF | 快速且精度高 |
+
+## 工业场景的SLAM需求
+
+在产线和仓储AGV场景中，SLAM的选型要考虑：
+
+1. **环境特征**：工厂走廊很长、纹理重复 → 视觉SLAM容易丢，LiDAR更稳
+2. **动态物体**：产线上有人、叉车、物料 → 需要动态物体过滤
+3. **精度要求**：AGV导航一般需要±50mm，精密对接需要±10mm
+4. **重定位**：机器人断电重启后要能快速恢复定位
+
+我的经验：**工厂场景优先选 LiDAR+IMU方案（LIO-SAM / FAST-LIO）**，视觉方案在纹理匮乏的工厂环境中不可靠。
+
+## 总结
+
+SLAM 技术从滤波到图优化，从手工特征到深度学习，一直在演进。但核心问题没变——**在不确定性中做最优估计**。理解贝叶斯估计和图优化这两个基础，就能快速上手各种SLAM系统。`
+  },
+
+  {
+    id: 'rl-robot-control',
+    title: '强化学习在机器人控制中的应用',
+    date: '2026-07-20',
+    tags: ['强化学习', '机器人', '技术笔记'],
+    excerpt: '强化学习让机器人不需要精确的动力学模型就能学会复杂技能。本文梳理RL在机器人控制中的应用实践，从仿真训练到真实部署。',
+    content: `# 强化学习在机器人控制中的应用
+
+传统机器人控制依赖精确的动力学模型——但现实中的模型总有误差。强化学习提供了一条不同的路：让机器人自己学。
+
+## 为什么用RL做机器人控制
+
+传统控制的困境：
+
+\`\`\`
+模型基控制 (MPC/LQR):
+  优点: 有理论保证、可解释
+  缺点: 需要精确动力学模型 → 建模误差 → 性能下降
+
+RL控制:
+  优点: 不需要模型、能处理高度非线性
+  缺点: 训练成本高、安全无保证、黑盒
+\`\`\`
+
+实际中最好的策略是**两者结合**：RL做高层决策，传统控制做底层执行。
+
+## RL 机器人控制的问题建模
+
+\`\`\`python
+# 标准的机器人RL环境定义
+class RobotEnv:
+    def __init__(self):
+        self.robot = RobotArm()  # 7-DOF
+        self.target = random_pose()
+    
+    def reset(self):
+        self.robot.reset()
+        self.target = random_pose()
+        return self._get_obs()
+    
+    def _get_obs(self):
+        """状态设计——最关键的部分"""
+        return np.concatenate([
+            self.robot.joint_pos,       # 关节角度 (7)
+            self.robot.joint_vel,       # 关节速度 (7)
+            self.robot.ee_pose,         # 末端位姿 (7: 3位置+4姿态)
+            self.target,                # 目标位姿 (7)
+            self.target - self.robot.ee_pose  # 相对位姿 (7)
+        ])
+    
+    def step(self, action):
+        """动作执行"""
+        self.robot.apply_torque(action)
+        obs = self._get_obs()
+        reward = self._compute_reward(obs)
+        done = self._check_done(obs)
+        return obs, reward, done, {}
+    
+    def _compute_reward(self, obs):
+        """奖励设计——RL的灵魂"""
+        ee_pos = obs[14:17]
+        target_pos = obs[21:24]
+        
+        # 1. 距离奖励（稠密奖励）
+        dist = np.linalg.norm(ee_pos - target_pos)
+        r = -dist  # 越近越好
+        
+        # 2. 到达奖励（稀疏奖励）
+        if dist < 0.05:
+            r += 10.0
+        
+        # 3. 能耗惩罚
+        r -= 0.001 * np.sum(self.robot.joint_torque ** 2)
+        
+        # 4. 平滑性惩罚
+        r -= 0.01 * np.sum(np.diff(self.robot.joint_pos) ** 2)
+        
+        return r
+\`\`\`
+
+## 奖励设计的艺术
+
+RL 中**奖励设计比算法选择更重要**。一个好的奖励函数应该：
+
+1. **稠密**：每一步都有反馈，不是只有终点才有
+2. **引导性**：梯度方向指向目标
+3. **不过度约束**：给智能体留探索空间
+
+\`\`\`
+不好的奖励:  只有抓到物体才+1 → 稀疏奖励，训练极慢
+好的奖励:    距离越近+越多 + 抓到+10 + 稳定握住+持续奖励
+\`\`\`
+
+### 常见的奖励 shaping 技巧
+
+\`\`\`python
+def shaped_reward(env, action):
+    r = 0
+    
+    # 1. 势能函数（potential-based shaping）
+    # 保证最优策略不变的前提下加速学习
+    phi_old = potential(env.prev_state)
+    phi_new = potential(env.current_state)
+    r += gamma * phi_new - phi_old
+    
+    # 2. 课程学习——逐步提高难度
+    if env.difficulty == 'easy':
+        r += reach_bonus(large_threshold)
+    elif env.difficulty == 'hard':
+        r += reach_bonus(small_threshold)
+    
+    return r
+\`\`\`
+
+## 仿真训练：大规模并行
+
+真实机器人训练太慢太危险。在仿真中训练，再迁移到真实。
+
+\`\`\`python
+# Isaac Gym 大规模并行训练
+# 一个GPU上同时跑4096个机器人
+import isaacgym
+
+env = IsaacVecEnv(
+    task='FrankaReach',
+    num_envs=4096,        # 4096个并行环境
+    gpu_id=0,
+    sim_dt=1/120,
+    control_dt=1/30       # 30Hz控制
+)
+
+# PPO 训练
+model = PPO(
+    policy=MlpPolicy,
+    env=env,
+    learning_rate=3e-4,
+    n_steps=256,
+    batch_size=4096,
+    gamma=0.8,            # 机器人任务通常用较小gamma
+    gae_lambda=0.9
+)
+
+model.learn(total_timesteps=10_000_000)
+# 4096个并行环境 × 30Hz × 几小时 = 上亿步经验
+\`\`\`
+
+### Isaac Gym vs MuJoCo
+
+| 特性 | Isaac Gym | MuJoCo |
+|------|-----------|--------|
+| 并行性 | GPU大规模并行 | CPU并行 |
+| 物理精度 | 中 | 高 |
+| 接触模型 | GPU仿真 | 精确 |
+| 速度 | 极快(4096并行) | 中等 |
+| 适用 | 大规模RL训练 | 精细接触任务 |
+
+## Sim-to-Real 迁移
+
+### Domain Randomization
+
+\`\`\`python
+def randomize_env(env):
+    """每次reset随机化物理参数"""
+    env.friction = np.random.uniform(0.3, 1.5)
+    env.density = np.random.uniform(0.8, 1.2)
+    env.gravity = np.random.uniform(9.6, 10.0, 3)
+    
+    # 视觉随机化
+    env.light_color = random_color()
+    env.texture = random_from_texture_pool()
+    
+    # 动作延迟随机化
+    env.action_delay = np.random.uniform(0, 0.05)
+    
+    return env
+\`\`\`
+
+### Teacher-Student 蒸馏
+
+\`\`\`
+Teacher (特权信息):  真实物理参数 → 训练出强策略
+Student (只有传感器): 模仿Teacher → 部署到真实机器人
+\`\`\`
+
+\`\`\`python
+# Teacher: 用真实参数训练（仿真中知道真值）
+teacher_policy = train_rl(
+    obs=full_state,  # 包含真实摩擦、质量等
+    env=sim_with_true_params
+)
+
+# Student: 只有传感器数据
+# 通过模仿学习从Teacher蒸馏
+for batch in dataloader:
+    sensor_obs = batch['sensor']        # 只有传感器
+    teacher_action = teacher_policy(batch['privileged'])
+    
+    student_action = student_policy(sensor_obs)
+    loss = F.mse_loss(student_action, teacher_action)
+    loss.backward()
+\`\`\`
+
+## 实际案例：机械臂抓取的RL
+
+\`\`\`python
+class GraspEnv:
+    """RL训练机械臂抓取"""
+    def __init__(self):
+        self.robot = FrankaPanda()
+        self.object = random_object()
+        self.camera = SimCamera()
+    
+    def _get_obs(self):
+        # 视觉 + 本体感觉
+        return {
+            'image': self.camera.render(),      # [H, W, 3]
+            'state': np.concatenate([
+                self.robot.joint_pos,            # 7
+                self.robot.joint_vel,            # 7
+                self.robot.gripper_pos,          # 1
+            ])
+        }
+    
+    def _compute_reward(self):
+        r = 0
+        # 1. 接近物体
+        r -= np.linalg.norm(self.robot.ee_pos - self.object.pos)
+        
+        # 2. 抓取成功
+        if self.object.is_grasped(self.robot):
+            r += 5.0
+            
+            # 3. 抬起
+            if self.object.pos[2] > 0.3:
+                r += 10.0
+                
+                # 4. 放到目标位置
+                r -= np.linalg.norm(self.object.pos - self.target_pos)
+                if np.linalg.norm(self.object.pos - self.target_pos) < 0.1:
+                    r += 20.0
+                    return r, True  # 任务完成
+        
+        # 5. 物体掉落
+        if self.object.pos[2] < 0:
+            return -10.0, True
+        
+        return r, False
+\`\`\`
+
+训练技巧：
+1. **课程学习**：先学抓固定位置的球，再学抓随机位置的物体
+2. **多物体预训练**：在大量物体上预训练，提升泛化能力
+3. **物体集合随机化**：每次reset换不同的物体形状和大小
+
+## RL vs 传统控制：什么时候用什么
+
+| 场景 | 推荐方法 | 原因 |
+|------|---------|------|
+| 轨迹跟踪 | PID/MPC | 精确、可靠、可解释 |
+| 抓取未知物体 | RL + 传统控制兜底 | RL负责策略，传统控制保安全 |
+| 灵巧手操作 | RL | 自由度太高，传统方法建模困难 |
+| 步态控制（足式） | RL + 模型预测 | RL出步态，MPC做平衡 |
+| 产线固定任务 | 传统控制 | 不需要泛化，稳定性第一 |
+
+## 部署到真实机器人
+
+\`\`\`python
+# 部署流程
+class RLController:
+    def __init__(self, policy_path):
+        self.policy = torch.jit.load(policy_path)  # TorchScript加速
+        self.safety = SafetyMonitor()
+    
+    def compute_action(self, obs):
+        # 1. 安全检查
+        if self.safety.is_unsafe(obs):
+            return self.safety.safe_action(obs)
+        
+        # 2. RL策略推理
+        with torch.no_grad():
+            action = self.policy(obs)
+        
+        # 3. 动作限幅
+        action = np.clip(action, self.safe_min, self.safe_max)
+        
+        return action
+\`\`\`
+
+部署时的关键注意事项：
+1. **推理延迟**：策略网络要轻量（<10ms推理）
+2. **安全监控**：独立的安全模块，不依赖RL策略
+3. **异常恢复**：策略输出异常时切回安全模式
+4. **在线适应**：部署后持续微调（fine-tune）
+
+## 总结
+
+RL 在机器人控制中的价值不在于替代传统控制，而在于**解决传统控制搞不定的问题**——未知环境、复杂接触、灵巧操作。理解 RL 的优势和边界，在合适的场景用合适的方法，才是工程上的正确做法。`
+  },
+
+  {
+    id: 'visual-slam-frontend',
+    title: '视觉SLAM前端：特征提取与匹配',
+    date: '2026-07-05',
+    tags: ['SLAM', '深度学习', '技术笔记'],
+    excerpt: '视觉SLAM的前端决定了系统的鲁棒性。本文从ORB特征讲到SuperPoint+SuperGlue，梳理特征提取与匹配的完整技术链路。',
+    content: `# 视觉SLAM前端：特征提取与匹配
+
+视觉SLAM的前端负责逐帧处理——"这一帧相对于上一帧移动了多少？"。这是整个SLAM系统的基础，前端不稳，后端再强也白搭。
+
+## 前端的任务
+
+\`\`\`
+输入: 连续的图像帧
+输出: 相机位姿变化（R, t）+ 特征点对应的3D位置
+
+步骤: 
+  1. 特征提取 —— 找到图像中的关键点
+  2. 特征描述 —— 给每个关键点一个"指纹"
+  3. 特征匹配 —— 找到两帧之间的对应点
+  4. 运动估计 —— 从对应点计算相机运动
+\`\`\`
+
+## 1. 特征提取
+
+### 什么是好特征
+
+好的特征点应该具备：
+- **可重复性**：不同图像中同一个点都能被检测到
+- **可区分性**：不同点的描述子差异大
+- **高效性**：计算速度快
+
+### ORB特征（最常用）
+
+ORB = Oriented FAST + Rotated BRIEF
+
+\`\`\`python
+import cv2
+
+# ORB特征提取
+orb = cv2.ORB_create(nfeatures=2000)
+
+# 检测关键点 + 计算描述子
+kp1, des1 = orb.detectAndCompute(img1, None)
+kp2, des2 = orb.detectAndCompute(img2, None)
+
+# 特征点坐标
+points1 = np.array([kp.pt for kp in kp1])  # [N, 2]
+\`\`\`
+
+FAST 检测速度快但没方向，ORB加了方向估计；BRIEF 描述子快但没旋转不变性，ORB加了旋转。
+
+**ORB 的优势**：速度快（实时）、有旋转不变性、有尺度不变性（金字塔）、专利免费。
+
+### SIFT / SURF
+
+\`\`\`python
+sift = cv2.SIFT_create()
+kp, des = sift.detectAndCompute(img, None)
+\`\`\`
+
+精度更高但计算量大。SIFT 专利已过期，现在可以自由使用。
+
+### 特征提取对比
+
+| 特征 | 速度 | 精度 | 旋转不变 | 尺度不变 | 专利 |
+|------|------|------|---------|---------|------|
+| ORB | ⭐⭐⭐⭐⭐ | ⭐⭐⭐ | ✓ | ✓ | 免费 |
+| SIFT | ⭐⭐ | ⭐⭐⭐⭐⭐ | ✓ | ✓ | 已过期 |
+| SURF | ⭐⭐⭐ | ⭐⭐⭐⭐ | ✓ | ✓ | 有 |
+| BRISK | ⭐⭐⭐⭐ | ⭐⭐⭐ | ✓ | ✓ | 免费 |
+
+## 2. 特征匹配
+
+### 暴力匹配
+
+\`\`\`python
+# FLANN匹配器（近似最近邻，比暴力匹配快）
+flann = cv2.FlannBasedMatcher(
+    dict(algorithm=6, table_number=6, key_size=12, multi_probe_level=1),  # LSH for ORB
+    dict(checks=50)
+)
+
+matches = flann.knnMatch(des1, des2, k=2)
+
+# Lowe's ratio test：过滤不好的匹配
+good_matches = []
+for m, n in matches:
+    if m.distance < 0.7 * n.distance:  # 比率阈值
+        good_matches.append(m)
+
+print(f"匹配: {len(good_matches)}/{len(matches)}")
+\`\`\`
+
+### 深度学习匹配：SuperPoint + SuperGlue
+
+\`\`\`python
+# SuperPoint: 学习型特征检测+描述
+class SuperPoint:
+    def __init__(self):
+        self.net = load_pretrained()
+    
+    def detect_and_describe(self, img):
+        # 共享 backbone
+        features = self.net.backbone(img)
+        
+        # 检测头：关键点概率图
+        scores = self.net.detector_head(features)
+        keypoints = nms(scores > 0.7)  # 非极大值抑制
+        
+        # 描述头：每个像素的描述子
+        descriptors = self.net.descriptor_head(features)
+        descs = sample_descriptors(descriptors, keypoints)
+        
+        return keypoints, descs
+
+# SuperGlue: 图神经网络匹配
+class SuperGlue:
+    def __init__(self):
+        self.gnn = AttentionGNN()
+    
+    def match(self, kp1, des1, kp2, des2):
+        # 1. 位置编码（关键点坐标+描述子）
+        emb1 = self.encode(kp1, des1)
+        emb2 = self.encode(kp2, des2)
+        
+        # 2. 交替自注意力 + 交叉注意力
+        for layer in self.gnn.layers:
+            emb1, emb2 = layer(emb1, emb2)
+        
+        # 3. 匹配概率矩阵（Sinkhorn最优传输）
+        scores = emb1 @ emb2.T
+        match_prob = sinkhorn(torch.softmax(scores, dim=-1))
+        
+        return mutual_nearest_neighbor(match_prob)
+\`\`\`
+
+SuperGlue 的核心创新是用**图神经网络 + 注意力机制**做匹配，比传统暴力匹配鲁棒得多——能处理大视角变化和遮挡。
+
+### 匹配方法对比
+
+| 方法 | 速度 | 鲁棒性 | 大视角变化 | 需要 GPU |
+|------|------|--------|-----------|---------|
+| FLANN | ⭐⭐⭐⭐ | ⭐⭐ | 差 | 否 |
+| BF | ⭐⭐ | ⭐⭐ | 差 | 否 |
+| SuperGlue | ⭐⭐ | ⭐⭐⭐⭐⭐ | 好 | 是 |
+| LightGlue | ⭐⭐⭐ | ⭐⭐⭐⭐⭐ | 好 | 是 |
+
+## 3. 运动估计
+
+有了匹配点对，怎么算相机运动？取决于传感器配置。
+
+### 2D-2D：对极几何（单目）
+
+\`\`\`python
+# 从像素对应点恢复相机运动
+E, mask = cv2.findEssentialMat(
+    points1, points2, 
+    camera_matrix=K,
+    method=cv2.RANSAC,
+    prob=0.999,
+    threshold=1.0
+)
+
+# 分解本质矩阵 → R, t
+_, R, t, mask = cv2.recoverPose(E, points1, points2, K)
+\`\`\`
+
+**本质矩阵 E** 编码了两个视角之间的相对位姿。从 E 分解出 R, t 有4个解，需要三角化验证选正确的。
+
+### 3D-2D：PnP（已知3D点）
+
+\`\`\`python
+# 如果上一帧的3D点已知，用PnP求当前位姿
+retval, rvec, tvec, inliers = cv2.solvePnPRansac(
+    object_points_3d,  # 3D点（上一帧三角化的）
+    image_points_2d,   # 当前帧的2D投影
+    K, None
+)
+R, _ = cv2.Rodrigues(rvec)
+\`\`\`
+
+PnP 比 2D-2D 更稳定——3D-2D约束比纯2D约束信息量更大。
+
+### 3D-3D：ICP（已知两组3D点）
+
+\`\`\`python
+def icp(source_3d, target_3d):
+    """点到点ICP"""
+    # 1. 计算质心
+    centroid_s = np.mean(source_3d, axis=0)
+    centroid_t = np.mean(target_3d, axis=0)
+    
+    # 2. 去质心
+    s = source_3d - centroid_s
+    t = target_3d - centroid_t
+    
+    # 3. SVD求旋转
+    H = s.T @ t
+    U, S, Vt = np.linalg.svd(H)
+    R = Vt.T @ U.T
+    
+    # 4. 求平移
+    t = centroid_t - R @ centroid_s
+    
+    return R, t
+\`\`\`
+
+### RANSAC：异常值剔除
+
+\`\`\`python
+def ransac_pose(points1, points2, K, n_iters=1000, threshold=2.0):
+    """RANSAC估计位姿"""
+    best_inliers = 0
+    best_R, best_t = None, None
+    
+    for _ in range(n_iters):
+        # 1. 随机采样最小点集（5点 for 2D-2D, 4点 for PnP）
+        idx = np.random.choice(len(points1), 5, replace=False)
+        
+        # 2. 求解位姿
+        E, _ = cv2.findEssentialMat(
+            points1[idx], points2[idx], K
+        )
+        _, R, t = cv2.recoverPose(E, points1, points2, K)
+        
+        # 3. 计算内点数
+        inliers = count_inliers(points1, points2, K, R, t, threshold)
+        
+        if inliers > best_inliers:
+            best_inliers = inliers
+            best_R, best_t = R, t
+    
+    return best_R, best_t, best_inliers
+\`\`\`
+
+RANSAC 是SLAM前端的标配——没有它，一个错误匹配就会搞崩运动估计。
+
+## 三角化：恢复3D点
+
+\`\`\`python
+def triangulate(P1, P2, pts1, pts2):
+    """三角化：从两个视角的2D点恢复3D点"""
+    points_3d = []
+    for p1, p2 in zip(pts1, pts2):
+        # 线性三角化: Ax=0
+        A = np.array([
+            p1[0] * P1[2] - P1[0],
+            p1[1] * P1[2] - P1[1],
+            p2[0] * P2[2] - P2[0],
+            p2[1] * P2[2] - P2[1]
+        ])
+        _, _, Vt = np.linalg.svd(A)
+        X = Vt[-1, :3] / Vt[-1, 3]  # 齐次→非齐次
+        points_3d.append(X)
+    return np.array(points_3d)
+\`\`\`
+
+## 关键帧选择
+
+不是每帧都要做SLAM——选择信息量大的"关键帧"。
+
+\`\`\`python
+def need_new_keyframe(current_frame, last_keyframe):
+    """判断是否需要插入新关键帧"""
+    # 1. 距离上次关键帧的运动量
+    R, t = relative_pose(current_frame, last_keyframe)
+    translation = np.linalg.norm(t)
+    rotation = np.arccos((np.trace(R) - 1) / 2)
+    
+    # 2. 特征点跟踪率下降
+    tracking_ratio = current_frame.matched / last_keyframe.features
+    
+    # 3. 插入条件
+    if translation > 0.1 or rotation > 0.2 or tracking_ratio < 0.7:
+        return True
+    return False
+\`\`\`
+
+## ORB-SLAM 前端流程
+
+\`\`\`
+新帧到达
+  → ORB特征提取（金字塔各层）
+  → 与上一帧的BoW匹配（恒速运动模型预测搜索区域）
+  → 2D-2D或3D-2D位姿估计（RANSAC + PnP）
+  → 三角化新3D点
+  → 局部地图跟踪（匹配局部地图点）
+  → 判断是否插入关键帧
+\`\`\`
+
+## 实际问题与解法
+
+| 问题 | 原因 | 解法 |
+|------|------|------|
+| 跟踪丢失 | 快速运动/模糊/遮挡 | IMU预积分辅助、重定位 |
+| 纹理缺失 | 白墙、走廊 | 增加直接法成分、加LiDAR |
+| 光照变化 | 日夜/室内外 | 特征归一化、学习型特征 |
+| 重复纹理 | 走廊/对称建筑 | 几何验证、IMU辅助 |
+| 动态物体 | 人/车 | 几何一致性检查剔除动态点 |
+
+## 总结
+
+视觉SLAM前端的演进方向：从手工特征（ORB/SIFT）到学习特征（SuperPoint），从暴力匹配到图神经网络匹配（SuperGlue）。但在工程实践中，ORB + FLANN 仍然是性价比最高的选择——简单、快速、不需要GPU。学习型方法在极端条件下更鲁棒，但部署成本也更高。`
+  },
+
+  {
+    id: 'deep-learning-in-slam',
+    title: '深度学习在SLAM中的应用',
+    date: '2026-06-25',
+    tags: ['SLAM', '深度学习', '机器学习'],
+    excerpt: '传统SLAM的瓶颈在哪？深度学习能解决什么？本文梳理深度学习在SLAM各个环节中的应用现状与落地挑战。',
+    content: `# 深度学习在SLAM中的应用
+
+传统SLAM是纯几何方法——特征提取靠手工算子，优化靠非线性最小二乘。深度学习能帮上什么忙？
+
+## 深度学习在SLAM中的角色
+
+\`\`\`
+传统SLAM:  传感器 → [手工前端] → [几何后端] → 轨迹+地图
+深度SLAM:  传感器 → [学习前端] → [几何后端] → 轨迹+地图
+                    ↑ 替换部分模块
+
+端到端SLAM: 传感器 → [神经网络] → 轨迹+地图
+             ↑ 全部用神经网络替代
+\`\`\`
+
+实践证明：**用深度学习替换SLAM的特定模块（前端）效果最好**，端到端方案目前还不够成熟。
+
+## 应用一：深度特征提取
+
+### SuperPoint
+
+用自监督学习训练的特征检测器。
+
+\`\`\`python
+class SuperPoint(nn.Module):
+    """SuperPoint: 共享backbone + 两个头"""
+    def __init__(self):
+        super().__init__()
+        # 共享特征提取（VGG-style）
+        self.encoder = VGGEncoder()  # 输出: [B, 128, H/8, W/8]
+        
+        # 检测头：每个像素是否为关键点
+        self.detector = nn.Conv2d(128, 65, 1)  # 65 = 8x8 + 1(无关键点)
+        
+        # 描述头：每个像素256维描述子
+        self.descriptor = nn.Conv2d(128, 256, 1)
+    
+    def forward(self, img):
+        feat = self.encoder(img)
+        scores = torch.softmax(self.detector(feat), dim=1)
+        descs = F.normalize(self.descriptor(feat), dim=1)
+        return scores, descs
+\`\`\`
+
+**训练方法**：
+1. 先在合成数据（几何形状）上训练检测器
+2. 再用同形变换（Homographic Adaptation）在真实图像上自监督训练
+3. 描述子用对比学习训练
+
+### vs ORB
+
+| 指标 | ORB | SuperPoint |
+|------|-----|-----------|
+| 速度 | 10ms | 30ms (GPU) |
+| 重复性 | 中 | 高 |
+| 纹理稀缺场景 | 差 | 好 |
+| 需要 GPU | 否 | 是 |
+| 可解释性 | 高 | 低 |
+
+## 应用二：深度特征匹配
+
+### SuperGlue
+
+\`\`\`python
+class SuperGlue(nn.Module):
+    """图神经网络匹配"""
+    def __init__(self, n_layers=9):
+        super().__init__()
+        self.keypoint_encoder = MLP(2 + 1 + 256, 256)  # 坐标+分数+描述子
+        self.gnn = nn.ModuleList([
+            AttentionLayer(256) for _ in range(n_layers)
+        ])
+        self.final_proj = nn.Linear(256, 256)
+    
+    def forward(self, kp1, desc1, kp2, desc2):
+        # 1. 编码关键点（位置+描述子融合）
+        emb1 = self.keypoint_encoder(cat(kp1, desc1))
+        emb2 = self.keypoint_encoder(cat(kp2, desc2))
+        
+        # 2. 交替Self-Attention和Cross-Attention
+        for layer in self.gnn:
+            emb1, emb2 = layer(emb1, emb2)
+        
+        # 3. 计算匹配分数矩阵
+        scores = self.final_proj(emb1) @ self.final_proj(emb2).T
+        
+        # 4. Sinkhorn算法（最优传输，考虑一一匹配约束）
+        scores = sinkhorn_algorithm(scores)
+        
+        return scores  # [N1, N2] 匹配概率
+\`\`\`
+
+SuperGlue 的关键洞察：**匹配不是一个独立的决策，而是全局优化问题**——一个点的匹配会影响其他点的匹配。注意力机制正好能建模这种全局依赖。
+
+### LightGlue（2023）
+
+SuperGlue 的改进版，核心改进是**自适应计算量**：
+
+\`\`\`python
+class LightGlue(nn.Module):
+    def forward(self, kp1, desc1, kp2, desc2):
+        emb1, emb2 = self.encode(kp1, desc1), self.encode(kp2, desc2)
+        
+        for i, layer in enumerate(self.layers):
+            emb1, emb2 = layer(emb1, emb2)
+            
+            # 早停：如果已经高置信度匹配，提前退出
+            if self.confidence(emb1, emb2) > threshold:
+                # 只跑前i层就够了
+                return self.match(emb1, emb2)
+        
+        return self.match(emb1, emb2)
+\`\`\`
+
+容易匹配的图像对少跑几层，困难的图像对多跑几层——动态分配计算资源。
+
+## 应用三：深度位姿估计
+
+### 直接回归位姿
+
+\`\`\`python
+class PoseNet(nn.Module):
+    """从单张图像直接回归相机位姿"""
+    def __init__(self):
+        super().__init__()
+        self.backbone = ResNet18(pretrained=True)
+        self.pose_head = nn.Linear(512, 7)  # 3平移 + 4旋转(四元数)
+    
+    def forward(self, img):
+        feat = self.backbone(img)
+        pose = self.pose_head(feat)
+        
+        # 分离平移和旋转
+        t = pose[:, :3]
+        q = F.normalize(pose[:, 3:], dim=-1)  # 四元数归一化
+        
+        return t, q
+\`\`\`
+
+**问题**：泛化能力差，在新环境中完全不可用。只能在训练环境内工作。
+
+### 相对位姿估计（更实用）
+
+\`\`\`python
+class RelPoseNet(nn.Module):
+    """估计两帧之间的相对位姿"""
+    def forward(self, img1, img2):
+        feat1 = self.backbone(img1)
+        feat2 = self.backbone(img2)
+        
+        # 融合两帧特征
+        fused = torch.cat([feat1, feat2, feat1 * feat2], dim=1)
+        
+        # 回归相对位姿
+        R = self.rotation_head(fused)   # 旋转
+        t = self.translation_head(fused)  # 平移方向（无尺度）
+        
+        return R, t
+\`\`\`
+
+## 应用四：深度深度估计
+
+### Monodepth2：单目深度估计
+
+\`\`\`python
+class Monodepth2(nn.Module):
+    """自监督单目深度估计"""
+    def __init__(self):
+        self.depth_encoder = ResNet18()
+        self.depth_decoder = DepthDecoder()
+        
+        # 额外的位姿网络（用于自监督训练）
+        self.pose_encoder = ResNet18()
+        self.pose_decoder = PoseDecoder()
+    
+    def forward(self, img1, img2):
+        # 预测深度
+        depth1 = self.depth_decoder(self.depth_encoder(img1))
+        
+        # 预测位姿
+        pose = self.pose_decoder(self.pose_encoder(cat(img1, img2)))
+        
+        # 自监督损失：用预测的深度和位姿重建img2
+        img2_recon = warp(img1, depth1, pose, intrinsics)
+        loss = photometric_loss(img2, img2_recon) + smoothness_loss(depth1)
+        
+        return depth1, loss
+\`\`\`
+
+单目深度估计**没有绝对尺度**——这是单目SLAM的固有缺陷。要获得真实尺度需要双目、RGB-D或IMU。
+
+## 应用五：语义SLAM
+
+把语义信息（物体类别）融入SLAM，实现语义建图。
+
+\`\`\`python
+class SemanticSLAM:
+    def __init__(self):
+        self.slam = ORBSLAM3()
+        self.detector = YOLOv8()  # 目标检测
+        self.semantic_map = {}
+    
+    def process_frame(self, img):
+        # 1. 传统SLAM定位
+        pose = self.slam.track(img)
+        if pose is None:
+            return
+        
+        # 2. 语义检测
+        detections = self.detector(img)
+        
+        # 3. 把检测结果投到3D地图
+        for det in detections:
+            # 检测框对应的3D点
+            mask = box_to_mask(det.bbox)
+            points_3d = self.slam.get_map_points_in_region(mask)
+            
+            if points_3d is not None:
+                # 更新语义地图
+                obj_id = det.class_id
+                if obj_id not in self.semantic_map:
+                    self.semantic_map[obj_id] = []
+                self.semantic_map[obj_id].append({
+                    'pose': pose,
+                    'points': points_3d,
+                    'bbox': det.bbox
+                })
+\`\`\`
+
+语义SLAM的价值：
+- **数据关联更鲁棒**：用语义信息辅助闭环检测
+- **动态物体剔除**：识别行人/车辆，排除其干扰
+- **高级地图**：不只是点云，还有"桌子""椅子""门"
+
+## 应用六：学习型闭环检测
+
+\`\`\`python
+class NetVLAD(nn.Module):
+    """基于深度学习的全局描述子，用于位置识别"""
+    def __init__(self, num_clusters=64, dim=512):
+        super().__init__()
+        self.backbone = ResNet18()
+        self.clusters = nn.Parameter(torch.randn(num_clusters, dim))
+        self.fc = nn.Linear(dim * num_clusters, 4096)
+    
+    def forward(self, img):
+        # 1. 提取局部特征
+        feat = self.backbone(img)  # [B, C, H, W]
+        feat = feat.flatten(2).transpose(1, 2)  # [B, HW, C]
+        
+        # 2. 计算软分配到各聚类
+        soft_assign = torch.softmax(feat @ self.clusters.T, dim=-1)  # [B, HW, K]
+        
+        # 3. VLAD聚合
+        residual = feat.unsqueeze(2) - self.clusters  # [B, HW, K, C]
+        vlad = (soft_assign.unsqueeze(-1) * residual).sum(1)  # [B, K, C]
+        vlad = F.normalize(vlad.flatten(1), dim=-1)  # [B, K*C]
+        
+        # 4. 降维
+        return F.normalize(self.fc(vlad), dim=-1)  # [B, 4096]
+\`\`\`
+
+NetVLAD 用可学习的聚类替代手工词袋（DBoW），在光照变化和视角变化下更鲁棒。
+
+## 端到端SLAM：DROID-SLAM
+
+\`\`\`python
+class DROIDSLAM:
+    """端到端视觉SLAM"""
+    def __init__(self):
+        self.corr_fn = CorrBlock()  # 学习型相关性
+        self.update_net = GRUUpdate()  # GRU更新
+        
+    def track(self, frames):
+        # 1. 初始化
+        poses = [identity()]
+        depths = [predict_depth(frames[0])]
+        
+        for i in range(1, len(frames)):
+            # 2. 构建相关性体（学习型匹配）
+            corr = self.corr_fn(frames[i-1], frames[i])
+            
+            # 3. GRU迭代更新位姿和深度
+            for _ in range(n_iters):
+                delta_pose, delta_depth = self.update_net(corr, poses[i], depths[i])
+                poses[i] = update_pose(poses[i], delta_pose)
+                depths[i] = update_depth(depths[i], delta_depth)
+        
+        # 4. 全局优化
+        poses = self.global_optimize(poses, depths, frames)
+        
+        return poses, depths
+\`\`\`
+
+DROID-SLAM 在多个benchmark上超越传统方法，但：
+- 计算量大（需要GPU）
+- 泛化到训练集外场景有退化
+- 难以调试和解释
+
+## 落地现状与建议
+
+| 模块 | 传统方法 | 深度学习 | 建议 |
+|------|---------|---------|------|
+| 特征提取 | ORB/SIFT | SuperPoint | 纹理差用SuperPoint |
+| 特征匹配 | FLANN/BF | SuperGlue | 大视角变化用SuperGlue |
+| 深度估计 | 双目/RGB-D | Monodepth | 没有深度传感器时用 |
+| 闭环检测 | DBoW2 | NetVLAD | 光照变化大用NetVLAD |
+| 位姿估计 | PnP+RANSAC | 端到端回归 | 老老实实用PnP |
+| 后端优化 | g2o/GTSAM | - | 还没有深度学习的优势 |
+
+**实用建议**：不要追求"全深度学习SLAM"。传统SLAM + 选择性地在某些环节用深度学习增强，是当前最务实的方案。
+
+## 总结
+
+深度学习在SLAM中的最大价值不是替代几何方法，而是**解决几何方法的短板**——纹理缺乏、大视角变化、光照变化、语义理解。理解传统方法的瓶颈在哪，再有针对性地用深度学习去补，才是正确的工程思路。`
   }
 ];
 
 // 标签信息（自动从文章中提取，这里用于排序）
-const TAG_ORDER = ['具身智能', 'VLA', '机械臂', '智能制造', '机器人', '深度学习', '运动控制', '读书笔记', '技术笔记', '随笔', '生活', '深圳', '产线'];
+const TAG_ORDER = ['具身智能', 'VLA', '机械臂', '智能制造', '机器人', '深度学习', '机器学习', '强化学习', 'SLAM', '运动控制', '读书笔记', '技术笔记', '随笔', '生活', '深圳', '产线'];
