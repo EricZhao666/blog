@@ -28,7 +28,31 @@ EXCLUDE_DIRS = {
     'build', '.idea', '.vscode', 'target', 'bin', 'obj', '.svn', '.gradle',
     'out', 'release', '.pytest_cache', '.mypy_cache', 'site-packages', '.tox',
     '.settings', '.ipynb_checkpoints', 'node_modules_copy',
+    # environment / non-code directories (Premiere, IDE, MATLAB runtime, venv Lib)
+    'pr', 'registry', 'win64', 'm3iregistry', 'lib',
 }
+
+# Directory-name prefixes that signal an environment / tool / IDE artifact
+ENV_PREFIX = (
+    'intellij idea', 'pycharm', 'sqlYog', 'adobe', 'premiere',
+    'visual studio', 'webstorm', 'eclipse', 'anaconda', 'conda',
+)
+
+# Top-level folders to skip for specific libraries (defensive; user-requested)
+ROOT_DROP_TOP = {
+    'study': {'其他', '学术Seminar'},
+}
+
+
+def is_env_dir(name):
+    """True for environment / tool / IDE / runtime directories."""
+    n = name.lower()
+    if n in EXCLUDE_DIRS:
+        return True
+    for p in ENV_PREFIX:
+        if n.startswith(p):
+            return True
+    return False
 
 # File extensions with no browsing value / that bloat the data file
 EXCLUDE_EXT = {
@@ -99,11 +123,12 @@ def scan_root(root_path, root_id, category):
     files = []
     truncated = False
     scanned_dirs = 0
+    drop_top = ROOT_DROP_TOP.get(root_id, set())
     for dirpath, dirnames, filenames in os.walk(root_path):
-        # prune excluded / hidden directories in place (top-down)
+        # prune excluded / hidden / environment directories in place (top-down)
         dirnames[:] = [
             d for d in dirnames
-            if d not in EXCLUDE_DIRS and not d.startswith('.')
+            if not d.startswith('.') and not is_env_dir(d) and d not in drop_top
         ]
         scanned_dirs += 1
         for fn in filenames:
