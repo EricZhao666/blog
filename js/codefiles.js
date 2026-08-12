@@ -8,2611 +8,2195 @@ const CODE_LIBS = [
   {
     "id": "matlab_backup",
     "name": "matlab备份",
-    "source": "E:/杂项/matlab备份",
     "category": "MATLAB 备份",
-    "fileCount": 160,
-    "totalSize": 10195542,
-    "totalSizeFormatted": "9.7 MB",
+    "fileCount": 147,
+    "totalSize": 10052566,
+    "totalSizeFormatted": "10.1 MB",
     "description": "MATLAB 课程作业与项目备份：含信号处理（EE311）、机器人正运动学仿真（PUMA / SCARA 六轴机械臂的 D-H 建模与动画）、基于 IMU + 位置观测的误差卡尔曼滤波（EKF）融合、魔方求解器等。是《机器人学导论》《SLAM 技术全景》等文章里数学公式的代码落地。",
     "files": [
       {
         "name": "assignment2_calculation.m",
         "type": "MATLAB代码",
         "size": 2935,
-        "path": "E:/杂项/matlab备份/assignment2_calculation.m",
-        "relPath": "assignment2_calculation.m",
-        "sizeFormatted": "2.9 KB"
+        "sizeFormatted": "2.9 KB",
+        "project": ""
       },
       {
         "name": "assignment6.m",
         "type": "MATLAB代码",
         "size": 821,
-        "path": "E:/杂项/matlab备份/assignment6.m",
-        "relPath": "assignment6.m",
-        "sizeFormatted": "821 B"
+        "sizeFormatted": "821 B",
+        "project": ""
       },
       {
         "name": "Assinment_HCD.m",
         "type": "MATLAB代码",
         "size": 1198,
-        "path": "E:/杂项/matlab备份/Assinment_HCD.m",
-        "relPath": "Assinment_HCD.m",
-        "sizeFormatted": "1.2 KB"
+        "sizeFormatted": "1.2 KB",
+        "project": ""
       },
       {
         "name": "computer_assignment1.m",
         "type": "MATLAB代码",
         "size": 785,
-        "path": "E:/杂项/matlab备份/computer_assignment1.m",
-        "relPath": "computer_assignment1.m",
-        "sizeFormatted": "785 B"
-      },
-      {
-        "name": "deploytool.bat",
-        "type": "Shell脚本",
-        "size": 909,
-        "path": "E:/杂项/matlab备份/deploytool.bat",
-        "relPath": "deploytool.bat",
-        "sizeFormatted": "909 B"
+        "sizeFormatted": "785 B",
+        "project": ""
       },
       {
         "name": "ee406_as2.m",
         "type": "MATLAB代码",
         "size": 2590,
-        "path": "E:/杂项/matlab备份/ee406_as2.m",
-        "relPath": "ee406_as2.m",
-        "sizeFormatted": "2.5 KB"
+        "sizeFormatted": "2.5 KB",
+        "project": ""
       },
       {
         "name": "f1.m",
         "type": "MATLAB代码",
         "size": 206,
-        "path": "E:/杂项/matlab备份/f1.m",
-        "relPath": "f1.m",
-        "sizeFormatted": "206 B"
+        "sizeFormatted": "206 B",
+        "project": ""
       },
       {
         "name": "Homework2.m",
         "type": "MATLAB代码",
         "size": 1166,
-        "path": "E:/杂项/matlab备份/Homework2.m",
-        "relPath": "Homework2.m",
-        "sizeFormatted": "1.1 KB"
+        "sizeFormatted": "1.1 KB",
+        "project": ""
       },
       {
         "name": "LAB.m",
         "type": "MATLAB代码",
         "size": 1047,
-        "path": "E:/杂项/matlab备份/LAB.m",
-        "relPath": "LAB.m",
-        "sizeFormatted": "1.0 KB"
+        "sizeFormatted": "1.0 KB",
+        "project": ""
       },
       {
         "name": "LAB2.m",
         "type": "MATLAB代码",
         "size": 843,
-        "path": "E:/杂项/matlab备份/LAB2.m",
-        "relPath": "LAB2.m",
-        "sizeFormatted": "843 B"
+        "sizeFormatted": "843 B",
+        "project": ""
       },
       {
         "name": "LAB_3.m",
         "type": "MATLAB代码",
         "size": 454,
-        "path": "E:/杂项/matlab备份/LAB_3.m",
-        "relPath": "LAB_3.m",
-        "sizeFormatted": "454 B"
-      },
-      {
-        "name": "lcdata.xml",
-        "type": "YAML配置",
-        "size": 906,
-        "path": "E:/杂项/matlab备份/lcdata.xml",
-        "relPath": "lcdata.xml",
-        "sizeFormatted": "906 B"
-      },
-      {
-        "name": "lcdata.xsd",
-        "type": "其他",
-        "size": 2404,
-        "path": "E:/杂项/matlab备份/lcdata.xsd",
-        "relPath": "lcdata.xsd",
-        "sizeFormatted": "2.3 KB"
-      },
-      {
-        "name": "lcdata_utf8.xml",
-        "type": "YAML配置",
-        "size": 13176,
-        "path": "E:/杂项/matlab备份/lcdata_utf8.xml",
-        "relPath": "lcdata_utf8.xml",
-        "sizeFormatted": "12.9 KB"
-      },
-      {
-        "name": "mbuild.bat",
-        "type": "Shell脚本",
-        "size": 2112,
-        "path": "E:/杂项/matlab备份/mbuild.bat",
-        "relPath": "mbuild.bat",
-        "sizeFormatted": "2.1 KB"
-      },
-      {
-        "name": "mcc.bat",
-        "type": "Shell脚本",
-        "size": 558,
-        "path": "E:/杂项/matlab备份/mcc.bat",
-        "relPath": "mcc.bat",
-        "sizeFormatted": "558 B"
-      },
-      {
-        "name": "mex.bat",
-        "type": "Shell脚本",
-        "size": 388,
-        "path": "E:/杂项/matlab备份/mex.bat",
-        "relPath": "mex.bat",
-        "sizeFormatted": "388 B"
-      },
-      {
-        "name": "mex.pl",
-        "type": "其他",
-        "size": 70605,
-        "path": "E:/杂项/matlab备份/mex.pl",
-        "relPath": "mex.pl",
-        "sizeFormatted": "69.0 KB"
-      },
-      {
-        "name": "mexext.bat",
-        "type": "Shell脚本",
-        "size": 762,
-        "path": "E:/杂项/matlab备份/mexext.bat",
-        "relPath": "mexext.bat",
-        "sizeFormatted": "762 B"
-      },
-      {
-        "name": "mexsetup.pm",
-        "type": "其他",
-        "size": 38262,
-        "path": "E:/杂项/matlab备份/mexsetup.pm",
-        "relPath": "mexsetup.pm",
-        "sizeFormatted": "37.4 KB"
-      },
-      {
-        "name": "mexutils.pm",
-        "type": "其他",
-        "size": 10030,
-        "path": "E:/杂项/matlab备份/mexutils.pm",
-        "relPath": "mexutils.pm",
-        "sizeFormatted": "9.8 KB"
-      },
-      {
-        "name": "mw_mpiexec.bat",
-        "type": "Shell脚本",
-        "size": 619,
-        "path": "E:/杂项/matlab备份/mw_mpiexec.bat",
-        "relPath": "mw_mpiexec.bat",
-        "sizeFormatted": "619 B"
+        "sizeFormatted": "454 B",
+        "project": ""
       },
       {
         "name": "ques3.mat",
         "type": "其他",
         "size": 152921,
-        "path": "E:/杂项/matlab备份/ques3.mat",
-        "relPath": "ques3.mat",
-        "sizeFormatted": "149.3 KB"
+        "sizeFormatted": "149.3 KB",
+        "project": ""
       },
       {
         "name": "test.m",
         "type": "MATLAB代码",
         "size": 184,
-        "path": "E:/杂项/matlab备份/test.m",
-        "relPath": "test.m",
-        "sizeFormatted": "184 B"
+        "sizeFormatted": "184 B",
+        "project": ""
       },
       {
         "name": "untitled1.slx",
         "type": "Simulink模型",
         "size": 17703,
-        "path": "E:/杂项/matlab备份/untitled1.slx",
-        "relPath": "untitled1.slx",
-        "sizeFormatted": "17.3 KB"
+        "sizeFormatted": "17.3 KB",
+        "project": ""
       },
       {
         "name": "verrifie.m",
         "type": "MATLAB代码",
         "size": 3246,
-        "path": "E:/杂项/matlab备份/verrifie.m",
-        "relPath": "verrifie.m",
-        "sizeFormatted": "3.2 KB"
-      },
-      {
-        "name": "worker.bat",
-        "type": "Shell脚本",
-        "size": 2245,
-        "path": "E:/杂项/matlab备份/worker.bat",
-        "relPath": "worker.bat",
-        "sizeFormatted": "2.2 KB"
+        "sizeFormatted": "3.2 KB",
+        "project": ""
       },
       {
         "name": "xishu.mat",
         "type": "其他",
         "size": 839,
-        "path": "E:/杂项/matlab备份/xishu.mat",
-        "relPath": "xishu.mat",
-        "sizeFormatted": "839 B"
+        "sizeFormatted": "839 B",
+        "project": ""
       },
       {
         "name": "A_algorithm_demo_class.m",
         "type": "MATLAB代码",
         "size": 7435,
-        "path": "E:/杂项/matlab备份/7213/mid-term/A_algorithm_demo_class.m",
-        "relPath": "7213/mid-term/A_algorithm_demo_class.m",
-        "sizeFormatted": "7.3 KB"
+        "sizeFormatted": "7.3 KB",
+        "project": "7213"
       },
       {
         "name": "final_test.m",
         "type": "MATLAB代码",
         "size": 14984,
-        "path": "E:/杂项/matlab备份/7213/mid-term/final_test.m",
-        "relPath": "7213/mid-term/final_test.m",
-        "sizeFormatted": "14.6 KB"
+        "sizeFormatted": "14.6 KB",
+        "project": "7213"
       },
       {
         "name": "Lec 5- Mid term Project.pdf",
         "type": "PDF文档",
         "size": 272600,
-        "path": "E:/杂项/matlab备份/7213/mid-term/Lec 5- Mid term Project.pdf",
-        "relPath": "7213/mid-term/Lec 5- Mid term Project.pdf",
-        "sizeFormatted": "266.2 KB"
+        "sizeFormatted": "266.2 KB",
+        "project": "7213"
       },
       {
         "name": "obj_data.m",
         "type": "MATLAB代码",
         "size": 1391,
-        "path": "E:/杂项/matlab备份/7213/mid-term/obj_data.m",
-        "relPath": "7213/mid-term/obj_data.m",
-        "sizeFormatted": "1.4 KB"
+        "sizeFormatted": "1.4 KB",
+        "project": "7213"
       },
       {
         "name": "test.m",
         "type": "MATLAB代码",
         "size": 5808,
-        "path": "E:/杂项/matlab备份/7213/mid-term/test.m",
-        "relPath": "7213/mid-term/test.m",
-        "sizeFormatted": "5.7 KB"
+        "sizeFormatted": "5.7 KB",
+        "project": "7213"
       },
       {
         "name": "50家供货量.xlsx",
         "type": "Excel表格",
         "size": 84852,
-        "path": "E:/杂项/matlab备份/all_date/50家供货量.xlsx",
-        "relPath": "all_date/50家供货量.xlsx",
-        "sizeFormatted": "82.9 KB"
+        "sizeFormatted": "82.9 KB",
+        "project": "all_date"
       },
       {
         "name": "50家定货量.xlsx",
         "type": "Excel表格",
         "size": 110818,
-        "path": "E:/杂项/matlab备份/all_date/50家定货量.xlsx",
-        "relPath": "all_date/50家定货量.xlsx",
-        "sizeFormatted": "108.2 KB"
+        "sizeFormatted": "108.2 KB",
+        "project": "all_date"
       },
       {
         "name": "50家预选.xlsx",
         "type": "Excel表格",
         "size": 48304,
-        "path": "E:/杂项/matlab备份/all_date/50家预选.xlsx",
-        "relPath": "all_date/50家预选.xlsx",
-        "sizeFormatted": "47.2 KB"
+        "sizeFormatted": "47.2 KB",
+        "project": "all_date"
       },
       {
         "name": "date_fenxi.m",
         "type": "MATLAB代码",
         "size": 374,
-        "path": "E:/杂项/matlab备份/all_date/date_fenxi.m",
-        "relPath": "all_date/date_fenxi.m",
-        "sizeFormatted": "374 B"
+        "sizeFormatted": "374 B",
+        "project": "all_date"
       },
       {
         "name": "q2.m",
         "type": "MATLAB代码",
         "size": 897,
-        "path": "E:/杂项/matlab备份/all_date/q2.m",
-        "relPath": "all_date/q2.m",
-        "sizeFormatted": "897 B"
+        "sizeFormatted": "897 B",
+        "project": "all_date"
       },
       {
         "name": "q2_3.m",
         "type": "MATLAB代码",
         "size": 1301,
-        "path": "E:/杂项/matlab备份/all_date/q2_3.m",
-        "relPath": "all_date/q2_3.m",
-        "sizeFormatted": "1.3 KB"
+        "sizeFormatted": "1.3 KB",
+        "project": "all_date"
       },
       {
         "name": "q2_true.m",
         "type": "MATLAB代码",
         "size": 1055,
-        "path": "E:/杂项/matlab备份/all_date/q2_true.m",
-        "relPath": "all_date/q2_true.m",
-        "sizeFormatted": "1.0 KB"
+        "sizeFormatted": "1.0 KB",
+        "project": "all_date"
       },
       {
         "name": "q2_zhouyi.m",
         "type": "MATLAB代码",
         "size": 1363,
-        "path": "E:/杂项/matlab备份/all_date/q2_zhouyi.m",
-        "relPath": "all_date/q2_zhouyi.m",
-        "sizeFormatted": "1.3 KB"
+        "sizeFormatted": "1.3 KB",
+        "project": "all_date"
       },
       {
         "name": "q3_2.m",
         "type": "MATLAB代码",
         "size": 1333,
-        "path": "E:/杂项/matlab备份/all_date/q3_2.m",
-        "relPath": "all_date/q3_2.m",
-        "sizeFormatted": "1.3 KB"
+        "sizeFormatted": "1.3 KB",
+        "project": "all_date"
       },
       {
         "name": "q3_3.m",
         "type": "MATLAB代码",
         "size": 1289,
-        "path": "E:/杂项/matlab备份/all_date/q3_3.m",
-        "relPath": "all_date/q3_3.m",
-        "sizeFormatted": "1.3 KB"
+        "sizeFormatted": "1.3 KB",
+        "project": "all_date"
       },
       {
         "name": "q4_1.m",
         "type": "MATLAB代码",
         "size": 579,
-        "path": "E:/杂项/matlab备份/all_date/q4_1.m",
-        "relPath": "all_date/q4_1.m",
-        "sizeFormatted": "579 B"
+        "sizeFormatted": "579 B",
+        "project": "all_date"
       },
       {
         "name": "q4_2.m",
         "type": "MATLAB代码",
         "size": 1260,
-        "path": "E:/杂项/matlab备份/all_date/q4_2.m",
-        "relPath": "all_date/q4_2.m",
-        "sizeFormatted": "1.2 KB"
+        "sizeFormatted": "1.2 KB",
+        "project": "all_date"
       },
       {
         "name": "xishu.m",
         "type": "MATLAB代码",
         "size": 547,
-        "path": "E:/杂项/matlab备份/all_date/xishu.m",
-        "relPath": "all_date/xishu.m",
-        "sizeFormatted": "547 B"
+        "sizeFormatted": "547 B",
+        "project": "all_date"
       },
       {
         "name": "zhengtai.m",
         "type": "MATLAB代码",
         "size": 214,
-        "path": "E:/杂项/matlab备份/all_date/zhengtai.m",
-        "relPath": "all_date/zhengtai.m",
-        "sizeFormatted": "214 B"
+        "sizeFormatted": "214 B",
+        "project": "all_date"
       },
       {
         "name": "分析.xlsx",
         "type": "Excel表格",
         "size": 10185,
-        "path": "E:/杂项/matlab备份/all_date/分析.xlsx",
-        "relPath": "all_date/分析.xlsx",
-        "sizeFormatted": "9.9 KB"
+        "sizeFormatted": "9.9 KB",
+        "project": "all_date"
       },
       {
         "name": "损失量.xlsx",
         "type": "Excel表格",
         "size": 17303,
-        "path": "E:/杂项/matlab备份/all_date/损失量.xlsx",
-        "relPath": "all_date/损失量.xlsx",
-        "sizeFormatted": "16.9 KB"
+        "sizeFormatted": "16.9 KB",
+        "project": "all_date"
       },
       {
         "name": "新建 XLSX 工作表.xlsx",
         "type": "Excel表格",
         "size": 659651,
-        "path": "E:/杂项/matlab备份/all_date/新建 XLSX 工作表.xlsx",
-        "relPath": "all_date/新建 XLSX 工作表.xlsx",
-        "sizeFormatted": "644.2 KB"
+        "sizeFormatted": "644.2 KB",
+        "project": "all_date"
       },
       {
         "name": "第四问数据.xlsx",
         "type": "Excel表格",
         "size": 11243,
-        "path": "E:/杂项/matlab备份/all_date/第四问数据.xlsx",
-        "relPath": "all_date/第四问数据.xlsx",
-        "sizeFormatted": "11.0 KB"
+        "sizeFormatted": "11.0 KB",
+        "project": "all_date"
       },
       {
         "name": "附件A 订购方案数据结果.xlsx",
         "type": "Excel表格",
         "size": 102545,
-        "path": "E:/杂项/matlab备份/all_date/附件A 订购方案数据结果.xlsx",
-        "relPath": "all_date/附件A 订购方案数据结果.xlsx",
-        "sizeFormatted": "100.1 KB"
+        "sizeFormatted": "100.1 KB",
+        "project": "all_date"
       },
       {
         "name": "附件B 转运方案数据结果.xlsx",
         "type": "Excel表格",
         "size": 636324,
-        "path": "E:/杂项/matlab备份/all_date/附件B 转运方案数据结果.xlsx",
-        "relPath": "all_date/附件B 转运方案数据结果.xlsx",
-        "sizeFormatted": "621.4 KB"
+        "sizeFormatted": "621.4 KB",
+        "project": "all_date"
       },
       {
         "name": "预处理.xlsx",
         "type": "Excel表格",
         "size": 41163,
-        "path": "E:/杂项/matlab备份/all_date/预处理.xlsx",
-        "relPath": "all_date/预处理.xlsx",
-        "sizeFormatted": "40.2 KB"
+        "sizeFormatted": "40.2 KB",
+        "project": "all_date"
       },
       {
         "name": "Q1.m",
         "type": "MATLAB代码",
         "size": 1094,
-        "path": "E:/杂项/matlab备份/Aquestion/Q1.m",
-        "relPath": "Aquestion/Q1.m",
-        "sizeFormatted": "1.1 KB"
+        "sizeFormatted": "1.1 KB",
+        "project": "Aquestion"
       },
       {
         "name": "Q2.m",
         "type": "MATLAB代码",
         "size": 1406,
-        "path": "E:/杂项/matlab备份/Aquestion/Q2.m",
-        "relPath": "Aquestion/Q2.m",
-        "sizeFormatted": "1.4 KB"
+        "sizeFormatted": "1.4 KB",
+        "project": "Aquestion"
       },
       {
         "name": "Q2_2.m",
         "type": "MATLAB代码",
         "size": 1342,
-        "path": "E:/杂项/matlab备份/Aquestion/Q2_2.m",
-        "relPath": "Aquestion/Q2_2.m",
-        "sizeFormatted": "1.3 KB"
+        "sizeFormatted": "1.3 KB",
+        "project": "Aquestion"
       },
       {
         "name": "Q3.m",
         "type": "MATLAB代码",
         "size": 436,
-        "path": "E:/杂项/matlab备份/Aquestion/Q3.m",
-        "relPath": "Aquestion/Q3.m",
-        "sizeFormatted": "436 B"
+        "sizeFormatted": "436 B",
+        "project": "Aquestion"
       },
       {
         "name": "Q3_2.m",
         "type": "MATLAB代码",
         "size": 539,
-        "path": "E:/杂项/matlab备份/Aquestion/Q3_2.m",
-        "relPath": "Aquestion/Q3_2.m",
-        "sizeFormatted": "539 B"
+        "sizeFormatted": "539 B",
+        "project": "Aquestion"
       },
       {
         "name": "Q3_fit.m",
         "type": "MATLAB代码",
         "size": 1575,
-        "path": "E:/杂项/matlab备份/Aquestion/Q3_fit.m",
-        "relPath": "Aquestion/Q3_fit.m",
-        "sizeFormatted": "1.5 KB"
+        "sizeFormatted": "1.5 KB",
+        "project": "Aquestion"
       },
       {
         "name": "Q3_l.m",
         "type": "MATLAB代码",
         "size": 775,
-        "path": "E:/杂项/matlab备份/Aquestion/Q3_l.m",
-        "relPath": "Aquestion/Q3_l.m",
-        "sizeFormatted": "775 B"
+        "sizeFormatted": "775 B",
+        "project": "Aquestion"
       },
       {
         "name": "Q4.m",
         "type": "MATLAB代码",
         "size": 2094,
-        "path": "E:/杂项/matlab备份/Aquestion/Q4.m",
-        "relPath": "Aquestion/Q4.m",
-        "sizeFormatted": "2.0 KB"
+        "sizeFormatted": "2.0 KB",
+        "project": "Aquestion"
       },
       {
         "name": "test.m",
         "type": "MATLAB代码",
         "size": 1750,
-        "path": "E:/杂项/matlab备份/Aquestion/test.m",
-        "relPath": "Aquestion/test.m",
-        "sizeFormatted": "1.7 KB"
+        "sizeFormatted": "1.7 KB",
+        "project": "Aquestion"
       },
       {
         "name": "redis.conf",
         "type": "YAML配置",
         "size": 47195,
-        "path": "E:/杂项/matlab备份/arch/redis.conf",
-        "relPath": "arch/redis.conf",
-        "sizeFormatted": "46.1 KB"
+        "sizeFormatted": "46.1 KB",
+        "project": "arch"
       },
       {
         "name": "assigement1.m",
         "type": "MATLAB代码",
         "size": 3047,
-        "path": "E:/杂项/matlab备份/assigement1/assigement1.m",
-        "relPath": "assigement1/assigement1.m",
-        "sizeFormatted": "3.0 KB"
+        "sizeFormatted": "3.0 KB",
+        "project": "assigement1"
       },
       {
         "name": "ASSIGEMENT3.m",
         "type": "MATLAB代码",
         "size": 2164,
-        "path": "E:/杂项/matlab备份/assigement1/ASSIGEMENT3.m",
-        "relPath": "assigement1/ASSIGEMENT3.m",
-        "sizeFormatted": "2.1 KB"
+        "sizeFormatted": "2.1 KB",
+        "project": "assigement1"
       },
       {
         "name": "assigenment2.m",
         "type": "MATLAB代码",
         "size": 1253,
-        "path": "E:/杂项/matlab备份/assigement1/assigenment2.m",
-        "relPath": "assigement1/assigenment2.m",
-        "sizeFormatted": "1.2 KB"
+        "sizeFormatted": "1.2 KB",
+        "project": "assigement1"
       },
       {
         "name": "DTFT.m",
         "type": "MATLAB代码",
         "size": 639,
-        "path": "E:/杂项/matlab备份/assigement1/DTFT.m",
-        "relPath": "assigement1/DTFT.m",
-        "sizeFormatted": "639 B"
+        "sizeFormatted": "639 B",
+        "project": "assigement1"
       },
       {
         "name": "noisysig1.mat",
         "type": "其他",
         "size": 99256,
-        "path": "E:/杂项/matlab备份/assigement1/noisysig1.mat",
-        "relPath": "assigement1/noisysig1.mat",
-        "sizeFormatted": "96.9 KB"
+        "sizeFormatted": "96.9 KB",
+        "project": "assigement1"
       },
       {
         "name": "noisysig2.mat",
         "type": "其他",
         "size": 294196,
-        "path": "E:/杂项/matlab备份/assigement1/noisysig2.mat",
-        "relPath": "assigement1/noisysig2.mat",
-        "sizeFormatted": "287.3 KB"
+        "sizeFormatted": "287.3 KB",
+        "project": "assigement1"
       },
       {
         "name": "average.xlsx",
         "type": "Excel表格",
         "size": 8381,
-        "path": "E:/杂项/matlab备份/code_place/average.xlsx",
-        "relPath": "code_place/average.xlsx",
-        "sizeFormatted": "8.2 KB"
+        "sizeFormatted": "8.2 KB",
+        "project": "code_place"
       },
       {
         "name": "data.xlsx",
         "type": "Excel表格",
         "size": 25430,
-        "path": "E:/杂项/matlab备份/code_place/data.xlsx",
-        "relPath": "code_place/data.xlsx",
-        "sizeFormatted": "24.8 KB"
+        "sizeFormatted": "24.8 KB",
+        "project": "code_place"
       },
       {
         "name": "data_of_202151a.mat",
         "type": "其他",
         "size": 10991,
-        "path": "E:/杂项/matlab备份/code_place/data_of_202151a.mat",
-        "relPath": "code_place/data_of_202151a.mat",
-        "sizeFormatted": "10.7 KB"
+        "sizeFormatted": "10.7 KB",
+        "project": "code_place"
       },
       {
         "name": "fact.m",
         "type": "MATLAB代码",
         "size": 95,
-        "path": "E:/杂项/matlab备份/code_place/fact.m",
-        "relPath": "code_place/fact.m",
-        "sizeFormatted": "95 B"
+        "sizeFormatted": "95 B",
+        "project": "code_place"
       },
       {
         "name": "hole_note.m",
         "type": "MATLAB代码",
         "size": 2262,
-        "path": "E:/杂项/matlab备份/code_place/hole_note.m",
-        "relPath": "code_place/hole_note.m",
-        "sizeFormatted": "2.2 KB"
+        "sizeFormatted": "2.2 KB",
+        "project": "code_place"
       },
       {
         "name": "linear_get.m",
         "type": "MATLAB代码",
         "size": 2537,
-        "path": "E:/杂项/matlab备份/code_place/linear_get.m",
-        "relPath": "code_place/linear_get.m",
-        "sizeFormatted": "2.5 KB"
+        "sizeFormatted": "2.5 KB",
+        "project": "code_place"
       },
       {
         "name": "linear_get_time.m",
         "type": "MATLAB代码",
         "size": 1095,
-        "path": "E:/杂项/matlab备份/code_place/linear_get_time.m",
-        "relPath": "code_place/linear_get_time.m",
-        "sizeFormatted": "1.1 KB"
+        "sizeFormatted": "1.1 KB",
+        "project": "code_place"
       },
       {
         "name": "mengt.m",
         "type": "MATLAB代码",
         "size": 2966,
-        "path": "E:/杂项/matlab备份/code_place/mengt.m",
-        "relPath": "code_place/mengt.m",
-        "sizeFormatted": "2.9 KB"
+        "sizeFormatted": "2.9 KB",
+        "project": "code_place"
       },
       {
         "name": "pic_get.m",
         "type": "MATLAB代码",
         "size": 338,
-        "path": "E:/杂项/matlab备份/code_place/pic_get.m",
-        "relPath": "code_place/pic_get.m",
-        "sizeFormatted": "338 B"
+        "sizeFormatted": "338 B",
+        "project": "code_place"
       },
       {
         "name": "shuju.xlsx",
         "type": "Excel表格",
         "size": 8809,
-        "path": "E:/杂项/matlab备份/code_place/shuju.xlsx",
-        "relPath": "code_place/shuju.xlsx",
-        "sizeFormatted": "8.6 KB"
+        "sizeFormatted": "8.6 KB",
+        "project": "code_place"
       },
       {
         "name": "sj.xlsx",
         "type": "Excel表格",
         "size": 25430,
-        "path": "E:/杂项/matlab备份/code_place/sj.xlsx",
-        "relPath": "code_place/sj.xlsx",
-        "sizeFormatted": "24.8 KB"
+        "sizeFormatted": "24.8 KB",
+        "project": "code_place"
       },
       {
         "name": "test.xlsx",
         "type": "Excel表格",
         "size": 11798,
-        "path": "E:/杂项/matlab备份/code_place/test.xlsx",
-        "relPath": "code_place/test.xlsx",
-        "sizeFormatted": "11.5 KB"
+        "sizeFormatted": "11.5 KB",
+        "project": "code_place"
       },
       {
         "name": "test_get.m",
         "type": "MATLAB代码",
         "size": 544,
-        "path": "E:/杂项/matlab备份/code_place/test_get.m",
-        "relPath": "code_place/test_get.m",
-        "sizeFormatted": "544 B"
+        "sizeFormatted": "544 B",
+        "project": "code_place"
       },
       {
         "name": "Untitled1.m",
         "type": "MATLAB代码",
         "size": 659,
-        "path": "E:/杂项/matlab备份/code_place/Untitled1.m",
-        "relPath": "code_place/Untitled1.m",
-        "sizeFormatted": "659 B"
+        "sizeFormatted": "659 B",
+        "project": "code_place"
       },
       {
         "name": "data_of_202151a.mat",
         "type": "其他",
         "size": 10991,
-        "path": "E:/杂项/matlab备份/code_place/cal202151A/data_of_202151a.mat",
-        "relPath": "code_place/cal202151A/data_of_202151a.mat",
-        "sizeFormatted": "10.7 KB"
+        "sizeFormatted": "10.7 KB",
+        "project": "code_place"
       },
       {
         "name": "ques1.m",
         "type": "MATLAB代码",
         "size": 1581,
-        "path": "E:/杂项/matlab备份/code_place/cal202151A/ques1.m",
-        "relPath": "code_place/cal202151A/ques1.m",
-        "sizeFormatted": "1.5 KB"
+        "sizeFormatted": "1.5 KB",
+        "project": "code_place"
       },
       {
         "name": "ques1.mat",
         "type": "其他",
         "size": 1480,
-        "path": "E:/杂项/matlab备份/code_place/cal202151A/ques1.mat",
-        "relPath": "code_place/cal202151A/ques1.mat",
-        "sizeFormatted": "1.4 KB"
+        "sizeFormatted": "1.4 KB",
+        "project": "code_place"
       },
       {
         "name": "ques2.m",
         "type": "MATLAB代码",
         "size": 3995,
-        "path": "E:/杂项/matlab备份/code_place/cal202151A/ques2.m",
-        "relPath": "code_place/cal202151A/ques2.m",
-        "sizeFormatted": "3.9 KB"
+        "sizeFormatted": "3.9 KB",
+        "project": "code_place"
       },
       {
         "name": "ques2.mat",
         "type": "其他",
         "size": 4333,
-        "path": "E:/杂项/matlab备份/code_place/cal202151A/ques2.mat",
-        "relPath": "code_place/cal202151A/ques2.mat",
-        "sizeFormatted": "4.2 KB"
+        "sizeFormatted": "4.2 KB",
+        "project": "code_place"
       },
       {
         "name": "ques3.m",
         "type": "MATLAB代码",
         "size": 6317,
-        "path": "E:/杂项/matlab备份/code_place/cal202151A/ques3.m",
-        "relPath": "code_place/cal202151A/ques3.m",
-        "sizeFormatted": "6.2 KB"
+        "sizeFormatted": "6.2 KB",
+        "project": "code_place"
       },
       {
         "name": "ques3.mat",
         "type": "其他",
         "size": 152921,
-        "path": "E:/杂项/matlab备份/code_place/cal202151A/ques3.mat",
-        "relPath": "code_place/cal202151A/ques3.mat",
-        "sizeFormatted": "149.3 KB"
+        "sizeFormatted": "149.3 KB",
+        "project": "code_place"
       },
       {
         "name": "ques4.m",
         "type": "MATLAB代码",
         "size": 1838,
-        "path": "E:/杂项/matlab备份/code_place/cal202151A/ques4.m",
-        "relPath": "code_place/cal202151A/ques4.m",
-        "sizeFormatted": "1.8 KB"
+        "sizeFormatted": "1.8 KB",
+        "project": "code_place"
       },
       {
         "name": "ques4.mat",
         "type": "其他",
         "size": 138075,
-        "path": "E:/杂项/matlab备份/code_place/cal202151A/ques4.mat",
-        "relPath": "code_place/cal202151A/ques4.mat",
-        "sizeFormatted": "134.8 KB"
+        "sizeFormatted": "134.8 KB",
+        "project": "code_place"
       },
       {
         "name": "ques5.m",
         "type": "MATLAB代码",
         "size": 2515,
-        "path": "E:/杂项/matlab备份/code_place/cal202151A/ques5.m",
-        "relPath": "code_place/cal202151A/ques5.m",
-        "sizeFormatted": "2.5 KB"
+        "sizeFormatted": "2.5 KB",
+        "project": "code_place"
       },
       {
         "name": "ques5.mat",
         "type": "其他",
         "size": 262,
-        "path": "E:/杂项/matlab备份/code_place/cal202151A/ques5.mat",
-        "relPath": "code_place/cal202151A/ques5.mat",
-        "sizeFormatted": "262 B"
+        "sizeFormatted": "262 B",
+        "project": "code_place"
       },
       {
         "name": "vaccineProcessing.m",
         "type": "MATLAB代码",
         "size": 1059,
-        "path": "E:/杂项/matlab备份/code_place/cal202151A/vaccineProcessing.m",
-        "relPath": "code_place/cal202151A/vaccineProcessing.m",
-        "sizeFormatted": "1.0 KB"
+        "sizeFormatted": "1.0 KB",
+        "project": "code_place"
       },
       {
         "name": "绘制示意图.ppt",
         "type": "PPT课件",
         "size": 946688,
-        "path": "E:/杂项/matlab备份/code_place/cal202151A/绘制示意图.ppt",
-        "relPath": "code_place/cal202151A/绘制示意图.ppt",
-        "sizeFormatted": "924.5 KB"
+        "sizeFormatted": "924.5 KB",
+        "project": "code_place"
       },
       {
         "name": "！！！使用代码前必看！！！.txt",
         "type": "文档",
         "size": 1222,
-        "path": "E:/杂项/matlab备份/code_place/cal202151A/！！！使用代码前必看！！！.txt",
-        "relPath": "code_place/cal202151A/！！！使用代码前必看！！！.txt",
-        "sizeFormatted": "1.2 KB"
+        "sizeFormatted": "1.2 KB",
+        "project": "code_place"
       },
       {
         "name": "colordetect.m",
         "type": "MATLAB代码",
         "size": 2155,
-        "path": "E:/杂项/matlab备份/cube_robot/Cube-Solver-master/colordetect.m",
-        "relPath": "cube_robot/Cube-Solver-master/colordetect.m",
-        "sizeFormatted": "2.1 KB"
+        "sizeFormatted": "2.1 KB",
+        "project": "cube_robot"
       },
       {
         "name": "cube_machine_GUI.m",
         "type": "MATLAB代码",
         "size": 10667,
-        "path": "E:/杂项/matlab备份/cube_robot/Cube-Solver-master/cube_machine_GUI.m",
-        "relPath": "cube_robot/Cube-Solver-master/cube_machine_GUI.m",
-        "sizeFormatted": "10.4 KB"
+        "sizeFormatted": "10.4 KB",
+        "project": "cube_robot"
       },
       {
         "name": "cube_machine_Start.fig",
         "type": "其他",
         "size": 104230,
-        "path": "E:/杂项/matlab备份/cube_robot/Cube-Solver-master/cube_machine_Start.fig",
-        "relPath": "cube_robot/Cube-Solver-master/cube_machine_Start.fig",
-        "sizeFormatted": "101.8 KB"
+        "sizeFormatted": "101.8 KB",
+        "project": "cube_robot"
       },
       {
         "name": "cube_machine_Start.m",
         "type": "MATLAB代码",
         "size": 16363,
-        "path": "E:/杂项/matlab备份/cube_robot/Cube-Solver-master/cube_machine_Start.m",
-        "relPath": "cube_robot/Cube-Solver-master/cube_machine_Start.m",
-        "sizeFormatted": "16.0 KB"
+        "sizeFormatted": "16.0 KB",
+        "project": "cube_robot"
       },
       {
         "name": "kociemba.m",
         "type": "MATLAB代码",
         "size": 422,
-        "path": "E:/杂项/matlab备份/cube_robot/Cube-Solver-master/kociemba.m",
-        "relPath": "cube_robot/Cube-Solver-master/kociemba.m",
-        "sizeFormatted": "422 B"
+        "sizeFormatted": "422 B",
+        "project": "cube_robot"
       },
       {
         "name": "README.md",
         "type": "文档",
         "size": 2330,
-        "path": "E:/杂项/matlab备份/cube_robot/Cube-Solver-master/README.md",
-        "relPath": "cube_robot/Cube-Solver-master/README.md",
-        "sizeFormatted": "2.3 KB"
+        "sizeFormatted": "2.3 KB",
+        "project": "cube_robot"
       },
       {
         "name": "whitebalance.m",
         "type": "MATLAB代码",
         "size": 693,
-        "path": "E:/杂项/matlab备份/cube_robot/Cube-Solver-master/whitebalance.m",
-        "relPath": "cube_robot/Cube-Solver-master/whitebalance.m",
-        "sizeFormatted": "693 B"
+        "sizeFormatted": "693 B",
+        "project": "cube_robot"
       },
       {
         "name": "feedback.slx",
         "type": "Simulink模型",
         "size": 18925,
-        "path": "E:/杂项/matlab备份/EE311/feedback.slx",
-        "relPath": "EE311/feedback.slx",
-        "sizeFormatted": "18.5 KB"
+        "sizeFormatted": "18.5 KB",
+        "project": "EE311"
       },
       {
         "name": "project.m",
         "type": "MATLAB代码",
         "size": 660,
-        "path": "E:/杂项/matlab备份/EE311/project.m",
-        "relPath": "EE311/project.m",
-        "sizeFormatted": "660 B"
+        "sizeFormatted": "660 B",
+        "project": "EE311"
       },
       {
         "name": "question3.m",
         "type": "MATLAB代码",
         "size": 3153,
-        "path": "E:/杂项/matlab备份/EE311/question3.m",
-        "relPath": "EE311/question3.m",
-        "sizeFormatted": "3.1 KB"
+        "sizeFormatted": "3.1 KB",
+        "project": "EE311"
       },
       {
         "name": "question7.m",
         "type": "MATLAB代码",
         "size": 8,
-        "path": "E:/杂项/matlab备份/EE311/question7.m",
-        "relPath": "EE311/question7.m",
-        "sizeFormatted": "8 B"
+        "sizeFormatted": "8 B",
+        "project": "EE311"
       },
       {
         "name": "feeback.slx",
         "type": "Simulink模型",
         "size": 23974,
-        "path": "E:/杂项/matlab备份/EE311/project2/feeback.slx",
-        "relPath": "EE311/project2/feeback.slx",
-        "sizeFormatted": "23.4 KB"
+        "sizeFormatted": "23.4 KB",
+        "project": "EE311"
       },
       {
         "name": "handmake.slx",
         "type": "Simulink模型",
         "size": 23703,
-        "path": "E:/杂项/matlab备份/EE311/project2/handmake.slx",
-        "relPath": "EE311/project2/handmake.slx",
-        "sizeFormatted": "23.1 KB"
+        "sizeFormatted": "23.1 KB",
+        "project": "EE311"
       },
       {
         "name": "pidnew.slx",
         "type": "Simulink模型",
         "size": 20787,
-        "path": "E:/杂项/matlab备份/EE311/project2/pidnew.slx",
-        "relPath": "EE311/project2/pidnew.slx",
-        "sizeFormatted": "20.3 KB"
+        "sizeFormatted": "20.3 KB",
+        "project": "EE311"
       },
       {
         "name": "pidown.slx",
         "type": "Simulink模型",
         "size": 20283,
-        "path": "E:/杂项/matlab备份/EE311/project2/pidown.slx",
-        "relPath": "EE311/project2/pidown.slx",
-        "sizeFormatted": "19.8 KB"
+        "sizeFormatted": "19.8 KB",
+        "project": "EE311"
       },
       {
         "name": "project2_4_2.slx",
         "type": "Simulink模型",
         "size": 28735,
-        "path": "E:/杂项/matlab备份/EE311/project2/project2_4_2.slx",
-        "relPath": "EE311/project2/project2_4_2.slx",
-        "sizeFormatted": "28.1 KB"
+        "sizeFormatted": "28.1 KB",
+        "project": "EE311"
       },
       {
         "name": "question1.m",
         "type": "MATLAB代码",
         "size": 1710,
-        "path": "E:/杂项/matlab备份/EE311/project2/question1.m",
-        "relPath": "EE311/project2/question1.m",
-        "sizeFormatted": "1.7 KB"
+        "sizeFormatted": "1.7 KB",
+        "project": "EE311"
       },
       {
         "name": "ekf.m",
         "type": "MATLAB代码",
         "size": 5306,
-        "path": "E:/杂项/matlab备份/EKF_project_Finish/ekf.m",
-        "relPath": "EKF_project_Finish/ekf.m",
-        "sizeFormatted": "5.2 KB"
+        "sizeFormatted": "5.2 KB",
+        "project": "EKF_project_Finish"
       },
       {
         "name": "eul2mat.m",
         "type": "MATLAB代码",
         "size": 771,
-        "path": "E:/杂项/matlab备份/EKF_project_Finish/eul2mat.m",
-        "relPath": "EKF_project_Finish/eul2mat.m",
-        "sizeFormatted": "771 B"
+        "sizeFormatted": "771 B",
+        "project": "EKF_project_Finish"
       },
       {
         "name": "euler_test.m",
         "type": "MATLAB代码",
         "size": 216,
-        "path": "E:/杂项/matlab备份/EKF_project_Finish/euler_test.m",
-        "relPath": "EKF_project_Finish/euler_test.m",
-        "sizeFormatted": "216 B"
+        "sizeFormatted": "216 B",
+        "project": "EKF_project_Finish"
       },
       {
         "name": "eul_jacobian.m",
         "type": "MATLAB代码",
         "size": 702,
-        "path": "E:/杂项/matlab备份/EKF_project_Finish/eul_jacobian.m",
-        "relPath": "EKF_project_Finish/eul_jacobian.m",
-        "sizeFormatted": "702 B"
+        "sizeFormatted": "702 B",
+        "project": "EKF_project_Finish"
       },
       {
         "name": "Fx_Fw_calculated_methodupload.m",
         "type": "MATLAB代码",
         "size": 4592,
-        "path": "E:/杂项/matlab备份/EKF_project_Finish/Fx_Fw_calculated_methodupload.m",
-        "relPath": "EKF_project_Finish/Fx_Fw_calculated_methodupload.m",
-        "sizeFormatted": "4.5 KB"
+        "sizeFormatted": "4.5 KB",
+        "project": "EKF_project_Finish"
       },
       {
         "name": "imu.csv",
         "type": "Excel表格",
         "size": 561047,
-        "path": "E:/杂项/matlab备份/EKF_project_Finish/imu.csv",
-        "relPath": "EKF_project_Finish/imu.csv",
-        "sizeFormatted": "547.9 KB"
+        "sizeFormatted": "547.9 KB",
+        "project": "EKF_project_Finish"
       },
       {
         "name": "measurement.csv",
         "type": "Excel表格",
         "size": 15817,
-        "path": "E:/杂项/matlab备份/EKF_project_Finish/measurement.csv",
-        "relPath": "EKF_project_Finish/measurement.csv",
-        "sizeFormatted": "15.4 KB"
+        "sizeFormatted": "15.4 KB",
+        "project": "EKF_project_Finish"
       },
       {
         "name": "predict.m",
         "type": "MATLAB代码",
         "size": 20456,
-        "path": "E:/杂项/matlab备份/EKF_project_Finish/predict.m",
-        "relPath": "EKF_project_Finish/predict.m",
-        "sizeFormatted": "20.0 KB"
+        "sizeFormatted": "20.0 KB",
+        "project": "EKF_project_Finish"
       },
       {
         "name": "propagation.m",
         "type": "MATLAB代码",
         "size": 1220,
-        "path": "E:/杂项/matlab备份/EKF_project_Finish/propagation.m",
-        "relPath": "EKF_project_Finish/propagation.m",
-        "sizeFormatted": "1.2 KB"
+        "sizeFormatted": "1.2 KB",
+        "project": "EKF_project_Finish"
       },
       {
         "name": "imu.csv",
         "type": "Excel表格",
         "size": 561047,
-        "path": "E:/杂项/matlab备份/EKF_project_Finish/singular/imu.csv",
-        "relPath": "EKF_project_Finish/singular/imu.csv",
-        "sizeFormatted": "547.9 KB"
+        "sizeFormatted": "547.9 KB",
+        "project": "EKF_project_Finish"
       },
       {
         "name": "measurement.csv",
         "type": "Excel表格",
         "size": 15817,
-        "path": "E:/杂项/matlab备份/EKF_project_Finish/singular/measurement.csv",
-        "relPath": "EKF_project_Finish/singular/measurement.csv",
-        "sizeFormatted": "15.4 KB"
+        "sizeFormatted": "15.4 KB",
+        "project": "EKF_project_Finish"
       },
       {
         "name": "imu.csv",
         "type": "Excel表格",
         "size": 489859,
-        "path": "E:/杂项/matlab备份/EKF_project_Finish/singular/old/imu.csv",
-        "relPath": "EKF_project_Finish/singular/old/imu.csv",
-        "sizeFormatted": "478.4 KB"
+        "sizeFormatted": "478.4 KB",
+        "project": "EKF_project_Finish"
       },
       {
         "name": "measurement.csv",
         "type": "Excel表格",
         "size": 14006,
-        "path": "E:/杂项/matlab备份/EKF_project_Finish/singular/old/measurement.csv",
-        "relPath": "EKF_project_Finish/singular/old/measurement.csv",
-        "sizeFormatted": "13.7 KB"
+        "sizeFormatted": "13.7 KB",
+        "project": "EKF_project_Finish"
       },
       {
         "name": "plot_result.m",
         "type": "MATLAB代码",
         "size": 488,
-        "path": "E:/杂项/matlab备份/IDAT7213 - Software/plot_result.m",
-        "relPath": "IDAT7213 - Software/plot_result.m",
-        "sizeFormatted": "488 B"
+        "sizeFormatted": "488 B",
+        "project": "IDAT7213 - Software"
       },
       {
         "name": "quadrotor_sim.slx",
         "type": "Simulink模型",
         "size": 36712,
-        "path": "E:/杂项/matlab备份/IDAT7213 - Software/quadrotor_sim.slx",
-        "relPath": "IDAT7213 - Software/quadrotor_sim.slx",
-        "sizeFormatted": "35.9 KB"
+        "sizeFormatted": "35.9 KB",
+        "project": "IDAT7213 - Software"
       },
       {
         "name": "quadrotor_sim.slx.r2019b",
         "type": "其他",
         "size": 32758,
-        "path": "E:/杂项/matlab备份/IDAT7213 - Software/quadrotor_sim.slx.r2019b",
-        "relPath": "IDAT7213 - Software/quadrotor_sim.slx.r2019b",
-        "sizeFormatted": "32.0 KB"
+        "sizeFormatted": "32.0 KB",
+        "project": "IDAT7213 - Software"
       },
       {
         "name": "Readme.txt",
         "type": "文档",
         "size": 151,
-        "path": "E:/杂项/matlab备份/IDAT7213 - Software/Readme.txt",
-        "relPath": "IDAT7213 - Software/Readme.txt",
-        "sizeFormatted": "151 B"
+        "sizeFormatted": "151 B",
+        "project": "IDAT7213 - Software"
       },
       {
         "name": "run_model.m",
         "type": "MATLAB代码",
         "size": 2863,
-        "path": "E:/杂项/matlab备份/IDAT7213 - Software/run_model.m",
-        "relPath": "IDAT7213 - Software/run_model.m",
-        "sizeFormatted": "2.8 KB"
+        "sizeFormatted": "2.8 KB",
+        "project": "IDAT7213 - Software"
       },
       {
         "name": "Subsystem.slxp",
         "type": "其他",
         "size": 80211,
-        "path": "E:/杂项/matlab备份/IDAT7213 - Software/Subsystem.slxp",
-        "relPath": "IDAT7213 - Software/Subsystem.slxp",
-        "sizeFormatted": "78.3 KB"
+        "sizeFormatted": "78.3 KB",
+        "project": "IDAT7213 - Software"
       },
       {
         "name": "Subsystem_msp.mexw64",
         "type": "其他",
         "size": 175914,
-        "path": "E:/杂项/matlab备份/IDAT7213 - Software/Subsystem_msp.mexw64",
-        "relPath": "IDAT7213 - Software/Subsystem_msp.mexw64",
-        "sizeFormatted": "171.8 KB"
+        "sizeFormatted": "171.8 KB",
+        "project": "IDAT7213 - Software"
       },
       {
         "name": "MECH7010 - Mid-term Project Intro 2024 sem1.pdf",
         "type": "PDF文档",
         "size": 2572339,
-        "path": "E:/杂项/matlab备份/MECH7010_Project_LastSemester/MECH7010 - Mid-term Project Intro 2024 sem1.pdf",
-        "relPath": "MECH7010_Project_LastSemester/MECH7010 - Mid-term Project Intro 2024 sem1.pdf",
-        "sizeFormatted": "2.5 MB"
+        "sizeFormatted": "2.5 MB",
+        "project": "MECH7010_Project_LastSemester"
       },
       {
         "name": "ekf.m",
         "type": "MATLAB代码",
         "size": 4033,
-        "path": "E:/杂项/matlab备份/MECH7010_Project_LastSemester/EKF_project/ekf.m",
-        "relPath": "MECH7010_Project_LastSemester/EKF_project/ekf.m",
-        "sizeFormatted": "3.9 KB"
+        "sizeFormatted": "3.9 KB",
+        "project": "MECH7010_Project_LastSemester"
       },
       {
         "name": "eul2mat.m",
         "type": "MATLAB代码",
         "size": 1010,
-        "path": "E:/杂项/matlab备份/MECH7010_Project_LastSemester/EKF_project/eul2mat.m",
-        "relPath": "MECH7010_Project_LastSemester/EKF_project/eul2mat.m",
-        "sizeFormatted": "1010 B"
+        "sizeFormatted": "1010 B",
+        "project": "MECH7010_Project_LastSemester"
       },
       {
         "name": "euler_test.m",
         "type": "MATLAB代码",
         "size": 215,
-        "path": "E:/杂项/matlab备份/MECH7010_Project_LastSemester/EKF_project/euler_test.m",
-        "relPath": "MECH7010_Project_LastSemester/EKF_project/euler_test.m",
-        "sizeFormatted": "215 B"
+        "sizeFormatted": "215 B",
+        "project": "MECH7010_Project_LastSemester"
       },
       {
         "name": "eul_jacobian.m",
         "type": "MATLAB代码",
         "size": 711,
-        "path": "E:/杂项/matlab备份/MECH7010_Project_LastSemester/EKF_project/eul_jacobian.m",
-        "relPath": "MECH7010_Project_LastSemester/EKF_project/eul_jacobian.m",
-        "sizeFormatted": "711 B"
+        "sizeFormatted": "711 B",
+        "project": "MECH7010_Project_LastSemester"
       },
       {
         "name": "imu.csv",
         "type": "Excel表格",
         "size": 489859,
-        "path": "E:/杂项/matlab备份/MECH7010_Project_LastSemester/EKF_project/imu.csv",
-        "relPath": "MECH7010_Project_LastSemester/EKF_project/imu.csv",
-        "sizeFormatted": "478.4 KB"
+        "sizeFormatted": "478.4 KB",
+        "project": "MECH7010_Project_LastSemester"
       },
       {
         "name": "measurement.csv",
         "type": "Excel表格",
         "size": 14006,
-        "path": "E:/杂项/matlab备份/MECH7010_Project_LastSemester/EKF_project/measurement.csv",
-        "relPath": "MECH7010_Project_LastSemester/EKF_project/measurement.csv",
-        "sizeFormatted": "13.7 KB"
+        "sizeFormatted": "13.7 KB",
+        "project": "MECH7010_Project_LastSemester"
       },
       {
         "name": "predict.m",
         "type": "MATLAB代码",
         "size": 2787,
-        "path": "E:/杂项/matlab备份/MECH7010_Project_LastSemester/EKF_project/predict.m",
-        "relPath": "MECH7010_Project_LastSemester/EKF_project/predict.m",
-        "sizeFormatted": "2.7 KB"
+        "sizeFormatted": "2.7 KB",
+        "project": "MECH7010_Project_LastSemester"
       },
       {
         "name": "propagation.m",
         "type": "MATLAB代码",
         "size": 1220,
-        "path": "E:/杂项/matlab备份/MECH7010_Project_LastSemester/EKF_project/propagation.m",
-        "relPath": "MECH7010_Project_LastSemester/EKF_project/propagation.m",
-        "sizeFormatted": "1.2 KB"
+        "sizeFormatted": "1.2 KB",
+        "project": "MECH7010_Project_LastSemester"
       },
       {
         "name": "imu.csv",
         "type": "Excel表格",
         "size": 561047,
-        "path": "E:/杂项/matlab备份/MECH7010_Project_LastSemester/EKF_project/singular/imu.csv",
-        "relPath": "MECH7010_Project_LastSemester/EKF_project/singular/imu.csv",
-        "sizeFormatted": "547.9 KB"
+        "sizeFormatted": "547.9 KB",
+        "project": "MECH7010_Project_LastSemester"
       },
       {
         "name": "measurement.csv",
         "type": "Excel表格",
         "size": 15817,
-        "path": "E:/杂项/matlab备份/MECH7010_Project_LastSemester/EKF_project/singular/measurement.csv",
-        "relPath": "MECH7010_Project_LastSemester/EKF_project/singular/measurement.csv",
-        "sizeFormatted": "15.4 KB"
+        "sizeFormatted": "15.4 KB",
+        "project": "MECH7010_Project_LastSemester"
       },
       {
         "name": "dh_20123540.m",
         "type": "MATLAB代码",
         "size": 1379,
-        "path": "E:/杂项/matlab备份/robot_lab2_20123540/dh_20123540.m",
-        "relPath": "robot_lab2_20123540/dh_20123540.m",
-        "sizeFormatted": "1.3 KB"
+        "sizeFormatted": "1.3 KB",
+        "project": "robot_lab2_20123540"
       },
       {
         "name": "puma_robot_20123540.m",
         "type": "MATLAB代码",
         "size": 8509,
-        "path": "E:/杂项/matlab备份/robot_lab2_20123540/puma_robot_20123540.m",
-        "relPath": "robot_lab2_20123540/puma_robot_20123540.m",
-        "sizeFormatted": "8.3 KB"
+        "sizeFormatted": "8.3 KB",
+        "project": "robot_lab2_20123540"
       },
       {
         "name": "scara_robot_circle_20123540.m",
         "type": "MATLAB代码",
         "size": 6441,
-        "path": "E:/杂项/matlab备份/robot_lab2_20123540/scara_robot_circle_20123540.m",
-        "relPath": "robot_lab2_20123540/scara_robot_circle_20123540.m",
-        "sizeFormatted": "6.3 KB"
+        "sizeFormatted": "6.3 KB",
+        "project": "robot_lab2_20123540"
       },
       {
         "name": "scara_robot_fk.p",
         "type": "其他",
         "size": 286,
-        "path": "E:/杂项/matlab备份/robot_lab2_20123540/scara_robot_fk.p",
-        "relPath": "robot_lab2_20123540/scara_robot_fk.p",
-        "sizeFormatted": "286 B"
+        "sizeFormatted": "286 B",
+        "project": "robot_lab2_20123540"
       },
       {
         "name": "LAB3.m",
         "type": "MATLAB代码",
         "size": 2305,
-        "path": "E:/杂项/matlab备份/signal/LAB3.m",
-        "relPath": "signal/LAB3.m",
-        "sizeFormatted": "2.3 KB"
+        "sizeFormatted": "2.3 KB",
+        "project": "signal"
       },
       {
         "name": "sawtooth_signal.m",
         "type": "MATLAB代码",
         "size": 1642,
-        "path": "E:/杂项/matlab备份/signal/sawtooth_signal.m",
-        "relPath": "signal/sawtooth_signal.m",
-        "sizeFormatted": "1.6 KB"
+        "sizeFormatted": "1.6 KB",
+        "project": "signal"
       },
       {
         "name": "Task1.m",
         "type": "MATLAB代码",
         "size": 193,
-        "path": "E:/杂项/matlab备份/signal/Task1.m",
-        "relPath": "signal/Task1.m",
-        "sizeFormatted": "193 B"
+        "sizeFormatted": "193 B",
+        "project": "signal"
       },
       {
         "name": "Task3.m",
         "type": "MATLAB代码",
         "size": 281,
-        "path": "E:/杂项/matlab备份/signal/Task3.m",
-        "relPath": "signal/Task3.m",
-        "sizeFormatted": "281 B"
+        "sizeFormatted": "281 B",
+        "project": "signal"
       },
       {
         "name": "task4.m",
         "type": "MATLAB代码",
         "size": 178,
-        "path": "E:/杂项/matlab备份/signal/task4.m",
-        "relPath": "signal/task4.m",
-        "sizeFormatted": "178 B"
+        "sizeFormatted": "178 B",
+        "project": "signal"
       },
       {
         "name": "test5.m",
         "type": "MATLAB代码",
         "size": 125,
-        "path": "E:/杂项/matlab备份/signal/test5.m",
-        "relPath": "signal/test5.m",
-        "sizeFormatted": "125 B"
+        "sizeFormatted": "125 B",
+        "project": "signal"
       },
       {
         "name": "arch.bat",
         "type": "Shell脚本",
         "size": 1955,
-        "path": "E:/杂项/matlab备份/util/arch.bat",
-        "relPath": "util/arch.bat",
-        "sizeFormatted": "1.9 KB"
+        "sizeFormatted": "1.9 KB",
+        "project": "util"
       },
       {
         "name": "mbuildHelp.txt",
         "type": "文档",
         "size": 7525,
-        "path": "E:/杂项/matlab备份/util/mex/mbuildHelp.txt",
-        "relPath": "util/mex/mbuildHelp.txt",
-        "sizeFormatted": "7.3 KB"
+        "sizeFormatted": "7.3 KB",
+        "project": "util"
       },
       {
         "name": "mexHelp.txt",
         "type": "文档",
         "size": 4816,
-        "path": "E:/杂项/matlab备份/util/mex/mexHelp.txt",
-        "relPath": "util/mex/mexHelp.txt",
-        "sizeFormatted": "4.7 KB"
+        "sizeFormatted": "4.7 KB",
+        "project": "util"
       },
       {
         "name": "version.txt",
         "type": "文档",
         "size": 7,
-        "path": "E:/杂项/matlab备份/util/mex/version.txt",
-        "relPath": "util/mex/version.txt",
-        "sizeFormatted": "7 B"
+        "sizeFormatted": "7 B",
+        "project": "util"
       }
     ]
   },
   {
     "id": "pythoncodeplace",
     "name": "pythoncodeplace",
-    "source": "E:/pythoncodeplace",
     "category": "Python 代码",
     "fileCount": 162,
     "totalSize": 23690431,
-    "totalSizeFormatted": "22.6 MB",
+    "totalSizeFormatted": "23.7 MB",
     "description": "Python 机器学习与具身智能实践：包含按 OpenVLA 思路手写的「迷你 VLA」（看图 + 读指令 → 出机械臂动作）、MindSpore 版 ResNet50 图像分类、轻量 MobileNetV2 分类模型，以及评论 / 微信等小项目。对应《VLA 模型入门》《机器学习入门》等文章。",
     "files": [
       {
         "name": "Dockerfile",
         "type": "其他",
         "size": 2095,
-        "path": "E:/pythoncodeplace/comment/Dockerfile",
-        "relPath": "comment/Dockerfile",
-        "sizeFormatted": "2.0 KB"
+        "sizeFormatted": "2.0 KB",
+        "project": "comment"
       },
       {
         "name": "manage.py",
         "type": "Python代码",
         "size": 685,
-        "path": "E:/pythoncodeplace/comment/manage.py",
-        "relPath": "comment/manage.py",
-        "sizeFormatted": "685 B"
+        "sizeFormatted": "685 B",
+        "project": "comment"
       },
       {
         "name": "pyvenv.cfg",
         "type": "YAML配置",
         "size": 316,
-        "path": "E:/pythoncodeplace/comment/pyvenv.cfg",
-        "relPath": "comment/pyvenv.cfg",
-        "sizeFormatted": "316 B"
+        "sizeFormatted": "316 B",
+        "project": "comment"
       },
       {
         "name": "requirements.txt",
         "type": "文档",
         "size": 442,
-        "path": "E:/pythoncodeplace/comment/requirements.txt",
-        "relPath": "comment/requirements.txt",
-        "sizeFormatted": "442 B"
+        "sizeFormatted": "442 B",
+        "project": "comment"
       },
       {
         "name": "asgi.py",
         "type": "Python代码",
         "size": 407,
-        "path": "E:/pythoncodeplace/comment/comment/asgi.py",
-        "relPath": "comment/comment/asgi.py",
-        "sizeFormatted": "407 B"
+        "sizeFormatted": "407 B",
+        "project": "comment"
       },
       {
         "name": "settings.py",
         "type": "Python代码",
         "size": 3403,
-        "path": "E:/pythoncodeplace/comment/comment/settings.py",
-        "relPath": "comment/comment/settings.py",
-        "sizeFormatted": "3.3 KB"
+        "sizeFormatted": "3.3 KB",
+        "project": "comment"
       },
       {
         "name": "urls.py",
         "type": "Python代码",
         "size": 834,
-        "path": "E:/pythoncodeplace/comment/comment/urls.py",
-        "relPath": "comment/comment/urls.py",
-        "sizeFormatted": "834 B"
+        "sizeFormatted": "834 B",
+        "project": "comment"
       },
       {
         "name": "views.py",
         "type": "Python代码",
         "size": 6174,
-        "path": "E:/pythoncodeplace/comment/comment/views.py",
-        "relPath": "comment/comment/views.py",
-        "sizeFormatted": "6.0 KB"
+        "sizeFormatted": "6.0 KB",
+        "project": "comment"
       },
       {
         "name": "wsgi.py",
         "type": "Python代码",
         "size": 407,
-        "path": "E:/pythoncodeplace/comment/comment/wsgi.py",
-        "relPath": "comment/comment/wsgi.py",
-        "sizeFormatted": "407 B"
+        "sizeFormatted": "407 B",
+        "project": "comment"
       },
       {
         "name": "__init__.py",
         "type": "Python代码",
         "size": 0,
-        "path": "E:/pythoncodeplace/comment/comment/__init__.py",
-        "relPath": "comment/comment/__init__.py",
-        "sizeFormatted": "0 B"
+        "sizeFormatted": "0 B",
+        "project": "comment"
       },
       {
         "name": "activate",
         "type": "其他",
         "size": 2146,
-        "path": "E:/pythoncodeplace/comment/Scripts/activate",
-        "relPath": "comment/Scripts/activate",
-        "sizeFormatted": "2.1 KB"
+        "sizeFormatted": "2.1 KB",
+        "project": "comment"
       },
       {
         "name": "activate.bat",
         "type": "Shell脚本",
         "size": 1019,
-        "path": "E:/pythoncodeplace/comment/Scripts/activate.bat",
-        "relPath": "comment/Scripts/activate.bat",
-        "sizeFormatted": "1019 B"
+        "sizeFormatted": "1019 B",
+        "project": "comment"
       },
       {
         "name": "activate.fish",
         "type": "其他",
         "size": 3069,
-        "path": "E:/pythoncodeplace/comment/Scripts/activate.fish",
-        "relPath": "comment/Scripts/activate.fish",
-        "sizeFormatted": "3.0 KB"
+        "sizeFormatted": "3.0 KB",
+        "project": "comment"
       },
       {
         "name": "activate.ps1",
         "type": "Shell脚本",
         "size": 1755,
-        "path": "E:/pythoncodeplace/comment/Scripts/activate.ps1",
-        "relPath": "comment/Scripts/activate.ps1",
-        "sizeFormatted": "1.7 KB"
+        "sizeFormatted": "1.7 KB",
+        "project": "comment"
       },
       {
         "name": "activate.xsh",
         "type": "其他",
         "size": 1160,
-        "path": "E:/pythoncodeplace/comment/Scripts/activate.xsh",
-        "relPath": "comment/Scripts/activate.xsh",
-        "sizeFormatted": "1.1 KB"
+        "sizeFormatted": "1.1 KB",
+        "project": "comment"
       },
       {
         "name": "activate_this.py",
         "type": "Python代码",
         "size": 1193,
-        "path": "E:/pythoncodeplace/comment/Scripts/activate_this.py",
-        "relPath": "comment/Scripts/activate_this.py",
-        "sizeFormatted": "1.2 KB"
+        "sizeFormatted": "1.2 KB",
+        "project": "comment"
       },
       {
         "name": "deactivate.bat",
         "type": "Shell脚本",
         "size": 510,
-        "path": "E:/pythoncodeplace/comment/Scripts/deactivate.bat",
-        "relPath": "comment/Scripts/deactivate.bat",
-        "sizeFormatted": "510 B"
+        "sizeFormatted": "510 B",
+        "project": "comment"
       },
       {
         "name": "django-admin.py",
         "type": "Python代码",
         "size": 683,
-        "path": "E:/pythoncodeplace/comment/Scripts/django-admin.py",
-        "relPath": "comment/Scripts/django-admin.py",
-        "sizeFormatted": "683 B"
+        "sizeFormatted": "683 B",
+        "project": "comment"
       },
       {
         "name": "pydoc.bat",
         "type": "Shell脚本",
         "size": 24,
-        "path": "E:/pythoncodeplace/comment/Scripts/pydoc.bat",
-        "relPath": "comment/Scripts/pydoc.bat",
-        "sizeFormatted": "24 B"
+        "sizeFormatted": "24 B",
+        "project": "comment"
       },
       {
         "name": ".gitignore",
         "type": "其他",
         "size": 42,
-        "path": "E:/pythoncodeplace/mindspore/.gitignore",
-        "relPath": "mindspore/.gitignore",
-        "sizeFormatted": "42 B"
+        "sizeFormatted": "42 B",
+        "project": "mindspore"
       },
       {
         "name": "pyvenv.cfg",
         "type": "YAML配置",
         "size": 316,
-        "path": "E:/pythoncodeplace/mindspore/pyvenv.cfg",
-        "relPath": "mindspore/pyvenv.cfg",
-        "sizeFormatted": "316 B"
+        "sizeFormatted": "316 B",
+        "project": "mindspore"
       },
       {
         "name": "activate",
         "type": "其他",
         "size": 2148,
-        "path": "E:/pythoncodeplace/mindspore/Scripts/activate",
-        "relPath": "mindspore/Scripts/activate",
-        "sizeFormatted": "2.1 KB"
+        "sizeFormatted": "2.1 KB",
+        "project": "mindspore"
       },
       {
         "name": "activate.bat",
         "type": "Shell脚本",
         "size": 1021,
-        "path": "E:/pythoncodeplace/mindspore/Scripts/activate.bat",
-        "relPath": "mindspore/Scripts/activate.bat",
-        "sizeFormatted": "1021 B"
+        "sizeFormatted": "1021 B",
+        "project": "mindspore"
       },
       {
         "name": "activate.fish",
         "type": "其他",
         "size": 3071,
-        "path": "E:/pythoncodeplace/mindspore/Scripts/activate.fish",
-        "relPath": "mindspore/Scripts/activate.fish",
-        "sizeFormatted": "3.0 KB"
+        "sizeFormatted": "3.0 KB",
+        "project": "mindspore"
       },
       {
         "name": "activate.ps1",
         "type": "Shell脚本",
         "size": 1755,
-        "path": "E:/pythoncodeplace/mindspore/Scripts/activate.ps1",
-        "relPath": "mindspore/Scripts/activate.ps1",
-        "sizeFormatted": "1.7 KB"
+        "sizeFormatted": "1.7 KB",
+        "project": "mindspore"
       },
       {
         "name": "activate.xsh",
         "type": "其他",
         "size": 1162,
-        "path": "E:/pythoncodeplace/mindspore/Scripts/activate.xsh",
-        "relPath": "mindspore/Scripts/activate.xsh",
-        "sizeFormatted": "1.1 KB"
+        "sizeFormatted": "1.1 KB",
+        "project": "mindspore"
       },
       {
         "name": "activate_this.py",
         "type": "Python代码",
         "size": 1193,
-        "path": "E:/pythoncodeplace/mindspore/Scripts/activate_this.py",
-        "relPath": "mindspore/Scripts/activate_this.py",
-        "sizeFormatted": "1.2 KB"
+        "sizeFormatted": "1.2 KB",
+        "project": "mindspore"
       },
       {
         "name": "deactivate.bat",
         "type": "Shell脚本",
         "size": 510,
-        "path": "E:/pythoncodeplace/mindspore/Scripts/deactivate.bat",
-        "relPath": "mindspore/Scripts/deactivate.bat",
-        "sizeFormatted": "510 B"
+        "sizeFormatted": "510 B",
+        "project": "mindspore"
       },
       {
         "name": "pydoc.bat",
         "type": "Shell脚本",
         "size": 24,
-        "path": "E:/pythoncodeplace/mindspore/Scripts/pydoc.bat",
-        "relPath": "mindspore/Scripts/pydoc.bat",
-        "sizeFormatted": "24 B"
+        "sizeFormatted": "24 B",
+        "project": "mindspore"
       },
       {
         "name": "ttx.1",
         "type": "其他",
         "size": 5377,
-        "path": "E:/pythoncodeplace/mindspore/share/man/man1/ttx.1",
-        "relPath": "mindspore/share/man/man1/ttx.1",
-        "sizeFormatted": "5.3 KB"
+        "sizeFormatted": "5.3 KB",
+        "project": "mindspore"
       },
       {
         "name": "full_openvla.py",
         "type": "Python代码",
         "size": 6539,
-        "path": "E:/pythoncodeplace/openvla/full_openvla.py",
-        "relPath": "openvla/full_openvla.py",
-        "sizeFormatted": "6.4 KB"
+        "sizeFormatted": "6.4 KB",
+        "project": "openvla"
       },
       {
         "name": "infer.py",
         "type": "Python代码",
         "size": 0,
-        "path": "E:/pythoncodeplace/openvla/infer.py",
-        "relPath": "openvla/infer.py",
-        "sizeFormatted": "0 B"
+        "sizeFormatted": "0 B",
+        "project": "openvla"
       },
       {
         "name": "train.py",
         "type": "Python代码",
         "size": 6311,
-        "path": "E:/pythoncodeplace/openvla/train.py",
-        "relPath": "openvla/train.py",
-        "sizeFormatted": "6.2 KB"
+        "sizeFormatted": "6.2 KB",
+        "project": "openvla"
       },
       {
         "name": "dataset.py",
         "type": "Python代码",
         "size": 479,
-        "path": "E:/pythoncodeplace/openvla/data/dataset.py",
-        "relPath": "openvla/data/dataset.py",
-        "sizeFormatted": "479 B"
+        "sizeFormatted": "479 B",
+        "project": "openvla"
       },
       {
         "name": "mini_dataset.json",
         "type": "YAML配置",
         "size": 6883,
-        "path": "E:/pythoncodeplace/openvla/mini_openvla_cartpole_discrete/mini_dataset.json",
-        "relPath": "openvla/mini_openvla_cartpole_discrete/mini_dataset.json",
-        "sizeFormatted": "6.7 KB"
+        "sizeFormatted": "6.7 KB",
+        "project": "openvla"
       },
       {
         "name": "mini_dataset.json",
         "type": "YAML配置",
         "size": 6783,
-        "path": "E:/pythoncodeplace/openvla/mini_openvla_cartpole_gptneo/mini_dataset.json",
-        "relPath": "openvla/mini_openvla_cartpole_gptneo/mini_dataset.json",
-        "sizeFormatted": "6.6 KB"
+        "sizeFormatted": "6.6 KB",
+        "project": "openvla"
       },
       {
         "name": "action_head.py",
         "type": "Python代码",
         "size": 336,
-        "path": "E:/pythoncodeplace/openvla/models/action_head.py",
-        "relPath": "openvla/models/action_head.py",
-        "sizeFormatted": "336 B"
+        "sizeFormatted": "336 B",
+        "project": "openvla"
       },
       {
         "name": "openvla.py",
         "type": "Python代码",
         "size": 1219,
-        "path": "E:/pythoncodeplace/openvla/models/openvla.py",
-        "relPath": "openvla/models/openvla.py",
-        "sizeFormatted": "1.2 KB"
+        "sizeFormatted": "1.2 KB",
+        "project": "openvla"
       },
       {
         "name": "transformer.py",
         "type": "Python代码",
         "size": 505,
-        "path": "E:/pythoncodeplace/openvla/models/transformer.py",
-        "relPath": "openvla/models/transformer.py",
-        "sizeFormatted": "505 B"
+        "sizeFormatted": "505 B",
+        "project": "openvla"
       },
       {
         "name": "vision.py",
         "type": "Python代码",
         "size": 635,
-        "path": "E:/pythoncodeplace/openvla/models/vision.py",
-        "relPath": "openvla/models/vision.py",
-        "sizeFormatted": "635 B"
+        "sizeFormatted": "635 B",
+        "project": "openvla"
       },
       {
         "name": "collect_rlbench_bc.py",
         "type": "Python代码",
         "size": 2416,
-        "path": "E:/pythoncodeplace/openvla/tools/collect_rlbench_bc.py",
-        "relPath": "openvla/tools/collect_rlbench_bc.py",
-        "sizeFormatted": "2.4 KB"
+        "sizeFormatted": "2.4 KB",
+        "project": "openvla"
       },
       {
         "name": "convert_test.py",
         "type": "Python代码",
         "size": 1047,
-        "path": "E:/pythoncodeplace/openvla/tools/convert_test.py",
-        "relPath": "openvla/tools/convert_test.py",
-        "sizeFormatted": "1.0 KB"
+        "sizeFormatted": "1.0 KB",
+        "project": "openvla"
       },
       {
         "name": "manage.py",
         "type": "Python代码",
         "size": 719,
-        "path": "E:/pythoncodeplace/predict/manage.py",
-        "relPath": "predict/manage.py",
-        "sizeFormatted": "719 B"
+        "sizeFormatted": "719 B",
+        "project": "predict"
       },
       {
         "name": "asgi.py",
         "type": "Python代码",
         "size": 407,
-        "path": "E:/pythoncodeplace/predict/predict/asgi.py",
-        "relPath": "predict/predict/asgi.py",
-        "sizeFormatted": "407 B"
+        "sizeFormatted": "407 B",
+        "project": "predict"
       },
       {
         "name": "MobileNetV2.pth",
         "type": "其他",
         "size": 9178125,
-        "path": "E:/pythoncodeplace/predict/predict/MobileNetV2.pth",
-        "relPath": "predict/predict/MobileNetV2.pth",
-        "sizeFormatted": "8.8 MB"
+        "sizeFormatted": "8.8 MB",
+        "project": "predict"
       },
       {
         "name": "mobilenet_v2-b0353104.pth",
         "type": "其他",
         "size": 14212972,
-        "path": "E:/pythoncodeplace/predict/predict/mobilenet_v2-b0353104.pth",
-        "relPath": "predict/predict/mobilenet_v2-b0353104.pth",
-        "sizeFormatted": "13.6 MB"
+        "sizeFormatted": "13.6 MB",
+        "project": "predict"
       },
       {
         "name": "mobiletrain.py",
         "type": "Python代码",
         "size": 5604,
-        "path": "E:/pythoncodeplace/predict/predict/mobiletrain.py",
-        "relPath": "predict/predict/mobiletrain.py",
-        "sizeFormatted": "5.5 KB"
+        "sizeFormatted": "5.5 KB",
+        "project": "predict"
       },
       {
         "name": "model_v2.py",
         "type": "Python代码",
         "size": 4223,
-        "path": "E:/pythoncodeplace/predict/predict/model_v2.py",
-        "relPath": "predict/predict/model_v2.py",
-        "sizeFormatted": "4.1 KB"
+        "sizeFormatted": "4.1 KB",
+        "project": "predict"
       },
       {
         "name": "settings.py",
         "type": "Python代码",
         "size": 3417,
-        "path": "E:/pythoncodeplace/predict/predict/settings.py",
-        "relPath": "predict/predict/settings.py",
-        "sizeFormatted": "3.3 KB"
+        "sizeFormatted": "3.3 KB",
+        "project": "predict"
       },
       {
         "name": "urls.py",
         "type": "Python代码",
         "size": 828,
-        "path": "E:/pythoncodeplace/predict/predict/urls.py",
-        "relPath": "predict/predict/urls.py",
-        "sizeFormatted": "828 B"
+        "sizeFormatted": "828 B",
+        "project": "predict"
       },
       {
         "name": "valtest.py",
         "type": "Python代码",
         "size": 674,
-        "path": "E:/pythoncodeplace/predict/predict/valtest.py",
-        "relPath": "predict/predict/valtest.py",
-        "sizeFormatted": "674 B"
+        "sizeFormatted": "674 B",
+        "project": "predict"
       },
       {
         "name": "views.py",
         "type": "Python代码",
         "size": 948,
-        "path": "E:/pythoncodeplace/predict/predict/views.py",
-        "relPath": "predict/predict/views.py",
-        "sizeFormatted": "948 B"
+        "sizeFormatted": "948 B",
+        "project": "predict"
       },
       {
         "name": "wsgi.py",
         "type": "Python代码",
         "size": 407,
-        "path": "E:/pythoncodeplace/predict/predict/wsgi.py",
-        "relPath": "predict/predict/wsgi.py",
-        "sizeFormatted": "407 B"
+        "sizeFormatted": "407 B",
+        "project": "predict"
       },
       {
         "name": "__init__.py",
         "type": "Python代码",
         "size": 0,
-        "path": "E:/pythoncodeplace/predict/predict/__init__.py",
-        "relPath": "predict/predict/__init__.py",
-        "sizeFormatted": "0 B"
+        "sizeFormatted": "0 B",
+        "project": "predict"
       },
       {
         "name": "upload.html",
         "type": "HTML文件",
         "size": 314,
-        "path": "E:/pythoncodeplace/predict/templates/upload.html",
-        "relPath": "predict/templates/upload.html",
-        "sizeFormatted": "314 B"
+        "sizeFormatted": "314 B",
+        "project": "predict"
       },
       {
         "name": "getTrainImage.py",
         "type": "Python代码",
         "size": 965,
-        "path": "E:/pythoncodeplace/pythonProject/getTrainImage.py",
-        "relPath": "pythonProject/getTrainImage.py",
-        "sizeFormatted": "965 B"
+        "sizeFormatted": "965 B",
+        "project": "pythonProject"
       },
       {
         "name": "main.py",
         "type": "Python代码",
         "size": 544,
-        "path": "E:/pythoncodeplace/pythonProject/main.py",
-        "relPath": "pythonProject/main.py",
-        "sizeFormatted": "544 B"
+        "sizeFormatted": "544 B",
+        "project": "pythonProject"
       },
       {
         "name": "detecto.py",
         "type": "Python代码",
         "size": 209,
-        "path": "E:/pythoncodeplace/pythonProject/fruit/detecto.py",
-        "relPath": "pythonProject/fruit/detecto.py",
-        "sizeFormatted": "209 B"
+        "sizeFormatted": "209 B",
+        "project": "pythonProject"
       },
       {
         "name": ".gitignore",
         "type": "其他",
         "size": 350,
-        "path": "E:/pythoncodeplace/pythonProject/mindspore_resnet50_husky_labrador-master/.gitignore",
-        "relPath": "pythonProject/mindspore_resnet50_husky_labrador-master/.gitignore",
-        "sizeFormatted": "350 B"
+        "sizeFormatted": "350 B",
+        "project": "pythonProject"
       },
       {
         "name": "export.py",
         "type": "Python代码",
         "size": 521,
-        "path": "E:/pythoncodeplace/pythonProject/mindspore_resnet50_husky_labrador-master/export.py",
-        "relPath": "pythonProject/mindspore_resnet50_husky_labrador-master/export.py",
-        "sizeFormatted": "521 B"
+        "sizeFormatted": "521 B",
+        "project": "pythonProject"
       },
       {
         "name": "infer.py",
         "type": "Python代码",
         "size": 2047,
-        "path": "E:/pythoncodeplace/pythonProject/mindspore_resnet50_husky_labrador-master/infer.py",
-        "relPath": "pythonProject/mindspore_resnet50_husky_labrador-master/infer.py",
-        "sizeFormatted": "2.0 KB"
+        "sizeFormatted": "2.0 KB",
+        "project": "pythonProject"
       },
       {
         "name": "LICENSE",
         "type": "其他",
         "size": 9592,
-        "path": "E:/pythoncodeplace/pythonProject/mindspore_resnet50_husky_labrador-master/LICENSE",
-        "relPath": "pythonProject/mindspore_resnet50_husky_labrador-master/LICENSE",
-        "sizeFormatted": "9.4 KB"
+        "sizeFormatted": "9.4 KB",
+        "project": "pythonProject"
       },
       {
         "name": "mindsporeTrain.py",
         "type": "Python代码",
         "size": 8456,
-        "path": "E:/pythoncodeplace/pythonProject/mindspore_resnet50_husky_labrador-master/mindsporeTrain.py",
-        "relPath": "pythonProject/mindspore_resnet50_husky_labrador-master/mindsporeTrain.py",
-        "sizeFormatted": "8.3 KB"
+        "sizeFormatted": "8.3 KB",
+        "project": "pythonProject"
       },
       {
         "name": "README.en.md",
         "type": "文档",
         "size": 899,
-        "path": "E:/pythoncodeplace/pythonProject/mindspore_resnet50_husky_labrador-master/README.en.md",
-        "relPath": "pythonProject/mindspore_resnet50_husky_labrador-master/README.en.md",
-        "sizeFormatted": "899 B"
+        "sizeFormatted": "899 B",
+        "project": "pythonProject"
       },
       {
         "name": "README.md",
         "type": "文档",
         "size": 988,
-        "path": "E:/pythoncodeplace/pythonProject/mindspore_resnet50_husky_labrador-master/README.md",
-        "relPath": "pythonProject/mindspore_resnet50_husky_labrador-master/README.md",
-        "sizeFormatted": "988 B"
+        "sizeFormatted": "988 B",
+        "project": "pythonProject"
       },
       {
         "name": "resnet.py",
         "type": "Python代码",
         "size": 22462,
-        "path": "E:/pythoncodeplace/pythonProject/mindspore_resnet50_husky_labrador-master/resnet.py",
-        "relPath": "pythonProject/mindspore_resnet50_husky_labrador-master/resnet.py",
-        "sizeFormatted": "21.9 KB"
+        "sizeFormatted": "21.9 KB",
+        "project": "pythonProject"
       },
       {
         "name": "train.py",
         "type": "Python代码",
         "size": 6436,
-        "path": "E:/pythoncodeplace/pythonProject/mindspore_resnet50_husky_labrador-master/train.py",
-        "relPath": "pythonProject/mindspore_resnet50_husky_labrador-master/train.py",
-        "sizeFormatted": "6.3 KB"
+        "sizeFormatted": "6.3 KB",
+        "project": "pythonProject"
       },
       {
         "name": "train_continue.py",
         "type": "Python代码",
         "size": 6595,
-        "path": "E:/pythoncodeplace/pythonProject/mindspore_resnet50_husky_labrador-master/train_continue.py",
-        "relPath": "pythonProject/mindspore_resnet50_husky_labrador-master/train_continue.py",
-        "sizeFormatted": "6.4 KB"
+        "sizeFormatted": "6.4 KB",
+        "project": "pythonProject"
       },
       {
         "name": "train_transfer.py",
         "type": "Python代码",
         "size": 7061,
-        "path": "E:/pythoncodeplace/pythonProject/mindspore_resnet50_husky_labrador-master/train_transfer.py",
-        "relPath": "pythonProject/mindspore_resnet50_husky_labrador-master/train_transfer.py",
-        "sizeFormatted": "6.9 KB"
+        "sizeFormatted": "6.9 KB",
+        "project": "pythonProject"
       },
       {
         "name": "val.py",
         "type": "Python代码",
         "size": 3096,
-        "path": "E:/pythoncodeplace/pythonProject/mindspore_resnet50_husky_labrador-master/val.py",
-        "relPath": "pythonProject/mindspore_resnet50_husky_labrador-master/val.py",
-        "sizeFormatted": "3.0 KB"
+        "sizeFormatted": "3.0 KB",
+        "project": "pythonProject"
       },
       {
         "name": "config.py",
         "type": "Python代码",
         "size": 4653,
-        "path": "E:/pythoncodeplace/pythonProject/mindspore_resnet50_husky_labrador-master/model_utils/config.py",
-        "relPath": "pythonProject/mindspore_resnet50_husky_labrador-master/model_utils/config.py",
-        "sizeFormatted": "4.5 KB"
+        "sizeFormatted": "4.5 KB",
+        "project": "pythonProject"
       },
       {
         "name": "resnet101_imagenet2012_config.yaml",
         "type": "YAML配置",
         "size": 2498,
-        "path": "E:/pythoncodeplace/pythonProject/mindspore_resnet50_husky_labrador-master/model_utils/config/resnet101_imagenet2012_config.yaml",
-        "relPath": "pythonProject/mindspore_resnet50_husky_labrador-master/model_utils/config/resnet101_imagenet2012_config.yaml",
-        "sizeFormatted": "2.4 KB"
+        "sizeFormatted": "2.4 KB",
+        "project": "pythonProject"
       },
       {
         "name": "resnet152_imagenet2012_config.yaml",
         "type": "YAML配置",
         "size": 2610,
-        "path": "E:/pythoncodeplace/pythonProject/mindspore_resnet50_husky_labrador-master/model_utils/config/resnet152_imagenet2012_config.yaml",
-        "relPath": "pythonProject/mindspore_resnet50_husky_labrador-master/model_utils/config/resnet152_imagenet2012_config.yaml",
-        "sizeFormatted": "2.5 KB"
+        "sizeFormatted": "2.5 KB",
+        "project": "pythonProject"
       },
       {
         "name": "resnet18_cifar10_config.yaml",
         "type": "YAML配置",
         "size": 2411,
-        "path": "E:/pythoncodeplace/pythonProject/mindspore_resnet50_husky_labrador-master/model_utils/config/resnet18_cifar10_config.yaml",
-        "relPath": "pythonProject/mindspore_resnet50_husky_labrador-master/model_utils/config/resnet18_cifar10_config.yaml",
-        "sizeFormatted": "2.4 KB"
+        "sizeFormatted": "2.4 KB",
+        "project": "pythonProject"
       },
       {
         "name": "resnet18_cifar10_config_gpu.yaml",
         "type": "YAML配置",
         "size": 2408,
-        "path": "E:/pythoncodeplace/pythonProject/mindspore_resnet50_husky_labrador-master/model_utils/config/resnet18_cifar10_config_gpu.yaml",
-        "relPath": "pythonProject/mindspore_resnet50_husky_labrador-master/model_utils/config/resnet18_cifar10_config_gpu.yaml",
-        "sizeFormatted": "2.4 KB"
+        "sizeFormatted": "2.4 KB",
+        "project": "pythonProject"
       },
       {
         "name": "resnet18_imagenet2012_config.yaml",
         "type": "YAML配置",
         "size": 2467,
-        "path": "E:/pythoncodeplace/pythonProject/mindspore_resnet50_husky_labrador-master/model_utils/config/resnet18_imagenet2012_config.yaml",
-        "relPath": "pythonProject/mindspore_resnet50_husky_labrador-master/model_utils/config/resnet18_imagenet2012_config.yaml",
-        "sizeFormatted": "2.4 KB"
+        "sizeFormatted": "2.4 KB",
+        "project": "pythonProject"
       },
       {
         "name": "resnet18_imagenet2012_config_gpu.yaml",
         "type": "YAML配置",
         "size": 2464,
-        "path": "E:/pythoncodeplace/pythonProject/mindspore_resnet50_husky_labrador-master/model_utils/config/resnet18_imagenet2012_config_gpu.yaml",
-        "relPath": "pythonProject/mindspore_resnet50_husky_labrador-master/model_utils/config/resnet18_imagenet2012_config_gpu.yaml",
-        "sizeFormatted": "2.4 KB"
+        "sizeFormatted": "2.4 KB",
+        "project": "pythonProject"
       },
       {
         "name": "resnet34_imagenet2012_config.yaml",
         "type": "YAML配置",
         "size": 2467,
-        "path": "E:/pythoncodeplace/pythonProject/mindspore_resnet50_husky_labrador-master/model_utils/config/resnet34_imagenet2012_config.yaml",
-        "relPath": "pythonProject/mindspore_resnet50_husky_labrador-master/model_utils/config/resnet34_imagenet2012_config.yaml",
-        "sizeFormatted": "2.4 KB"
+        "sizeFormatted": "2.4 KB",
+        "project": "pythonProject"
       },
       {
         "name": "resnet50_cifar10_config.yaml",
         "type": "YAML配置",
         "size": 2456,
-        "path": "E:/pythoncodeplace/pythonProject/mindspore_resnet50_husky_labrador-master/model_utils/config/resnet50_cifar10_config.yaml",
-        "relPath": "pythonProject/mindspore_resnet50_husky_labrador-master/model_utils/config/resnet50_cifar10_config.yaml",
-        "sizeFormatted": "2.4 KB"
+        "sizeFormatted": "2.4 KB",
+        "project": "pythonProject"
       },
       {
         "name": "resnet50_imagenet2012_Ascend_Thor_config.yaml",
         "type": "YAML配置",
         "size": 2490,
-        "path": "E:/pythoncodeplace/pythonProject/mindspore_resnet50_husky_labrador-master/model_utils/config/resnet50_imagenet2012_Ascend_Thor_config.yaml",
-        "relPath": "pythonProject/mindspore_resnet50_husky_labrador-master/model_utils/config/resnet50_imagenet2012_Ascend_Thor_config.yaml",
-        "sizeFormatted": "2.4 KB"
+        "sizeFormatted": "2.4 KB",
+        "project": "pythonProject"
       },
       {
         "name": "resnet50_imagenet2012_Boost_config.yaml",
         "type": "YAML配置",
         "size": 2509,
-        "path": "E:/pythoncodeplace/pythonProject/mindspore_resnet50_husky_labrador-master/model_utils/config/resnet50_imagenet2012_Boost_config.yaml",
-        "relPath": "pythonProject/mindspore_resnet50_husky_labrador-master/model_utils/config/resnet50_imagenet2012_Boost_config.yaml",
-        "sizeFormatted": "2.5 KB"
+        "sizeFormatted": "2.5 KB",
+        "project": "pythonProject"
       },
       {
         "name": "resnet50_imagenet2012_config.yaml",
         "type": "YAML配置",
         "size": 2512,
-        "path": "E:/pythoncodeplace/pythonProject/mindspore_resnet50_husky_labrador-master/model_utils/config/resnet50_imagenet2012_config.yaml",
-        "relPath": "pythonProject/mindspore_resnet50_husky_labrador-master/model_utils/config/resnet50_imagenet2012_config.yaml",
-        "sizeFormatted": "2.5 KB"
+        "sizeFormatted": "2.5 KB",
+        "project": "pythonProject"
       },
       {
         "name": "resnet50_imagenet2012_GPU_Thor_config.yaml",
         "type": "YAML配置",
         "size": 2486,
-        "path": "E:/pythoncodeplace/pythonProject/mindspore_resnet50_husky_labrador-master/model_utils/config/resnet50_imagenet2012_GPU_Thor_config.yaml",
-        "relPath": "pythonProject/mindspore_resnet50_husky_labrador-master/model_utils/config/resnet50_imagenet2012_GPU_Thor_config.yaml",
-        "sizeFormatted": "2.4 KB"
+        "sizeFormatted": "2.4 KB",
+        "project": "pythonProject"
       },
       {
         "name": "resnet_benchmark_GPU.yaml",
         "type": "YAML配置",
         "size": 1936,
-        "path": "E:/pythoncodeplace/pythonProject/mindspore_resnet50_husky_labrador-master/model_utils/config/resnet_benchmark_GPU.yaml",
-        "relPath": "pythonProject/mindspore_resnet50_husky_labrador-master/model_utils/config/resnet_benchmark_GPU.yaml",
-        "sizeFormatted": "1.9 KB"
+        "sizeFormatted": "1.9 KB",
+        "project": "pythonProject"
       },
       {
         "name": "se-resnet50_imagenet2012_config.yaml",
         "type": "YAML配置",
         "size": 2544,
-        "path": "E:/pythoncodeplace/pythonProject/mindspore_resnet50_husky_labrador-master/model_utils/config/se-resnet50_imagenet2012_config.yaml",
-        "relPath": "pythonProject/mindspore_resnet50_husky_labrador-master/model_utils/config/se-resnet50_imagenet2012_config.yaml",
-        "sizeFormatted": "2.5 KB"
+        "sizeFormatted": "2.5 KB",
+        "project": "pythonProject"
       },
       {
         "name": "data.txt",
         "type": "文档",
         "size": 28346,
-        "path": "E:/pythoncodeplace/pythonProject/rank_0/data.txt",
-        "relPath": "pythonProject/rank_0/data.txt",
-        "sizeFormatted": "27.7 KB"
+        "sizeFormatted": "27.7 KB",
+        "project": "pythonProject"
       },
       {
         "name": "测试脚本.py",
         "type": "Python代码",
         "size": 9600,
-        "path": "E:/pythoncodeplace/pythonProject/rank_0/测试脚本.py",
-        "relPath": "pythonProject/rank_0/测试脚本.py",
-        "sizeFormatted": "9.4 KB"
+        "sizeFormatted": "9.4 KB",
+        "project": "pythonProject"
       },
       {
         "name": "data.txt",
         "type": "文档",
         "size": 11,
-        "path": "E:/pythoncodeplace/pythonProject/rank_0/om/data.txt",
-        "relPath": "pythonProject/rank_0/om/data.txt",
-        "sizeFormatted": "11 B"
+        "sizeFormatted": "11 B",
+        "project": "pythonProject"
       },
       {
         "name": "多线程.py",
         "type": "Python代码",
         "size": 9197,
-        "path": "E:/pythoncodeplace/pythonProject/rank_0/om/多线程.py",
-        "relPath": "pythonProject/rank_0/om/多线程.py",
-        "sizeFormatted": "9.0 KB"
+        "sizeFormatted": "9.0 KB",
+        "project": "pythonProject"
       },
       {
         "name": ".eslintrc.js",
         "type": "JavaScript文件",
         "size": 587,
-        "path": "E:/pythoncodeplace/weixin/.eslintrc.js",
-        "relPath": "weixin/.eslintrc.js",
-        "sizeFormatted": "587 B"
+        "sizeFormatted": "587 B",
+        "project": "weixin"
       },
       {
         "name": "project.config.json",
         "type": "YAML配置",
         "size": 2213,
-        "path": "E:/pythoncodeplace/weixin/project.config.json",
-        "relPath": "weixin/project.config.json",
-        "sizeFormatted": "2.2 KB"
+        "sizeFormatted": "2.2 KB",
+        "project": "weixin"
       },
       {
         "name": "project.private.config.json",
         "type": "YAML配置",
         "size": 368,
-        "path": "E:/pythoncodeplace/weixin/project.private.config.json",
-        "relPath": "weixin/project.private.config.json",
-        "sizeFormatted": "368 B"
+        "sizeFormatted": "368 B",
+        "project": "weixin"
       },
       {
         "name": "README.md",
         "type": "文档",
         "size": 583,
-        "path": "E:/pythoncodeplace/weixin/README.md",
-        "relPath": "weixin/README.md",
-        "sizeFormatted": "583 B"
+        "sizeFormatted": "583 B",
+        "project": "weixin"
       },
       {
         "name": "uploadCloudFunction.bat",
         "type": "Shell脚本",
         "size": 191,
-        "path": "E:/pythoncodeplace/weixin/uploadCloudFunction.bat",
-        "relPath": "weixin/uploadCloudFunction.bat",
-        "sizeFormatted": "191 B"
+        "sizeFormatted": "191 B",
+        "project": "weixin"
       },
       {
         "name": "config.json",
         "type": "YAML配置",
         "size": 69,
-        "path": "E:/pythoncodeplace/weixin/cloudfunctions/quickstartFunctions/config.json",
-        "relPath": "weixin/cloudfunctions/quickstartFunctions/config.json",
-        "sizeFormatted": "69 B"
+        "sizeFormatted": "69 B",
+        "project": "weixin"
       },
       {
         "name": "index.js",
         "type": "JavaScript文件",
         "size": 915,
-        "path": "E:/pythoncodeplace/weixin/cloudfunctions/quickstartFunctions/index.js",
-        "relPath": "weixin/cloudfunctions/quickstartFunctions/index.js",
-        "sizeFormatted": "915 B"
+        "sizeFormatted": "915 B",
+        "project": "weixin"
       },
       {
         "name": "package.json",
         "type": "YAML配置",
         "size": 270,
-        "path": "E:/pythoncodeplace/weixin/cloudfunctions/quickstartFunctions/package.json",
-        "relPath": "weixin/cloudfunctions/quickstartFunctions/package.json",
-        "sizeFormatted": "270 B"
+        "sizeFormatted": "270 B",
+        "project": "weixin"
       },
       {
         "name": "index.js",
         "type": "JavaScript文件",
         "size": 1336,
-        "path": "E:/pythoncodeplace/weixin/cloudfunctions/quickstartFunctions/createCollection/index.js",
-        "relPath": "weixin/cloudfunctions/quickstartFunctions/createCollection/index.js",
-        "sizeFormatted": "1.3 KB"
+        "sizeFormatted": "1.3 KB",
+        "project": "weixin"
       },
       {
         "name": "index.js",
         "type": "JavaScript文件",
         "size": 497,
-        "path": "E:/pythoncodeplace/weixin/cloudfunctions/quickstartFunctions/getMiniProgramCode/index.js",
-        "relPath": "weixin/cloudfunctions/quickstartFunctions/getMiniProgramCode/index.js",
-        "sizeFormatted": "497 B"
+        "sizeFormatted": "497 B",
+        "project": "weixin"
       },
       {
         "name": "index.js",
         "type": "JavaScript文件",
         "size": 348,
-        "path": "E:/pythoncodeplace/weixin/cloudfunctions/quickstartFunctions/getOpenId/index.js",
-        "relPath": "weixin/cloudfunctions/quickstartFunctions/getOpenId/index.js",
-        "sizeFormatted": "348 B"
+        "sizeFormatted": "348 B",
+        "project": "weixin"
       },
       {
         "name": "index.js",
         "type": "JavaScript文件",
         "size": 291,
-        "path": "E:/pythoncodeplace/weixin/cloudfunctions/quickstartFunctions/selectRecord/index.js",
-        "relPath": "weixin/cloudfunctions/quickstartFunctions/selectRecord/index.js",
-        "sizeFormatted": "291 B"
+        "sizeFormatted": "291 B",
+        "project": "weixin"
       },
       {
         "name": "index.js",
         "type": "JavaScript文件",
         "size": 394,
-        "path": "E:/pythoncodeplace/weixin/cloudfunctions/quickstartFunctions/sumRecord/index.js",
-        "relPath": "weixin/cloudfunctions/quickstartFunctions/sumRecord/index.js",
-        "sizeFormatted": "394 B"
+        "sizeFormatted": "394 B",
+        "project": "weixin"
       },
       {
         "name": "index.js",
         "type": "JavaScript文件",
         "size": 637,
-        "path": "E:/pythoncodeplace/weixin/cloudfunctions/quickstartFunctions/updateRecord/index.js",
-        "relPath": "weixin/cloudfunctions/quickstartFunctions/updateRecord/index.js",
-        "sizeFormatted": "637 B"
+        "sizeFormatted": "637 B",
+        "project": "weixin"
       },
       {
         "name": "app.js",
         "type": "JavaScript文件",
         "size": 597,
-        "path": "E:/pythoncodeplace/weixin/miniprogram/app.js",
-        "relPath": "weixin/miniprogram/app.js",
-        "sizeFormatted": "597 B"
+        "sizeFormatted": "597 B",
+        "project": "weixin"
       },
       {
         "name": "app.json",
         "type": "YAML配置",
         "size": 697,
-        "path": "E:/pythoncodeplace/weixin/miniprogram/app.json",
-        "relPath": "weixin/miniprogram/app.json",
-        "sizeFormatted": "697 B"
+        "sizeFormatted": "697 B",
+        "project": "weixin"
       },
       {
         "name": "app.wxss",
         "type": "其他",
         "size": 330,
-        "path": "E:/pythoncodeplace/weixin/miniprogram/app.wxss",
-        "relPath": "weixin/miniprogram/app.wxss",
-        "sizeFormatted": "330 B"
+        "sizeFormatted": "330 B",
+        "project": "weixin"
       },
       {
         "name": "envList.js",
         "type": "JavaScript文件",
         "size": 134,
-        "path": "E:/pythoncodeplace/weixin/miniprogram/envList.js",
-        "relPath": "weixin/miniprogram/envList.js",
-        "sizeFormatted": "134 B"
+        "sizeFormatted": "134 B",
+        "project": "weixin"
       },
       {
         "name": "project.config.json",
         "type": "YAML配置",
         "size": 1280,
-        "path": "E:/pythoncodeplace/weixin/miniprogram/project.config.json",
-        "relPath": "weixin/miniprogram/project.config.json",
-        "sizeFormatted": "1.2 KB"
+        "sizeFormatted": "1.2 KB",
+        "project": "weixin"
       },
       {
         "name": "project.private.config.json",
         "type": "YAML配置",
         "size": 351,
-        "path": "E:/pythoncodeplace/weixin/miniprogram/project.private.config.json",
-        "relPath": "weixin/miniprogram/project.private.config.json",
-        "sizeFormatted": "351 B"
+        "sizeFormatted": "351 B",
+        "project": "weixin"
       },
       {
         "name": "sitemap.json",
         "type": "YAML配置",
         "size": 195,
-        "path": "E:/pythoncodeplace/weixin/miniprogram/sitemap.json",
-        "relPath": "weixin/miniprogram/sitemap.json",
-        "sizeFormatted": "195 B"
+        "sizeFormatted": "195 B",
+        "project": "weixin"
       },
       {
         "name": "index.js",
         "type": "JavaScript文件",
         "size": 713,
-        "path": "E:/pythoncodeplace/weixin/miniprogram/components/cloudTipModal/index.js",
-        "relPath": "weixin/miniprogram/components/cloudTipModal/index.js",
-        "sizeFormatted": "713 B"
+        "sizeFormatted": "713 B",
+        "project": "weixin"
       },
       {
         "name": "index.json",
         "type": "YAML配置",
         "size": 48,
-        "path": "E:/pythoncodeplace/weixin/miniprogram/components/cloudTipModal/index.json",
-        "relPath": "weixin/miniprogram/components/cloudTipModal/index.json",
-        "sizeFormatted": "48 B"
+        "sizeFormatted": "48 B",
+        "project": "weixin"
       },
       {
         "name": "index.wxml",
         "type": "其他",
         "size": 647,
-        "path": "E:/pythoncodeplace/weixin/miniprogram/components/cloudTipModal/index.wxml",
-        "relPath": "weixin/miniprogram/components/cloudTipModal/index.wxml",
-        "sizeFormatted": "647 B"
+        "sizeFormatted": "647 B",
+        "project": "weixin"
       },
       {
         "name": "index.wxss",
         "type": "其他",
         "size": 921,
-        "path": "E:/pythoncodeplace/weixin/miniprogram/components/cloudTipModal/index.wxss",
-        "relPath": "weixin/miniprogram/components/cloudTipModal/index.wxss",
-        "sizeFormatted": "921 B"
+        "sizeFormatted": "921 B",
+        "project": "weixin"
       },
       {
         "name": "index.js",
         "type": "JavaScript文件",
         "size": 68,
-        "path": "E:/pythoncodeplace/weixin/miniprogram/pages/createCollection/index.js",
-        "relPath": "weixin/miniprogram/pages/createCollection/index.js",
-        "sizeFormatted": "68 B"
+        "sizeFormatted": "68 B",
+        "project": "weixin"
       },
       {
         "name": "index.json",
         "type": "YAML配置",
         "size": 27,
-        "path": "E:/pythoncodeplace/weixin/miniprogram/pages/createCollection/index.json",
-        "relPath": "weixin/miniprogram/pages/createCollection/index.json",
-        "sizeFormatted": "27 B"
+        "sizeFormatted": "27 B",
+        "project": "weixin"
       },
       {
         "name": "index.wxml",
         "type": "其他",
         "size": 478,
-        "path": "E:/pythoncodeplace/weixin/miniprogram/pages/createCollection/index.wxml",
-        "relPath": "weixin/miniprogram/pages/createCollection/index.wxml",
-        "sizeFormatted": "478 B"
+        "sizeFormatted": "478 B",
+        "project": "weixin"
       },
       {
         "name": "index.wxss",
         "type": "其他",
         "size": 367,
-        "path": "E:/pythoncodeplace/weixin/miniprogram/pages/createCollection/index.wxss",
-        "relPath": "weixin/miniprogram/pages/createCollection/index.wxss",
-        "sizeFormatted": "367 B"
+        "sizeFormatted": "367 B",
+        "project": "weixin"
       },
       {
         "name": "index.js",
         "type": "JavaScript文件",
         "size": 112,
-        "path": "E:/pythoncodeplace/weixin/miniprogram/pages/deployService/index.js",
-        "relPath": "weixin/miniprogram/pages/deployService/index.js",
-        "sizeFormatted": "112 B"
+        "sizeFormatted": "112 B",
+        "project": "weixin"
       },
       {
         "name": "index.json",
         "type": "YAML配置",
         "size": 27,
-        "path": "E:/pythoncodeplace/weixin/miniprogram/pages/deployService/index.json",
-        "relPath": "weixin/miniprogram/pages/deployService/index.json",
-        "sizeFormatted": "27 B"
+        "sizeFormatted": "27 B",
+        "project": "weixin"
       },
       {
         "name": "index.wxml",
         "type": "其他",
         "size": 686,
-        "path": "E:/pythoncodeplace/weixin/miniprogram/pages/deployService/index.wxml",
-        "relPath": "weixin/miniprogram/pages/deployService/index.wxml",
-        "sizeFormatted": "686 B"
+        "sizeFormatted": "686 B",
+        "project": "weixin"
       },
       {
         "name": "index.wxss",
         "type": "其他",
         "size": 416,
-        "path": "E:/pythoncodeplace/weixin/miniprogram/pages/deployService/index.wxss",
-        "relPath": "weixin/miniprogram/pages/deployService/index.wxss",
-        "sizeFormatted": "416 B"
+        "sizeFormatted": "416 B",
+        "project": "weixin"
       },
       {
         "name": "index.js",
         "type": "JavaScript文件",
         "size": 845,
-        "path": "E:/pythoncodeplace/weixin/miniprogram/pages/getMiniProgramCode/index.js",
-        "relPath": "weixin/miniprogram/pages/getMiniProgramCode/index.js",
-        "sizeFormatted": "845 B"
+        "sizeFormatted": "845 B",
+        "project": "weixin"
       },
       {
         "name": "index.json",
         "type": "YAML配置",
         "size": 137,
-        "path": "E:/pythoncodeplace/weixin/miniprogram/pages/getMiniProgramCode/index.json",
-        "relPath": "weixin/miniprogram/pages/getMiniProgramCode/index.json",
-        "sizeFormatted": "137 B"
+        "sizeFormatted": "137 B",
+        "project": "weixin"
       },
       {
         "name": "index.wxml",
         "type": "其他",
         "size": 743,
-        "path": "E:/pythoncodeplace/weixin/miniprogram/pages/getMiniProgramCode/index.wxml",
-        "relPath": "weixin/miniprogram/pages/getMiniProgramCode/index.wxml",
-        "sizeFormatted": "743 B"
+        "sizeFormatted": "743 B",
+        "project": "weixin"
       },
       {
         "name": "index.wxss",
         "type": "其他",
         "size": 943,
-        "path": "E:/pythoncodeplace/weixin/miniprogram/pages/getMiniProgramCode/index.wxss",
-        "relPath": "weixin/miniprogram/pages/getMiniProgramCode/index.wxss",
-        "sizeFormatted": "943 B"
+        "sizeFormatted": "943 B",
+        "project": "weixin"
       },
       {
         "name": "index.js",
         "type": "JavaScript文件",
         "size": 809,
-        "path": "E:/pythoncodeplace/weixin/miniprogram/pages/getOpenId/index.js",
-        "relPath": "weixin/miniprogram/pages/getOpenId/index.js",
-        "sizeFormatted": "809 B"
+        "sizeFormatted": "809 B",
+        "project": "weixin"
       },
       {
         "name": "index.json",
         "type": "YAML配置",
         "size": 131,
-        "path": "E:/pythoncodeplace/weixin/miniprogram/pages/getOpenId/index.json",
-        "relPath": "weixin/miniprogram/pages/getOpenId/index.json",
-        "sizeFormatted": "131 B"
+        "sizeFormatted": "131 B",
+        "project": "weixin"
       },
       {
         "name": "index.wxml",
         "type": "其他",
         "size": 608,
-        "path": "E:/pythoncodeplace/weixin/miniprogram/pages/getOpenId/index.wxml",
-        "relPath": "weixin/miniprogram/pages/getOpenId/index.wxml",
-        "sizeFormatted": "608 B"
+        "sizeFormatted": "608 B",
+        "project": "weixin"
       },
       {
         "name": "index.wxss",
         "type": "其他",
         "size": 794,
-        "path": "E:/pythoncodeplace/weixin/miniprogram/pages/getOpenId/index.wxss",
-        "relPath": "weixin/miniprogram/pages/getOpenId/index.wxss",
-        "sizeFormatted": "794 B"
+        "sizeFormatted": "794 B",
+        "project": "weixin"
       },
       {
         "name": "index.js",
         "type": "JavaScript文件",
         "size": 3168,
-        "path": "E:/pythoncodeplace/weixin/miniprogram/pages/index/index.js",
-        "relPath": "weixin/miniprogram/pages/index/index.js",
-        "sizeFormatted": "3.1 KB"
+        "sizeFormatted": "3.1 KB",
+        "project": "weixin"
       },
       {
         "name": "index.json",
         "type": "YAML配置",
         "size": 87,
-        "path": "E:/pythoncodeplace/weixin/miniprogram/pages/index/index.json",
-        "relPath": "weixin/miniprogram/pages/index/index.json",
-        "sizeFormatted": "87 B"
+        "sizeFormatted": "87 B",
+        "project": "weixin"
       },
       {
         "name": "index.wxml",
         "type": "其他",
         "size": 1325,
-        "path": "E:/pythoncodeplace/weixin/miniprogram/pages/index/index.wxml",
-        "relPath": "weixin/miniprogram/pages/index/index.wxml",
-        "sizeFormatted": "1.3 KB"
+        "sizeFormatted": "1.3 KB",
+        "project": "weixin"
       },
       {
         "name": "index.wxss",
         "type": "其他",
         "size": 1357,
-        "path": "E:/pythoncodeplace/weixin/miniprogram/pages/index/index.wxss",
-        "relPath": "weixin/miniprogram/pages/index/index.wxss",
-        "sizeFormatted": "1.3 KB"
+        "sizeFormatted": "1.3 KB",
+        "project": "weixin"
       },
       {
         "name": "index.js",
         "type": "JavaScript文件",
         "size": 831,
-        "path": "E:/pythoncodeplace/weixin/miniprogram/pages/selectRecord/index.js",
-        "relPath": "weixin/miniprogram/pages/selectRecord/index.js",
-        "sizeFormatted": "831 B"
+        "sizeFormatted": "831 B",
+        "project": "weixin"
       },
       {
         "name": "index.json",
         "type": "YAML配置",
         "size": 131,
-        "path": "E:/pythoncodeplace/weixin/miniprogram/pages/selectRecord/index.json",
-        "relPath": "weixin/miniprogram/pages/selectRecord/index.json",
-        "sizeFormatted": "131 B"
+        "sizeFormatted": "131 B",
+        "project": "weixin"
       },
       {
         "name": "index.wxml",
         "type": "其他",
         "size": 1238,
-        "path": "E:/pythoncodeplace/weixin/miniprogram/pages/selectRecord/index.wxml",
-        "relPath": "weixin/miniprogram/pages/selectRecord/index.wxml",
-        "sizeFormatted": "1.2 KB"
+        "sizeFormatted": "1.2 KB",
+        "project": "weixin"
       },
       {
         "name": "index.wxss",
         "type": "其他",
         "size": 1323,
-        "path": "E:/pythoncodeplace/weixin/miniprogram/pages/selectRecord/index.wxss",
-        "relPath": "weixin/miniprogram/pages/selectRecord/index.wxss",
-        "sizeFormatted": "1.3 KB"
+        "sizeFormatted": "1.3 KB",
+        "project": "weixin"
       },
       {
         "name": "index.js",
         "type": "JavaScript文件",
         "size": 808,
-        "path": "E:/pythoncodeplace/weixin/miniprogram/pages/sumRecord/index.js",
-        "relPath": "weixin/miniprogram/pages/sumRecord/index.js",
-        "sizeFormatted": "808 B"
+        "sizeFormatted": "808 B",
+        "project": "weixin"
       },
       {
         "name": "index.json",
         "type": "YAML配置",
         "size": 131,
-        "path": "E:/pythoncodeplace/weixin/miniprogram/pages/sumRecord/index.json",
-        "relPath": "weixin/miniprogram/pages/sumRecord/index.json",
-        "sizeFormatted": "131 B"
+        "sizeFormatted": "131 B",
+        "project": "weixin"
       },
       {
         "name": "index.wxml",
         "type": "其他",
         "size": 1115,
-        "path": "E:/pythoncodeplace/weixin/miniprogram/pages/sumRecord/index.wxml",
-        "relPath": "weixin/miniprogram/pages/sumRecord/index.wxml",
-        "sizeFormatted": "1.1 KB"
+        "sizeFormatted": "1.1 KB",
+        "project": "weixin"
       },
       {
         "name": "index.wxss",
         "type": "其他",
         "size": 1326,
-        "path": "E:/pythoncodeplace/weixin/miniprogram/pages/sumRecord/index.wxss",
-        "relPath": "weixin/miniprogram/pages/sumRecord/index.wxss",
-        "sizeFormatted": "1.3 KB"
+        "sizeFormatted": "1.3 KB",
+        "project": "weixin"
       },
       {
         "name": "index.js",
         "type": "JavaScript文件",
         "size": 728,
-        "path": "E:/pythoncodeplace/weixin/miniprogram/pages/sumRecordResult/index.js",
-        "relPath": "weixin/miniprogram/pages/sumRecordResult/index.js",
-        "sizeFormatted": "728 B"
+        "sizeFormatted": "728 B",
+        "project": "weixin"
       },
       {
         "name": "index.json",
         "type": "YAML配置",
         "size": 131,
-        "path": "E:/pythoncodeplace/weixin/miniprogram/pages/sumRecordResult/index.json",
-        "relPath": "weixin/miniprogram/pages/sumRecordResult/index.json",
-        "sizeFormatted": "131 B"
+        "sizeFormatted": "131 B",
+        "project": "weixin"
       },
       {
         "name": "index.wxml",
         "type": "其他",
         "size": 990,
-        "path": "E:/pythoncodeplace/weixin/miniprogram/pages/sumRecordResult/index.wxml",
-        "relPath": "weixin/miniprogram/pages/sumRecordResult/index.wxml",
-        "sizeFormatted": "990 B"
+        "sizeFormatted": "990 B",
+        "project": "weixin"
       },
       {
         "name": "index.wxss",
         "type": "其他",
         "size": 1166,
-        "path": "E:/pythoncodeplace/weixin/miniprogram/pages/sumRecordResult/index.wxss",
-        "relPath": "weixin/miniprogram/pages/sumRecordResult/index.wxss",
-        "sizeFormatted": "1.1 KB"
+        "sizeFormatted": "1.1 KB",
+        "project": "weixin"
       },
       {
         "name": "index.js",
         "type": "JavaScript文件",
         "size": 833,
-        "path": "E:/pythoncodeplace/weixin/miniprogram/pages/updateRecord/index.js",
-        "relPath": "weixin/miniprogram/pages/updateRecord/index.js",
-        "sizeFormatted": "833 B"
+        "sizeFormatted": "833 B",
+        "project": "weixin"
       },
       {
         "name": "index.json",
         "type": "YAML配置",
         "size": 131,
-        "path": "E:/pythoncodeplace/weixin/miniprogram/pages/updateRecord/index.json",
-        "relPath": "weixin/miniprogram/pages/updateRecord/index.json",
-        "sizeFormatted": "131 B"
+        "sizeFormatted": "131 B",
+        "project": "weixin"
       },
       {
         "name": "index.wxml",
         "type": "其他",
         "size": 1123,
-        "path": "E:/pythoncodeplace/weixin/miniprogram/pages/updateRecord/index.wxml",
-        "relPath": "weixin/miniprogram/pages/updateRecord/index.wxml",
-        "sizeFormatted": "1.1 KB"
+        "sizeFormatted": "1.1 KB",
+        "project": "weixin"
       },
       {
         "name": "index.wxss",
         "type": "其他",
         "size": 1326,
-        "path": "E:/pythoncodeplace/weixin/miniprogram/pages/updateRecord/index.wxss",
-        "relPath": "weixin/miniprogram/pages/updateRecord/index.wxss",
-        "sizeFormatted": "1.3 KB"
+        "sizeFormatted": "1.3 KB",
+        "project": "weixin"
       },
       {
         "name": "index.js",
         "type": "JavaScript文件",
         "size": 1425,
-        "path": "E:/pythoncodeplace/weixin/miniprogram/pages/updateRecordResult/index.js",
-        "relPath": "weixin/miniprogram/pages/updateRecordResult/index.js",
-        "sizeFormatted": "1.4 KB"
+        "sizeFormatted": "1.4 KB",
+        "project": "weixin"
       },
       {
         "name": "index.json",
         "type": "YAML配置",
         "size": 131,
-        "path": "E:/pythoncodeplace/weixin/miniprogram/pages/updateRecordResult/index.json",
-        "relPath": "weixin/miniprogram/pages/updateRecordResult/index.json",
-        "sizeFormatted": "131 B"
+        "sizeFormatted": "131 B",
+        "project": "weixin"
       },
       {
         "name": "index.wxml",
         "type": "其他",
         "size": 1187,
-        "path": "E:/pythoncodeplace/weixin/miniprogram/pages/updateRecordResult/index.wxml",
-        "relPath": "weixin/miniprogram/pages/updateRecordResult/index.wxml",
-        "sizeFormatted": "1.2 KB"
+        "sizeFormatted": "1.2 KB",
+        "project": "weixin"
       },
       {
         "name": "index.wxss",
         "type": "其他",
         "size": 1118,
-        "path": "E:/pythoncodeplace/weixin/miniprogram/pages/updateRecordResult/index.wxss",
-        "relPath": "weixin/miniprogram/pages/updateRecordResult/index.wxss",
-        "sizeFormatted": "1.1 KB"
+        "sizeFormatted": "1.1 KB",
+        "project": "weixin"
       },
       {
         "name": "index.js",
         "type": "JavaScript文件",
         "size": 132,
-        "path": "E:/pythoncodeplace/weixin/miniprogram/pages/updateRecordSuccess/index.js",
-        "relPath": "weixin/miniprogram/pages/updateRecordSuccess/index.js",
-        "sizeFormatted": "132 B"
+        "sizeFormatted": "132 B",
+        "project": "weixin"
       },
       {
         "name": "index.json",
         "type": "YAML配置",
         "size": 131,
-        "path": "E:/pythoncodeplace/weixin/miniprogram/pages/updateRecordSuccess/index.json",
-        "relPath": "weixin/miniprogram/pages/updateRecordSuccess/index.json",
-        "sizeFormatted": "131 B"
+        "sizeFormatted": "131 B",
+        "project": "weixin"
       },
       {
         "name": "index.wxml",
         "type": "其他",
         "size": 299,
-        "path": "E:/pythoncodeplace/weixin/miniprogram/pages/updateRecordSuccess/index.wxml",
-        "relPath": "weixin/miniprogram/pages/updateRecordSuccess/index.wxml",
-        "sizeFormatted": "299 B"
+        "sizeFormatted": "299 B",
+        "project": "weixin"
       },
       {
         "name": "index.wxss",
         "type": "其他",
         "size": 409,
-        "path": "E:/pythoncodeplace/weixin/miniprogram/pages/updateRecordSuccess/index.wxss",
-        "relPath": "weixin/miniprogram/pages/updateRecordSuccess/index.wxss",
-        "sizeFormatted": "409 B"
+        "sizeFormatted": "409 B",
+        "project": "weixin"
       },
       {
         "name": "index.js",
         "type": "JavaScript文件",
         "size": 1143,
-        "path": "E:/pythoncodeplace/weixin/miniprogram/pages/uploadFile/index.js",
-        "relPath": "weixin/miniprogram/pages/uploadFile/index.js",
-        "sizeFormatted": "1.1 KB"
+        "sizeFormatted": "1.1 KB",
+        "project": "weixin"
       },
       {
         "name": "index.json",
         "type": "YAML配置",
         "size": 131,
-        "path": "E:/pythoncodeplace/weixin/miniprogram/pages/uploadFile/index.json",
-        "relPath": "weixin/miniprogram/pages/uploadFile/index.json",
-        "sizeFormatted": "131 B"
+        "sizeFormatted": "131 B",
+        "project": "weixin"
       },
       {
         "name": "index.wxml",
         "type": "其他",
         "size": 842,
-        "path": "E:/pythoncodeplace/weixin/miniprogram/pages/uploadFile/index.wxml",
-        "relPath": "weixin/miniprogram/pages/uploadFile/index.wxml",
-        "sizeFormatted": "842 B"
+        "sizeFormatted": "842 B",
+        "project": "weixin"
       },
       {
         "name": "index.wxss",
         "type": "其他",
         "size": 1394,
-        "path": "E:/pythoncodeplace/weixin/miniprogram/pages/uploadFile/index.wxss",
-        "relPath": "weixin/miniprogram/pages/uploadFile/index.wxss",
-        "sizeFormatted": "1.4 KB"
+        "sizeFormatted": "1.4 KB",
+        "project": "weixin"
       }
     ]
   },
   {
     "id": "study",
     "name": "学习",
-    "source": "E:/学习",
     "category": "学习资料",
     "fileCount": 529,
     "totalSize": 47226788,
-    "totalSizeFormatted": "45.0 MB",
+    "totalSizeFormatted": "47.2 MB",
     "description": "历年学习资料与课程项目大杂烩：覆盖机器学习（含魔方颜色识别等 CV 小项目）、MindSpore、人工智能、后端开发（Spring Boot / Django / MyBatis）、MATLAB 与数据库等，文件量大（1.5 GB / 5490 个），偏课程作业与练手代码。",
     "guide": "`study` 是一个**学习大杂烩**，横跨 Python 机器学习、Java 课程实验、Web 框架和数据库，是多年课程作业与个人练习的合集（体积大主要是因为含 venv 虚拟环境和 IDE 配置缓存，并不是每个文件都是源码）。\n\n### 1. `机器学习/代码` —— ML / CV 实践集\n内容很丰富：`SVM.py`（经典支持向量机）、`softmax回归` / `多重感知机` / `卷积层`（从零手写深度学习基础）、`数字识别` / `汉字分类`（用神经网络做图像分类）、`手势识别` / `手语识别`（计算机视觉应用）、`推荐算法`、`demucs`（音频分离）等。例如一个最小 softmax 回归，本质就是「线性映射 + softmax + 交叉熵」：\n\n```python\n# 伪代码示意：线性层 + softmax\nlogits = X @ W + b\nprobs = softmax(logits)\nloss = cross_entropy(probs, y_true)\n```\n\n同目录的 `cube_robot/kmeans.py` 还用无监督 K-Means 给魔方色块做颜色聚类（这个例子也写进了《机器学习入门》）。\n\n### 2. `天气地图` —— 数据获取 + 可视化\n这个项目把「调 API → 存数据库 → 画地图」打通：`openweather.py` 调 OpenWeatherMap 接口拿天气，再写进 MySQL：\n\n```python\nurl = 'http://api.openweathermap.org/data/2.5/forecast?q={}&APPID=...'.format(city)\nweather = json.loads(r.urlopen(url).read())\n# 解析后写入 MySQL\ncursor.execute('INSERT INTO asia1(city, qiya, tianqi, ...) VALUE (%s, %s, %s, ...)', data)\nconn.commit()\n```\n\n`地图/天气地图主体.py` 用 `folium` 在高德底图上叠加标记、折线、多边形和重庆 GeoJSON，生成可交互 HTML 地图。同目录的 `tcs.py` 还是一个 pygame 贪吃蛇小游戏。\n\n### 3. `西二java` / `西二python` / `西二数据库` —— 课程实验\n「西二」是课程实验项目，含 Java 面向对象（封装 / 继承 / 多态，典型作业如**宠物店程序**）、Python 基础、数据库（SQLyog + MyBatis）等，`pom.xml` / `src` 结构完整。\n\n### 4. `Springboot` / `mybatis` / `django` —— Web 框架练习\nSpring Boot + MyBatis 的企业级增删改查、`django` 的 Python Web 开发，都是从框架入门到能做 CRUD 的练手项目。\n\n> 提示：这个库文件极多（约 5490 个），很多是虚拟环境和 IDE 缓存。浏览时建议用上方搜索框按项目名称（如 `机器学习`、`天气地图`、`西二java`）过滤，会清爽很多。",
     "files": [
@@ -2620,4528 +2204,3963 @@ const CODE_LIBS = [
         "name": "manage.py",
         "type": "Python代码",
         "size": 685,
-        "path": "E:/学习/backend/manage.py",
-        "relPath": "backend/manage.py",
-        "sizeFormatted": "685 B"
+        "sizeFormatted": "685 B",
+        "project": "backend"
       },
       {
         "name": "asgi.py",
         "type": "Python代码",
         "size": 407,
-        "path": "E:/学习/backend/backend/asgi.py",
-        "relPath": "backend/backend/asgi.py",
-        "sizeFormatted": "407 B"
+        "sizeFormatted": "407 B",
+        "project": "backend"
       },
       {
         "name": "settings.py",
         "type": "Python代码",
         "size": 3427,
-        "path": "E:/学习/backend/backend/settings.py",
-        "relPath": "backend/backend/settings.py",
-        "sizeFormatted": "3.3 KB"
+        "sizeFormatted": "3.3 KB",
+        "project": "backend"
       },
       {
         "name": "urls.py",
         "type": "Python代码",
         "size": 918,
-        "path": "E:/学习/backend/backend/urls.py",
-        "relPath": "backend/backend/urls.py",
-        "sizeFormatted": "918 B"
+        "sizeFormatted": "918 B",
+        "project": "backend"
       },
       {
         "name": "wsgi.py",
         "type": "Python代码",
         "size": 407,
-        "path": "E:/学习/backend/backend/wsgi.py",
-        "relPath": "backend/backend/wsgi.py",
-        "sizeFormatted": "407 B"
+        "sizeFormatted": "407 B",
+        "project": "backend"
       },
       {
         "name": "__init__.py",
         "type": "Python代码",
         "size": 0,
-        "path": "E:/学习/backend/backend/__init__.py",
-        "relPath": "backend/backend/__init__.py",
-        "sizeFormatted": "0 B"
+        "sizeFormatted": "0 B",
+        "project": "backend"
       },
       {
         "name": "admin.py",
         "type": "Python代码",
         "size": 66,
-        "path": "E:/学习/backend/sales/admin.py",
-        "relPath": "backend/sales/admin.py",
-        "sizeFormatted": "66 B"
+        "sizeFormatted": "66 B",
+        "project": "backend"
       },
       {
         "name": "apps.py",
         "type": "Python代码",
         "size": 148,
-        "path": "E:/学习/backend/sales/apps.py",
-        "relPath": "backend/sales/apps.py",
-        "sizeFormatted": "148 B"
+        "sizeFormatted": "148 B",
+        "project": "backend"
       },
       {
         "name": "models.py",
         "type": "Python代码",
         "size": 60,
-        "path": "E:/学习/backend/sales/models.py",
-        "relPath": "backend/sales/models.py",
-        "sizeFormatted": "60 B"
+        "sizeFormatted": "60 B",
+        "project": "backend"
       },
       {
         "name": "tests.py",
         "type": "Python代码",
         "size": 63,
-        "path": "E:/学习/backend/sales/tests.py",
-        "relPath": "backend/sales/tests.py",
-        "sizeFormatted": "63 B"
+        "sizeFormatted": "63 B",
+        "project": "backend"
       },
       {
         "name": "views.py",
         "type": "Python代码",
         "size": 266,
-        "path": "E:/学习/backend/sales/views.py",
-        "relPath": "backend/sales/views.py",
-        "sizeFormatted": "266 B"
+        "sizeFormatted": "266 B",
+        "project": "backend"
       },
       {
         "name": "__init__.py",
         "type": "Python代码",
         "size": 0,
-        "path": "E:/学习/backend/sales/__init__.py",
-        "relPath": "backend/sales/__init__.py",
-        "sizeFormatted": "0 B"
+        "sizeFormatted": "0 B",
+        "project": "backend"
       },
       {
         "name": "__init__.py",
         "type": "Python代码",
         "size": 0,
-        "path": "E:/学习/backend/sales/migrations/__init__.py",
-        "relPath": "backend/sales/migrations/__init__.py",
-        "sizeFormatted": "0 B"
+        "sizeFormatted": "0 B",
+        "project": "backend"
       },
       {
         "name": "m.html",
         "type": "HTML文件",
         "size": 3247,
-        "path": "E:/学习/backend/sales/templates/m.html",
-        "relPath": "backend/sales/templates/m.html",
-        "sizeFormatted": "3.2 KB"
+        "sizeFormatted": "3.2 KB",
+        "project": "backend"
       },
       {
         "name": "style.css",
         "type": "CSS文件",
         "size": 2474,
-        "path": "E:/学习/backend/sales/templates/css/style.css",
-        "relPath": "backend/sales/templates/css/style.css",
-        "sizeFormatted": "2.4 KB"
+        "sizeFormatted": "2.4 KB",
+        "project": "backend"
       },
       {
         "name": "manage.py",
         "type": "Python代码",
         "size": 684,
-        "path": "E:/学习/backend/upload/manage.py",
-        "relPath": "backend/upload/manage.py",
-        "sizeFormatted": "684 B"
+        "sizeFormatted": "684 B",
+        "project": "backend"
       },
       {
         "name": "index.html",
         "type": "HTML文件",
         "size": 139,
-        "path": "E:/学习/backend/upload/templates/upload/index.html",
-        "relPath": "backend/upload/templates/upload/index.html",
-        "sizeFormatted": "139 B"
+        "sizeFormatted": "139 B",
+        "project": "backend"
       },
       {
         "name": "asgi.py",
         "type": "Python代码",
         "size": 405,
-        "path": "E:/学习/backend/upload/upload/asgi.py",
-        "relPath": "backend/upload/upload/asgi.py",
-        "sizeFormatted": "405 B"
+        "sizeFormatted": "405 B",
+        "project": "backend"
       },
       {
         "name": "settings.py",
         "type": "Python代码",
         "size": 3364,
-        "path": "E:/学习/backend/upload/upload/settings.py",
-        "relPath": "backend/upload/upload/settings.py",
-        "sizeFormatted": "3.3 KB"
+        "sizeFormatted": "3.3 KB",
+        "project": "backend"
       },
       {
         "name": "urls.py",
         "type": "Python代码",
         "size": 769,
-        "path": "E:/学习/backend/upload/upload/urls.py",
-        "relPath": "backend/upload/upload/urls.py",
-        "sizeFormatted": "769 B"
+        "sizeFormatted": "769 B",
+        "project": "backend"
       },
       {
         "name": "viwes.py",
         "type": "Python代码",
         "size": 144,
-        "path": "E:/学习/backend/upload/upload/viwes.py",
-        "relPath": "backend/upload/upload/viwes.py",
-        "sizeFormatted": "144 B"
+        "sizeFormatted": "144 B",
+        "project": "backend"
       },
       {
         "name": "wsgi.py",
         "type": "Python代码",
         "size": 405,
-        "path": "E:/学习/backend/upload/upload/wsgi.py",
-        "relPath": "backend/upload/upload/wsgi.py",
-        "sizeFormatted": "405 B"
+        "sizeFormatted": "405 B",
+        "project": "backend"
       },
       {
         "name": "__init__.py",
         "type": "Python代码",
         "size": 0,
-        "path": "E:/学习/backend/upload/upload/__init__.py",
-        "relPath": "backend/upload/upload/__init__.py",
-        "sizeFormatted": "0 B"
+        "sizeFormatted": "0 B",
+        "project": "backend"
       },
       {
         "name": "manage.py",
         "type": "Python代码",
         "size": 684,
-        "path": "E:/学习/cangku/manage.py",
-        "relPath": "cangku/manage.py",
-        "sizeFormatted": "684 B"
+        "sizeFormatted": "684 B",
+        "project": "cangku"
       },
       {
         "name": "index.html",
         "type": "HTML文件",
         "size": 362,
-        "path": "E:/学习/cangku/templates/upload/index.html",
-        "relPath": "cangku/templates/upload/index.html",
-        "sizeFormatted": "362 B"
+        "sizeFormatted": "362 B",
+        "project": "cangku"
       },
       {
         "name": "m1.html",
         "type": "HTML文件",
         "size": 4178,
-        "path": "E:/学习/cangku/templates/upload/m1.html",
-        "relPath": "cangku/templates/upload/m1.html",
-        "sizeFormatted": "4.1 KB"
+        "sizeFormatted": "4.1 KB",
+        "project": "cangku"
       },
       {
         "name": "success.html",
         "type": "HTML文件",
         "size": 4152,
-        "path": "E:/学习/cangku/templates/upload/success.html",
-        "relPath": "cangku/templates/upload/success.html",
-        "sizeFormatted": "4.1 KB"
+        "sizeFormatted": "4.1 KB",
+        "project": "cangku"
       },
       {
         "name": "__init__.py",
         "type": "Python代码",
         "size": 0,
-        "path": "E:/学习/cangku/templates/upload/__init__.py",
-        "relPath": "cangku/templates/upload/__init__.py",
-        "sizeFormatted": "0 B"
+        "sizeFormatted": "0 B",
+        "project": "cangku"
       },
       {
         "name": "manage.py",
         "type": "Python代码",
         "size": 684,
-        "path": "E:/学习/cangku/upload/manage.py",
-        "relPath": "cangku/upload/manage.py",
-        "sizeFormatted": "684 B"
+        "sizeFormatted": "684 B",
+        "project": "cangku"
       },
       {
         "name": "asgi.py",
         "type": "Python代码",
         "size": 405,
-        "path": "E:/学习/cangku/upload/upload/asgi.py",
-        "relPath": "cangku/upload/upload/asgi.py",
-        "sizeFormatted": "405 B"
+        "sizeFormatted": "405 B",
+        "project": "cangku"
       },
       {
         "name": "settings.py",
         "type": "Python代码",
         "size": 3364,
-        "path": "E:/学习/cangku/upload/upload/settings.py",
-        "relPath": "cangku/upload/upload/settings.py",
-        "sizeFormatted": "3.3 KB"
+        "sizeFormatted": "3.3 KB",
+        "project": "cangku"
       },
       {
         "name": "urls.py",
         "type": "Python代码",
         "size": 769,
-        "path": "E:/学习/cangku/upload/upload/urls.py",
-        "relPath": "cangku/upload/upload/urls.py",
-        "sizeFormatted": "769 B"
+        "sizeFormatted": "769 B",
+        "project": "cangku"
       },
       {
         "name": "views.py",
         "type": "Python代码",
         "size": 651,
-        "path": "E:/学习/cangku/upload/upload/views.py",
-        "relPath": "cangku/upload/upload/views.py",
-        "sizeFormatted": "651 B"
+        "sizeFormatted": "651 B",
+        "project": "cangku"
       },
       {
         "name": "wsgi.py",
         "type": "Python代码",
         "size": 405,
-        "path": "E:/学习/cangku/upload/upload/wsgi.py",
-        "relPath": "cangku/upload/upload/wsgi.py",
-        "sizeFormatted": "405 B"
+        "sizeFormatted": "405 B",
+        "project": "cangku"
       },
       {
         "name": "__init__.py",
         "type": "Python代码",
         "size": 0,
-        "path": "E:/学习/cangku/upload/upload/__init__.py",
-        "relPath": "cangku/upload/upload/__init__.py",
-        "sizeFormatted": "0 B"
+        "sizeFormatted": "0 B",
+        "project": "cangku"
       },
       {
         "name": "asgi.py",
         "type": "Python代码",
         "size": 405,
-        "path": "E:/学习/cangku/后端/asgi.py",
-        "relPath": "cangku/后端/asgi.py",
-        "sizeFormatted": "405 B"
+        "sizeFormatted": "405 B",
+        "project": "cangku"
       },
       {
         "name": "settings.py",
         "type": "Python代码",
         "size": 3480,
-        "path": "E:/学习/cangku/后端/settings.py",
-        "relPath": "cangku/后端/settings.py",
-        "sizeFormatted": "3.4 KB"
+        "sizeFormatted": "3.4 KB",
+        "project": "cangku"
       },
       {
         "name": "urls.py",
         "type": "Python代码",
         "size": 919,
-        "path": "E:/学习/cangku/后端/urls.py",
-        "relPath": "cangku/后端/urls.py",
-        "sizeFormatted": "919 B"
+        "sizeFormatted": "919 B",
+        "project": "cangku"
       },
       {
         "name": "wsgi.py",
         "type": "Python代码",
         "size": 405,
-        "path": "E:/学习/cangku/后端/wsgi.py",
-        "relPath": "cangku/后端/wsgi.py",
-        "sizeFormatted": "405 B"
+        "sizeFormatted": "405 B",
+        "project": "cangku"
       },
       {
         "name": "__init__.py",
         "type": "Python代码",
         "size": 0,
-        "path": "E:/学习/cangku/后端/__init__.py",
-        "relPath": "cangku/后端/__init__.py",
-        "sizeFormatted": "0 B"
+        "sizeFormatted": "0 B",
+        "project": "cangku"
       },
       {
         "name": "container.config.json",
         "type": "YAML配置",
         "size": 1359,
-        "path": "E:/学习/django/comment/container.config.json",
-        "relPath": "django/comment/container.config.json",
-        "sizeFormatted": "1.3 KB"
+        "sizeFormatted": "1.3 KB",
+        "project": "django"
       },
       {
         "name": "manage.py",
         "type": "Python代码",
         "size": 625,
-        "path": "E:/学习/django/comment/manage.py",
-        "relPath": "django/comment/manage.py",
-        "sizeFormatted": "625 B"
+        "sizeFormatted": "625 B",
+        "project": "django"
       },
       {
         "name": "README.md",
         "type": "文档",
         "size": 4113,
-        "path": "E:/学习/django/comment/README.md",
-        "relPath": "django/comment/README.md",
-        "sizeFormatted": "4.0 KB"
+        "sizeFormatted": "4.0 KB",
+        "project": "django"
       },
       {
         "name": "requirements.txt",
         "type": "文档",
         "size": 328,
-        "path": "E:/学习/django/comment/requirements.txt",
-        "relPath": "django/comment/requirements.txt",
-        "sizeFormatted": "328 B"
+        "sizeFormatted": "328 B",
+        "project": "django"
       },
       {
         "name": "apps.py",
         "type": "Python代码",
         "size": 155,
-        "path": "E:/学习/django/comment/wxcloudrun/apps.py",
-        "relPath": "django/comment/wxcloudrun/apps.py",
-        "sizeFormatted": "155 B"
+        "sizeFormatted": "155 B",
+        "project": "django"
       },
       {
         "name": "asgi.py",
         "type": "Python代码",
         "size": 413,
-        "path": "E:/学习/django/comment/wxcloudrun/asgi.py",
-        "relPath": "django/comment/wxcloudrun/asgi.py",
-        "sizeFormatted": "413 B"
+        "sizeFormatted": "413 B",
+        "project": "django"
       },
       {
         "name": "models.py",
         "type": "Python代码",
         "size": 461,
-        "path": "E:/学习/django/comment/wxcloudrun/models.py",
-        "relPath": "django/comment/wxcloudrun/models.py",
-        "sizeFormatted": "461 B"
+        "sizeFormatted": "461 B",
+        "project": "django"
       },
       {
         "name": "settings.py",
         "type": "Python代码",
         "size": 6254,
-        "path": "E:/学习/django/comment/wxcloudrun/settings.py",
-        "relPath": "django/comment/wxcloudrun/settings.py",
-        "sizeFormatted": "6.1 KB"
+        "sizeFormatted": "6.1 KB",
+        "project": "django"
       },
       {
         "name": "urls.py",
         "type": "Python代码",
         "size": 900,
-        "path": "E:/学习/django/comment/wxcloudrun/urls.py",
-        "relPath": "django/comment/wxcloudrun/urls.py",
-        "sizeFormatted": "900 B"
+        "sizeFormatted": "900 B",
+        "project": "django"
       },
       {
         "name": "views.py",
         "type": "Python代码",
         "size": 8365,
-        "path": "E:/学习/django/comment/wxcloudrun/views.py",
-        "relPath": "django/comment/wxcloudrun/views.py",
-        "sizeFormatted": "8.2 KB"
+        "sizeFormatted": "8.2 KB",
+        "project": "django"
       },
       {
         "name": "wsgi.py",
         "type": "Python代码",
         "size": 413,
-        "path": "E:/学习/django/comment/wxcloudrun/wsgi.py",
-        "relPath": "django/comment/wxcloudrun/wsgi.py",
-        "sizeFormatted": "413 B"
+        "sizeFormatted": "413 B",
+        "project": "django"
       },
       {
         "name": "__init__.py",
         "type": "Python代码",
         "size": 48,
-        "path": "E:/学习/django/comment/wxcloudrun/__init__.py",
-        "relPath": "django/comment/wxcloudrun/__init__.py",
-        "sizeFormatted": "48 B"
+        "sizeFormatted": "48 B",
+        "project": "django"
       },
       {
         "name": "__init__.py",
         "type": "Python代码",
         "size": 0,
-        "path": "E:/学习/django/comment/wxcloudrun/migrations/__init__.py",
-        "relPath": "django/comment/wxcloudrun/migrations/__init__.py",
-        "sizeFormatted": "0 B"
+        "sizeFormatted": "0 B",
+        "project": "django"
       },
       {
         "name": "index.html",
         "type": "HTML文件",
         "size": 10436,
-        "path": "E:/学习/django/comment/wxcloudrun/templates/index.html",
-        "relPath": "django/comment/wxcloudrun/templates/index.html",
-        "sizeFormatted": "10.2 KB"
+        "sizeFormatted": "10.2 KB",
+        "project": "django"
       },
       {
         "name": "readme.txt",
         "type": "文档",
         "size": 948,
-        "path": "E:/学习/matlab/MATLAB R2018a Win64 Crack/readme.txt",
-        "relPath": "matlab/MATLAB R2018a Win64 Crack/readme.txt",
-        "sizeFormatted": "948 B"
+        "sizeFormatted": "948 B",
+        "project": "matlab"
       },
       {
         "name": "下载使用说明.txt",
         "type": "文档",
         "size": 2897,
-        "path": "E:/学习/matlab/MATLAB R2018a Win64 Crack/下载使用说明.txt",
-        "relPath": "matlab/MATLAB R2018a Win64 Crack/下载使用说明.txt",
-        "sizeFormatted": "2.8 KB"
+        "sizeFormatted": "2.8 KB",
+        "project": "matlab"
       },
       {
         "name": "pyvenv.cfg",
         "type": "YAML配置",
         "size": 316,
-        "path": "E:/学习/mindspore/pyvenv.cfg",
-        "relPath": "mindspore/pyvenv.cfg",
-        "sizeFormatted": "316 B"
+        "sizeFormatted": "316 B",
+        "project": "mindspore"
       },
       {
         "name": "activate.bat",
         "type": "Shell脚本",
         "size": 1012,
-        "path": "E:/学习/mindspore/Scripts/activate.bat",
-        "relPath": "mindspore/Scripts/activate.bat",
-        "sizeFormatted": "1012 B"
+        "sizeFormatted": "1012 B",
+        "project": "mindspore"
       },
       {
         "name": "activate.ps1",
         "type": "Shell脚本",
         "size": 1755,
-        "path": "E:/学习/mindspore/Scripts/activate.ps1",
-        "relPath": "mindspore/Scripts/activate.ps1",
-        "sizeFormatted": "1.7 KB"
+        "sizeFormatted": "1.7 KB",
+        "project": "mindspore"
       },
       {
         "name": "activate_this.py",
         "type": "Python代码",
         "size": 1193,
-        "path": "E:/学习/mindspore/Scripts/activate_this.py",
-        "relPath": "mindspore/Scripts/activate_this.py",
-        "sizeFormatted": "1.2 KB"
+        "sizeFormatted": "1.2 KB",
+        "project": "mindspore"
       },
       {
         "name": "deactivate.bat",
         "type": "Shell脚本",
         "size": 510,
-        "path": "E:/学习/mindspore/Scripts/deactivate.bat",
-        "relPath": "mindspore/Scripts/deactivate.bat",
-        "sizeFormatted": "510 B"
+        "sizeFormatted": "510 B",
+        "project": "mindspore"
       },
       {
         "name": "pydoc.bat",
         "type": "Shell脚本",
         "size": 24,
-        "path": "E:/学习/mindspore/Scripts/pydoc.bat",
-        "relPath": "mindspore/Scripts/pydoc.bat",
-        "sizeFormatted": "24 B"
+        "sizeFormatted": "24 B",
+        "project": "mindspore"
       },
       {
         "name": "pom.xml",
         "type": "YAML配置",
         "size": 1370,
-        "path": "E:/学习/mybatis的增删改查/pom.xml",
-        "relPath": "mybatis的增删改查/pom.xml",
-        "sizeFormatted": "1.3 KB"
+        "sizeFormatted": "1.3 KB",
+        "project": "mybatis的增删改查"
       },
       {
         "name": "IUser.java",
         "type": "Java代码",
         "size": 102,
-        "path": "E:/学习/mybatis的增删改查/src/main/java/IUser.java",
-        "relPath": "mybatis的增删改查/src/main/java/IUser.java",
-        "sizeFormatted": "102 B"
+        "sizeFormatted": "102 B",
+        "project": "mybatis的增删改查"
       },
       {
         "name": "qwe.java",
         "type": "Java代码",
         "size": 175,
-        "path": "E:/学习/mybatis的增删改查/src/main/java/qwe.java",
-        "relPath": "mybatis的增删改查/src/main/java/qwe.java",
-        "sizeFormatted": "175 B"
+        "sizeFormatted": "175 B",
+        "project": "mybatis的增删改查"
       },
       {
         "name": "StudentDao.java",
         "type": "Java代码",
         "size": 1412,
-        "path": "E:/学习/mybatis的增删改查/src/main/java/StudentDao.java",
-        "relPath": "mybatis的增删改查/src/main/java/StudentDao.java",
-        "sizeFormatted": "1.4 KB"
+        "sizeFormatted": "1.4 KB",
+        "project": "mybatis的增删改查"
       },
       {
         "name": "test.java",
         "type": "Java代码",
         "size": 26,
-        "path": "E:/学习/mybatis的增删改查/src/main/java/test.java",
-        "relPath": "mybatis的增删改查/src/main/java/test.java",
-        "sizeFormatted": "26 B"
+        "sizeFormatted": "26 B",
+        "project": "mybatis的增删改查"
       },
       {
         "name": "user.java",
         "type": "Java代码",
         "size": 704,
-        "path": "E:/学习/mybatis的增删改查/src/main/java/user.java",
-        "relPath": "mybatis的增删改查/src/main/java/user.java",
-        "sizeFormatted": "704 B"
+        "sizeFormatted": "704 B",
+        "project": "mybatis的增删改查"
       },
       {
         "name": "sqlMapConfig.xml",
         "type": "YAML配置",
         "size": 1028,
-        "path": "E:/学习/mybatis的增删改查/src/main/resources/sqlMapConfig.xml",
-        "relPath": "mybatis的增删改查/src/main/resources/sqlMapConfig.xml",
-        "sizeFormatted": "1.0 KB"
+        "sizeFormatted": "1.0 KB",
+        "project": "mybatis的增删改查"
       },
       {
         "name": "StudentMapper.xml",
         "type": "YAML配置",
         "size": 554,
-        "path": "E:/学习/mybatis的增删改查/src/main/resources/StudentMapper.xml",
-        "relPath": "mybatis的增删改查/src/main/resources/StudentMapper.xml",
-        "sizeFormatted": "554 B"
+        "sizeFormatted": "554 B",
+        "project": "mybatis的增删改查"
       },
       {
         "name": "pom.xml",
         "type": "YAML配置",
         "size": 2232,
-        "path": "E:/学习/Springboot/pom.xml",
-        "relPath": "Springboot/pom.xml",
-        "sizeFormatted": "2.2 KB"
+        "sizeFormatted": "2.2 KB",
+        "project": "Springboot"
       },
       {
         "name": "HelloApplication.java",
         "type": "Java代码",
         "size": 317,
-        "path": "E:/学习/Springboot/src/main/java/com/zhao/hello/HelloApplication.java",
-        "relPath": "Springboot/src/main/java/com/zhao/hello/HelloApplication.java",
-        "sizeFormatted": "317 B"
+        "sizeFormatted": "317 B",
+        "project": "Springboot"
       },
       {
         "name": "LoginHandleInterceptor.java",
         "type": "Java代码",
         "size": 770,
-        "path": "E:/学习/Springboot/src/main/java/com/zhao/hello/config/LoginHandleInterceptor.java",
-        "relPath": "Springboot/src/main/java/com/zhao/hello/config/LoginHandleInterceptor.java",
-        "sizeFormatted": "770 B"
+        "sizeFormatted": "770 B",
+        "project": "Springboot"
       },
       {
         "name": "MyLocaleResolver.java",
         "type": "Java代码",
         "size": 988,
-        "path": "E:/学习/Springboot/src/main/java/com/zhao/hello/config/MyLocaleResolver.java",
-        "relPath": "Springboot/src/main/java/com/zhao/hello/config/MyLocaleResolver.java",
-        "sizeFormatted": "988 B"
+        "sizeFormatted": "988 B",
+        "project": "Springboot"
       },
       {
         "name": "MyMvcConfig.java",
         "type": "Java代码",
         "size": 1236,
-        "path": "E:/学习/Springboot/src/main/java/com/zhao/hello/config/MyMvcConfig.java",
-        "relPath": "Springboot/src/main/java/com/zhao/hello/config/MyMvcConfig.java",
-        "sizeFormatted": "1.2 KB"
+        "sizeFormatted": "1.2 KB",
+        "project": "Springboot"
       },
       {
         "name": "EmployeeController.java",
         "type": "Java代码",
         "size": 2251,
-        "path": "E:/学习/Springboot/src/main/java/com/zhao/hello/controller/EmployeeController.java",
-        "relPath": "Springboot/src/main/java/com/zhao/hello/controller/EmployeeController.java",
-        "sizeFormatted": "2.2 KB"
+        "sizeFormatted": "2.2 KB",
+        "project": "Springboot"
       },
       {
         "name": "IndexController.java",
         "type": "Java代码",
         "size": 207,
-        "path": "E:/学习/Springboot/src/main/java/com/zhao/hello/controller/IndexController.java",
-        "relPath": "Springboot/src/main/java/com/zhao/hello/controller/IndexController.java",
-        "sizeFormatted": "207 B"
+        "sizeFormatted": "207 B",
+        "project": "Springboot"
       },
       {
         "name": "loginController.java",
         "type": "Java代码",
         "size": 1040,
-        "path": "E:/学习/Springboot/src/main/java/com/zhao/hello/controller/loginController.java",
-        "relPath": "Springboot/src/main/java/com/zhao/hello/controller/loginController.java",
-        "sizeFormatted": "1.0 KB"
+        "sizeFormatted": "1.0 KB",
+        "project": "Springboot"
       },
       {
         "name": "DepartmentDao.java",
         "type": "Java代码",
         "size": 1057,
-        "path": "E:/学习/Springboot/src/main/java/com/zhao/hello/dao/DepartmentDao.java",
-        "relPath": "Springboot/src/main/java/com/zhao/hello/dao/DepartmentDao.java",
-        "sizeFormatted": "1.0 KB"
+        "sizeFormatted": "1.0 KB",
+        "project": "Springboot"
       },
       {
         "name": "EmployeeDao.java",
         "type": "Java代码",
         "size": 1862,
-        "path": "E:/学习/Springboot/src/main/java/com/zhao/hello/dao/EmployeeDao.java",
-        "relPath": "Springboot/src/main/java/com/zhao/hello/dao/EmployeeDao.java",
-        "sizeFormatted": "1.8 KB"
+        "sizeFormatted": "1.8 KB",
+        "project": "Springboot"
       },
       {
         "name": "Department.java",
         "type": "Java代码",
         "size": 273,
-        "path": "E:/学习/Springboot/src/main/java/com/zhao/hello/pojo/Department.java",
-        "relPath": "Springboot/src/main/java/com/zhao/hello/pojo/Department.java",
-        "sizeFormatted": "273 B"
+        "sizeFormatted": "273 B",
+        "project": "Springboot"
       },
       {
         "name": "Employee.java",
         "type": "Java代码",
         "size": 707,
-        "path": "E:/学习/Springboot/src/main/java/com/zhao/hello/pojo/Employee.java",
-        "relPath": "Springboot/src/main/java/com/zhao/hello/pojo/Employee.java",
-        "sizeFormatted": "707 B"
+        "sizeFormatted": "707 B",
+        "project": "Springboot"
       },
       {
         "name": "bootstrap.min.css",
         "type": "CSS文件",
         "size": 145094,
-        "path": "E:/学习/Springboot/src/main/resources/static/css/bootstrap.min.css",
-        "relPath": "Springboot/src/main/resources/static/css/bootstrap.min.css",
-        "sizeFormatted": "141.7 KB"
+        "sizeFormatted": "141.7 KB",
+        "project": "Springboot"
       },
       {
         "name": "dashboard.css",
         "type": "CSS文件",
         "size": 1539,
-        "path": "E:/学习/Springboot/src/main/resources/static/css/dashboard.css",
-        "relPath": "Springboot/src/main/resources/static/css/dashboard.css",
-        "sizeFormatted": "1.5 KB"
+        "sizeFormatted": "1.5 KB",
+        "project": "Springboot"
       },
       {
         "name": "signin.css",
         "type": "CSS文件",
         "size": 906,
-        "path": "E:/学习/Springboot/src/main/resources/static/css/signin.css",
-        "relPath": "Springboot/src/main/resources/static/css/signin.css",
-        "sizeFormatted": "906 B"
+        "sizeFormatted": "906 B",
+        "project": "Springboot"
       },
       {
         "name": "bootstrap.min.js",
         "type": "JavaScript文件",
         "size": 48944,
-        "path": "E:/学习/Springboot/src/main/resources/static/js/bootstrap.min.js",
-        "relPath": "Springboot/src/main/resources/static/js/bootstrap.min.js",
-        "sizeFormatted": "47.8 KB"
+        "sizeFormatted": "47.8 KB",
+        "project": "Springboot"
       },
       {
         "name": "Chart.min.js",
         "type": "JavaScript文件",
         "size": 157843,
-        "path": "E:/学习/Springboot/src/main/resources/static/js/Chart.min.js",
-        "relPath": "Springboot/src/main/resources/static/js/Chart.min.js",
-        "sizeFormatted": "154.1 KB"
+        "sizeFormatted": "154.1 KB",
+        "project": "Springboot"
       },
       {
         "name": "feather.min.js",
         "type": "JavaScript文件",
         "size": 71973,
-        "path": "E:/学习/Springboot/src/main/resources/static/js/feather.min.js",
-        "relPath": "Springboot/src/main/resources/static/js/feather.min.js",
-        "sizeFormatted": "70.3 KB"
+        "sizeFormatted": "70.3 KB",
+        "project": "Springboot"
       },
       {
         "name": "jquery-3.2.1.slim.min.js",
         "type": "JavaScript文件",
         "size": 69597,
-        "path": "E:/学习/Springboot/src/main/resources/static/js/jquery-3.2.1.slim.min.js",
-        "relPath": "Springboot/src/main/resources/static/js/jquery-3.2.1.slim.min.js",
-        "sizeFormatted": "68.0 KB"
+        "sizeFormatted": "68.0 KB",
+        "project": "Springboot"
       },
       {
         "name": "popper.min.js",
         "type": "JavaScript文件",
         "size": 19188,
-        "path": "E:/学习/Springboot/src/main/resources/static/js/popper.min.js",
-        "relPath": "Springboot/src/main/resources/static/js/popper.min.js",
-        "sizeFormatted": "18.7 KB"
+        "sizeFormatted": "18.7 KB",
+        "project": "Springboot"
       },
       {
         "name": "404.html",
         "type": "HTML文件",
         "size": 10347,
-        "path": "E:/学习/Springboot/src/main/resources/templates/404.html",
-        "relPath": "Springboot/src/main/resources/templates/404.html",
-        "sizeFormatted": "10.1 KB"
+        "sizeFormatted": "10.1 KB",
+        "project": "Springboot"
       },
       {
         "name": "dashboard.html",
         "type": "HTML文件",
         "size": 4584,
-        "path": "E:/学习/Springboot/src/main/resources/templates/dashboard.html",
-        "relPath": "Springboot/src/main/resources/templates/dashboard.html",
-        "sizeFormatted": "4.5 KB"
+        "sizeFormatted": "4.5 KB",
+        "project": "Springboot"
       },
       {
         "name": "index.html",
         "type": "HTML文件",
         "size": 1752,
-        "path": "E:/学习/Springboot/src/main/resources/templates/index.html",
-        "relPath": "Springboot/src/main/resources/templates/index.html",
-        "sizeFormatted": "1.7 KB"
+        "sizeFormatted": "1.7 KB",
+        "project": "Springboot"
       },
       {
         "name": "commons.html",
         "type": "HTML文件",
         "size": 9140,
-        "path": "E:/学习/Springboot/src/main/resources/templates/commons/commons.html",
-        "relPath": "Springboot/src/main/resources/templates/commons/commons.html",
-        "sizeFormatted": "8.9 KB"
+        "sizeFormatted": "8.9 KB",
+        "project": "Springboot"
       },
       {
         "name": "add.html",
         "type": "HTML文件",
         "size": 4745,
-        "path": "E:/学习/Springboot/src/main/resources/templates/emp/add.html",
-        "relPath": "Springboot/src/main/resources/templates/emp/add.html",
-        "sizeFormatted": "4.6 KB"
+        "sizeFormatted": "4.6 KB",
+        "project": "Springboot"
       },
       {
         "name": "list.html",
         "type": "HTML文件",
         "size": 3785,
-        "path": "E:/学习/Springboot/src/main/resources/templates/emp/list.html",
-        "relPath": "Springboot/src/main/resources/templates/emp/list.html",
-        "sizeFormatted": "3.7 KB"
+        "sizeFormatted": "3.7 KB",
+        "project": "Springboot"
       },
       {
         "name": "update.html",
         "type": "HTML文件",
         "size": 5077,
-        "path": "E:/学习/Springboot/src/main/resources/templates/emp/update.html",
-        "relPath": "Springboot/src/main/resources/templates/emp/update.html",
-        "sizeFormatted": "5.0 KB"
+        "sizeFormatted": "5.0 KB",
+        "project": "Springboot"
       },
       {
         "name": "HelloApplicationTests.java",
         "type": "Java代码",
         "size": 1387,
-        "path": "E:/学习/Springboot/src/test/java/com/zhao/hello/HelloApplicationTests.java",
-        "relPath": "Springboot/src/test/java/com/zhao/hello/HelloApplicationTests.java",
-        "sizeFormatted": "1.4 KB"
+        "sizeFormatted": "1.4 KB",
+        "project": "Springboot"
       },
       {
         "name": "pom.xml",
         "type": "YAML配置",
         "size": 3996,
-        "path": "E:/学习/TimChat/pom.xml",
-        "relPath": "TimChat/pom.xml",
-        "sizeFormatted": "3.9 KB"
+        "sizeFormatted": "3.9 KB",
+        "project": "TimChat"
       },
       {
         "name": "ChatRoomApplication.java",
         "type": "Java代码",
         "size": 321,
-        "path": "E:/学习/TimChat/src/main/java/timchat/beta/ChatRoomApplication.java",
-        "relPath": "TimChat/src/main/java/timchat/beta/ChatRoomApplication.java",
-        "sizeFormatted": "321 B"
+        "sizeFormatted": "321 B",
+        "project": "TimChat"
       },
       {
         "name": "IdUtils.java",
         "type": "Java代码",
         "size": 508,
-        "path": "E:/学习/TimChat/src/main/java/timchat/beta/component/IdUtils.java",
-        "relPath": "TimChat/src/main/java/timchat/beta/component/IdUtils.java",
-        "sizeFormatted": "508 B"
+        "sizeFormatted": "508 B",
+        "project": "TimChat"
       },
       {
         "name": "JsonUtils.java",
         "type": "Java代码",
         "size": 286,
-        "path": "E:/学习/TimChat/src/main/java/timchat/beta/component/JsonUtils.java",
-        "relPath": "TimChat/src/main/java/timchat/beta/component/JsonUtils.java",
-        "sizeFormatted": "286 B"
+        "sizeFormatted": "286 B",
+        "project": "TimChat"
       },
       {
         "name": "CorsConfig.java",
         "type": "Java代码",
         "size": 1022,
-        "path": "E:/学习/TimChat/src/main/java/timchat/beta/config/CorsConfig.java",
-        "relPath": "TimChat/src/main/java/timchat/beta/config/CorsConfig.java",
-        "sizeFormatted": "1022 B"
+        "sizeFormatted": "1022 B",
+        "project": "TimChat"
       },
       {
         "name": "SwaggerConfig.java",
         "type": "Java代码",
         "size": 1262,
-        "path": "E:/学习/TimChat/src/main/java/timchat/beta/config/SwaggerConfig.java",
-        "relPath": "TimChat/src/main/java/timchat/beta/config/SwaggerConfig.java",
-        "sizeFormatted": "1.2 KB"
+        "sizeFormatted": "1.2 KB",
+        "project": "TimChat"
       },
       {
         "name": "WebMvcConfig.java",
         "type": "Java代码",
         "size": 799,
-        "path": "E:/学习/TimChat/src/main/java/timchat/beta/config/WebMvcConfig.java",
-        "relPath": "TimChat/src/main/java/timchat/beta/config/WebMvcConfig.java",
-        "sizeFormatted": "799 B"
+        "sizeFormatted": "799 B",
+        "project": "TimChat"
       },
       {
         "name": "WebSocketConfig.java",
         "type": "Java代码",
         "size": 551,
-        "path": "E:/学习/TimChat/src/main/java/timchat/beta/config/WebSocketConfig.java",
-        "relPath": "TimChat/src/main/java/timchat/beta/config/WebSocketConfig.java",
-        "sizeFormatted": "551 B"
+        "sizeFormatted": "551 B",
+        "project": "TimChat"
       },
       {
         "name": "UserController.java",
         "type": "Java代码",
         "size": 3022,
-        "path": "E:/学习/TimChat/src/main/java/timchat/beta/Controller/UserController.java",
-        "relPath": "TimChat/src/main/java/timchat/beta/Controller/UserController.java",
-        "sizeFormatted": "3.0 KB"
+        "sizeFormatted": "3.0 KB",
+        "project": "TimChat"
       },
       {
         "name": "WebSocketController.java",
         "type": "Java代码",
         "size": 4700,
-        "path": "E:/学习/TimChat/src/main/java/timchat/beta/Controller/WebSocketController.java",
-        "relPath": "TimChat/src/main/java/timchat/beta/Controller/WebSocketController.java",
-        "sizeFormatted": "4.6 KB"
+        "sizeFormatted": "4.6 KB",
+        "project": "TimChat"
       },
       {
         "name": "User.java",
         "type": "Java代码",
         "size": 263,
-        "path": "E:/学习/TimChat/src/main/java/timchat/beta/entiy/User.java",
-        "relPath": "TimChat/src/main/java/timchat/beta/entiy/User.java",
-        "sizeFormatted": "263 B"
+        "sizeFormatted": "263 B",
+        "project": "TimChat"
       },
       {
         "name": "UserMapper.java",
         "type": "Java代码",
         "size": 407,
-        "path": "E:/学习/TimChat/src/main/java/timchat/beta/Mapper/UserMapper.java",
-        "relPath": "TimChat/src/main/java/timchat/beta/Mapper/UserMapper.java",
-        "sizeFormatted": "407 B"
+        "sizeFormatted": "407 B",
+        "project": "TimChat"
       },
       {
         "name": "UserMapper.xml",
         "type": "YAML配置",
         "size": 852,
-        "path": "E:/学习/TimChat/src/main/resources/mapper/UserMapper.xml",
-        "relPath": "TimChat/src/main/resources/mapper/UserMapper.xml",
-        "sizeFormatted": "852 B"
+        "sizeFormatted": "852 B",
+        "project": "TimChat"
       },
       {
         "name": "ChatRoomApplicationTests.java",
         "type": "Java代码",
         "size": 215,
-        "path": "E:/学习/TimChat/src/test/java/timchat/beta/ChatRoomApplicationTests.java",
-        "relPath": "TimChat/src/test/java/timchat/beta/ChatRoomApplicationTests.java",
-        "sizeFormatted": "215 B"
+        "sizeFormatted": "215 B",
+        "project": "TimChat"
       },
       {
         "name": "pom.xml",
         "type": "YAML配置",
         "size": 1781,
-        "path": "E:/学习/west_two_mybatis/pom.xml",
-        "relPath": "west_two_mybatis/pom.xml",
-        "sizeFormatted": "1.7 KB"
+        "sizeFormatted": "1.7 KB",
+        "project": "west_two_mybatis"
       },
       {
         "name": "README.md",
         "type": "文档",
         "size": 75,
-        "path": "E:/学习/west_two_mybatis/README.md",
-        "relPath": "west_two_mybatis/README.md",
-        "sizeFormatted": "75 B"
+        "sizeFormatted": "75 B",
+        "project": "west_two_mybatis"
       },
       {
         "name": "建表文件.txt",
         "type": "文档",
         "size": 892,
-        "path": "E:/学习/west_two_mybatis/建表文件.txt",
-        "relPath": "west_two_mybatis/建表文件.txt",
-        "sizeFormatted": "892 B"
+        "sizeFormatted": "892 B",
+        "project": "west_two_mybatis"
       },
       {
         "name": "pom.xml",
         "type": "YAML配置",
         "size": 1245,
-        "path": "E:/学习/west_two_mybatis/datebase_Conn/pom.xml",
-        "relPath": "west_two_mybatis/datebase_Conn/pom.xml",
-        "sizeFormatted": "1.2 KB"
+        "sizeFormatted": "1.2 KB",
+        "project": "west_two_mybatis"
       },
       {
         "name": "weatherSystem.java",
         "type": "Java代码",
         "size": 996,
-        "path": "E:/学习/west_two_mybatis/datebase_Conn/src/main/java/weatherSystem.java",
-        "relPath": "west_two_mybatis/datebase_Conn/src/main/java/weatherSystem.java",
-        "sizeFormatted": "996 B"
+        "sizeFormatted": "996 B",
+        "project": "west_two_mybatis"
       },
       {
         "name": "CityDao.java",
         "type": "Java代码",
         "size": 184,
-        "path": "E:/学习/west_two_mybatis/datebase_Conn/src/main/java/Dao/CityDao.java",
-        "relPath": "west_two_mybatis/datebase_Conn/src/main/java/Dao/CityDao.java",
-        "sizeFormatted": "184 B"
+        "sizeFormatted": "184 B",
+        "project": "west_two_mybatis"
       },
       {
         "name": "City_CRUD.java",
         "type": "Java代码",
         "size": 1030,
-        "path": "E:/学习/west_two_mybatis/datebase_Conn/src/main/java/Dao/City_CRUD.java",
-        "relPath": "west_two_mybatis/datebase_Conn/src/main/java/Dao/City_CRUD.java",
-        "sizeFormatted": "1.0 KB"
+        "sizeFormatted": "1.0 KB",
+        "project": "west_two_mybatis"
       },
       {
         "name": "weatherMapper.java",
         "type": "Java代码",
         "size": 250,
-        "path": "E:/学习/west_two_mybatis/datebase_Conn/src/main/java/Dao/weatherMapper.java",
-        "relPath": "west_two_mybatis/datebase_Conn/src/main/java/Dao/weatherMapper.java",
-        "sizeFormatted": "250 B"
+        "sizeFormatted": "250 B",
+        "project": "west_two_mybatis"
       },
       {
         "name": "weather_CRUD.java",
         "type": "Java代码",
         "size": 1539,
-        "path": "E:/学习/west_two_mybatis/datebase_Conn/src/main/java/Dao/weather_CRUD.java",
-        "relPath": "west_two_mybatis/datebase_Conn/src/main/java/Dao/weather_CRUD.java",
-        "sizeFormatted": "1.5 KB"
+        "sizeFormatted": "1.5 KB",
+        "project": "west_two_mybatis"
       },
       {
         "name": "City.java",
         "type": "Java代码",
         "size": 1305,
-        "path": "E:/学习/west_two_mybatis/datebase_Conn/src/main/java/pojo/City.java",
-        "relPath": "west_two_mybatis/datebase_Conn/src/main/java/pojo/City.java",
-        "sizeFormatted": "1.3 KB"
+        "sizeFormatted": "1.3 KB",
+        "project": "west_two_mybatis"
       },
       {
         "name": "getcity.java",
         "type": "Java代码",
         "size": 3337,
-        "path": "E:/学习/west_two_mybatis/datebase_Conn/src/main/java/pojo/getcity.java",
-        "relPath": "west_two_mybatis/datebase_Conn/src/main/java/pojo/getcity.java",
-        "sizeFormatted": "3.3 KB"
+        "sizeFormatted": "3.3 KB",
+        "project": "west_two_mybatis"
       },
       {
         "name": "getWeather.java",
         "type": "Java代码",
         "size": 4707,
-        "path": "E:/学习/west_two_mybatis/datebase_Conn/src/main/java/pojo/getWeather.java",
-        "relPath": "west_two_mybatis/datebase_Conn/src/main/java/pojo/getWeather.java",
-        "sizeFormatted": "4.6 KB"
+        "sizeFormatted": "4.6 KB",
+        "project": "west_two_mybatis"
       },
       {
         "name": "weather.java",
         "type": "Java代码",
         "size": 1784,
-        "path": "E:/学习/west_two_mybatis/datebase_Conn/src/main/java/pojo/weather.java",
-        "relPath": "west_two_mybatis/datebase_Conn/src/main/java/pojo/weather.java",
-        "sizeFormatted": "1.7 KB"
+        "sizeFormatted": "1.7 KB",
+        "project": "west_two_mybatis"
       },
       {
         "name": "MybatisUtils.java",
         "type": "Java代码",
         "size": 809,
-        "path": "E:/学习/west_two_mybatis/datebase_Conn/src/main/java/utils/MybatisUtils.java",
-        "relPath": "west_two_mybatis/datebase_Conn/src/main/java/utils/MybatisUtils.java",
-        "sizeFormatted": "809 B"
+        "sizeFormatted": "809 B",
+        "project": "west_two_mybatis"
       },
       {
         "name": "CityMapper.xml",
         "type": "YAML配置",
         "size": 641,
-        "path": "E:/学习/west_two_mybatis/datebase_Conn/src/main/resources/CityMapper.xml",
-        "relPath": "west_two_mybatis/datebase_Conn/src/main/resources/CityMapper.xml",
-        "sizeFormatted": "641 B"
+        "sizeFormatted": "641 B",
+        "project": "west_two_mybatis"
       },
       {
         "name": "mybatis-config.xml",
         "type": "YAML配置",
         "size": 1092,
-        "path": "E:/学习/west_two_mybatis/datebase_Conn/src/main/resources/mybatis-config.xml",
-        "relPath": "west_two_mybatis/datebase_Conn/src/main/resources/mybatis-config.xml",
-        "sizeFormatted": "1.1 KB"
+        "sizeFormatted": "1.1 KB",
+        "project": "west_two_mybatis"
       },
       {
         "name": "weatherMapper.xml",
         "type": "YAML配置",
         "size": 906,
-        "path": "E:/学习/west_two_mybatis/datebase_Conn/src/main/resources/weatherMapper.xml",
-        "relPath": "west_two_mybatis/datebase_Conn/src/main/resources/weatherMapper.xml",
-        "sizeFormatted": "906 B"
+        "sizeFormatted": "906 B",
+        "project": "west_two_mybatis"
       },
       {
         "name": "CityDaoTest.java",
         "type": "Java代码",
         "size": 532,
-        "path": "E:/学习/west_two_mybatis/datebase_Conn/src/test/java/Dao/CityDaoTest.java",
-        "relPath": "west_two_mybatis/datebase_Conn/src/test/java/Dao/CityDaoTest.java",
-        "sizeFormatted": "532 B"
+        "sizeFormatted": "532 B",
+        "project": "west_two_mybatis"
       },
       {
         "name": "weatherDaoTest.java",
         "type": "Java代码",
         "size": 522,
-        "path": "E:/学习/west_two_mybatis/datebase_Conn/src/test/java/Dao/weatherDaoTest.java",
-        "relPath": "west_two_mybatis/datebase_Conn/src/test/java/Dao/weatherDaoTest.java",
-        "sizeFormatted": "522 B"
+        "sizeFormatted": "522 B",
+        "project": "west_two_mybatis"
       },
       {
         "name": "pyvenv.cfg",
         "type": "YAML配置",
         "size": 88,
-        "path": "E:/学习/人工智能/pyvenv.cfg",
-        "relPath": "人工智能/pyvenv.cfg",
-        "sizeFormatted": "88 B"
+        "sizeFormatted": "88 B",
+        "project": "人工智能"
       },
       {
         "name": "activate.bat",
         "type": "Shell脚本",
         "size": 1027,
-        "path": "E:/学习/人工智能/Scripts/activate.bat",
-        "relPath": "人工智能/Scripts/activate.bat",
-        "sizeFormatted": "1.0 KB"
+        "sizeFormatted": "1.0 KB",
+        "project": "人工智能"
       },
       {
         "name": "Activate.ps1",
         "type": "Shell脚本",
         "size": 1498,
-        "path": "E:/学习/人工智能/Scripts/Activate.ps1",
-        "relPath": "人工智能/Scripts/Activate.ps1",
-        "sizeFormatted": "1.5 KB"
+        "sizeFormatted": "1.5 KB",
+        "project": "人工智能"
       },
       {
         "name": "deactivate.bat",
         "type": "Shell脚本",
         "size": 368,
-        "path": "E:/学习/人工智能/Scripts/deactivate.bat",
-        "relPath": "人工智能/Scripts/deactivate.bat",
-        "sizeFormatted": "368 B"
+        "sizeFormatted": "368 B",
+        "project": "人工智能"
       },
       {
         "name": "manage.py",
         "type": "Python代码",
         "size": 684,
-        "path": "E:/学习/后端/manage.py",
-        "relPath": "后端/manage.py",
-        "sizeFormatted": "684 B"
+        "sizeFormatted": "684 B",
+        "project": "后端"
       },
       {
         "name": "例会 - 副本.pptx",
         "type": "PPT课件",
         "size": 1094333,
-        "path": "E:/学习/后端/load/例会 - 副本.pptx",
-        "relPath": "后端/load/例会 - 副本.pptx",
-        "sizeFormatted": "1.0 MB"
+        "sizeFormatted": "1.0 MB",
+        "project": "后端"
       },
       {
         "name": "基础1.py",
         "type": "Python代码",
         "size": 148,
-        "path": "E:/学习/后端/load/基础1.py",
-        "relPath": "后端/load/基础1.py",
-        "sizeFormatted": "148 B"
+        "sizeFormatted": "148 B",
+        "project": "后端"
       },
       {
         "name": "index.html",
         "type": "HTML文件",
         "size": 362,
-        "path": "E:/学习/后端/templates/upload/index.html",
-        "relPath": "后端/templates/upload/index.html",
-        "sizeFormatted": "362 B"
+        "sizeFormatted": "362 B",
+        "project": "后端"
       },
       {
         "name": "m1.html",
         "type": "HTML文件",
         "size": 4362,
-        "path": "E:/学习/后端/templates/upload/m1.html",
-        "relPath": "后端/templates/upload/m1.html",
-        "sizeFormatted": "4.3 KB"
+        "sizeFormatted": "4.3 KB",
+        "project": "后端"
       },
       {
         "name": "success.html",
         "type": "HTML文件",
         "size": 4152,
-        "path": "E:/学习/后端/templates/upload/success.html",
-        "relPath": "后端/templates/upload/success.html",
-        "sizeFormatted": "4.1 KB"
+        "sizeFormatted": "4.1 KB",
+        "project": "后端"
       },
       {
         "name": "test.html",
         "type": "HTML文件",
         "size": 895,
-        "path": "E:/学习/后端/templates/upload/test.html",
-        "relPath": "后端/templates/upload/test.html",
-        "sizeFormatted": "895 B"
+        "sizeFormatted": "895 B",
+        "project": "后端"
       },
       {
         "name": "__init__.py",
         "type": "Python代码",
         "size": 0,
-        "path": "E:/学习/后端/templates/upload/__init__.py",
-        "relPath": "后端/templates/upload/__init__.py",
-        "sizeFormatted": "0 B"
+        "sizeFormatted": "0 B",
+        "project": "后端"
       },
       {
         "name": "manage.py",
         "type": "Python代码",
         "size": 684,
-        "path": "E:/学习/后端/upload/manage.py",
-        "relPath": "后端/upload/manage.py",
-        "sizeFormatted": "684 B"
+        "sizeFormatted": "684 B",
+        "project": "后端"
       },
       {
         "name": "asgi.py",
         "type": "Python代码",
         "size": 405,
-        "path": "E:/学习/后端/upload/upload/asgi.py",
-        "relPath": "后端/upload/upload/asgi.py",
-        "sizeFormatted": "405 B"
+        "sizeFormatted": "405 B",
+        "project": "后端"
       },
       {
         "name": "settings.py",
         "type": "Python代码",
         "size": 3364,
-        "path": "E:/学习/后端/upload/upload/settings.py",
-        "relPath": "后端/upload/upload/settings.py",
-        "sizeFormatted": "3.3 KB"
+        "sizeFormatted": "3.3 KB",
+        "project": "后端"
       },
       {
         "name": "urls.py",
         "type": "Python代码",
         "size": 769,
-        "path": "E:/学习/后端/upload/upload/urls.py",
-        "relPath": "后端/upload/upload/urls.py",
-        "sizeFormatted": "769 B"
+        "sizeFormatted": "769 B",
+        "project": "后端"
       },
       {
         "name": "views.py",
         "type": "Python代码",
         "size": 651,
-        "path": "E:/学习/后端/upload/upload/views.py",
-        "relPath": "后端/upload/upload/views.py",
-        "sizeFormatted": "651 B"
+        "sizeFormatted": "651 B",
+        "project": "后端"
       },
       {
         "name": "wsgi.py",
         "type": "Python代码",
         "size": 405,
-        "path": "E:/学习/后端/upload/upload/wsgi.py",
-        "relPath": "后端/upload/upload/wsgi.py",
-        "sizeFormatted": "405 B"
+        "sizeFormatted": "405 B",
+        "project": "后端"
       },
       {
         "name": "__init__.py",
         "type": "Python代码",
         "size": 0,
-        "path": "E:/学习/后端/upload/upload/__init__.py",
-        "relPath": "后端/upload/upload/__init__.py",
-        "sizeFormatted": "0 B"
+        "sizeFormatted": "0 B",
+        "project": "后端"
       },
       {
         "name": "asgi.py",
         "type": "Python代码",
         "size": 405,
-        "path": "E:/学习/后端/后端/asgi.py",
-        "relPath": "后端/后端/asgi.py",
-        "sizeFormatted": "405 B"
+        "sizeFormatted": "405 B",
+        "project": "后端"
       },
       {
         "name": "settings.py",
         "type": "Python代码",
         "size": 3480,
-        "path": "E:/学习/后端/后端/settings.py",
-        "relPath": "后端/后端/settings.py",
-        "sizeFormatted": "3.4 KB"
+        "sizeFormatted": "3.4 KB",
+        "project": "后端"
       },
       {
         "name": "urls.py",
         "type": "Python代码",
         "size": 919,
-        "path": "E:/学习/后端/后端/urls.py",
-        "relPath": "后端/后端/urls.py",
-        "sizeFormatted": "919 B"
+        "sizeFormatted": "919 B",
+        "project": "后端"
       },
       {
         "name": "wsgi.py",
         "type": "Python代码",
         "size": 405,
-        "path": "E:/学习/后端/后端/wsgi.py",
-        "relPath": "后端/后端/wsgi.py",
-        "sizeFormatted": "405 B"
+        "sizeFormatted": "405 B",
+        "project": "后端"
       },
       {
         "name": "__init__.py",
         "type": "Python代码",
         "size": 0,
-        "path": "E:/学习/后端/后端/__init__.py",
-        "relPath": "后端/后端/__init__.py",
-        "sizeFormatted": "0 B"
+        "sizeFormatted": "0 B",
+        "project": "后端"
       },
       {
         "name": "main.py",
         "type": "Python代码",
         "size": 544,
-        "path": "E:/学习/天气地图/main.py",
-        "relPath": "天气地图/main.py",
-        "sizeFormatted": "544 B"
+        "sizeFormatted": "544 B",
+        "project": "天气地图"
       },
       {
         "name": "tcs.py",
         "type": "Python代码",
         "size": 5548,
-        "path": "E:/学习/天气地图/tcs.py",
-        "relPath": "天气地图/tcs.py",
-        "sizeFormatted": "5.4 KB"
+        "sizeFormatted": "5.4 KB",
+        "project": "天气地图"
       },
       {
         "name": "test.py",
         "type": "Python代码",
         "size": 621,
-        "path": "E:/学习/天气地图/test.py",
-        "relPath": "天气地图/test.py",
-        "sizeFormatted": "621 B"
+        "sizeFormatted": "621 B",
+        "project": "天气地图"
       },
       {
         "name": "f1.html",
         "type": "HTML文件",
         "size": 102161,
-        "path": "E:/学习/天气地图/地图/f1.html",
-        "relPath": "天气地图/地图/f1.html",
-        "sizeFormatted": "99.8 KB"
+        "sizeFormatted": "99.8 KB",
+        "project": "天气地图"
       },
       {
         "name": "MySQL.py",
         "type": "Python代码",
         "size": 454,
-        "path": "E:/学习/天气地图/地图/MySQL.py",
-        "relPath": "天气地图/地图/MySQL.py",
-        "sizeFormatted": "454 B"
+        "sizeFormatted": "454 B",
+        "project": "天气地图"
       },
       {
         "name": "openweather.py",
         "type": "Python代码",
         "size": 1597,
-        "path": "E:/学习/天气地图/地图/openweather.py",
-        "relPath": "天气地图/地图/openweather.py",
-        "sizeFormatted": "1.6 KB"
+        "sizeFormatted": "1.6 KB",
+        "project": "天气地图"
       },
       {
         "name": "__init__.py",
         "type": "Python代码",
         "size": 0,
-        "path": "E:/学习/天气地图/地图/__init__.py",
-        "relPath": "天气地图/地图/__init__.py",
-        "sizeFormatted": "0 B"
+        "sizeFormatted": "0 B",
+        "project": "天气地图"
       },
       {
         "name": "历史天气.py",
         "type": "Python代码",
         "size": 2724,
-        "path": "E:/学习/天气地图/地图/历史天气.py",
-        "relPath": "天气地图/地图/历史天气.py",
-        "sizeFormatted": "2.7 KB"
+        "sizeFormatted": "2.7 KB",
+        "project": "天气地图"
       },
       {
         "name": "国外天气.py",
         "type": "Python代码",
         "size": 2190,
-        "path": "E:/学习/天气地图/地图/国外天气.py",
-        "relPath": "天气地图/地图/国外天气.py",
-        "sizeFormatted": "2.1 KB"
+        "sizeFormatted": "2.1 KB",
+        "project": "天气地图"
       },
       {
         "name": "国外经纬度.py",
         "type": "Python代码",
         "size": 994,
-        "path": "E:/学习/天气地图/地图/国外经纬度.py",
-        "relPath": "天气地图/地图/国外经纬度.py",
-        "sizeFormatted": "994 B"
+        "sizeFormatted": "994 B",
+        "project": "天气地图"
       },
       {
         "name": "地图文件.py",
         "type": "Python代码",
         "size": 1405,
-        "path": "E:/学习/天气地图/地图/地图文件.py",
-        "relPath": "天气地图/地图/地图文件.py",
-        "sizeFormatted": "1.4 KB"
+        "sizeFormatted": "1.4 KB",
+        "project": "天气地图"
       },
       {
         "name": "大洋洲天气.py",
         "type": "Python代码",
         "size": 2081,
-        "path": "E:/学习/天气地图/地图/大洋洲天气.py",
-        "relPath": "天气地图/地图/大洋洲天气.py",
-        "sizeFormatted": "2.0 KB"
+        "sizeFormatted": "2.0 KB",
+        "project": "天气地图"
       },
       {
         "name": "天气地图主体.py",
         "type": "Python代码",
         "size": 3072,
-        "path": "E:/学习/天气地图/地图/天气地图主体.py",
-        "relPath": "天气地图/地图/天气地图主体.py",
-        "sizeFormatted": "3.0 KB"
+        "sizeFormatted": "3.0 KB",
+        "project": "天气地图"
       },
       {
         "name": "天气地图数据导入.py",
         "type": "Python代码",
         "size": 1849,
-        "path": "E:/学习/天气地图/地图/天气地图数据导入.py",
-        "relPath": "天气地图/地图/天气地图数据导入.py",
-        "sizeFormatted": "1.8 KB"
+        "sizeFormatted": "1.8 KB",
+        "project": "天气地图"
       },
       {
         "name": "欧洲天气.py",
         "type": "Python代码",
         "size": 2137,
-        "path": "E:/学习/天气地图/地图/欧洲天气.py",
-        "relPath": "天气地图/地图/欧洲天气.py",
-        "sizeFormatted": "2.1 KB"
+        "sizeFormatted": "2.1 KB",
+        "project": "天气地图"
       },
       {
         "name": "美洲天气.py",
         "type": "Python代码",
         "size": 2389,
-        "path": "E:/学习/天气地图/地图/美洲天气.py",
-        "relPath": "天气地图/地图/美洲天气.py",
-        "sizeFormatted": "2.3 KB"
+        "sizeFormatted": "2.3 KB",
+        "project": "天气地图"
       },
       {
         "name": "获取经纬度.py",
         "type": "Python代码",
         "size": 1548,
-        "path": "E:/学习/天气地图/地图/获取经纬度.py",
-        "relPath": "天气地图/地图/获取经纬度.py",
-        "sizeFormatted": "1.5 KB"
+        "sizeFormatted": "1.5 KB",
+        "project": "天气地图"
       },
       {
         "name": "获得数据.py",
         "type": "Python代码",
         "size": 2125,
-        "path": "E:/学习/天气地图/地图/获得数据.py",
-        "relPath": "天气地图/地图/获得数据.py",
-        "sizeFormatted": "2.1 KB"
+        "sizeFormatted": "2.1 KB",
+        "project": "天气地图"
       },
       {
         "name": "非洲天气.py",
         "type": "Python代码",
         "size": 2112,
-        "path": "E:/学习/天气地图/地图/非洲天气.py",
-        "relPath": "天气地图/地图/非洲天气.py",
-        "sizeFormatted": "2.1 KB"
+        "sizeFormatted": "2.1 KB",
+        "project": "天气地图"
       },
       {
         "name": "ten_test.py",
         "type": "Python代码",
         "size": 2,
-        "path": "E:/学习/天气地图/机器学习/ten_test.py",
-        "relPath": "天气地图/机器学习/ten_test.py",
-        "sizeFormatted": "2 B"
+        "sizeFormatted": "2 B",
+        "project": "天气地图"
       },
       {
         "name": "__init__.py",
         "type": "Python代码",
         "size": 0,
-        "path": "E:/学习/天气地图/机器学习/__init__.py",
-        "relPath": "天气地图/机器学习/__init__.py",
-        "sizeFormatted": "0 B"
+        "sizeFormatted": "0 B",
+        "project": "天气地图"
       },
       {
         "name": "dictionary.txt",
         "type": "文档",
         "size": 2308991,
-        "path": "E:/学习/宠物店/学校/next/dictionary.txt",
-        "relPath": "宠物店/学校/next/dictionary.txt",
-        "sizeFormatted": "2.2 MB"
+        "sizeFormatted": "2.2 MB",
+        "project": "宠物店"
       },
       {
         "name": "house_tiny.csv",
         "type": "Excel表格",
         "size": 78,
-        "path": "E:/学习/机器学习/data/house_tiny.csv",
-        "relPath": "机器学习/data/house_tiny.csv",
-        "sizeFormatted": "78 B"
+        "sizeFormatted": "78 B",
+        "project": "机器学习"
       },
       {
         "name": "kaggle_house_pred_test.csv",
         "type": "Excel表格",
         "size": 451405,
-        "path": "E:/学习/机器学习/data/kaggle_house_pred_test.csv",
-        "relPath": "机器学习/data/kaggle_house_pred_test.csv",
-        "sizeFormatted": "440.8 KB"
+        "sizeFormatted": "440.8 KB",
+        "project": "机器学习"
       },
       {
         "name": "kaggle_house_pred_train.csv",
         "type": "Excel表格",
         "size": 460676,
-        "path": "E:/学习/机器学习/data/kaggle_house_pred_train.csv",
-        "relPath": "机器学习/data/kaggle_house_pred_train.csv",
-        "sizeFormatted": "449.9 KB"
+        "sizeFormatted": "449.9 KB",
+        "project": "机器学习"
       },
       {
         "name": "camera_test.py",
         "type": "Python代码",
         "size": 1164,
-        "path": "E:/学习/机器学习/代码/camera_test.py",
-        "relPath": "机器学习/代码/camera_test.py",
-        "sizeFormatted": "1.1 KB"
+        "sizeFormatted": "1.1 KB",
+        "project": "机器学习"
       },
       {
         "name": "getTrainImage.py",
         "type": "Python代码",
         "size": 975,
-        "path": "E:/学习/机器学习/代码/getTrainImage.py",
-        "relPath": "机器学习/代码/getTrainImage.py",
-        "sizeFormatted": "975 B"
+        "sizeFormatted": "975 B",
+        "project": "机器学习"
       },
       {
         "name": "SVM.py",
         "type": "Python代码",
         "size": 1935,
-        "path": "E:/学习/机器学习/代码/SVM.py",
-        "relPath": "机器学习/代码/SVM.py",
-        "sizeFormatted": "1.9 KB"
+        "sizeFormatted": "1.9 KB",
+        "project": "机器学习"
       },
       {
         "name": "__init__.py",
         "type": "Python代码",
         "size": 0,
-        "path": "E:/学习/机器学习/代码/__init__.py",
-        "relPath": "机器学习/代码/__init__.py",
-        "sizeFormatted": "0 B"
+        "sizeFormatted": "0 B",
+        "project": "机器学习"
       },
       {
         "name": "README.md",
         "type": "文档",
         "size": 22428,
-        "path": "E:/学习/机器学习/代码/cube_new/double-armed-rubiks-cube-robot-master/README.md",
-        "relPath": "机器学习/代码/cube_new/double-armed-rubiks-cube-robot-master/README.md",
-        "sizeFormatted": "21.9 KB"
+        "sizeFormatted": "21.9 KB",
+        "project": "机器学习"
       },
       {
         "name": "ansi.c",
         "type": "C代码",
         "size": 4675,
-        "path": "E:/学习/机器学习/代码/cube_new/double-armed-rubiks-cube-robot-master/RP2040/ansi.c",
-        "relPath": "机器学习/代码/cube_new/double-armed-rubiks-cube-robot-master/RP2040/ansi.c",
-        "sizeFormatted": "4.6 KB"
+        "sizeFormatted": "4.6 KB",
+        "project": "机器学习"
       },
       {
         "name": "ansi.h",
         "type": "头文件",
         "size": 1956,
-        "path": "E:/学习/机器学习/代码/cube_new/double-armed-rubiks-cube-robot-master/RP2040/ansi.h",
-        "relPath": "机器学习/代码/cube_new/double-armed-rubiks-cube-robot-master/RP2040/ansi.h",
-        "sizeFormatted": "1.9 KB"
+        "sizeFormatted": "1.9 KB",
+        "project": "机器学习"
       },
       {
         "name": "ansi_def.h",
         "type": "头文件",
         "size": 3903,
-        "path": "E:/学习/机器学习/代码/cube_new/double-armed-rubiks-cube-robot-master/RP2040/ansi_def.h",
-        "relPath": "机器学习/代码/cube_new/double-armed-rubiks-cube-robot-master/RP2040/ansi_def.h",
-        "sizeFormatted": "3.8 KB"
+        "sizeFormatted": "3.8 KB",
+        "project": "机器学习"
       },
       {
         "name": "ansi_port.c",
         "type": "C代码",
         "size": 7009,
-        "path": "E:/学习/机器学习/代码/cube_new/double-armed-rubiks-cube-robot-master/RP2040/ansi_port.c",
-        "relPath": "机器学习/代码/cube_new/double-armed-rubiks-cube-robot-master/RP2040/ansi_port.c",
-        "sizeFormatted": "6.8 KB"
+        "sizeFormatted": "6.8 KB",
+        "project": "机器学习"
       },
       {
         "name": "ansi_port.h",
         "type": "头文件",
         "size": 3647,
-        "path": "E:/学习/机器学习/代码/cube_new/double-armed-rubiks-cube-robot-master/RP2040/ansi_port.h",
-        "relPath": "机器学习/代码/cube_new/double-armed-rubiks-cube-robot-master/RP2040/ansi_port.h",
-        "sizeFormatted": "3.6 KB"
+        "sizeFormatted": "3.6 KB",
+        "project": "机器学习"
       },
       {
         "name": "CMakeLists.txt",
         "type": "文档",
         "size": 1044,
-        "path": "E:/学习/机器学习/代码/cube_new/double-armed-rubiks-cube-robot-master/RP2040/CMakeLists.txt",
-        "relPath": "机器学习/代码/cube_new/double-armed-rubiks-cube-robot-master/RP2040/CMakeLists.txt",
-        "sizeFormatted": "1.0 KB"
+        "sizeFormatted": "1.0 KB",
+        "project": "机器学习"
       },
       {
         "name": "main.c",
         "type": "C代码",
         "size": 39058,
-        "path": "E:/学习/机器学习/代码/cube_new/double-armed-rubiks-cube-robot-master/RP2040/main.c",
-        "relPath": "机器学习/代码/cube_new/double-armed-rubiks-cube-robot-master/RP2040/main.c",
-        "sizeFormatted": "38.1 KB"
+        "sizeFormatted": "38.1 KB",
+        "project": "机器学习"
       },
       {
         "name": "main.h",
         "type": "头文件",
         "size": 2710,
-        "path": "E:/学习/机器学习/代码/cube_new/double-armed-rubiks-cube-robot-master/RP2040/main.h",
-        "relPath": "机器学习/代码/cube_new/double-armed-rubiks-cube-robot-master/RP2040/main.h",
-        "sizeFormatted": "2.6 KB"
+        "sizeFormatted": "2.6 KB",
+        "project": "机器学习"
       },
       {
         "name": "nr_micro_shell.c",
         "type": "C代码",
         "size": 8764,
-        "path": "E:/学习/机器学习/代码/cube_new/double-armed-rubiks-cube-robot-master/RP2040/nr_micro_shell.c",
-        "relPath": "机器学习/代码/cube_new/double-armed-rubiks-cube-robot-master/RP2040/nr_micro_shell.c",
-        "sizeFormatted": "8.6 KB"
+        "sizeFormatted": "8.6 KB",
+        "project": "机器学习"
       },
       {
         "name": "nr_micro_shell.h",
         "type": "头文件",
         "size": 4991,
-        "path": "E:/学习/机器学习/代码/cube_new/double-armed-rubiks-cube-robot-master/RP2040/nr_micro_shell.h",
-        "relPath": "机器学习/代码/cube_new/double-armed-rubiks-cube-robot-master/RP2040/nr_micro_shell.h",
-        "sizeFormatted": "4.9 KB"
+        "sizeFormatted": "4.9 KB",
+        "project": "机器学习"
       },
       {
         "name": "nr_micro_shell_commands.c",
         "type": "C代码",
         "size": 7785,
-        "path": "E:/学习/机器学习/代码/cube_new/double-armed-rubiks-cube-robot-master/RP2040/nr_micro_shell_commands.c",
-        "relPath": "机器学习/代码/cube_new/double-armed-rubiks-cube-robot-master/RP2040/nr_micro_shell_commands.c",
-        "sizeFormatted": "7.6 KB"
+        "sizeFormatted": "7.6 KB",
+        "project": "机器学习"
       },
       {
         "name": "nr_micro_shell_config.h",
         "type": "头文件",
         "size": 4810,
-        "path": "E:/学习/机器学习/代码/cube_new/double-armed-rubiks-cube-robot-master/RP2040/nr_micro_shell_config.h",
-        "relPath": "机器学习/代码/cube_new/double-armed-rubiks-cube-robot-master/RP2040/nr_micro_shell_config.h",
-        "sizeFormatted": "4.7 KB"
+        "sizeFormatted": "4.7 KB",
+        "project": "机器学习"
       },
       {
         "name": "pin_def.h",
         "type": "头文件",
         "size": 709,
-        "path": "E:/学习/机器学习/代码/cube_new/double-armed-rubiks-cube-robot-master/RP2040/pin_def.h",
-        "relPath": "机器学习/代码/cube_new/double-armed-rubiks-cube-robot-master/RP2040/pin_def.h",
-        "sizeFormatted": "709 B"
+        "sizeFormatted": "709 B",
+        "project": "机器学习"
       },
       {
         "name": "color_converter.c",
         "type": "C代码",
         "size": 6611,
-        "path": "E:/学习/机器学习/代码/cube_new/double-armed-rubiks-cube-robot-master/SG2002/cube_robot/color_converter.c",
-        "relPath": "机器学习/代码/cube_new/double-armed-rubiks-cube-robot-master/SG2002/cube_robot/color_converter.c",
-        "sizeFormatted": "6.5 KB"
+        "sizeFormatted": "6.5 KB",
+        "project": "机器学习"
       },
       {
         "name": "color_converter.h",
         "type": "头文件",
         "size": 558,
-        "path": "E:/学习/机器学习/代码/cube_new/double-armed-rubiks-cube-robot-master/SG2002/cube_robot/color_converter.h",
-        "relPath": "机器学习/代码/cube_new/double-armed-rubiks-cube-robot-master/SG2002/cube_robot/color_converter.h",
-        "sizeFormatted": "558 B"
+        "sizeFormatted": "558 B",
+        "project": "机器学习"
       },
       {
         "name": "color_detect.c",
         "type": "C代码",
         "size": 11729,
-        "path": "E:/学习/机器学习/代码/cube_new/double-armed-rubiks-cube-robot-master/SG2002/cube_robot/color_detect.c",
-        "relPath": "机器学习/代码/cube_new/double-armed-rubiks-cube-robot-master/SG2002/cube_robot/color_detect.c",
-        "sizeFormatted": "11.5 KB"
+        "sizeFormatted": "11.5 KB",
+        "project": "机器学习"
       },
       {
         "name": "color_detect.h",
         "type": "头文件",
         "size": 274,
-        "path": "E:/学习/机器学习/代码/cube_new/double-armed-rubiks-cube-robot-master/SG2002/cube_robot/color_detect.h",
-        "relPath": "机器学习/代码/cube_new/double-armed-rubiks-cube-robot-master/SG2002/cube_robot/color_detect.h",
-        "sizeFormatted": "274 B"
+        "sizeFormatted": "274 B",
+        "project": "机器学习"
       },
       {
         "name": "cube_robot_main.c",
         "type": "C代码",
         "size": 18867,
-        "path": "E:/学习/机器学习/代码/cube_new/double-armed-rubiks-cube-robot-master/SG2002/cube_robot/cube_robot_main.c",
-        "relPath": "机器学习/代码/cube_new/double-armed-rubiks-cube-robot-master/SG2002/cube_robot/cube_robot_main.c",
-        "sizeFormatted": "18.4 KB"
+        "sizeFormatted": "18.4 KB",
+        "project": "机器学习"
       },
       {
         "name": "solve.c",
         "type": "C代码",
         "size": 28002,
-        "path": "E:/学习/机器学习/代码/cube_new/double-armed-rubiks-cube-robot-master/SG2002/cube_robot/solve.c",
-        "relPath": "机器学习/代码/cube_new/double-armed-rubiks-cube-robot-master/SG2002/cube_robot/solve.c",
-        "sizeFormatted": "27.3 KB"
+        "sizeFormatted": "27.3 KB",
+        "project": "机器学习"
       },
       {
         "name": "solve.h",
         "type": "头文件",
         "size": 194,
-        "path": "E:/学习/机器学习/代码/cube_new/double-armed-rubiks-cube-robot-master/SG2002/cube_robot/solve.h",
-        "relPath": "机器学习/代码/cube_new/double-armed-rubiks-cube-robot-master/SG2002/cube_robot/solve.h",
-        "sizeFormatted": "194 B"
+        "sizeFormatted": "194 B",
+        "project": "机器学习"
       },
       {
         "name": "cube_table.py",
         "type": "Python代码",
         "size": 1148,
-        "path": "E:/学习/机器学习/代码/cube_new/double-armed-rubiks-cube-robot-master/tools/cube_table.py",
-        "relPath": "机器学习/代码/cube_new/double-armed-rubiks-cube-robot-master/tools/cube_table.py",
-        "sizeFormatted": "1.1 KB"
+        "sizeFormatted": "1.1 KB",
+        "project": "机器学习"
       },
       {
         "name": "read_pos.py",
         "type": "Python代码",
         "size": 5478,
-        "path": "E:/学习/机器学习/代码/cube_new/double-armed-rubiks-cube-robot-master/tools/read_pos.py",
-        "relPath": "机器学习/代码/cube_new/double-armed-rubiks-cube-robot-master/tools/read_pos.py",
-        "sizeFormatted": "5.3 KB"
+        "sizeFormatted": "5.3 KB",
+        "project": "机器学习"
       },
       {
         "name": "save.txt",
         "type": "文档",
         "size": 924,
-        "path": "E:/学习/机器学习/代码/cube_new/double-armed-rubiks-cube-robot-master/tools/save.txt",
-        "relPath": "机器学习/代码/cube_new/double-armed-rubiks-cube-robot-master/tools/save.txt",
-        "sizeFormatted": "924 B"
+        "sizeFormatted": "924 B",
+        "project": "机器学习"
       },
       {
         "name": "time_cost.c",
         "type": "C代码",
         "size": 2338,
-        "path": "E:/学习/机器学习/代码/cube_new/double-armed-rubiks-cube-robot-master/tools/time_cost.c",
-        "relPath": "机器学习/代码/cube_new/double-armed-rubiks-cube-robot-master/tools/time_cost.c",
-        "sizeFormatted": "2.3 KB"
+        "sizeFormatted": "2.3 KB",
+        "project": "机器学习"
       },
       {
         "name": "verify_cube_str_decode.c",
         "type": "C代码",
         "size": 12444,
-        "path": "E:/学习/机器学习/代码/cube_new/double-armed-rubiks-cube-robot-master/tools/verify_cube_str_decode.c",
-        "relPath": "机器学习/代码/cube_new/double-armed-rubiks-cube-robot-master/tools/verify_cube_str_decode.c",
-        "sizeFormatted": "12.2 KB"
+        "sizeFormatted": "12.2 KB",
+        "project": "机器学习"
       },
       {
         "name": "cube.py",
         "type": "Python代码",
         "size": 28996,
-        "path": "E:/学习/机器学习/代码/cube_new/double-armed-rubiks-cube-robot-master/tools_solve/cube.py",
-        "relPath": "机器学习/代码/cube_new/double-armed-rubiks-cube-robot-master/tools_solve/cube.py",
-        "sizeFormatted": "28.3 KB"
+        "sizeFormatted": "28.3 KB",
+        "project": "机器学习"
       },
       {
         "name": "prun.py",
         "type": "Python代码",
         "size": 25924,
-        "path": "E:/学习/机器学习/代码/cube_new/double-armed-rubiks-cube-robot-master/tools_solve/prun.py",
-        "relPath": "机器学习/代码/cube_new/double-armed-rubiks-cube-robot-master/tools_solve/prun.py",
-        "sizeFormatted": "25.3 KB"
+        "sizeFormatted": "25.3 KB",
+        "project": "机器学习"
       },
       {
         "name": "solve.c",
         "type": "C代码",
         "size": 34540,
-        "path": "E:/学习/机器学习/代码/cube_new/double-armed-rubiks-cube-robot-master/tools_solve/solve.c",
-        "relPath": "机器学习/代码/cube_new/double-armed-rubiks-cube-robot-master/tools_solve/solve.c",
-        "sizeFormatted": "33.7 KB"
+        "sizeFormatted": "33.7 KB",
+        "project": "机器学习"
       },
       {
         "name": "test_case.txt",
         "type": "文档",
         "size": 550000,
-        "path": "E:/学习/机器学习/代码/cube_new/double-armed-rubiks-cube-robot-master/tools_solve/test_case.txt",
-        "relPath": "机器学习/代码/cube_new/double-armed-rubiks-cube-robot-master/tools_solve/test_case.txt",
-        "sizeFormatted": "537.1 KB"
+        "sizeFormatted": "537.1 KB",
+        "project": "机器学习"
       },
       {
         "name": "BOM_Board1_Schematic1_2024-02-20.xlsx",
         "type": "Excel表格",
         "size": 65393,
-        "path": "E:/学习/机器学习/代码/cube_new/double-armed-rubiks-cube-robot-master/原理图+PCB/BOM_Board1_Schematic1_2024-02-20.xlsx",
-        "relPath": "机器学习/代码/cube_new/double-armed-rubiks-cube-robot-master/原理图+PCB/BOM_Board1_Schematic1_2024-02-20.xlsx",
-        "sizeFormatted": "63.9 KB"
+        "sizeFormatted": "63.9 KB",
+        "project": "机器学习"
       },
       {
         "name": "SCH_Schematic1_2024-02-26.pdf",
         "type": "PDF文档",
         "size": 918676,
-        "path": "E:/学习/机器学习/代码/cube_new/double-armed-rubiks-cube-robot-master/原理图+PCB/SCH_Schematic1_2024-02-26.pdf",
-        "relPath": "机器学习/代码/cube_new/double-armed-rubiks-cube-robot-master/原理图+PCB/SCH_Schematic1_2024-02-26.pdf",
-        "sizeFormatted": "897.1 KB"
+        "sizeFormatted": "897.1 KB",
+        "project": "机器学习"
       },
       {
         "name": "电源测试.xlsx",
         "type": "Excel表格",
         "size": 9555,
-        "path": "E:/学习/机器学习/代码/cube_new/double-armed-rubiks-cube-robot-master/原理图+PCB/电源测试.xlsx",
-        "relPath": "机器学习/代码/cube_new/double-armed-rubiks-cube-robot-master/原理图+PCB/电源测试.xlsx",
-        "sizeFormatted": "9.3 KB"
+        "sizeFormatted": "9.3 KB",
+        "project": "机器学习"
       },
       {
         "name": "LICENSE.txt",
         "type": "文档",
         "size": 268,
-        "path": "E:/学习/机器学习/代码/cube_new/double-armed-rubiks-cube-robot-master/结构图纸/gears/LICENSE.txt",
-        "relPath": "机器学习/代码/cube_new/double-armed-rubiks-cube-robot-master/结构图纸/gears/LICENSE.txt",
-        "sizeFormatted": "268 B"
+        "sizeFormatted": "268 B",
+        "project": "机器学习"
       },
       {
         "name": "README.md",
         "type": "文档",
         "size": 16776,
-        "path": "E:/学习/机器学习/代码/cube_new/double-armed-rubiks-cube-robot-master/结构图纸/gears/README.md",
-        "relPath": "机器学习/代码/cube_new/double-armed-rubiks-cube-robot-master/结构图纸/gears/README.md",
-        "sizeFormatted": "16.4 KB"
+        "sizeFormatted": "16.4 KB",
+        "project": "机器学习"
       },
       {
         "name": "classes.py",
         "type": "Python代码",
         "size": 3315,
-        "path": "E:/学习/机器学习/代码/cube_read/VirtualCube-final/classes.py",
-        "relPath": "机器学习/代码/cube_read/VirtualCube-final/classes.py",
-        "sizeFormatted": "3.2 KB"
+        "sizeFormatted": "3.2 KB",
+        "project": "机器学习"
       },
       {
         "name": "cube.py",
         "type": "Python代码",
         "size": 10325,
-        "path": "E:/学习/机器学习/代码/cube_read/VirtualCube-final/cube.py",
-        "relPath": "机器学习/代码/cube_read/VirtualCube-final/cube.py",
-        "sizeFormatted": "10.1 KB"
+        "sizeFormatted": "10.1 KB",
+        "project": "机器学习"
       },
       {
         "name": "cubePicture.py",
         "type": "Python代码",
         "size": 3615,
-        "path": "E:/学习/机器学习/代码/cube_read/VirtualCube-final/cubePicture.py",
-        "relPath": "机器学习/代码/cube_read/VirtualCube-final/cubePicture.py",
-        "sizeFormatted": "3.5 KB"
+        "sizeFormatted": "3.5 KB",
+        "project": "机器学习"
       },
       {
         "name": "functions.py",
         "type": "Python代码",
         "size": 1035,
-        "path": "E:/学习/机器学习/代码/cube_read/VirtualCube-final/functions.py",
-        "relPath": "机器学习/代码/cube_read/VirtualCube-final/functions.py",
-        "sizeFormatted": "1.0 KB"
+        "sizeFormatted": "1.0 KB",
+        "project": "机器学习"
       },
       {
         "name": "main.py",
         "type": "Python代码",
         "size": 104,
-        "path": "E:/学习/机器学习/代码/cube_read/VirtualCube-final/main.py",
-        "relPath": "机器学习/代码/cube_read/VirtualCube-final/main.py",
-        "sizeFormatted": "104 B"
+        "sizeFormatted": "104 B",
+        "project": "机器学习"
       },
       {
         "name": "README.md",
         "type": "文档",
         "size": 264,
-        "path": "E:/学习/机器学习/代码/cube_read/VirtualCube-final/README.md",
-        "relPath": "机器学习/代码/cube_read/VirtualCube-final/README.md",
-        "sizeFormatted": "264 B"
+        "sizeFormatted": "264 B",
+        "project": "机器学习"
       },
       {
         "name": "visor.py",
         "type": "Python代码",
         "size": 3379,
-        "path": "E:/学习/机器学习/代码/cube_read/VirtualCube-final/visor.py",
-        "relPath": "机器学习/代码/cube_read/VirtualCube-final/visor.py",
-        "sizeFormatted": "3.3 KB"
+        "sizeFormatted": "3.3 KB",
+        "project": "机器学习"
       },
       {
         "name": "RUBIKS.ipynb",
         "type": "Jupyter Notebook",
         "size": 11053,
-        "path": "E:/学习/机器学习/代码/cube_read/VirtualCube-final/Notebooks/RUBIKS.ipynb",
-        "relPath": "机器学习/代码/cube_read/VirtualCube-final/Notebooks/RUBIKS.ipynb",
-        "sizeFormatted": "10.8 KB"
+        "sizeFormatted": "10.8 KB",
+        "project": "机器学习"
       },
       {
         "name": "RUBIKS2.ipynb",
         "type": "Jupyter Notebook",
         "size": 14566,
-        "path": "E:/学习/机器学习/代码/cube_read/VirtualCube-final/Notebooks/RUBIKS2.ipynb",
-        "relPath": "机器学习/代码/cube_read/VirtualCube-final/Notebooks/RUBIKS2.ipynb",
-        "sizeFormatted": "14.2 KB"
+        "sizeFormatted": "14.2 KB",
+        "project": "机器学习"
       },
       {
         "name": "19.select_roi.py",
         "type": "Python代码",
         "size": 2147,
-        "path": "E:/学习/机器学习/代码/cube_robot/19.select_roi.py",
-        "relPath": "机器学习/代码/cube_robot/19.select_roi.py",
-        "sizeFormatted": "2.1 KB"
+        "sizeFormatted": "2.1 KB",
+        "project": "机器学习"
       },
       {
         "name": "20.roi_deal.py",
         "type": "Python代码",
         "size": 5572,
-        "path": "E:/学习/机器学习/代码/cube_robot/20.roi_deal.py",
-        "relPath": "机器学习/代码/cube_robot/20.roi_deal.py",
-        "sizeFormatted": "5.4 KB"
+        "sizeFormatted": "5.4 KB",
+        "project": "机器学习"
       },
       {
         "name": "arduino.py",
         "type": "Python代码",
         "size": 662,
-        "path": "E:/学习/机器学习/代码/cube_robot/arduino.py",
-        "relPath": "机器学习/代码/cube_robot/arduino.py",
-        "sizeFormatted": "662 B"
+        "sizeFormatted": "662 B",
+        "project": "机器学习"
       },
       {
         "name": "client_gui.py",
         "type": "Python代码",
         "size": 8661,
-        "path": "E:/学习/机器学习/代码/cube_robot/client_gui.py",
-        "relPath": "机器学习/代码/cube_robot/client_gui.py",
-        "sizeFormatted": "8.5 KB"
+        "sizeFormatted": "8.5 KB",
+        "project": "机器学习"
       },
       {
         "name": "color_data.py",
         "type": "Python代码",
         "size": 7098,
-        "path": "E:/学习/机器学习/代码/cube_robot/color_data.py",
-        "relPath": "机器学习/代码/cube_robot/color_data.py",
-        "sizeFormatted": "6.9 KB"
+        "sizeFormatted": "6.9 KB",
+        "project": "机器学习"
       },
       {
         "name": "coord.py",
         "type": "Python代码",
         "size": 9683,
-        "path": "E:/学习/机器学习/代码/cube_robot/coord.py",
-        "relPath": "机器学习/代码/cube_robot/coord.py",
-        "sizeFormatted": "9.5 KB"
+        "sizeFormatted": "9.5 KB",
+        "project": "机器学习"
       },
       {
         "name": "cubie.py",
         "type": "Python代码",
         "size": 20504,
-        "path": "E:/学习/机器学习/代码/cube_robot/cubie.py",
-        "relPath": "机器学习/代码/cube_robot/cubie.py",
-        "sizeFormatted": "20.0 KB"
+        "sizeFormatted": "20.0 KB",
+        "project": "机器学习"
       },
       {
         "name": "defs.py",
         "type": "Python代码",
         "size": 2577,
-        "path": "E:/学习/机器学习/代码/cube_robot/defs.py",
-        "relPath": "机器学习/代码/cube_robot/defs.py",
-        "sizeFormatted": "2.5 KB"
+        "sizeFormatted": "2.5 KB",
+        "project": "机器学习"
       },
       {
         "name": "enums.py",
         "type": "Python代码",
         "size": 3631,
-        "path": "E:/学习/机器学习/代码/cube_robot/enums.py",
-        "relPath": "机器学习/代码/cube_robot/enums.py",
-        "sizeFormatted": "3.5 KB"
+        "sizeFormatted": "3.5 KB",
+        "project": "机器学习"
       },
       {
         "name": "example.py",
         "type": "Python代码",
         "size": 4014,
-        "path": "E:/学习/机器学习/代码/cube_robot/example.py",
-        "relPath": "机器学习/代码/cube_robot/example.py",
-        "sizeFormatted": "3.9 KB"
+        "sizeFormatted": "3.9 KB",
+        "project": "机器学习"
       },
       {
         "name": "face.py",
         "type": "Python代码",
         "size": 4552,
-        "path": "E:/学习/机器学习/代码/cube_robot/face.py",
-        "relPath": "机器学习/代码/cube_robot/face.py",
-        "sizeFormatted": "4.4 KB"
+        "sizeFormatted": "4.4 KB",
+        "project": "机器学习"
       },
       {
         "name": "kmeans.py",
         "type": "Python代码",
         "size": 1273,
-        "path": "E:/学习/机器学习/代码/cube_robot/kmeans.py",
-        "relPath": "机器学习/代码/cube_robot/kmeans.py",
-        "sizeFormatted": "1.2 KB"
+        "sizeFormatted": "1.2 KB",
+        "project": "机器学习"
       },
       {
         "name": "kmean_tocolor.py",
         "type": "Python代码",
         "size": 1366,
-        "path": "E:/学习/机器学习/代码/cube_robot/kmean_tocolor.py",
-        "relPath": "机器学习/代码/cube_robot/kmean_tocolor.py",
-        "sizeFormatted": "1.3 KB"
+        "sizeFormatted": "1.3 KB",
+        "project": "机器学习"
       },
       {
         "name": "main.py",
         "type": "Python代码",
         "size": 544,
-        "path": "E:/学习/机器学习/代码/cube_robot/main.py",
-        "relPath": "机器学习/代码/cube_robot/main.py",
-        "sizeFormatted": "544 B"
+        "sizeFormatted": "544 B",
+        "project": "机器学习"
       },
       {
         "name": "misc.py",
         "type": "Python代码",
         "size": 774,
-        "path": "E:/学习/机器学习/代码/cube_robot/misc.py",
-        "relPath": "机器学习/代码/cube_robot/misc.py",
-        "sizeFormatted": "774 B"
+        "sizeFormatted": "774 B",
+        "project": "机器学习"
       },
       {
         "name": "moves.py",
         "type": "Python代码",
         "size": 9244,
-        "path": "E:/学习/机器学习/代码/cube_robot/moves.py",
-        "relPath": "机器学习/代码/cube_robot/moves.py",
-        "sizeFormatted": "9.0 KB"
+        "sizeFormatted": "9.0 KB",
+        "project": "机器学习"
       },
       {
         "name": "pruning.py",
         "type": "Python代码",
         "size": 16110,
-        "path": "E:/学习/机器学习/代码/cube_robot/pruning.py",
-        "relPath": "机器学习/代码/cube_robot/pruning.py",
-        "sizeFormatted": "15.7 KB"
+        "sizeFormatted": "15.7 KB",
+        "project": "机器学习"
       },
       {
         "name": "README.md",
         "type": "文档",
         "size": 1440,
-        "path": "E:/学习/机器学习/代码/cube_robot/README.md",
-        "relPath": "机器学习/代码/cube_robot/README.md",
-        "sizeFormatted": "1.4 KB"
+        "sizeFormatted": "1.4 KB",
+        "project": "机器学习"
       },
       {
         "name": "rgb_encode.py",
         "type": "Python代码",
         "size": 3429,
-        "path": "E:/学习/机器学习/代码/cube_robot/rgb_encode.py",
-        "relPath": "机器学习/代码/cube_robot/rgb_encode.py",
-        "sizeFormatted": "3.3 KB"
+        "sizeFormatted": "3.3 KB",
+        "project": "机器学习"
       },
       {
         "name": "rgb_num.py",
         "type": "Python代码",
         "size": 4011,
-        "path": "E:/学习/机器学习/代码/cube_robot/rgb_num.py",
-        "relPath": "机器学习/代码/cube_robot/rgb_num.py",
-        "sizeFormatted": "3.9 KB"
+        "sizeFormatted": "3.9 KB",
+        "project": "机器学习"
       },
       {
         "name": "rgb_output.py",
         "type": "Python代码",
         "size": 4954,
-        "path": "E:/学习/机器学习/代码/cube_robot/rgb_output.py",
-        "relPath": "机器学习/代码/cube_robot/rgb_output.py",
-        "sizeFormatted": "4.8 KB"
+        "sizeFormatted": "4.8 KB",
+        "project": "机器学习"
       },
       {
         "name": "rgb_threshold.py",
         "type": "Python代码",
         "size": 2984,
-        "path": "E:/学习/机器学习/代码/cube_robot/rgb_threshold.py",
-        "relPath": "机器学习/代码/cube_robot/rgb_threshold.py",
-        "sizeFormatted": "2.9 KB"
+        "sizeFormatted": "2.9 KB",
+        "project": "机器学习"
       },
       {
         "name": "sockets.py",
         "type": "Python代码",
         "size": 2644,
-        "path": "E:/学习/机器学习/代码/cube_robot/sockets.py",
-        "relPath": "机器学习/代码/cube_robot/sockets.py",
-        "sizeFormatted": "2.6 KB"
+        "sizeFormatted": "2.6 KB",
+        "project": "机器学习"
       },
       {
         "name": "solver.py",
         "type": "Python代码",
         "size": 12880,
-        "path": "E:/学习/机器学习/代码/cube_robot/solver.py",
-        "relPath": "机器学习/代码/cube_robot/solver.py",
-        "sizeFormatted": "12.6 KB"
+        "sizeFormatted": "12.6 KB",
+        "project": "机器学习"
       },
       {
         "name": "start_server.py",
         "type": "Python代码",
         "size": 678,
-        "path": "E:/学习/机器学习/代码/cube_robot/start_server.py",
-        "relPath": "机器学习/代码/cube_robot/start_server.py",
-        "sizeFormatted": "678 B"
+        "sizeFormatted": "678 B",
+        "project": "机器学习"
       },
       {
         "name": "symmetries.py",
         "type": "Python代码",
         "size": 12388,
-        "path": "E:/学习/机器学习/代码/cube_robot/symmetries.py",
-        "relPath": "机器学习/代码/cube_robot/symmetries.py",
-        "sizeFormatted": "12.1 KB"
+        "sizeFormatted": "12.1 KB",
+        "project": "机器学习"
       },
       {
         "name": "total_color.py",
         "type": "Python代码",
         "size": 7270,
-        "path": "E:/学习/机器学习/代码/cube_robot/total_color.py",
-        "relPath": "机器学习/代码/cube_robot/total_color.py",
-        "sizeFormatted": "7.1 KB"
+        "sizeFormatted": "7.1 KB",
+        "project": "机器学习"
       },
       {
         "name": "README.md",
         "type": "文档",
         "size": 4154,
-        "path": "E:/学习/机器学习/代码/cube_try/RubiksCubeRecoverBot-master/README.md",
-        "relPath": "机器学习/代码/cube_try/RubiksCubeRecoverBot-master/README.md",
-        "sizeFormatted": "4.1 KB"
+        "sizeFormatted": "4.1 KB",
+        "project": "机器学习"
       },
       {
         "name": "arduino.py",
         "type": "Python代码",
         "size": 421,
-        "path": "E:/学习/机器学习/代码/cube_try/RubiksCubeRecoverBot-master/RubicBot/arduino.py",
-        "relPath": "机器学习/代码/cube_try/RubiksCubeRecoverBot-master/RubicBot/arduino.py",
-        "sizeFormatted": "421 B"
+        "sizeFormatted": "421 B",
+        "project": "机器学习"
       },
       {
         "name": "client_gui.py",
         "type": "Python代码",
         "size": 8978,
-        "path": "E:/学习/机器学习/代码/cube_try/RubiksCubeRecoverBot-master/RubicBot/client_gui.py",
-        "relPath": "机器学习/代码/cube_try/RubiksCubeRecoverBot-master/RubicBot/client_gui.py",
-        "sizeFormatted": "8.8 KB"
+        "sizeFormatted": "8.8 KB",
+        "project": "机器学习"
       },
       {
         "name": "colorRecHSV.py",
         "type": "Python代码",
         "size": 8962,
-        "path": "E:/学习/机器学习/代码/cube_try/RubiksCubeRecoverBot-master/RubicBot/colorRecHSV.py",
-        "relPath": "机器学习/代码/cube_try/RubiksCubeRecoverBot-master/RubicBot/colorRecHSV.py",
-        "sizeFormatted": "8.8 KB"
+        "sizeFormatted": "8.8 KB",
+        "project": "机器学习"
       },
       {
         "name": "coord.py",
         "type": "Python代码",
         "size": 9652,
-        "path": "E:/学习/机器学习/代码/cube_try/RubiksCubeRecoverBot-master/RubicBot/coord.py",
-        "relPath": "机器学习/代码/cube_try/RubiksCubeRecoverBot-master/RubicBot/coord.py",
-        "sizeFormatted": "9.4 KB"
+        "sizeFormatted": "9.4 KB",
+        "project": "机器学习"
       },
       {
         "name": "cubie.py",
         "type": "Python代码",
         "size": 19949,
-        "path": "E:/学习/机器学习/代码/cube_try/RubiksCubeRecoverBot-master/RubicBot/cubie.py",
-        "relPath": "机器学习/代码/cube_try/RubiksCubeRecoverBot-master/RubicBot/cubie.py",
-        "sizeFormatted": "19.5 KB"
+        "sizeFormatted": "19.5 KB",
+        "project": "机器学习"
       },
       {
         "name": "defs.py",
         "type": "Python代码",
         "size": 2533,
-        "path": "E:/学习/机器学习/代码/cube_try/RubiksCubeRecoverBot-master/RubicBot/defs.py",
-        "relPath": "机器学习/代码/cube_try/RubiksCubeRecoverBot-master/RubicBot/defs.py",
-        "sizeFormatted": "2.5 KB"
+        "sizeFormatted": "2.5 KB",
+        "project": "机器学习"
       },
       {
         "name": "enums.py",
         "type": "Python代码",
         "size": 3475,
-        "path": "E:/学习/机器学习/代码/cube_try/RubiksCubeRecoverBot-master/RubicBot/enums.py",
-        "relPath": "机器学习/代码/cube_try/RubiksCubeRecoverBot-master/RubicBot/enums.py",
-        "sizeFormatted": "3.4 KB"
+        "sizeFormatted": "3.4 KB",
+        "project": "机器学习"
       },
       {
         "name": "face.py",
         "type": "Python代码",
         "size": 4434,
-        "path": "E:/学习/机器学习/代码/cube_try/RubiksCubeRecoverBot-master/RubicBot/face.py",
-        "relPath": "机器学习/代码/cube_try/RubiksCubeRecoverBot-master/RubicBot/face.py",
-        "sizeFormatted": "4.3 KB"
+        "sizeFormatted": "4.3 KB",
+        "project": "机器学习"
       },
       {
         "name": "main.py",
         "type": "Python代码",
         "size": 219,
-        "path": "E:/学习/机器学习/代码/cube_try/RubiksCubeRecoverBot-master/RubicBot/main.py",
-        "relPath": "机器学习/代码/cube_try/RubiksCubeRecoverBot-master/RubicBot/main.py",
-        "sizeFormatted": "219 B"
+        "sizeFormatted": "219 B",
+        "project": "机器学习"
       },
       {
         "name": "misc.py",
         "type": "Python代码",
         "size": 642,
-        "path": "E:/学习/机器学习/代码/cube_try/RubiksCubeRecoverBot-master/RubicBot/misc.py",
-        "relPath": "机器学习/代码/cube_try/RubiksCubeRecoverBot-master/RubicBot/misc.py",
-        "sizeFormatted": "642 B"
+        "sizeFormatted": "642 B",
+        "project": "机器学习"
       },
       {
         "name": "moves.py",
         "type": "Python代码",
         "size": 8251,
-        "path": "E:/学习/机器学习/代码/cube_try/RubiksCubeRecoverBot-master/RubicBot/moves.py",
-        "relPath": "机器学习/代码/cube_try/RubiksCubeRecoverBot-master/RubicBot/moves.py",
-        "sizeFormatted": "8.1 KB"
+        "sizeFormatted": "8.1 KB",
+        "project": "机器学习"
       },
       {
         "name": "pruning.py",
         "type": "Python代码",
         "size": 15459,
-        "path": "E:/学习/机器学习/代码/cube_try/RubiksCubeRecoverBot-master/RubicBot/pruning.py",
-        "relPath": "机器学习/代码/cube_try/RubiksCubeRecoverBot-master/RubicBot/pruning.py",
-        "sizeFormatted": "15.1 KB"
+        "sizeFormatted": "15.1 KB",
+        "project": "机器学习"
       },
       {
         "name": "recognize.py",
         "type": "Python代码",
         "size": 6288,
-        "path": "E:/学习/机器学习/代码/cube_try/RubiksCubeRecoverBot-master/RubicBot/recognize.py",
-        "relPath": "机器学习/代码/cube_try/RubiksCubeRecoverBot-master/RubicBot/recognize.py",
-        "sizeFormatted": "6.1 KB"
+        "sizeFormatted": "6.1 KB",
+        "project": "机器学习"
       },
       {
         "name": "sockets.py",
         "type": "Python代码",
         "size": 2564,
-        "path": "E:/学习/机器学习/代码/cube_try/RubiksCubeRecoverBot-master/RubicBot/sockets.py",
-        "relPath": "机器学习/代码/cube_try/RubiksCubeRecoverBot-master/RubicBot/sockets.py",
-        "sizeFormatted": "2.5 KB"
+        "sizeFormatted": "2.5 KB",
+        "project": "机器学习"
       },
       {
         "name": "solver.py",
         "type": "Python代码",
         "size": 12674,
-        "path": "E:/学习/机器学习/代码/cube_try/RubiksCubeRecoverBot-master/RubicBot/solver.py",
-        "relPath": "机器学习/代码/cube_try/RubiksCubeRecoverBot-master/RubicBot/solver.py",
-        "sizeFormatted": "12.4 KB"
+        "sizeFormatted": "12.4 KB",
+        "project": "机器学习"
       },
       {
         "name": "start_server.py",
         "type": "Python代码",
         "size": 660,
-        "path": "E:/学习/机器学习/代码/cube_try/RubiksCubeRecoverBot-master/RubicBot/start_server.py",
-        "relPath": "机器学习/代码/cube_try/RubiksCubeRecoverBot-master/RubicBot/start_server.py",
-        "sizeFormatted": "660 B"
+        "sizeFormatted": "660 B",
+        "project": "机器学习"
       },
       {
         "name": "symmetries.py",
         "type": "Python代码",
         "size": 12060,
-        "path": "E:/学习/机器学习/代码/cube_try/RubiksCubeRecoverBot-master/RubicBot/symmetries.py",
-        "relPath": "机器学习/代码/cube_try/RubiksCubeRecoverBot-master/RubicBot/symmetries.py",
-        "sizeFormatted": "11.8 KB"
+        "sizeFormatted": "11.8 KB",
+        "project": "机器学习"
       },
       {
         "name": "models.py",
         "type": "Python代码",
         "size": 20027,
-        "path": "E:/学习/机器学习/代码/cube_try/RubiksCubeRecoverBot-master/RubicBot/src/models.py",
-        "relPath": "机器学习/代码/cube_try/RubiksCubeRecoverBot-master/RubicBot/src/models.py",
-        "sizeFormatted": "19.6 KB"
+        "sizeFormatted": "19.6 KB",
+        "project": "机器学习"
       },
       {
         "name": "utils.py",
         "type": "Python代码",
         "size": 3999,
-        "path": "E:/学习/机器学习/代码/cube_try/RubiksCubeRecoverBot-master/RubicBot/src/utils.py",
-        "relPath": "机器学习/代码/cube_try/RubiksCubeRecoverBot-master/RubicBot/src/utils.py",
-        "sizeFormatted": "3.9 KB"
+        "sizeFormatted": "3.9 KB",
+        "project": "机器学习"
       },
       {
         "name": "AiTrainer.py",
         "type": "Python代码",
         "size": 1755,
-        "path": "E:/学习/机器学习/代码/CvApplication/AiTrainer/AiTrainer.py",
-        "relPath": "机器学习/代码/CvApplication/AiTrainer/AiTrainer.py",
-        "sizeFormatted": "1.7 KB"
+        "sizeFormatted": "1.7 KB",
+        "project": "机器学习"
       },
       {
         "name": "PoseModule.py",
         "type": "Python代码",
         "size": 3108,
-        "path": "E:/学习/机器学习/代码/CvApplication/AiTrainer/PoseModule.py",
-        "relPath": "机器学习/代码/CvApplication/AiTrainer/PoseModule.py",
-        "sizeFormatted": "3.0 KB"
+        "sizeFormatted": "3.0 KB",
+        "project": "机器学习"
       },
       {
         "name": "AiVirtualMouse.py",
         "type": "Python代码",
         "size": 2318,
-        "path": "E:/学习/机器学习/代码/CvApplication/AiVirtualMouse/AiVirtualMouse.py",
-        "relPath": "机器学习/代码/CvApplication/AiVirtualMouse/AiVirtualMouse.py",
-        "sizeFormatted": "2.3 KB"
+        "sizeFormatted": "2.3 KB",
+        "project": "机器学习"
       },
       {
         "name": "HandTrackingModule.py",
         "type": "Python代码",
         "size": 3423,
-        "path": "E:/学习/机器学习/代码/CvApplication/AiVirtualMouse/HandTrackingModule.py",
-        "relPath": "机器学习/代码/CvApplication/AiVirtualMouse/HandTrackingModule.py",
-        "sizeFormatted": "3.3 KB"
+        "sizeFormatted": "3.3 KB",
+        "project": "机器学习"
       },
       {
         "name": "AiVirtualPainter.py",
         "type": "Python代码",
         "size": 3097,
-        "path": "E:/学习/机器学习/代码/CvApplication/AiVirtualPainter/AiVirtualPainter.py",
-        "relPath": "机器学习/代码/CvApplication/AiVirtualPainter/AiVirtualPainter.py",
-        "sizeFormatted": "3.0 KB"
+        "sizeFormatted": "3.0 KB",
+        "project": "机器学习"
       },
       {
         "name": "HandTrackingModule.py",
         "type": "Python代码",
         "size": 3423,
-        "path": "E:/学习/机器学习/代码/CvApplication/AiVirtualPainter/HandTrackingModule.py",
-        "relPath": "机器学习/代码/CvApplication/AiVirtualPainter/HandTrackingModule.py",
-        "sizeFormatted": "3.3 KB"
+        "sizeFormatted": "3.3 KB",
+        "project": "机器学习"
       },
       {
         "name": "FingerCounter.py",
         "type": "Python代码",
         "size": 1553,
-        "path": "E:/学习/机器学习/代码/CvApplication/FingerCounter/FingerCounter.py",
-        "relPath": "机器学习/代码/CvApplication/FingerCounter/FingerCounter.py",
-        "sizeFormatted": "1.5 KB"
+        "sizeFormatted": "1.5 KB",
+        "project": "机器学习"
       },
       {
         "name": "HandTrackingModule.py",
         "type": "Python代码",
         "size": 3423,
-        "path": "E:/学习/机器学习/代码/CvApplication/FingerCounter/HandTrackingModule.py",
-        "relPath": "机器学习/代码/CvApplication/FingerCounter/HandTrackingModule.py",
-        "sizeFormatted": "3.3 KB"
+        "sizeFormatted": "3.3 KB",
+        "project": "机器学习"
       },
       {
         "name": "HandTrackingModule.py",
         "type": "Python代码",
         "size": 3423,
-        "path": "E:/学习/机器学习/代码/CvApplication/VolumeHandControl/HandTrackingModule.py",
-        "relPath": "机器学习/代码/CvApplication/VolumeHandControl/HandTrackingModule.py",
-        "sizeFormatted": "3.3 KB"
+        "sizeFormatted": "3.3 KB",
+        "project": "机器学习"
       },
       {
         "name": "VolumeHandControl.py",
         "type": "Python代码",
         "size": 2335,
-        "path": "E:/学习/机器学习/代码/CvApplication/VolumeHandControl/VolumeHandControl.py",
-        "relPath": "机器学习/代码/CvApplication/VolumeHandControl/VolumeHandControl.py",
-        "sizeFormatted": "2.3 KB"
+        "sizeFormatted": "2.3 KB",
+        "project": "机器学习"
       },
       {
         "name": "detectoFruits.py",
         "type": "Python代码",
         "size": 1672,
-        "path": "E:/学习/机器学习/代码/fruits/detectoFruits.py",
-        "relPath": "机器学习/代码/fruits/detectoFruits.py",
-        "sizeFormatted": "1.6 KB"
+        "sizeFormatted": "1.6 KB",
+        "project": "机器学习"
       },
       {
         "name": "test.py",
         "type": "Python代码",
         "size": 573,
-        "path": "E:/学习/机器学习/代码/fruits/test.py",
-        "relPath": "机器学习/代码/fruits/test.py",
-        "sizeFormatted": "573 B"
+        "sizeFormatted": "573 B",
+        "project": "机器学习"
       },
       {
         "name": "__init__.py",
         "type": "Python代码",
         "size": 0,
-        "path": "E:/学习/机器学习/代码/fruits/__init__.py",
-        "relPath": "机器学习/代码/fruits/__init__.py",
-        "sizeFormatted": "0 B"
+        "sizeFormatted": "0 B",
+        "project": "机器学习"
       },
       {
         "name": "kaggle_test.py",
         "type": "Python代码",
         "size": 2573,
-        "path": "E:/学习/机器学习/代码/fruits/kaggle/kaggle_test.py",
-        "relPath": "机器学习/代码/fruits/kaggle/kaggle_test.py",
-        "sizeFormatted": "2.5 KB"
+        "sizeFormatted": "2.5 KB",
+        "project": "机器学习"
       },
       {
         "name": "kaggle_train.py",
         "type": "Python代码",
         "size": 8689,
-        "path": "E:/学习/机器学习/代码/fruits/kaggle/kaggle_train.py",
-        "relPath": "机器学习/代码/fruits/kaggle/kaggle_train.py",
-        "sizeFormatted": "8.5 KB"
+        "sizeFormatted": "8.5 KB",
+        "project": "机器学习"
       },
       {
         "name": "test.py",
         "type": "Python代码",
         "size": 1129,
-        "path": "E:/学习/机器学习/代码/fruits/kaggle/test.py",
-        "relPath": "机器学习/代码/fruits/kaggle/test.py",
-        "sizeFormatted": "1.1 KB"
+        "sizeFormatted": "1.1 KB",
+        "project": "机器学习"
       },
       {
         "name": "__init__.py",
         "type": "Python代码",
         "size": 0,
-        "path": "E:/学习/机器学习/代码/fruits/kaggle/__init__.py",
-        "relPath": "机器学习/代码/fruits/kaggle/__init__.py",
-        "sizeFormatted": "0 B"
+        "sizeFormatted": "0 B",
+        "project": "机器学习"
       },
       {
         "name": "ceshi.py",
         "type": "Python代码",
         "size": 560,
-        "path": "E:/学习/机器学习/代码/fruits/other/ceshi.py",
-        "relPath": "机器学习/代码/fruits/other/ceshi.py",
-        "sizeFormatted": "560 B"
+        "sizeFormatted": "560 B",
+        "project": "机器学习"
       },
       {
         "name": "mobiletrain.py",
         "type": "Python代码",
         "size": 5084,
-        "path": "E:/学习/机器学习/代码/fruits/other/mobiletrain.py",
-        "relPath": "机器学习/代码/fruits/other/mobiletrain.py",
-        "sizeFormatted": "5.0 KB"
+        "sizeFormatted": "5.0 KB",
+        "project": "机器学习"
       },
       {
         "name": "model_v2.py",
         "type": "Python代码",
         "size": 4223,
-        "path": "E:/学习/机器学习/代码/fruits/other/model_v2.py",
-        "relPath": "机器学习/代码/fruits/other/model_v2.py",
-        "sizeFormatted": "4.1 KB"
+        "sizeFormatted": "4.1 KB",
+        "project": "机器学习"
       },
       {
         "name": "__init__.py",
         "type": "Python代码",
         "size": 0,
-        "path": "E:/学习/机器学习/代码/fruits/other/__init__.py",
-        "relPath": "机器学习/代码/fruits/other/__init__.py",
-        "sizeFormatted": "0 B"
+        "sizeFormatted": "0 B",
+        "project": "机器学习"
       },
       {
         "name": "水果分类.py",
         "type": "Python代码",
         "size": 5067,
-        "path": "E:/学习/机器学习/代码/fruits/other/水果分类.py",
-        "relPath": "机器学习/代码/fruits/other/水果分类.py",
-        "sizeFormatted": "4.9 KB"
+        "sizeFormatted": "4.9 KB",
+        "project": "机器学习"
       },
       {
         "name": "__init__.py",
         "type": "Python代码",
         "size": 0,
-        "path": "E:/学习/机器学习/代码/linear regression/__init__.py",
-        "relPath": "机器学习/代码/linear regression/__init__.py",
-        "sizeFormatted": "0 B"
+        "sizeFormatted": "0 B",
+        "project": "机器学习"
       },
       {
         "name": "从零开始的线性回归.py",
         "type": "Python代码",
         "size": 3394,
-        "path": "E:/学习/机器学习/代码/linear regression/从零开始的线性回归.py",
-        "relPath": "机器学习/代码/linear regression/从零开始的线性回归.py",
-        "sizeFormatted": "3.3 KB"
+        "sizeFormatted": "3.3 KB",
+        "project": "机器学习"
       },
       {
         "name": "线性回归的简洁实现.py",
         "type": "Python代码",
         "size": 1560,
-        "path": "E:/学习/机器学习/代码/linear regression/线性回归的简洁实现.py",
-        "relPath": "机器学习/代码/linear regression/线性回归的简洁实现.py",
-        "sizeFormatted": "1.5 KB"
+        "sizeFormatted": "1.5 KB",
+        "project": "机器学习"
       },
       {
         "name": "change.py",
         "type": "Python代码",
         "size": 379,
-        "path": "E:/学习/机器学习/代码/mobilenetv3/change.py",
-        "relPath": "机器学习/代码/mobilenetv3/change.py",
-        "sizeFormatted": "379 B"
+        "sizeFormatted": "379 B",
+        "project": "机器学习"
       },
       {
         "name": "class_indices.json",
         "type": "YAML配置",
         "size": 69,
-        "path": "E:/学习/机器学习/代码/mobilenetv3/class_indices.json",
-        "relPath": "机器学习/代码/mobilenetv3/class_indices.json",
-        "sizeFormatted": "69 B"
+        "sizeFormatted": "69 B",
+        "project": "机器学习"
       },
       {
         "name": "helloworld.py",
         "type": "Python代码",
         "size": 20,
-        "path": "E:/学习/机器学习/代码/mobilenetv3/helloworld.py",
-        "relPath": "机器学习/代码/mobilenetv3/helloworld.py",
-        "sizeFormatted": "20 B"
+        "sizeFormatted": "20 B",
+        "project": "机器学习"
       },
       {
         "name": "mobilenet.py",
         "type": "Python代码",
         "size": 14175,
-        "path": "E:/学习/机器学习/代码/mobilenetv3/mobilenet.py",
-        "relPath": "机器学习/代码/mobilenetv3/mobilenet.py",
-        "sizeFormatted": "13.8 KB"
+        "sizeFormatted": "13.8 KB",
+        "project": "机器学习"
       },
       {
         "name": "mobiletrain.py",
         "type": "Python代码",
         "size": 5603,
-        "path": "E:/学习/机器学习/代码/mobilenetv3/mobiletrain.py",
-        "relPath": "机器学习/代码/mobilenetv3/mobiletrain.py",
-        "sizeFormatted": "5.5 KB"
+        "sizeFormatted": "5.5 KB",
+        "project": "机器学习"
       },
       {
         "name": "model_v2.py",
         "type": "Python代码",
         "size": 4223,
-        "path": "E:/学习/机器学习/代码/mobilenetv3/model_v2.py",
-        "relPath": "机器学习/代码/mobilenetv3/model_v2.py",
-        "sizeFormatted": "4.1 KB"
+        "sizeFormatted": "4.1 KB",
+        "project": "机器学习"
       },
       {
         "name": "trianfenlei.py",
         "type": "Python代码",
         "size": 5051,
-        "path": "E:/学习/机器学习/代码/mobilenetv3/trianfenlei.py",
-        "relPath": "机器学习/代码/mobilenetv3/trianfenlei.py",
-        "sizeFormatted": "4.9 KB"
+        "sizeFormatted": "4.9 KB",
+        "project": "机器学习"
       },
       {
         "name": "valtest.py",
         "type": "Python代码",
         "size": 800,
-        "path": "E:/学习/机器学习/代码/mobilenetv3/valtest.py",
-        "relPath": "机器学习/代码/mobilenetv3/valtest.py",
-        "sizeFormatted": "800 B"
+        "sizeFormatted": "800 B",
+        "project": "机器学习"
       },
       {
         "name": "__init__.py",
         "type": "Python代码",
         "size": 0,
-        "path": "E:/学习/机器学习/代码/mobilenetv3/__init__.py",
-        "relPath": "机器学习/代码/mobilenetv3/__init__.py",
-        "sizeFormatted": "0 B"
+        "sizeFormatted": "0 B",
+        "project": "机器学习"
       },
       {
         "name": "softmax回归的简洁实现.py",
         "type": "Python代码",
         "size": 693,
-        "path": "E:/学习/机器学习/代码/softmax回归/softmax回归的简洁实现.py",
-        "relPath": "机器学习/代码/softmax回归/softmax回归的简洁实现.py",
-        "sizeFormatted": "693 B"
+        "sizeFormatted": "693 B",
+        "project": "机器学习"
       },
       {
         "name": "__init__.py",
         "type": "Python代码",
         "size": 0,
-        "path": "E:/学习/机器学习/代码/softmax回归/__init__.py",
-        "relPath": "机器学习/代码/softmax回归/__init__.py",
-        "sizeFormatted": "0 B"
+        "sizeFormatted": "0 B",
+        "project": "机器学习"
       },
       {
         "name": "从零开始的softmax.py",
         "type": "Python代码",
         "size": 6834,
-        "path": "E:/学习/机器学习/代码/softmax回归/从零开始的softmax.py",
-        "relPath": "机器学习/代码/softmax回归/从零开始的softmax.py",
-        "sizeFormatted": "6.7 KB"
+        "sizeFormatted": "6.7 KB",
+        "project": "机器学习"
       },
       {
         "name": "图像分类数据集.py",
         "type": "Python代码",
         "size": 3474,
-        "path": "E:/学习/机器学习/代码/softmax回归/图像分类数据集.py",
-        "relPath": "机器学习/代码/softmax回归/图像分类数据集.py",
-        "sizeFormatted": "3.4 KB"
+        "sizeFormatted": "3.4 KB",
+        "project": "机器学习"
       },
       {
         "name": "AlexNet.py",
         "type": "Python代码",
         "size": 5274,
-        "path": "E:/学习/机器学习/代码/卷积层/AlexNet.py",
-        "relPath": "机器学习/代码/卷积层/AlexNet.py",
-        "sizeFormatted": "5.2 KB"
+        "sizeFormatted": "5.2 KB",
+        "project": "机器学习"
       },
       {
         "name": "googlenet.py",
         "type": "Python代码",
         "size": 2802,
-        "path": "E:/学习/机器学习/代码/卷积层/googlenet.py",
-        "relPath": "机器学习/代码/卷积层/googlenet.py",
-        "sizeFormatted": "2.7 KB"
+        "sizeFormatted": "2.7 KB",
+        "project": "机器学习"
       },
       {
         "name": "LeNet模型.py",
         "type": "Python代码",
         "size": 4329,
-        "path": "E:/学习/机器学习/代码/卷积层/LeNet模型.py",
-        "relPath": "机器学习/代码/卷积层/LeNet模型.py",
-        "sizeFormatted": "4.2 KB"
+        "sizeFormatted": "4.2 KB",
+        "project": "机器学习"
       },
       {
         "name": "NIN.py",
         "type": "Python代码",
         "size": 1881,
-        "path": "E:/学习/机器学习/代码/卷积层/NIN.py",
-        "relPath": "机器学习/代码/卷积层/NIN.py",
-        "sizeFormatted": "1.8 KB"
+        "sizeFormatted": "1.8 KB",
+        "project": "机器学习"
       },
       {
         "name": "VGG.py",
         "type": "Python代码",
         "size": 4599,
-        "path": "E:/学习/机器学习/代码/卷积层/VGG.py",
-        "relPath": "机器学习/代码/卷积层/VGG.py",
-        "sizeFormatted": "4.5 KB"
+        "sizeFormatted": "4.5 KB",
+        "project": "机器学习"
       },
       {
         "name": "__init__.py",
         "type": "Python代码",
         "size": 0,
-        "path": "E:/学习/机器学习/代码/卷积层/__init__.py",
-        "relPath": "机器学习/代码/卷积层/__init__.py",
-        "sizeFormatted": "0 B"
+        "sizeFormatted": "0 B",
+        "project": "机器学习"
       },
       {
         "name": "图像卷积.py",
         "type": "Python代码",
         "size": 2921,
-        "path": "E:/学习/机器学习/代码/卷积层/图像卷积.py",
-        "relPath": "机器学习/代码/卷积层/图像卷积.py",
-        "sizeFormatted": "2.9 KB"
+        "sizeFormatted": "2.9 KB",
+        "project": "机器学习"
       },
       {
         "name": "填充和步幅.py",
         "type": "Python代码",
         "size": 1235,
-        "path": "E:/学习/机器学习/代码/卷积层/填充和步幅.py",
-        "relPath": "机器学习/代码/卷积层/填充和步幅.py",
-        "sizeFormatted": "1.2 KB"
+        "sizeFormatted": "1.2 KB",
+        "project": "机器学习"
       },
       {
         "name": "多输入多输出通道.py",
         "type": "Python代码",
         "size": 1549,
-        "path": "E:/学习/机器学习/代码/卷积层/多输入多输出通道.py",
-        "relPath": "机器学习/代码/卷积层/多输入多输出通道.py",
-        "sizeFormatted": "1.5 KB"
+        "sizeFormatted": "1.5 KB",
+        "project": "机器学习"
       },
       {
         "name": "批量归一化.py",
         "type": "Python代码",
         "size": 3419,
-        "path": "E:/学习/机器学习/代码/卷积层/批量归一化.py",
-        "relPath": "机器学习/代码/卷积层/批量归一化.py",
-        "sizeFormatted": "3.3 KB"
+        "sizeFormatted": "3.3 KB",
+        "project": "机器学习"
       },
       {
         "name": "残差神经网络.py",
         "type": "Python代码",
         "size": 5464,
-        "path": "E:/学习/机器学习/代码/卷积层/残差神经网络.py",
-        "relPath": "机器学习/代码/卷积层/残差神经网络.py",
-        "sizeFormatted": "5.3 KB"
+        "sizeFormatted": "5.3 KB",
+        "project": "机器学习"
       },
       {
         "name": "池化层.py",
         "type": "Python代码",
         "size": 1825,
-        "path": "E:/学习/机器学习/代码/卷积层/池化层.py",
-        "relPath": "机器学习/代码/卷积层/池化层.py",
-        "sizeFormatted": "1.8 KB"
+        "sizeFormatted": "1.8 KB",
+        "project": "机器学习"
       },
       {
         "name": "kaggle_house_pred_test.csv",
         "type": "Excel表格",
         "size": 451405,
-        "path": "E:/学习/机器学习/代码/夏令营任务/kaggle_house_pred_test.csv",
-        "relPath": "机器学习/代码/夏令营任务/kaggle_house_pred_test.csv",
-        "sizeFormatted": "440.8 KB"
+        "sizeFormatted": "440.8 KB",
+        "project": "机器学习"
       },
       {
         "name": "kaggle_house_pred_train.csv",
         "type": "Excel表格",
         "size": 460676,
-        "path": "E:/学习/机器学习/代码/夏令营任务/kaggle_house_pred_train.csv",
-        "relPath": "机器学习/代码/夏令营任务/kaggle_house_pred_train.csv",
-        "sizeFormatted": "449.9 KB"
+        "sizeFormatted": "449.9 KB",
+        "project": "机器学习"
       },
       {
         "name": "kaggle房价预测.py",
         "type": "Python代码",
         "size": 8367,
-        "path": "E:/学习/机器学习/代码/夏令营任务/kaggle房价预测.py",
-        "relPath": "机器学习/代码/夏令营任务/kaggle房价预测.py",
-        "sizeFormatted": "8.2 KB"
+        "sizeFormatted": "8.2 KB",
+        "project": "机器学习"
       },
       {
         "name": "test.csv",
         "type": "Excel表格",
         "size": 451405,
-        "path": "E:/学习/机器学习/代码/夏令营任务/test.csv",
-        "relPath": "机器学习/代码/夏令营任务/test.csv",
-        "sizeFormatted": "440.8 KB"
+        "sizeFormatted": "440.8 KB",
+        "project": "机器学习"
       },
       {
         "name": "train.csv",
         "type": "Excel表格",
         "size": 460676,
-        "path": "E:/学习/机器学习/代码/夏令营任务/train.csv",
-        "relPath": "机器学习/代码/夏令营任务/train.csv",
-        "sizeFormatted": "449.9 KB"
+        "sizeFormatted": "449.9 KB",
+        "project": "机器学习"
       },
       {
         "name": "__init__.py",
         "type": "Python代码",
         "size": 0,
-        "path": "E:/学习/机器学习/代码/夏令营任务/__init__.py",
-        "relPath": "机器学习/代码/夏令营任务/__init__.py",
-        "sizeFormatted": "0 B"
+        "sizeFormatted": "0 B",
+        "project": "机器学习"
       },
       {
         "name": "古文字分类.py",
         "type": "Python代码",
         "size": 4456,
-        "path": "E:/学习/机器学习/代码/夏令营任务/古文字分类.py",
-        "relPath": "机器学习/代码/夏令营任务/古文字分类.py",
-        "sizeFormatted": "4.4 KB"
+        "sizeFormatted": "4.4 KB",
+        "project": "机器学习"
       },
       {
         "name": "房价预测简化版.py",
         "type": "Python代码",
         "size": 2253,
-        "path": "E:/学习/机器学习/代码/夏令营任务/房价预测简化版.py",
-        "relPath": "机器学习/代码/夏令营任务/房价预测简化版.py",
-        "sizeFormatted": "2.2 KB"
+        "sizeFormatted": "2.2 KB",
+        "project": "机器学习"
       },
       {
         "name": "__init__.py",
         "type": "Python代码",
         "size": 0,
-        "path": "E:/学习/机器学习/代码/多重感知机/__init__.py",
-        "relPath": "机器学习/代码/多重感知机/__init__.py",
-        "sizeFormatted": "0 B"
+        "sizeFormatted": "0 B",
+        "project": "机器学习"
       },
       {
         "name": "丢弃法.py",
         "type": "Python代码",
         "size": 2711,
-        "path": "E:/学习/机器学习/代码/多重感知机/丢弃法.py",
-        "relPath": "机器学习/代码/多重感知机/丢弃法.py",
-        "sizeFormatted": "2.6 KB"
+        "sizeFormatted": "2.6 KB",
+        "project": "机器学习"
       },
       {
         "name": "从零开始的多层感知机.py",
         "type": "Python代码",
         "size": 1189,
-        "path": "E:/学习/机器学习/代码/多重感知机/从零开始的多层感知机.py",
-        "relPath": "机器学习/代码/多重感知机/从零开始的多层感知机.py",
-        "sizeFormatted": "1.2 KB"
+        "sizeFormatted": "1.2 KB",
+        "project": "机器学习"
       },
       {
         "name": "多层感知机的简洁实现.py",
         "type": "Python代码",
         "size": 606,
-        "path": "E:/学习/机器学习/代码/多重感知机/多层感知机的简洁实现.py",
-        "relPath": "机器学习/代码/多重感知机/多层感知机的简洁实现.py",
-        "sizeFormatted": "606 B"
+        "sizeFormatted": "606 B",
+        "project": "机器学习"
       },
       {
         "name": "数值稳定性和模型初始化.py",
         "type": "Python代码",
         "size": 284,
-        "path": "E:/学习/机器学习/代码/多重感知机/数值稳定性和模型初始化.py",
-        "relPath": "机器学习/代码/多重感知机/数值稳定性和模型初始化.py",
-        "sizeFormatted": "284 B"
+        "sizeFormatted": "284 B",
+        "project": "机器学习"
       },
       {
         "name": "权重衰退.py",
         "type": "Python代码",
         "size": 2837,
-        "path": "E:/学习/机器学习/代码/多重感知机/权重衰退.py",
-        "relPath": "机器学习/代码/多重感知机/权重衰退.py",
-        "sizeFormatted": "2.8 KB"
+        "sizeFormatted": "2.8 KB",
+        "project": "机器学习"
       },
       {
         "name": "过拟合和欠拟合.py",
         "type": "Python代码",
         "size": 3203,
-        "path": "E:/学习/机器学习/代码/多重感知机/过拟合和欠拟合.py",
-        "relPath": "机器学习/代码/多重感知机/过拟合和欠拟合.py",
-        "sizeFormatted": "3.1 KB"
+        "sizeFormatted": "3.1 KB",
+        "project": "机器学习"
       },
       {
         "name": "house.csv",
         "type": "Excel表格",
         "size": 1706430,
-        "path": "E:/学习/机器学习/代码/引导/house.csv",
-        "relPath": "机器学习/代码/引导/house.csv",
-        "sizeFormatted": "1.6 MB"
+        "sizeFormatted": "1.6 MB",
+        "project": "机器学习"
       },
       {
         "name": "pytorch.py",
         "type": "Python代码",
         "size": 1790,
-        "path": "E:/学习/机器学习/代码/引导/pytorch.py",
-        "relPath": "机器学习/代码/引导/pytorch.py",
-        "sizeFormatted": "1.7 KB"
+        "sizeFormatted": "1.7 KB",
+        "project": "机器学习"
       },
       {
         "name": "test.py",
         "type": "Python代码",
         "size": 5559,
-        "path": "E:/学习/机器学习/代码/引导/test.py",
-        "relPath": "机器学习/代码/引导/test.py",
-        "sizeFormatted": "5.4 KB"
+        "sizeFormatted": "5.4 KB",
+        "project": "机器学习"
       },
       {
         "name": "__init__.py",
         "type": "Python代码",
         "size": 0,
-        "path": "E:/学习/机器学习/代码/引导/__init__.py",
-        "relPath": "机器学习/代码/引导/__init__.py",
-        "sizeFormatted": "0 B"
+        "sizeFormatted": "0 B",
+        "project": "机器学习"
       },
       {
         "name": "房价预测.py",
         "type": "Python代码",
         "size": 669,
-        "path": "E:/学习/机器学习/代码/引导/房价预测.py",
-        "relPath": "机器学习/代码/引导/房价预测.py",
-        "sizeFormatted": "669 B"
+        "sizeFormatted": "669 B",
+        "project": "机器学习"
       },
       {
         "name": "数据预处理.py",
         "type": "Python代码",
         "size": 1709,
-        "path": "E:/学习/机器学习/代码/引导/数据预处理.py",
-        "relPath": "机器学习/代码/引导/数据预处理.py",
-        "sizeFormatted": "1.7 KB"
+        "sizeFormatted": "1.7 KB",
+        "project": "机器学习"
       },
       {
         "name": "测试.py",
         "type": "Python代码",
         "size": 285,
-        "path": "E:/学习/机器学习/代码/引导/测试.py",
-        "relPath": "机器学习/代码/引导/测试.py",
-        "sizeFormatted": "285 B"
+        "sizeFormatted": "285 B",
+        "project": "机器学习"
       },
       {
         "name": "线性代数.py",
         "type": "Python代码",
         "size": 1924,
-        "path": "E:/学习/机器学习/代码/引导/线性代数.py",
-        "relPath": "机器学习/代码/引导/线性代数.py",
-        "sizeFormatted": "1.9 KB"
+        "sizeFormatted": "1.9 KB",
+        "project": "机器学习"
       },
       {
         "name": "自动求导.py",
         "type": "Python代码",
         "size": 1546,
-        "path": "E:/学习/机器学习/代码/引导/自动求导.py",
-        "relPath": "机器学习/代码/引导/自动求导.py",
-        "sizeFormatted": "1.5 KB"
+        "sizeFormatted": "1.5 KB",
+        "project": "机器学习"
       },
       {
         "name": "ceshi.py",
         "type": "Python代码",
         "size": 541,
-        "path": "E:/学习/机器学习/代码/手势识别/ceshi.py",
-        "relPath": "机器学习/代码/手势识别/ceshi.py",
-        "sizeFormatted": "541 B"
+        "sizeFormatted": "541 B",
+        "project": "机器学习"
       },
       {
         "name": "handposetrain.py",
         "type": "Python代码",
         "size": 3499,
-        "path": "E:/学习/机器学习/代码/手势识别/handposetrain.py",
-        "relPath": "机器学习/代码/手势识别/handposetrain.py",
-        "sizeFormatted": "3.4 KB"
+        "sizeFormatted": "3.4 KB",
+        "project": "机器学习"
       },
       {
         "name": "test.py",
         "type": "Python代码",
         "size": 1813,
-        "path": "E:/学习/机器学习/代码/手势识别/test.py",
-        "relPath": "机器学习/代码/手势识别/test.py",
-        "sizeFormatted": "1.8 KB"
+        "sizeFormatted": "1.8 KB",
+        "project": "机器学习"
       },
       {
         "name": "training.py",
         "type": "Python代码",
         "size": 3019,
-        "path": "E:/学习/机器学习/代码/手势识别/training.py",
-        "relPath": "机器学习/代码/手势识别/training.py",
-        "sizeFormatted": "2.9 KB"
+        "sizeFormatted": "2.9 KB",
+        "project": "机器学习"
       },
       {
         "name": "__init__.py",
         "type": "Python代码",
         "size": 0,
-        "path": "E:/学习/机器学习/代码/手势识别/__init__.py",
-        "relPath": "机器学习/代码/手势识别/__init__.py",
-        "sizeFormatted": "0 B"
+        "sizeFormatted": "0 B",
+        "project": "机器学习"
       },
       {
         "name": "shouyuceishi.py",
         "type": "Python代码",
         "size": 3490,
-        "path": "E:/学习/机器学习/代码/手语识别/shouyuceishi.py",
-        "relPath": "机器学习/代码/手语识别/shouyuceishi.py",
-        "sizeFormatted": "3.4 KB"
+        "sizeFormatted": "3.4 KB",
+        "project": "机器学习"
       },
       {
         "name": "sign_mnist_test.csv",
         "type": "Excel表格",
         "size": 21777485,
-        "path": "E:/学习/机器学习/代码/手语识别/sign_mnist_test.csv",
-        "relPath": "机器学习/代码/手语识别/sign_mnist_test.csv",
-        "sizeFormatted": "20.8 MB"
+        "sizeFormatted": "20.8 MB",
+        "project": "机器学习"
       },
       {
         "name": "trainning.py",
         "type": "Python代码",
         "size": 3782,
-        "path": "E:/学习/机器学习/代码/手语识别/trainning.py",
-        "relPath": "机器学习/代码/手语识别/trainning.py",
-        "sizeFormatted": "3.7 KB"
+        "sizeFormatted": "3.7 KB",
+        "project": "机器学习"
       },
       {
         "name": "trainsfer.py",
         "type": "Python代码",
         "size": 1077,
-        "path": "E:/学习/机器学习/代码/手语识别/trainsfer.py",
-        "relPath": "机器学习/代码/手语识别/trainsfer.py",
-        "sizeFormatted": "1.1 KB"
+        "sizeFormatted": "1.1 KB",
+        "project": "机器学习"
       },
       {
         "name": "__init__.py",
         "type": "Python代码",
         "size": 0,
-        "path": "E:/学习/机器学习/代码/手语识别/__init__.py",
-        "relPath": "机器学习/代码/手语识别/__init__.py",
-        "sizeFormatted": "0 B"
+        "sizeFormatted": "0 B",
+        "project": "机器学习"
       },
       {
         "name": "getdata.py",
         "type": "Python代码",
         "size": 1567,
-        "path": "E:/学习/机器学习/代码/推荐算法/getdata.py",
-        "relPath": "机器学习/代码/推荐算法/getdata.py",
-        "sizeFormatted": "1.5 KB"
+        "sizeFormatted": "1.5 KB",
+        "project": "机器学习"
       },
       {
         "name": "record.txt",
         "type": "文档",
         "size": 153,
-        "path": "E:/学习/机器学习/代码/推荐算法/record.txt",
-        "relPath": "机器学习/代码/推荐算法/record.txt",
-        "sizeFormatted": "153 B"
+        "sizeFormatted": "153 B",
+        "project": "机器学习"
       },
       {
         "name": "record1.txt",
         "type": "文档",
         "size": 41,
-        "path": "E:/学习/机器学习/代码/推荐算法/record1.txt",
-        "relPath": "机器学习/代码/推荐算法/record1.txt",
-        "sizeFormatted": "41 B"
+        "sizeFormatted": "41 B",
+        "project": "机器学习"
       },
       {
         "name": "__init__.py",
         "type": "Python代码",
         "size": 0,
-        "path": "E:/学习/机器学习/代码/推荐算法/__init__.py",
-        "relPath": "机器学习/代码/推荐算法/__init__.py",
-        "sizeFormatted": "0 B"
+        "sizeFormatted": "0 B",
+        "project": "机器学习"
       },
       {
         "name": "单标签推荐算法.py",
         "type": "Python代码",
         "size": 4371,
-        "path": "E:/学习/机器学习/代码/推荐算法/单标签推荐算法.py",
-        "relPath": "机器学习/代码/推荐算法/单标签推荐算法.py",
-        "sizeFormatted": "4.3 KB"
+        "sizeFormatted": "4.3 KB",
+        "project": "机器学习"
       },
       {
         "name": "itemcf.py",
         "type": "Python代码",
         "size": 6743,
-        "path": "E:/学习/机器学习/代码/推荐算法/基于物品的协同过滤算法/itemcf.py",
-        "relPath": "机器学习/代码/推荐算法/基于物品的协同过滤算法/itemcf.py",
-        "sizeFormatted": "6.6 KB"
+        "sizeFormatted": "6.6 KB",
+        "project": "机器学习"
       },
       {
         "name": "test.py",
         "type": "Python代码",
         "size": 0,
-        "path": "E:/学习/机器学习/代码/推荐算法/基于物品的协同过滤算法/test.py",
-        "relPath": "机器学习/代码/推荐算法/基于物品的协同过滤算法/test.py",
-        "sizeFormatted": "0 B"
+        "sizeFormatted": "0 B",
+        "project": "机器学习"
       },
       {
         "name": "__init__.py",
         "type": "Python代码",
         "size": 0,
-        "path": "E:/学习/机器学习/代码/推荐算法/基于物品的协同过滤算法/__init__.py",
-        "relPath": "机器学习/代码/推荐算法/基于物品的协同过滤算法/__init__.py",
-        "sizeFormatted": "0 B"
+        "sizeFormatted": "0 B",
+        "project": "机器学习"
       },
       {
         "name": "main_test.py",
         "type": "Python代码",
         "size": 3454,
-        "path": "E:/学习/机器学习/代码/数字识别/main_test.py",
-        "relPath": "机器学习/代码/数字识别/main_test.py",
-        "sizeFormatted": "3.4 KB"
+        "sizeFormatted": "3.4 KB",
+        "project": "机器学习"
       },
       {
         "name": "tset1.py",
         "type": "Python代码",
         "size": 9855,
-        "path": "E:/学习/机器学习/代码/数字识别/tset1.py",
-        "relPath": "机器学习/代码/数字识别/tset1.py",
-        "sizeFormatted": "9.6 KB"
+        "sizeFormatted": "9.6 KB",
+        "project": "机器学习"
       },
       {
         "name": "__init__.py",
         "type": "Python代码",
         "size": 0,
-        "path": "E:/学习/机器学习/代码/数字识别/__init__.py",
-        "relPath": "机器学习/代码/数字识别/__init__.py",
-        "sizeFormatted": "0 B"
+        "sizeFormatted": "0 B",
+        "project": "机器学习"
       },
       {
         "name": "creat.py",
         "type": "Python代码",
         "size": 3466,
-        "path": "E:/学习/机器学习/代码/数字识别/生成手写数字/creat.py",
-        "relPath": "机器学习/代码/数字识别/生成手写数字/creat.py",
-        "sizeFormatted": "3.4 KB"
+        "sizeFormatted": "3.4 KB",
+        "project": "机器学习"
       },
       {
         "name": "__init__.py",
         "type": "Python代码",
         "size": 0,
-        "path": "E:/学习/机器学习/代码/数字识别/生成手写数字/__init__.py",
-        "relPath": "机器学习/代码/数字识别/生成手写数字/__init__.py",
-        "sizeFormatted": "0 B"
+        "sizeFormatted": "0 B",
+        "project": "机器学习"
       },
       {
         "name": "lenet汉字分类.py",
         "type": "Python代码",
         "size": 4487,
-        "path": "E:/学习/机器学习/代码/汉字分类/lenet汉字分类.py",
-        "relPath": "机器学习/代码/汉字分类/lenet汉字分类.py",
-        "sizeFormatted": "4.4 KB"
+        "sizeFormatted": "4.4 KB",
+        "project": "机器学习"
       },
       {
         "name": "__init__.py",
         "type": "Python代码",
         "size": 0,
-        "path": "E:/学习/机器学习/代码/汉字分类/__init__.py",
-        "relPath": "机器学习/代码/汉字分类/__init__.py",
-        "sizeFormatted": "0 B"
+        "sizeFormatted": "0 B",
+        "project": "机器学习"
       },
       {
         "name": "handtrack.py",
         "type": "Python代码",
         "size": 5613,
-        "path": "E:/学习/机器学习/代码/测试/handtrack.py",
-        "relPath": "机器学习/代码/测试/handtrack.py",
-        "sizeFormatted": "5.5 KB"
+        "sizeFormatted": "5.5 KB",
+        "project": "机器学习"
       },
       {
         "name": "ppx.py",
         "type": "Python代码",
         "size": 356,
-        "path": "E:/学习/机器学习/代码/测试/ppx.py",
-        "relPath": "机器学习/代码/测试/ppx.py",
-        "sizeFormatted": "356 B"
+        "sizeFormatted": "356 B",
+        "project": "机器学习"
       },
       {
         "name": "__init__.py",
         "type": "Python代码",
         "size": 0,
-        "path": "E:/学习/机器学习/代码/测试/__init__.py",
-        "relPath": "机器学习/代码/测试/__init__.py",
-        "sizeFormatted": "0 B"
+        "sizeFormatted": "0 B",
+        "project": "机器学习"
       },
       {
         "name": "测试脚本.py",
         "type": "Python代码",
         "size": 1896,
-        "path": "E:/学习/机器学习/代码/测试/测试脚本.py",
-        "relPath": "机器学习/代码/测试/测试脚本.py",
-        "sizeFormatted": "1.9 KB"
+        "sizeFormatted": "1.9 KB",
+        "project": "机器学习"
       },
       {
         "name": "all.xlsx",
         "type": "Excel表格",
         "size": 57287,
-        "path": "E:/学习/机器学习/代码/测试/数学建模/all.xlsx",
-        "relPath": "机器学习/代码/测试/数学建模/all.xlsx",
-        "sizeFormatted": "55.9 KB"
+        "sizeFormatted": "55.9 KB",
+        "project": "机器学习"
       },
       {
         "name": "allfood.xls",
         "type": "Excel表格",
         "size": 441344,
-        "path": "E:/学习/机器学习/代码/测试/数学建模/allfood.xls",
-        "relPath": "机器学习/代码/测试/数学建模/allfood.xls",
-        "sizeFormatted": "431.0 KB"
+        "sizeFormatted": "431.0 KB",
+        "project": "机器学习"
       },
       {
         "name": "fenglei.py",
         "type": "Python代码",
         "size": 167,
-        "path": "E:/学习/机器学习/代码/测试/数学建模/fenglei.py",
-        "relPath": "机器学习/代码/测试/数学建模/fenglei.py",
-        "sizeFormatted": "167 B"
+        "sizeFormatted": "167 B",
+        "project": "机器学习"
       },
       {
         "name": "food.xls",
         "type": "Excel表格",
         "size": 414720,
-        "path": "E:/学习/机器学习/代码/测试/数学建模/food.xls",
-        "relPath": "机器学习/代码/测试/数学建模/food.xls",
-        "sizeFormatted": "405.0 KB"
+        "sizeFormatted": "405.0 KB",
+        "project": "机器学习"
       },
       {
         "name": "lable.xlsx",
         "type": "Excel表格",
         "size": 10895,
-        "path": "E:/学习/机器学习/代码/测试/数学建模/lable.xlsx",
-        "relPath": "机器学习/代码/测试/数学建模/lable.xlsx",
-        "sizeFormatted": "10.6 KB"
+        "sizeFormatted": "10.6 KB",
+        "project": "机器学习"
       },
       {
         "name": "result.xlsx",
         "type": "Excel表格",
         "size": 36000,
-        "path": "E:/学习/机器学习/代码/测试/数学建模/result.xlsx",
-        "relPath": "机器学习/代码/测试/数学建模/result.xlsx",
-        "sizeFormatted": "35.2 KB"
+        "sizeFormatted": "35.2 KB",
+        "project": "机器学习"
       },
       {
         "name": "testall.xlsx",
         "type": "Excel表格",
         "size": 19539,
-        "path": "E:/学习/机器学习/代码/测试/数学建模/testall.xlsx",
-        "relPath": "机器学习/代码/测试/数学建模/testall.xlsx",
-        "sizeFormatted": "19.1 KB"
+        "sizeFormatted": "19.1 KB",
+        "project": "机器学习"
       },
       {
         "name": "testlable.xlsx",
         "type": "Excel表格",
         "size": 8908,
-        "path": "E:/学习/机器学习/代码/测试/数学建模/testlable.xlsx",
-        "relPath": "机器学习/代码/测试/数学建模/testlable.xlsx",
-        "sizeFormatted": "8.7 KB"
+        "sizeFormatted": "8.7 KB",
+        "project": "机器学习"
       },
       {
         "name": "__init__.py",
         "type": "Python代码",
         "size": 0,
-        "path": "E:/学习/机器学习/代码/测试/数学建模/__init__.py",
-        "relPath": "机器学习/代码/测试/数学建模/__init__.py",
-        "sizeFormatted": "0 B"
+        "sizeFormatted": "0 B",
+        "project": "机器学习"
       },
       {
         "name": "多层感知机.py",
         "type": "Python代码",
         "size": 1808,
-        "path": "E:/学习/机器学习/代码/测试/数学建模/多层感知机.py",
-        "relPath": "机器学习/代码/测试/数学建模/多层感知机.py",
-        "sizeFormatted": "1.8 KB"
+        "sizeFormatted": "1.8 KB",
+        "project": "机器学习"
       },
       {
         "name": "查找.py",
         "type": "Python代码",
         "size": 1049,
-        "path": "E:/学习/机器学习/代码/测试/数学建模/查找.py",
-        "relPath": "机器学习/代码/测试/数学建模/查找.py",
-        "sizeFormatted": "1.0 KB"
+        "sizeFormatted": "1.0 KB",
+        "project": "机器学习"
       },
       {
         "name": "allfood.xls",
         "type": "Excel表格",
         "size": 441344,
-        "path": "E:/学习/机器学习/代码/测试/数学建模/第四题/allfood.xls",
-        "relPath": "机器学习/代码/测试/数学建模/第四题/allfood.xls",
-        "sizeFormatted": "431.0 KB"
+        "sizeFormatted": "431.0 KB",
+        "project": "机器学习"
       },
       {
         "name": "__init__.py",
         "type": "Python代码",
         "size": 0,
-        "path": "E:/学习/机器学习/代码/测试/数学建模/第四题/__init__.py",
-        "relPath": "机器学习/代码/测试/数学建模/第四题/__init__.py",
-        "sizeFormatted": "0 B"
+        "sizeFormatted": "0 B",
+        "project": "机器学习"
       },
       {
         "name": "第四题.py",
         "type": "Python代码",
         "size": 788,
-        "path": "E:/学习/机器学习/代码/测试/数学建模/第四题/第四题.py",
-        "relPath": "机器学习/代码/测试/数学建模/第四题/第四题.py",
-        "sizeFormatted": "788 B"
+        "sizeFormatted": "788 B",
+        "project": "机器学习"
       },
       {
         "name": "__init__.py",
         "type": "Python代码",
         "size": 0,
-        "path": "E:/学习/机器学习/代码/深度学习计算/__init__.py",
-        "relPath": "机器学习/代码/深度学习计算/__init__.py",
-        "sizeFormatted": "0 B"
+        "sizeFormatted": "0 B",
+        "project": "机器学习"
       },
       {
         "name": "参数管理.py",
         "type": "Python代码",
         "size": 3984,
-        "path": "E:/学习/机器学习/代码/深度学习计算/参数管理.py",
-        "relPath": "机器学习/代码/深度学习计算/参数管理.py",
-        "sizeFormatted": "3.9 KB"
+        "sizeFormatted": "3.9 KB",
+        "project": "机器学习"
       },
       {
         "name": "层和块.py",
         "type": "Python代码",
         "size": 3651,
-        "path": "E:/学习/机器学习/代码/深度学习计算/层和块.py",
-        "relPath": "机器学习/代码/深度学习计算/层和块.py",
-        "sizeFormatted": "3.6 KB"
+        "sizeFormatted": "3.6 KB",
+        "project": "机器学习"
       },
       {
         "name": "测试.py",
         "type": "Python代码",
         "size": 235,
-        "path": "E:/学习/机器学习/代码/深度学习计算/测试.py",
-        "relPath": "机器学习/代码/深度学习计算/测试.py",
-        "sizeFormatted": "235 B"
+        "sizeFormatted": "235 B",
+        "project": "机器学习"
       },
       {
         "name": "自定义层.py",
         "type": "Python代码",
         "size": 1426,
-        "path": "E:/学习/机器学习/代码/深度学习计算/自定义层.py",
-        "relPath": "机器学习/代码/深度学习计算/自定义层.py",
-        "sizeFormatted": "1.4 KB"
+        "sizeFormatted": "1.4 KB",
+        "project": "机器学习"
       },
       {
         "name": "读写文件.py",
         "type": "Python代码",
         "size": 1484,
-        "path": "E:/学习/机器学习/代码/深度学习计算/读写文件.py",
-        "relPath": "机器学习/代码/深度学习计算/读写文件.py",
-        "sizeFormatted": "1.4 KB"
+        "sizeFormatted": "1.4 KB",
+        "project": "机器学习"
       },
       {
         "name": "__init__.py",
         "type": "Python代码",
         "size": 0,
-        "path": "E:/学习/机器学习/代码/计算机视觉/__init__.py",
-        "relPath": "机器学习/代码/计算机视觉/__init__.py",
-        "sizeFormatted": "0 B"
+        "sizeFormatted": "0 B",
+        "project": "机器学习"
       },
       {
         "name": "区域卷积神经网络.py",
         "type": "Python代码",
         "size": 0,
-        "path": "E:/学习/机器学习/代码/计算机视觉/区域卷积神经网络.py",
-        "relPath": "机器学习/代码/计算机视觉/区域卷积神经网络.py",
-        "sizeFormatted": "0 B"
+        "sizeFormatted": "0 B",
+        "project": "机器学习"
       },
       {
         "name": "图像增广.py",
         "type": "Python代码",
         "size": 4090,
-        "path": "E:/学习/机器学习/代码/计算机视觉/图像增广.py",
-        "relPath": "机器学习/代码/计算机视觉/图像增广.py",
-        "sizeFormatted": "4.0 KB"
+        "sizeFormatted": "4.0 KB",
+        "project": "机器学习"
       },
       {
         "name": "微调.py",
         "type": "Python代码",
         "size": 2912,
-        "path": "E:/学习/机器学习/代码/计算机视觉/微调.py",
-        "relPath": "机器学习/代码/计算机视觉/微调.py",
-        "sizeFormatted": "2.8 KB"
+        "sizeFormatted": "2.8 KB",
+        "project": "机器学习"
       },
       {
         "name": "物体检测.py",
         "type": "Python代码",
         "size": 126,
-        "path": "E:/学习/机器学习/代码/计算机视觉/物体检测.py",
-        "relPath": "机器学习/代码/计算机视觉/物体检测.py",
-        "sizeFormatted": "126 B"
+        "sizeFormatted": "126 B",
+        "project": "机器学习"
       },
       {
         "name": "目标检测数据集.py",
         "type": "Python代码",
         "size": 2423,
-        "path": "E:/学习/机器学习/代码/计算机视觉/目标检测数据集.py",
-        "relPath": "机器学习/代码/计算机视觉/目标检测数据集.py",
-        "sizeFormatted": "2.4 KB"
+        "sizeFormatted": "2.4 KB",
+        "project": "机器学习"
       },
       {
         "name": "说明.txt",
         "type": "文档",
         "size": 174,
-        "path": "E:/学习/机器学习/电子资源-零基础学机器学习/说明.txt",
-        "relPath": "机器学习/电子资源-零基础学机器学习/说明.txt",
-        "sizeFormatted": "174 B"
+        "sizeFormatted": "174 B",
+        "project": "机器学习"
       },
       {
         "name": "C10-4 GAN.ipynb",
         "type": "Jupyter Notebook",
         "size": 4386,
-        "path": "E:/学习/机器学习/电子资源-零基础学机器学习/第10课 非监督及其他类型的学习/其他代码/C10-4 GAN.ipynb",
-        "relPath": "机器学习/电子资源-零基础学机器学习/第10课 非监督及其他类型的学习/其他代码/C10-4 GAN.ipynb",
-        "sizeFormatted": "4.3 KB"
+        "sizeFormatted": "4.3 KB",
+        "project": "机器学习"
       },
       {
         "name": "C10-5 VAE.ipynb",
         "type": "Jupyter Notebook",
         "size": 12471,
-        "path": "E:/学习/机器学习/电子资源-零基础学机器学习/第10课 非监督及其他类型的学习/其他代码/C10-5 VAE.ipynb",
-        "relPath": "机器学习/电子资源-零基础学机器学习/第10课 非监督及其他类型的学习/其他代码/C10-5 VAE.ipynb",
-        "sizeFormatted": "12.2 KB"
+        "sizeFormatted": "12.2 KB",
+        "project": "机器学习"
       },
       {
         "name": "C10-1 K-means - Customer Cluster.ipynb",
         "type": "Jupyter Notebook",
         "size": 2682,
-        "path": "E:/学习/机器学习/电子资源-零基础学机器学习/第10课 非监督及其他类型的学习/教学用例1 客户聚类/代码/C10-1 K-means - Customer Cluster.ipynb",
-        "relPath": "机器学习/电子资源-零基础学机器学习/第10课 非监督及其他类型的学习/教学用例1 客户聚类/代码/C10-1 K-means - Customer Cluster.ipynb",
-        "sizeFormatted": "2.6 KB"
+        "sizeFormatted": "2.6 KB",
+        "project": "机器学习"
       },
       {
         "name": "C10-2 K-means - Age and Spending.ipynb",
         "type": "Jupyter Notebook",
         "size": 50020,
-        "path": "E:/学习/机器学习/电子资源-零基础学机器学习/第10课 非监督及其他类型的学习/教学用例1 客户聚类/代码/C10-2 K-means - Age and Spending.ipynb",
-        "relPath": "机器学习/电子资源-零基础学机器学习/第10课 非监督及其他类型的学习/教学用例1 客户聚类/代码/C10-2 K-means - Age and Spending.ipynb",
-        "sizeFormatted": "48.8 KB"
+        "sizeFormatted": "48.8 KB",
+        "project": "机器学习"
       },
       {
         "name": "Customers Cluster.csv",
         "type": "Excel表格",
         "size": 5120,
-        "path": "E:/学习/机器学习/电子资源-零基础学机器学习/第10课 非监督及其他类型的学习/教学用例1 客户聚类/数据集/Customers Cluster.csv",
-        "relPath": "机器学习/电子资源-零基础学机器学习/第10课 非监督及其他类型的学习/教学用例1 客户聚类/数据集/Customers Cluster.csv",
-        "sizeFormatted": "5.0 KB"
+        "sizeFormatted": "5.0 KB",
+        "project": "机器学习"
       },
       {
         "name": "C10-3 PCA - Sign Language.ipynb",
         "type": "Jupyter Notebook",
         "size": 2181,
-        "path": "E:/学习/机器学习/电子资源-零基础学机器学习/第10课 非监督及其他类型的学习/教学用例2 手语PCA/代码/C10-3 PCA - Sign Language.ipynb",
-        "relPath": "机器学习/电子资源-零基础学机器学习/第10课 非监督及其他类型的学习/教学用例2 手语PCA/代码/C10-3 PCA - Sign Language.ipynb",
-        "sizeFormatted": "2.1 KB"
+        "sizeFormatted": "2.1 KB",
+        "project": "机器学习"
       },
       {
         "name": "数据集说明.txt",
         "type": "文档",
         "size": 124,
-        "path": "E:/学习/机器学习/电子资源-零基础学机器学习/第10课 非监督及其他类型的学习/教学用例2 手语PCA/数据集/数据集说明.txt",
-        "relPath": "机器学习/电子资源-零基础学机器学习/第10课 非监督及其他类型的学习/教学用例2 手语PCA/数据集/数据集说明.txt",
-        "sizeFormatted": "124 B"
+        "sizeFormatted": "124 B",
+        "project": "机器学习"
       },
       {
         "name": "C11-1 Q-Learning.ipynb",
         "type": "Jupyter Notebook",
         "size": 66379,
-        "path": "E:/学习/机器学习/电子资源-零基础学机器学习/第11课 强化学习/教学案例 冰湖挑战/代码/C11-1 Q-Learning.ipynb",
-        "relPath": "机器学习/电子资源-零基础学机器学习/第11课 强化学习/教学案例 冰湖挑战/代码/C11-1 Q-Learning.ipynb",
-        "sizeFormatted": "64.8 KB"
+        "sizeFormatted": "64.8 KB",
+        "project": "机器学习"
       },
       {
         "name": "C11-2 SARSA.ipynb",
         "type": "Jupyter Notebook",
         "size": 35927,
-        "path": "E:/学习/机器学习/电子资源-零基础学机器学习/第11课 强化学习/教学案例 冰湖挑战/代码/C11-2 SARSA.ipynb",
-        "relPath": "机器学习/电子资源-零基础学机器学习/第11课 强化学习/教学案例 冰湖挑战/代码/C11-2 SARSA.ipynb",
-        "sizeFormatted": "35.1 KB"
+        "sizeFormatted": "35.1 KB",
+        "project": "机器学习"
       },
       {
         "name": "C11-3 Deep Q-learning.ipynb",
         "type": "Jupyter Notebook",
         "size": 2470,
-        "path": "E:/学习/机器学习/电子资源-零基础学机器学习/第11课 强化学习/教学案例 冰湖挑战/代码/C11-3 Deep Q-learning.ipynb",
-        "relPath": "机器学习/电子资源-零基础学机器学习/第11课 强化学习/教学案例 冰湖挑战/代码/C11-3 Deep Q-learning.ipynb",
-        "sizeFormatted": "2.4 KB"
+        "sizeFormatted": "2.4 KB",
+        "project": "机器学习"
       },
       {
         "name": "C01-1 California Housing Price.ipynb",
         "type": "Jupyter Notebook",
         "size": 2967,
-        "path": "E:/学习/机器学习/电子资源-零基础学机器学习/第1课 机器学习实战/教学用例1 加州房价预测/代码/C01-1 California Housing Price.ipynb",
-        "relPath": "机器学习/电子资源-零基础学机器学习/第1课 机器学习实战/教学用例1 加州房价预测/代码/C01-1 California Housing Price.ipynb",
-        "sizeFormatted": "2.9 KB"
+        "sizeFormatted": "2.9 KB",
+        "project": "机器学习"
       },
       {
         "name": "house.csv",
         "type": "Excel表格",
         "size": 1706430,
-        "path": "E:/学习/机器学习/电子资源-零基础学机器学习/第1课 机器学习实战/教学用例1 加州房价预测/数据集/house.csv",
-        "relPath": "机器学习/电子资源-零基础学机器学习/第1课 机器学习实战/教学用例1 加州房价预测/数据集/house.csv",
-        "sizeFormatted": "1.6 MB"
+        "sizeFormatted": "1.6 MB",
+        "project": "机器学习"
       },
       {
         "name": "house.txt",
         "type": "文档",
         "size": 1706430,
-        "path": "E:/学习/机器学习/电子资源-零基础学机器学习/第1课 机器学习实战/教学用例1 加州房价预测/数据集/house.txt",
-        "relPath": "机器学习/电子资源-零基础学机器学习/第1课 机器学习实战/教学用例1 加州房价预测/数据集/house.txt",
-        "sizeFormatted": "1.6 MB"
+        "sizeFormatted": "1.6 MB",
+        "project": "机器学习"
       },
       {
         "name": "C01-2 MNIST Number Recognition.ipynb",
         "type": "Jupyter Notebook",
         "size": 3974,
-        "path": "E:/学习/机器学习/电子资源-零基础学机器学习/第1课 机器学习实战/教学用例2 MNIST手写数字识别/代码/C01-2 MNIST Number Recognition.ipynb",
-        "relPath": "机器学习/电子资源-零基础学机器学习/第1课 机器学习实战/教学用例2 MNIST手写数字识别/代码/C01-2 MNIST Number Recognition.ipynb",
-        "sizeFormatted": "3.9 KB"
+        "sizeFormatted": "3.9 KB",
+        "project": "机器学习"
       },
       {
         "name": "数据集说明.txt",
         "type": "文档",
         "size": 150,
-        "path": "E:/学习/机器学习/电子资源-零基础学机器学习/第1课 机器学习实战/教学用例2 MNIST手写数字识别/数据集/数据集说明.txt",
-        "relPath": "机器学习/电子资源-零基础学机器学习/第1课 机器学习实战/教学用例2 MNIST手写数字识别/数据集/数据集说明.txt",
-        "sizeFormatted": "150 B"
+        "sizeFormatted": "150 B",
+        "project": "机器学习"
       },
       {
         "name": "C01-3 Boston Housing Price.ipynb",
         "type": "Jupyter Notebook",
         "size": 1999,
-        "path": "E:/学习/机器学习/电子资源-零基础学机器学习/第1课 机器学习实战/练习用例 波士顿房价预测/代码/C01-3 Boston Housing Price.ipynb",
-        "relPath": "机器学习/电子资源-零基础学机器学习/第1课 机器学习实战/练习用例 波士顿房价预测/代码/C01-3 Boston Housing Price.ipynb",
-        "sizeFormatted": "2.0 KB"
+        "sizeFormatted": "2.0 KB",
+        "project": "机器学习"
       },
       {
         "name": "数据集说明.txt",
         "type": "文档",
         "size": 168,
-        "path": "E:/学习/机器学习/电子资源-零基础学机器学习/第1课 机器学习实战/练习用例 波士顿房价预测/数据集/数据集说明.txt",
-        "relPath": "机器学习/电子资源-零基础学机器学习/第1课 机器学习实战/练习用例 波士顿房价预测/数据集/数据集说明.txt",
-        "sizeFormatted": "168 B"
+        "sizeFormatted": "168 B",
+        "project": "机器学习"
       },
       {
         "name": "C02-1 Tensor - NumPy Arrays.ipynb",
         "type": "Jupyter Notebook",
         "size": 3244,
-        "path": "E:/学习/机器学习/电子资源-零基础学机器学习/第2课 Python数据操作/代码/C02-1 Tensor - NumPy Arrays.ipynb",
-        "relPath": "机器学习/电子资源-零基础学机器学习/第2课 Python数据操作/代码/C02-1 Tensor - NumPy Arrays.ipynb",
-        "sizeFormatted": "3.2 KB"
+        "sizeFormatted": "3.2 KB",
+        "project": "机器学习"
       },
       {
         "name": "C02-2 Tensor - Vertorization.ipynb",
         "type": "Jupyter Notebook",
         "size": 10048,
-        "path": "E:/学习/机器学习/电子资源-零基础学机器学习/第2课 Python数据操作/代码/C02-2 Tensor - Vertorization.ipynb",
-        "relPath": "机器学习/电子资源-零基础学机器学习/第2课 Python数据操作/代码/C02-2 Tensor - Vertorization.ipynb",
-        "sizeFormatted": "9.8 KB"
+        "sizeFormatted": "9.8 KB",
+        "project": "机器学习"
       },
       {
         "name": "C02-3 Tensor - Boston Housing.ipynb",
         "type": "Jupyter Notebook",
         "size": 4428,
-        "path": "E:/学习/机器学习/电子资源-零基础学机器学习/第2课 Python数据操作/代码/C02-3 Tensor - Boston Housing.ipynb",
-        "relPath": "机器学习/电子资源-零基础学机器学习/第2课 Python数据操作/代码/C02-3 Tensor - Boston Housing.ipynb",
-        "sizeFormatted": "4.3 KB"
+        "sizeFormatted": "4.3 KB",
+        "project": "机器学习"
       },
       {
         "name": "C03-1 Linear Regression - Ads-n-Sales Single Var.ipynb",
         "type": "Jupyter Notebook",
         "size": 133889,
-        "path": "E:/学习/机器学习/电子资源-零基础学机器学习/第3课 线性回归/教学用例 网店广告/代码/C03-1 Linear Regression - Ads-n-Sales Single Var.ipynb",
-        "relPath": "机器学习/电子资源-零基础学机器学习/第3课 线性回归/教学用例 网店广告/代码/C03-1 Linear Regression - Ads-n-Sales Single Var.ipynb",
-        "sizeFormatted": "130.8 KB"
+        "sizeFormatted": "130.8 KB",
+        "project": "机器学习"
       },
       {
         "name": "C03-2 Linear Regression - Ads-n-Sales Multi Vars.ipynb",
         "type": "Jupyter Notebook",
         "size": 7704,
-        "path": "E:/学习/机器学习/电子资源-零基础学机器学习/第3课 线性回归/教学用例 网店广告/代码/C03-2 Linear Regression - Ads-n-Sales Multi Vars.ipynb",
-        "relPath": "机器学习/电子资源-零基础学机器学习/第3课 线性回归/教学用例 网店广告/代码/C03-2 Linear Regression - Ads-n-Sales Multi Vars.ipynb",
-        "sizeFormatted": "7.5 KB"
+        "sizeFormatted": "7.5 KB",
+        "project": "机器学习"
       },
       {
         "name": "C03-3 Sklearn - Ads and Sales.ipynb",
         "type": "Jupyter Notebook",
         "size": 81150,
-        "path": "E:/学习/机器学习/电子资源-零基础学机器学习/第3课 线性回归/教学用例 网店广告/代码/C03-3 Sklearn - Ads and Sales.ipynb",
-        "relPath": "机器学习/电子资源-零基础学机器学习/第3课 线性回归/教学用例 网店广告/代码/C03-3 Sklearn - Ads and Sales.ipynb",
-        "sizeFormatted": "79.2 KB"
+        "sizeFormatted": "79.2 KB",
+        "project": "机器学习"
       },
       {
         "name": "C03-4 Contour Plot.ipynb",
         "type": "Jupyter Notebook",
         "size": 1472411,
-        "path": "E:/学习/机器学习/电子资源-零基础学机器学习/第3课 线性回归/教学用例 网店广告/代码/C03-4 Contour Plot.ipynb",
-        "relPath": "机器学习/电子资源-零基础学机器学习/第3课 线性回归/教学用例 网店广告/代码/C03-4 Contour Plot.ipynb",
-        "sizeFormatted": "1.4 MB"
+        "sizeFormatted": "1.4 MB",
+        "project": "机器学习"
       },
       {
         "name": "advertising.csv",
         "type": "Excel表格",
         "size": 4483,
-        "path": "E:/学习/机器学习/电子资源-零基础学机器学习/第3课 线性回归/教学用例 网店广告/数据集/advertising.csv",
-        "relPath": "机器学习/电子资源-零基础学机器学习/第3课 线性回归/教学用例 网店广告/数据集/advertising.csv",
-        "sizeFormatted": "4.4 KB"
+        "sizeFormatted": "4.4 KB",
+        "project": "机器学习"
       },
       {
         "name": "C03-5 Linear Regression - Bonston Housing.ipynb",
         "type": "Jupyter Notebook",
         "size": 4476,
-        "path": "E:/学习/机器学习/电子资源-零基础学机器学习/第3课 线性回归/练习用例 波士顿房价预测/代码/C03-5 Linear Regression - Bonston Housing.ipynb",
-        "relPath": "机器学习/电子资源-零基础学机器学习/第3课 线性回归/练习用例 波士顿房价预测/代码/C03-5 Linear Regression - Bonston Housing.ipynb",
-        "sizeFormatted": "4.4 KB"
+        "sizeFormatted": "4.4 KB",
+        "project": "机器学习"
       },
       {
         "name": "数据集说明.txt",
         "type": "文档",
         "size": 168,
-        "path": "E:/学习/机器学习/电子资源-零基础学机器学习/第3课 线性回归/练习用例 波士顿房价预测/数据集/数据集说明.txt",
-        "relPath": "机器学习/电子资源-零基础学机器学习/第3课 线性回归/练习用例 波士顿房价预测/数据集/数据集说明.txt",
-        "sizeFormatted": "168 B"
+        "sizeFormatted": "168 B",
+        "project": "机器学习"
       },
       {
         "name": "C04-1 Logistic Regression Single Class - Heart.ipynb",
         "type": "Jupyter Notebook",
         "size": 8460,
-        "path": "E:/学习/机器学习/电子资源-零基础学机器学习/第4课 逻辑回归/教学用例1 心脏病/代码/C04-1 Logistic Regression Single Class - Heart.ipynb",
-        "relPath": "机器学习/电子资源-零基础学机器学习/第4课 逻辑回归/教学用例1 心脏病/代码/C04-1 Logistic Regression Single Class - Heart.ipynb",
-        "sizeFormatted": "8.3 KB"
+        "sizeFormatted": "8.3 KB",
+        "project": "机器学习"
       },
       {
         "name": "heart.csv",
         "type": "Excel表格",
         "size": 11328,
-        "path": "E:/学习/机器学习/电子资源-零基础学机器学习/第4课 逻辑回归/教学用例1 心脏病/数据集/heart.csv",
-        "relPath": "机器学习/电子资源-零基础学机器学习/第4课 逻辑回归/教学用例1 心脏病/数据集/heart.csv",
-        "sizeFormatted": "11.1 KB"
+        "sizeFormatted": "11.1 KB",
+        "project": "机器学习"
       },
       {
         "name": "C04-2 Logistic Regression Multi Classes - Iris Sepal.ipynb",
         "type": "Jupyter Notebook",
         "size": 103609,
-        "path": "E:/学习/机器学习/电子资源-零基础学机器学习/第4课 逻辑回归/教学用例2 鸢尾花/代码/C04-2 Logistic Regression Multi Classes - Iris Sepal.ipynb",
-        "relPath": "机器学习/电子资源-零基础学机器学习/第4课 逻辑回归/教学用例2 鸢尾花/代码/C04-2 Logistic Regression Multi Classes - Iris Sepal.ipynb",
-        "sizeFormatted": "101.2 KB"
+        "sizeFormatted": "101.2 KB",
+        "project": "机器学习"
       },
       {
         "name": "C04-3 Logistic Regression Multi Classes - Iris Petal.ipynb",
         "type": "Jupyter Notebook",
         "size": 98476,
-        "path": "E:/学习/机器学习/电子资源-零基础学机器学习/第4课 逻辑回归/教学用例2 鸢尾花/代码/C04-3 Logistic Regression Multi Classes - Iris Petal.ipynb",
-        "relPath": "机器学习/电子资源-零基础学机器学习/第4课 逻辑回归/教学用例2 鸢尾花/代码/C04-3 Logistic Regression Multi Classes - Iris Petal.ipynb",
-        "sizeFormatted": "96.2 KB"
+        "sizeFormatted": "96.2 KB",
+        "project": "机器学习"
       },
       {
         "name": "Iris.csv",
         "type": "Excel表格",
         "size": 5107,
-        "path": "E:/学习/机器学习/电子资源-零基础学机器学习/第4课 逻辑回归/教学用例2 鸢尾花/数据集/Iris.csv",
-        "relPath": "机器学习/电子资源-零基础学机器学习/第4课 逻辑回归/教学用例2 鸢尾花/数据集/Iris.csv",
-        "sizeFormatted": "5.0 KB"
+        "sizeFormatted": "5.0 KB",
+        "project": "机器学习"
       },
       {
         "name": "数据集说明.txt",
         "type": "文档",
         "size": 319,
-        "path": "E:/学习/机器学习/电子资源-零基础学机器学习/第4课 逻辑回归/教学用例2 鸢尾花/数据集/数据集说明.txt",
-        "relPath": "机器学习/电子资源-零基础学机器学习/第4课 逻辑回归/教学用例2 鸢尾花/数据集/数据集说明.txt",
-        "sizeFormatted": "319 B"
+        "sizeFormatted": "319 B",
+        "project": "机器学习"
       },
       {
         "name": "C04-4 Logistic Regression Single Class - Titanic.ipynb",
         "type": "Jupyter Notebook",
         "size": 8029,
-        "path": "E:/学习/机器学习/电子资源-零基础学机器学习/第4课 逻辑回归/练习用例 泰坦尼克/代码/C04-4 Logistic Regression Single Class - Titanic.ipynb",
-        "relPath": "机器学习/电子资源-零基础学机器学习/第4课 逻辑回归/练习用例 泰坦尼克/代码/C04-4 Logistic Regression Single Class - Titanic.ipynb",
-        "sizeFormatted": "7.8 KB"
+        "sizeFormatted": "7.8 KB",
+        "project": "机器学习"
       },
       {
         "name": "test.csv",
         "type": "Excel表格",
         "size": 28629,
-        "path": "E:/学习/机器学习/电子资源-零基础学机器学习/第4课 逻辑回归/练习用例 泰坦尼克/数据集/test.csv",
-        "relPath": "机器学习/电子资源-零基础学机器学习/第4课 逻辑回归/练习用例 泰坦尼克/数据集/test.csv",
-        "sizeFormatted": "28.0 KB"
+        "sizeFormatted": "28.0 KB",
+        "project": "机器学习"
       },
       {
         "name": "train.csv",
         "type": "Excel表格",
         "size": 61194,
-        "path": "E:/学习/机器学习/电子资源-零基础学机器学习/第4课 逻辑回归/练习用例 泰坦尼克/数据集/train.csv",
-        "relPath": "机器学习/电子资源-零基础学机器学习/第4课 逻辑回归/练习用例 泰坦尼克/数据集/train.csv",
-        "sizeFormatted": "59.8 KB"
+        "sizeFormatted": "59.8 KB",
+        "project": "机器学习"
       },
       {
         "name": "数据集说明.txt",
         "type": "文档",
         "size": 144,
-        "path": "E:/学习/机器学习/电子资源-零基础学机器学习/第4课 逻辑回归/练习用例 泰坦尼克/数据集/数据集说明.txt",
-        "relPath": "机器学习/电子资源-零基础学机器学习/第4课 逻辑回归/练习用例 泰坦尼克/数据集/数据集说明.txt",
-        "sizeFormatted": "144 B"
+        "sizeFormatted": "144 B",
+        "project": "机器学习"
       },
       {
         "name": "C05-1 ANN - Bank Customer.ipynb",
         "type": "Jupyter Notebook",
         "size": 290502,
-        "path": "E:/学习/机器学习/电子资源-零基础学机器学习/第5课 深度神经网络/教学用例 银行客户流失/代码/C05-1 ANN - Bank Customer.ipynb",
-        "relPath": "机器学习/电子资源-零基础学机器学习/第5课 深度神经网络/教学用例 银行客户流失/代码/C05-1 ANN - Bank Customer.ipynb",
-        "sizeFormatted": "283.7 KB"
+        "sizeFormatted": "283.7 KB",
+        "project": "机器学习"
       },
       {
         "name": "C05-2 Using TensorBoard.ipynb",
         "type": "Jupyter Notebook",
         "size": 2006,
-        "path": "E:/学习/机器学习/电子资源-零基础学机器学习/第5课 深度神经网络/教学用例 银行客户流失/代码/C05-2 Using TensorBoard.ipynb",
-        "relPath": "机器学习/电子资源-零基础学机器学习/第5课 深度神经网络/教学用例 银行客户流失/代码/C05-2 Using TensorBoard.ipynb",
-        "sizeFormatted": "2.0 KB"
+        "sizeFormatted": "2.0 KB",
+        "project": "机器学习"
       },
       {
         "name": "BankCustomer.csv",
         "type": "Excel表格",
         "size": 582823,
-        "path": "E:/学习/机器学习/电子资源-零基础学机器学习/第5课 深度神经网络/教学用例 银行客户流失/数据集/BankCustomer.csv",
-        "relPath": "机器学习/电子资源-零基础学机器学习/第5课 深度神经网络/教学用例 银行客户流失/数据集/BankCustomer.csv",
-        "sizeFormatted": "569.2 KB"
+        "sizeFormatted": "569.2 KB",
+        "project": "机器学习"
       },
       {
         "name": "C05-3 ANN - Titanic.ipynb",
         "type": "Jupyter Notebook",
         "size": 16341,
-        "path": "E:/学习/机器学习/电子资源-零基础学机器学习/第5课 深度神经网络/练习用例 泰坦尼克/代码/C05-3 ANN - Titanic.ipynb",
-        "relPath": "机器学习/电子资源-零基础学机器学习/第5课 深度神经网络/练习用例 泰坦尼克/代码/C05-3 ANN - Titanic.ipynb",
-        "sizeFormatted": "16.0 KB"
+        "sizeFormatted": "16.0 KB",
+        "project": "机器学习"
       },
       {
         "name": "数据集说明.txt",
         "type": "文档",
         "size": 26,
-        "path": "E:/学习/机器学习/电子资源-零基础学机器学习/第5课 深度神经网络/练习用例 泰坦尼克/数据集/数据集说明.txt",
-        "relPath": "机器学习/电子资源-零基础学机器学习/第5课 深度神经网络/练习用例 泰坦尼克/数据集/数据集说明.txt",
-        "sizeFormatted": "26 B"
+        "sizeFormatted": "26 B",
+        "project": "机器学习"
       },
       {
         "name": "C06-1 CNN Dogs.ipynb",
         "type": "Jupyter Notebook",
         "size": 10774,
-        "path": "E:/学习/机器学习/电子资源-零基础学机器学习/第6课 卷积神经网络/教学用例 狗狗分类/代码/C06-1 CNN Dogs.ipynb",
-        "relPath": "机器学习/电子资源-零基础学机器学习/第6课 卷积神经网络/教学用例 狗狗分类/代码/C06-1 CNN Dogs.ipynb",
-        "sizeFormatted": "10.5 KB"
+        "sizeFormatted": "10.5 KB",
+        "project": "机器学习"
       },
       {
         "name": "数据集说明.txt",
         "type": "文档",
         "size": 58,
-        "path": "E:/学习/机器学习/电子资源-零基础学机器学习/第6课 卷积神经网络/教学用例 狗狗分类/数据集/数据集说明.txt",
-        "relPath": "机器学习/电子资源-零基础学机器学习/第6课 卷积神经网络/教学用例 狗狗分类/数据集/数据集说明.txt",
-        "sizeFormatted": "58 B"
+        "sizeFormatted": "58 B",
+        "project": "机器学习"
       },
       {
         "name": "C06-2 CNN Flowers.ipynb",
         "type": "Jupyter Notebook",
         "size": 5392,
-        "path": "E:/学习/机器学习/电子资源-零基础学机器学习/第6课 卷积神经网络/练习用例 是什么花/代码/C06-2 CNN Flowers.ipynb",
-        "relPath": "机器学习/电子资源-零基础学机器学习/第6课 卷积神经网络/练习用例 是什么花/代码/C06-2 CNN Flowers.ipynb",
-        "sizeFormatted": "5.3 KB"
+        "sizeFormatted": "5.3 KB",
+        "project": "机器学习"
       },
       {
         "name": "数据集说明.txt",
         "type": "文档",
         "size": 34,
-        "path": "E:/学习/机器学习/电子资源-零基础学机器学习/第6课 卷积神经网络/练习用例 是什么花/数据集/数据集说明.txt",
-        "relPath": "机器学习/电子资源-零基础学机器学习/第6课 卷积神经网络/练习用例 是什么花/数据集/数据集说明.txt",
-        "sizeFormatted": "34 B"
+        "sizeFormatted": "34 B",
+        "project": "机器学习"
       },
       {
         "name": "C07-1 RNN - Comments.ipynb",
         "type": "Jupyter Notebook",
         "size": 16918,
-        "path": "E:/学习/机器学习/电子资源-零基础学机器学习/第7课 循环神经网络/教学用例1 评论文本/代码/C07-1 RNN - Comments.ipynb",
-        "relPath": "机器学习/电子资源-零基础学机器学习/第7课 循环神经网络/教学用例1 评论文本/代码/C07-1 RNN - Comments.ipynb",
-        "sizeFormatted": "16.5 KB"
+        "sizeFormatted": "16.5 KB",
+        "project": "机器学习"
       },
       {
         "name": "数据集说明.txt",
         "type": "文档",
         "size": 61,
-        "path": "E:/学习/机器学习/电子资源-零基础学机器学习/第7课 循环神经网络/教学用例1 评论文本/数据集/数据集说明.txt",
-        "relPath": "机器学习/电子资源-零基础学机器学习/第7课 循环神经网络/教学用例1 评论文本/数据集/数据集说明.txt",
-        "sizeFormatted": "61 B"
+        "sizeFormatted": "61 B",
+        "project": "机器学习"
       },
       {
         "name": "C07-2 CNN1D GRU - New Earth.ipynb",
         "type": "Jupyter Notebook",
         "size": 14181,
-        "path": "E:/学习/机器学习/电子资源-零基础学机器学习/第7课 循环神经网络/教学用例2 系外行星/代码/C07-2 CNN1D GRU - New Earth.ipynb",
-        "relPath": "机器学习/电子资源-零基础学机器学习/第7课 循环神经网络/教学用例2 系外行星/代码/C07-2 CNN1D GRU - New Earth.ipynb",
-        "sizeFormatted": "13.8 KB"
+        "sizeFormatted": "13.8 KB",
+        "project": "机器学习"
       },
       {
         "name": "数据集说明.txt",
         "type": "文档",
         "size": 54,
-        "path": "E:/学习/机器学习/电子资源-零基础学机器学习/第7课 循环神经网络/教学用例2 系外行星/数据集/数据集说明.txt",
-        "relPath": "机器学习/电子资源-零基础学机器学习/第7课 循环神经网络/教学用例2 系外行星/数据集/数据集说明.txt",
-        "sizeFormatted": "54 B"
+        "sizeFormatted": "54 B",
+        "project": "机器学习"
       },
       {
         "name": "C07-3 RNN - Quora Queries.ipynb",
         "type": "Jupyter Notebook",
         "size": 3809,
-        "path": "E:/学习/机器学习/电子资源-零基础学机器学习/第7课 循环神经网络/练习用例 Quora问答/代码/C07-3 RNN - Quora Queries.ipynb",
-        "relPath": "机器学习/电子资源-零基础学机器学习/第7课 循环神经网络/练习用例 Quora问答/代码/C07-3 RNN - Quora Queries.ipynb",
-        "sizeFormatted": "3.7 KB"
+        "sizeFormatted": "3.7 KB",
+        "project": "机器学习"
       },
       {
         "name": "数据集说明.txt",
         "type": "文档",
         "size": 85,
-        "path": "E:/学习/机器学习/电子资源-零基础学机器学习/第7课 循环神经网络/练习用例 Quora问答/数据集/数据集说明.txt",
-        "relPath": "机器学习/电子资源-零基础学机器学习/第7课 循环神经网络/练习用例 Quora问答/数据集/数据集说明.txt",
-        "sizeFormatted": "85 B"
+        "sizeFormatted": "85 B",
+        "project": "机器学习"
       },
       {
         "name": "C08-1 Tools - Heart.ipynb",
         "type": "Jupyter Notebook",
         "size": 130247,
-        "path": "E:/学习/机器学习/电子资源-零基础学机器学习/第8课 传统算法/教学用例 心脏病/代码/C08-1 Tools - Heart.ipynb",
-        "relPath": "机器学习/电子资源-零基础学机器学习/第8课 传统算法/教学用例 心脏病/代码/C08-1 Tools - Heart.ipynb",
-        "sizeFormatted": "127.2 KB"
+        "sizeFormatted": "127.2 KB",
+        "project": "机器学习"
       },
       {
         "name": "数据集说明.txt",
         "type": "文档",
         "size": 32,
-        "path": "E:/学习/机器学习/电子资源-零基础学机器学习/第8课 传统算法/教学用例 心脏病/数据集/数据集说明.txt",
-        "relPath": "机器学习/电子资源-零基础学机器学习/第8课 传统算法/教学用例 心脏病/数据集/数据集说明.txt",
-        "sizeFormatted": "32 B"
+        "sizeFormatted": "32 B",
+        "project": "机器学习"
       },
       {
         "name": "C08-2 Tools - Bank.ipynb",
         "type": "Jupyter Notebook",
         "size": 72287,
-        "path": "E:/学习/机器学习/电子资源-零基础学机器学习/第8课 传统算法/练习用例 银行客户流失/代码/C08-2 Tools - Bank.ipynb",
-        "relPath": "机器学习/电子资源-零基础学机器学习/第8课 传统算法/练习用例 银行客户流失/代码/C08-2 Tools - Bank.ipynb",
-        "sizeFormatted": "70.6 KB"
+        "sizeFormatted": "70.6 KB",
+        "project": "机器学习"
       },
       {
         "name": "数据集说明.txt",
         "type": "文档",
         "size": 41,
-        "path": "E:/学习/机器学习/电子资源-零基础学机器学习/第8课 传统算法/练习用例 银行客户流失/数据集/数据集说明.txt",
-        "relPath": "机器学习/电子资源-零基础学机器学习/第8课 传统算法/练习用例 银行客户流失/数据集/数据集说明.txt",
-        "sizeFormatted": "41 B"
+        "sizeFormatted": "41 B",
+        "project": "机器学习"
       },
       {
         "name": "C09-1 Ensemble - Bank Customer.ipynb",
         "type": "Jupyter Notebook",
         "size": 67222,
-        "path": "E:/学习/机器学习/电子资源-零基础学机器学习/第9课 集成学习/教学用例1 银行客户流失/代码/C09-1 Ensemble - Bank Customer.ipynb",
-        "relPath": "机器学习/电子资源-零基础学机器学习/第9课 集成学习/教学用例1 银行客户流失/代码/C09-1 Ensemble - Bank Customer.ipynb",
-        "sizeFormatted": "65.6 KB"
+        "sizeFormatted": "65.6 KB",
+        "project": "机器学习"
       },
       {
         "name": "C09-3 Stacking - Bank Customer.ipynb",
         "type": "Jupyter Notebook",
         "size": 57934,
-        "path": "E:/学习/机器学习/电子资源-零基础学机器学习/第9课 集成学习/教学用例1 银行客户流失/代码/C09-3 Stacking - Bank Customer.ipynb",
-        "relPath": "机器学习/电子资源-零基础学机器学习/第9课 集成学习/教学用例1 银行客户流失/代码/C09-3 Stacking - Bank Customer.ipynb",
-        "sizeFormatted": "56.6 KB"
+        "sizeFormatted": "56.6 KB",
+        "project": "机器学习"
       },
       {
         "name": "数据集说明.txt",
         "type": "文档",
         "size": 41,
-        "path": "E:/学习/机器学习/电子资源-零基础学机器学习/第9课 集成学习/教学用例1 银行客户流失/数据集/数据集说明.txt",
-        "relPath": "机器学习/电子资源-零基础学机器学习/第9课 集成学习/教学用例1 银行客户流失/数据集/数据集说明.txt",
-        "sizeFormatted": "41 B"
+        "sizeFormatted": "41 B",
+        "project": "机器学习"
       },
       {
         "name": "C09-2 Bagging Regressors.ipynb",
         "type": "Jupyter Notebook",
         "size": 2935,
-        "path": "E:/学习/机器学习/电子资源-零基础学机器学习/第9课 集成学习/教学用例2 比较各种Bagging回归器/C09-2 Bagging Regressors.ipynb",
-        "relPath": "机器学习/电子资源-零基础学机器学习/第9课 集成学习/教学用例2 比较各种Bagging回归器/C09-2 Bagging Regressors.ipynb",
-        "sizeFormatted": "2.9 KB"
+        "sizeFormatted": "2.9 KB",
+        "project": "机器学习"
       },
       {
         "name": "C09-4 Ensemble - Heart.ipynb",
         "type": "Jupyter Notebook",
         "size": 7979,
-        "path": "E:/学习/机器学习/电子资源-零基础学机器学习/第9课 集成学习/练习用例 心脏病/代码/C09-4 Ensemble - Heart.ipynb",
-        "relPath": "机器学习/电子资源-零基础学机器学习/第9课 集成学习/练习用例 心脏病/代码/C09-4 Ensemble - Heart.ipynb",
-        "sizeFormatted": "7.8 KB"
+        "sizeFormatted": "7.8 KB",
+        "project": "机器学习"
       },
       {
         "name": "数据集说明.txt",
         "type": "文档",
         "size": 32,
-        "path": "E:/学习/机器学习/电子资源-零基础学机器学习/第9课 集成学习/练习用例 心脏病/数据集/数据集说明.txt",
-        "relPath": "机器学习/电子资源-零基础学机器学习/第9课 集成学习/练习用例 心脏病/数据集/数据集说明.txt",
-        "sizeFormatted": "32 B"
+        "sizeFormatted": "32 B",
+        "project": "机器学习"
       },
       {
         "name": "1.28反馈.docx",
         "type": "Word文档",
         "size": 13699,
-        "path": "E:/学习/西二java/1.28 类与对象基础/1.28反馈.docx",
-        "relPath": "西二java/1.28 类与对象基础/1.28反馈.docx",
-        "sizeFormatted": "13.4 KB"
+        "sizeFormatted": "13.4 KB",
+        "project": "西二java"
       },
       {
         "name": "Student 标准模板.java",
         "type": "Java代码",
         "size": 1913,
-        "path": "E:/学习/西二java/1.28 类与对象基础/Student 标准模板.java",
-        "relPath": "西二java/1.28 类与对象基础/Student 标准模板.java",
-        "sizeFormatted": "1.9 KB"
+        "sizeFormatted": "1.9 KB",
+        "project": "西二java"
       },
       {
         "name": "Students 最终版.java",
         "type": "Java代码",
         "size": 1828,
-        "path": "E:/学习/西二java/1.28 类与对象基础/Students 最终版.java",
-        "relPath": "西二java/1.28 类与对象基础/Students 最终版.java",
-        "sizeFormatted": "1.8 KB"
+        "sizeFormatted": "1.8 KB",
+        "project": "西二java"
       },
       {
         "name": "冒泡排序.txt",
         "type": "文档",
         "size": 323,
-        "path": "E:/学习/西二java/1.28 类与对象基础/冒泡排序.txt",
-        "relPath": "西二java/1.28 类与对象基础/冒泡排序.txt",
-        "sizeFormatted": "323 B"
+        "sizeFormatted": "323 B",
+        "project": "西二java"
       },
       {
         "name": "AB和C.java",
         "type": "Java代码",
         "size": 784,
-        "path": "E:/学习/西二java/1.29 PTA刷题与复习/AB和C.java",
-        "relPath": "西二java/1.29 PTA刷题与复习/AB和C.java",
-        "sizeFormatted": "784 B"
+        "sizeFormatted": "784 B",
+        "project": "西二java"
       },
       {
         "name": "IdCard.java",
         "type": "Java代码",
         "size": 1342,
-        "path": "E:/学习/西二java/1.29 PTA刷题与复习/IdCard.java",
-        "relPath": "西二java/1.29 PTA刷题与复习/IdCard.java",
-        "sizeFormatted": "1.3 KB"
+        "sizeFormatted": "1.3 KB",
+        "project": "西二java"
       },
       {
         "name": "倒叙.java",
         "type": "Java代码",
         "size": 1681,
-        "path": "E:/学习/西二java/1.29 PTA刷题与复习/倒叙.java",
-        "relPath": "西二java/1.29 PTA刷题与复习/倒叙.java",
-        "sizeFormatted": "1.6 KB"
+        "sizeFormatted": "1.6 KB",
+        "project": "西二java"
       },
       {
         "name": "数字分类.java",
         "type": "Java代码",
         "size": 1508,
-        "path": "E:/学习/西二java/1.29 PTA刷题与复习/数字分类.java",
-        "relPath": "西二java/1.29 PTA刷题与复习/数字分类.java",
-        "sizeFormatted": "1.5 KB"
+        "sizeFormatted": "1.5 KB",
+        "project": "西二java"
       },
       {
         "name": "猜想.java",
         "type": "Java代码",
         "size": 1434,
-        "path": "E:/学习/西二java/1.29 PTA刷题与复习/猜想.java",
-        "relPath": "西二java/1.29 PTA刷题与复习/猜想.java",
-        "sizeFormatted": "1.4 KB"
+        "sizeFormatted": "1.4 KB",
+        "project": "西二java"
       },
       {
         "name": "收入计算.java",
         "type": "Java代码",
         "size": 1266,
-        "path": "E:/学习/西二java/1.30 封装，继承，多态/收入计算.java",
-        "relPath": "西二java/1.30 封装，继承，多态/收入计算.java",
-        "sizeFormatted": "1.2 KB"
+        "sizeFormatted": "1.2 KB",
+        "project": "西二java"
       },
       {
         "name": "Income.java",
         "type": "Java代码",
         "size": 179,
-        "path": "E:/学习/西二java/1.30 封装，继承，多态/oop-polymorphic 任务文件/src/Income.java",
-        "relPath": "西二java/1.30 封装，继承，多态/oop-polymorphic 任务文件/src/Income.java",
-        "sizeFormatted": "179 B"
+        "sizeFormatted": "179 B",
+        "project": "西二java"
       },
       {
         "name": "Main.java",
         "type": "Java代码",
         "size": 389,
-        "path": "E:/学习/西二java/1.30 封装，继承，多态/oop-polymorphic 任务文件/src/Main.java",
-        "relPath": "西二java/1.30 封装，继承，多态/oop-polymorphic 任务文件/src/Main.java",
-        "sizeFormatted": "389 B"
+        "sizeFormatted": "389 B",
+        "project": "西二java"
       },
       {
         "name": "RoyaltyIncome.java",
         "type": "Java代码",
         "size": 79,
-        "path": "E:/学习/西二java/1.30 封装，继承，多态/oop-polymorphic 任务文件/src/RoyaltyIncome.java",
-        "relPath": "西二java/1.30 封装，继承，多态/oop-polymorphic 任务文件/src/RoyaltyIncome.java",
-        "sizeFormatted": "79 B"
+        "sizeFormatted": "79 B",
+        "project": "西二java"
       },
       {
         "name": "SalaryIncome.java",
         "type": "Java代码",
         "size": 219,
-        "path": "E:/学习/西二java/1.30 封装，继承，多态/oop-polymorphic 任务文件/src/SalaryIncome.java",
-        "relPath": "西二java/1.30 封装，继承，多态/oop-polymorphic 任务文件/src/SalaryIncome.java",
-        "sizeFormatted": "219 B"
+        "sizeFormatted": "219 B",
+        "project": "西二java"
       },
       {
         "name": "多态，抽象类，接口.pdf",
         "type": "PDF文档",
         "size": 3880262,
-        "path": "E:/学习/西二java/1.31 抽象，接口/多态，抽象类，接口.pdf",
-        "relPath": "西二java/1.31 抽象，接口/多态，抽象类，接口.pdf",
-        "sizeFormatted": "3.7 MB"
+        "sizeFormatted": "3.7 MB",
+        "project": "西二java"
       },
       {
         "name": "税的接口计算.java",
         "type": "Java代码",
         "size": 1110,
-        "path": "E:/学习/西二java/1.31 抽象，接口/税的接口计算.java",
-        "relPath": "西二java/1.31 抽象，接口/税的接口计算.java",
-        "sizeFormatted": "1.1 KB"
+        "sizeFormatted": "1.1 KB",
+        "project": "西二java"
       },
       {
         "name": "税的计算抽象类.java",
         "type": "Java代码",
         "size": 1038,
-        "path": "E:/学习/西二java/1.31 抽象，接口/税的计算抽象类.java",
-        "relPath": "西二java/1.31 抽象，接口/税的计算抽象类.java",
-        "sizeFormatted": "1.0 KB"
+        "sizeFormatted": "1.0 KB",
+        "project": "西二java"
       },
       {
         "name": "Java异常.pdf",
         "type": "PDF文档",
         "size": 1970063,
-        "path": "E:/学习/西二java/2.01 异常/Java异常.pdf",
-        "relPath": "西二java/2.01 异常/Java异常.pdf",
-        "sizeFormatted": "1.9 MB"
+        "sizeFormatted": "1.9 MB",
+        "project": "西二java"
       },
       {
         "name": "异常处理.java",
         "type": "Java代码",
         "size": 1201,
-        "path": "E:/学习/西二java/2.01 异常/异常处理.java",
-        "relPath": "西二java/2.01 异常/异常处理.java",
-        "sizeFormatted": "1.2 KB"
+        "sizeFormatted": "1.2 KB",
+        "project": "西二java"
       },
       {
         "name": "图书借阅.java",
         "type": "Java代码",
         "size": 2036,
-        "path": "E:/学习/西二java/2.02 泛型 集合/图书借阅.java",
-        "relPath": "西二java/2.02 泛型 集合/图书借阅.java",
-        "sizeFormatted": "2.0 KB"
+        "sizeFormatted": "2.0 KB",
+        "project": "西二java"
       },
       {
         "name": "Main.java",
         "type": "Java代码",
         "size": 1740,
-        "path": "E:/学习/西二java/2.02 泛型 集合/novel/src/novel/Main.java",
-        "relPath": "西二java/2.02 泛型 集合/novel/src/novel/Main.java",
-        "sizeFormatted": "1.7 KB"
+        "sizeFormatted": "1.7 KB",
+        "project": "西二java"
       },
       {
         "name": "Novel.java",
         "type": "Java代码",
         "size": 2798,
-        "path": "E:/学习/西二java/2.02 泛型 集合/novel/src/novel/Novel.java",
-        "relPath": "西二java/2.02 泛型 集合/novel/src/novel/Novel.java",
-        "sizeFormatted": "2.7 KB"
+        "sizeFormatted": "2.7 KB",
+        "project": "西二java"
       },
       {
         "name": "Animal.java",
         "type": "Java代码",
         "size": 1055,
-        "path": "E:/学习/西二java/2.03—2.04 宠物店程序/宠物店/src/Animal.java",
-        "relPath": "西二java/2.03—2.04 宠物店程序/宠物店/src/Animal.java",
-        "sizeFormatted": "1.0 KB"
+        "sizeFormatted": "1.0 KB",
+        "project": "西二java"
       },
       {
         "name": "brid.java",
         "type": "Java代码",
         "size": 471,
-        "path": "E:/学习/西二java/2.03—2.04 宠物店程序/宠物店/src/brid.java",
-        "relPath": "西二java/2.03—2.04 宠物店程序/宠物店/src/brid.java",
-        "sizeFormatted": "471 B"
+        "sizeFormatted": "471 B",
+        "project": "西二java"
       },
       {
         "name": "Cat.java",
         "type": "Java代码",
         "size": 439,
-        "path": "E:/学习/西二java/2.03—2.04 宠物店程序/宠物店/src/Cat.java",
-        "relPath": "西二java/2.03—2.04 宠物店程序/宠物店/src/Cat.java",
-        "sizeFormatted": "439 B"
+        "sizeFormatted": "439 B",
+        "project": "西二java"
       },
       {
         "name": "Dog.java",
         "type": "Java代码",
         "size": 441,
-        "path": "E:/学习/西二java/2.03—2.04 宠物店程序/宠物店/src/Dog.java",
-        "relPath": "西二java/2.03—2.04 宠物店程序/宠物店/src/Dog.java",
-        "sizeFormatted": "441 B"
+        "sizeFormatted": "441 B",
+        "project": "西二java"
       },
       {
         "name": "Main.java",
         "type": "Java代码",
         "size": 415,
-        "path": "E:/学习/西二java/2.03—2.04 宠物店程序/宠物店/src/Main.java",
-        "relPath": "西二java/2.03—2.04 宠物店程序/宠物店/src/Main.java",
-        "sizeFormatted": "415 B"
+        "sizeFormatted": "415 B",
+        "project": "西二java"
       },
       {
         "name": "PetShop.java",
         "type": "Java代码",
         "size": 3397,
-        "path": "E:/学习/西二java/2.03—2.04 宠物店程序/宠物店/src/PetShop.java",
-        "relPath": "西二java/2.03—2.04 宠物店程序/宠物店/src/PetShop.java",
-        "sizeFormatted": "3.3 KB"
+        "sizeFormatted": "3.3 KB",
+        "project": "西二java"
       },
       {
         "name": "Vaccine.java",
         "type": "Java代码",
         "size": 526,
-        "path": "E:/学习/西二java/2.03—2.04 宠物店程序/宠物店/src/Vaccine.java",
-        "relPath": "西二java/2.03—2.04 宠物店程序/宠物店/src/Vaccine.java",
-        "sizeFormatted": "526 B"
+        "sizeFormatted": "526 B",
+        "project": "西二java"
       },
       {
         "name": "新年祝福.java",
         "type": "Java代码",
         "size": 752,
-        "path": "E:/学习/西二java/2.05 多线程/新年祝福.java",
-        "relPath": "西二java/2.05 多线程/新年祝福.java",
-        "sizeFormatted": "752 B"
+        "sizeFormatted": "752 B",
+        "project": "西二java"
       },
       {
         "name": "pom.xml",
         "type": "YAML配置",
         "size": 1370,
-        "path": "E:/学习/西二java/2.13—2.14 mybits/mybatis的增删改查/pom.xml",
-        "relPath": "西二java/2.13—2.14 mybits/mybatis的增删改查/pom.xml",
-        "sizeFormatted": "1.3 KB"
+        "sizeFormatted": "1.3 KB",
+        "project": "西二java"
       },
       {
         "name": "IUser.java",
         "type": "Java代码",
         "size": 102,
-        "path": "E:/学习/西二java/2.13—2.14 mybits/mybatis的增删改查/src/main/java/IUser.java",
-        "relPath": "西二java/2.13—2.14 mybits/mybatis的增删改查/src/main/java/IUser.java",
-        "sizeFormatted": "102 B"
+        "sizeFormatted": "102 B",
+        "project": "西二java"
       },
       {
         "name": "StudentDao.java",
         "type": "Java代码",
         "size": 1412,
-        "path": "E:/学习/西二java/2.13—2.14 mybits/mybatis的增删改查/src/main/java/StudentDao.java",
-        "relPath": "西二java/2.13—2.14 mybits/mybatis的增删改查/src/main/java/StudentDao.java",
-        "sizeFormatted": "1.4 KB"
+        "sizeFormatted": "1.4 KB",
+        "project": "西二java"
       },
       {
         "name": "test.java",
         "type": "Java代码",
         "size": 26,
-        "path": "E:/学习/西二java/2.13—2.14 mybits/mybatis的增删改查/src/main/java/test.java",
-        "relPath": "西二java/2.13—2.14 mybits/mybatis的增删改查/src/main/java/test.java",
-        "sizeFormatted": "26 B"
+        "sizeFormatted": "26 B",
+        "project": "西二java"
       },
       {
         "name": "user.java",
         "type": "Java代码",
         "size": 704,
-        "path": "E:/学习/西二java/2.13—2.14 mybits/mybatis的增删改查/src/main/java/user.java",
-        "relPath": "西二java/2.13—2.14 mybits/mybatis的增删改查/src/main/java/user.java",
-        "sizeFormatted": "704 B"
+        "sizeFormatted": "704 B",
+        "project": "西二java"
       },
       {
         "name": "sqlMapConfig.xml",
         "type": "YAML配置",
         "size": 1028,
-        "path": "E:/学习/西二java/2.13—2.14 mybits/mybatis的增删改查/src/main/resources/sqlMapConfig.xml",
-        "relPath": "西二java/2.13—2.14 mybits/mybatis的增删改查/src/main/resources/sqlMapConfig.xml",
-        "sizeFormatted": "1.0 KB"
+        "sizeFormatted": "1.0 KB",
+        "project": "西二java"
       },
       {
         "name": "StudentMapper.xml",
         "type": "YAML配置",
         "size": 554,
-        "path": "E:/学习/西二java/2.13—2.14 mybits/mybatis的增删改查/src/main/resources/StudentMapper.xml",
-        "relPath": "西二java/2.13—2.14 mybits/mybatis的增删改查/src/main/resources/StudentMapper.xml",
-        "sizeFormatted": "554 B"
+        "sizeFormatted": "554 B",
+        "project": "西二java"
       },
       {
         "name": "jdbc的操作.java",
         "type": "Java代码",
         "size": 5520,
-        "path": "E:/学习/西二java/2.8—2.9 sqlyog和jdbc的增删改查/jdbc的操作.java",
-        "relPath": "西二java/2.8—2.9 sqlyog和jdbc的增删改查/jdbc的操作.java",
-        "sizeFormatted": "5.4 KB"
+        "sizeFormatted": "5.4 KB",
+        "project": "西二java"
       },
       {
         "name": "shujuku.sql",
         "type": "文档",
         "size": 290,
-        "path": "E:/学习/西二java/2.8—2.9 sqlyog和jdbc的增删改查/shujuku.sql",
-        "relPath": "西二java/2.8—2.9 sqlyog和jdbc的增删改查/shujuku.sql",
-        "sizeFormatted": "290 B"
+        "sizeFormatted": "290 B",
+        "project": "西二java"
       },
       {
         "name": "main.py",
         "type": "Python代码",
         "size": 544,
-        "path": "E:/学习/西二python/main.py",
-        "relPath": "西二python/main.py",
-        "sizeFormatted": "544 B"
+        "sizeFormatted": "544 B",
+        "project": "西二python"
       },
       {
         "name": "__init__.py",
         "type": "Python代码",
         "size": 0,
-        "path": "E:/学习/西二python/第一轮考核/__init__.py",
-        "relPath": "西二python/第一轮考核/__init__.py",
-        "sizeFormatted": "0 B"
+        "sizeFormatted": "0 B",
+        "project": "西二python"
       },
       {
         "name": "基础1.py",
         "type": "Python代码",
         "size": 148,
-        "path": "E:/学习/西二python/第一轮考核/基础1.py",
-        "relPath": "西二python/第一轮考核/基础1.py",
-        "sizeFormatted": "148 B"
+        "sizeFormatted": "148 B",
+        "project": "西二python"
       },
       {
         "name": "基础2.py",
         "type": "Python代码",
         "size": 92,
-        "path": "E:/学习/西二python/第一轮考核/基础2.py",
-        "relPath": "西二python/第一轮考核/基础2.py",
-        "sizeFormatted": "92 B"
+        "sizeFormatted": "92 B",
+        "project": "西二python"
       },
       {
         "name": "基础3.py",
         "type": "Python代码",
         "size": 92,
-        "path": "E:/学习/西二python/第一轮考核/基础3.py",
-        "relPath": "西二python/第一轮考核/基础3.py",
-        "sizeFormatted": "92 B"
+        "sizeFormatted": "92 B",
+        "project": "西二python"
       },
       {
         "name": "基础4.py",
         "type": "Python代码",
         "size": 255,
-        "path": "E:/学习/西二python/第一轮考核/基础4.py",
-        "relPath": "西二python/第一轮考核/基础4.py",
-        "sizeFormatted": "255 B"
+        "sizeFormatted": "255 B",
+        "project": "西二python"
       },
       {
         "name": "基础5.py",
         "type": "Python代码",
         "size": 285,
-        "path": "E:/学习/西二python/第一轮考核/基础5.py",
-        "relPath": "西二python/第一轮考核/基础5.py",
-        "sizeFormatted": "285 B"
+        "sizeFormatted": "285 B",
+        "project": "西二python"
       },
       {
         "name": "基础6.py",
         "type": "Python代码",
         "size": 763,
-        "path": "E:/学习/西二python/第一轮考核/基础6.py",
-        "relPath": "西二python/第一轮考核/基础6.py",
-        "sizeFormatted": "763 B"
+        "sizeFormatted": "763 B",
+        "project": "西二python"
       },
       {
         "name": "提高111.py",
         "type": "Python代码",
         "size": 626,
-        "path": "E:/学习/西二python/第一轮考核/提高111.py",
-        "relPath": "西二python/第一轮考核/提高111.py",
-        "sizeFormatted": "626 B"
+        "sizeFormatted": "626 B",
+        "project": "西二python"
       },
       {
         "name": "提高222.py",
         "type": "Python代码",
         "size": 247,
-        "path": "E:/学习/西二python/第一轮考核/提高222.py",
-        "relPath": "西二python/第一轮考核/提高222.py",
-        "sizeFormatted": "247 B"
+        "sizeFormatted": "247 B",
+        "project": "西二python"
       },
       {
         "name": "提高333.py",
         "type": "Python代码",
         "size": 0,
-        "path": "E:/学习/西二python/第一轮考核/提高333.py",
-        "relPath": "西二python/第一轮考核/提高333.py",
-        "sizeFormatted": "0 B"
+        "sizeFormatted": "0 B",
+        "project": "西二python"
       },
       {
         "name": "pom.xml",
         "type": "YAML配置",
         "size": 1562,
-        "path": "E:/学习/西二数据库/pom.xml",
-        "relPath": "西二数据库/pom.xml",
-        "sizeFormatted": "1.5 KB"
+        "sizeFormatted": "1.5 KB",
+        "project": "西二数据库"
       },
       {
         "name": "mybatis-config.xml",
         "type": "YAML配置",
         "size": 1027,
-        "path": "E:/学习/西二数据库/src/mybatis-config.xml",
-        "relPath": "西二数据库/src/mybatis-config.xml",
-        "sizeFormatted": "1.0 KB"
+        "sizeFormatted": "1.0 KB",
+        "project": "西二数据库"
       },
       {
         "name": "city.java",
         "type": "Java代码",
         "size": 1277,
-        "path": "E:/学习/西二数据库/src/entity/city.java",
-        "relPath": "西二数据库/src/entity/city.java",
-        "sizeFormatted": "1.2 KB"
+        "sizeFormatted": "1.2 KB",
+        "project": "西二数据库"
       },
       {
         "name": "cityDao.java",
         "type": "Java代码",
         "size": 1230,
-        "path": "E:/学习/西二数据库/src/entity/cityDao.java",
-        "relPath": "西二数据库/src/entity/cityDao.java",
-        "sizeFormatted": "1.2 KB"
+        "sizeFormatted": "1.2 KB",
+        "project": "西二数据库"
       },
       {
         "name": "getcity.java",
         "type": "Java代码",
         "size": 2381,
-        "path": "E:/学习/西二数据库/src/entity/getcity.java",
-        "relPath": "西二数据库/src/entity/getcity.java",
-        "sizeFormatted": "2.3 KB"
+        "sizeFormatted": "2.3 KB",
+        "project": "西二数据库"
       },
       {
         "name": "Icity.java",
         "type": "Java代码",
         "size": 197,
-        "path": "E:/学习/西二数据库/src/entity/Icity.java",
-        "relPath": "西二数据库/src/entity/Icity.java",
-        "sizeFormatted": "197 B"
+        "sizeFormatted": "197 B",
+        "project": "西二数据库"
       },
       {
         "name": "test.java",
         "type": "Java代码",
         "size": 284,
-        "path": "E:/学习/西二数据库/src/entity/test.java",
-        "relPath": "西二数据库/src/entity/test.java",
-        "sizeFormatted": "284 B"
+        "sizeFormatted": "284 B",
+        "project": "西二数据库"
       },
       {
         "name": "weather.java",
         "type": "Java代码",
         "size": 1303,
-        "path": "E:/学习/西二数据库/src/entity/weather.java",
-        "relPath": "西二数据库/src/entity/weather.java",
-        "sizeFormatted": "1.3 KB"
+        "sizeFormatted": "1.3 KB",
+        "project": "西二数据库"
       },
       {
         "name": "test.java",
         "type": "Java代码",
         "size": 47,
-        "path": "E:/学习/西二数据库/src/Mainpojo/test.java",
-        "relPath": "西二数据库/src/Mainpojo/test.java",
-        "sizeFormatted": "47 B"
+        "sizeFormatted": "47 B",
+        "project": "西二数据库"
       },
       {
         "name": "cityMapper.xml",
         "type": "YAML配置",
         "size": 593,
-        "path": "E:/学习/西二数据库/src/mapper/cityMapper.xml",
-        "relPath": "西二数据库/src/mapper/cityMapper.xml",
-        "sizeFormatted": "593 B"
+        "sizeFormatted": "593 B",
+        "project": "西二数据库"
       },
       {
         "name": "weatherMapper.xml",
         "type": "YAML配置",
         "size": 552,
-        "path": "E:/学习/西二数据库/src/mapper/weatherMapper.xml",
-        "relPath": "西二数据库/src/mapper/weatherMapper.xml",
-        "sizeFormatted": "552 B"
+        "sizeFormatted": "552 B",
+        "project": "西二数据库"
       },
       {
         "name": "MybatisUtils.java",
         "type": "Java代码",
         "size": 837,
-        "path": "E:/学习/西二数据库/src/mybatis/MybatisUtils.java",
-        "relPath": "西二数据库/src/mybatis/MybatisUtils.java",
-        "sizeFormatted": "837 B"
+        "sizeFormatted": "837 B",
+        "project": "西二数据库"
       }
     ]
   },
   {
     "id": "reinforce_learning",
     "name": "reinforce_learning",
-    "source": "E:/reinforce_learning",
     "category": "强化学习",
     "fileCount": 34,
     "totalSize": 187419,
-    "totalSizeFormatted": "183.0 KB",
+    "totalSizeFormatted": "187.4 KB",
     "description": "强化学习练手代码：纯 NumPy 实现的 Q-Learning，以及基于 PyTorch 的 PPO（离散动作 PPO-PyTorch/PPO.py 与连续动作 PPO_continuous.py），在 LunarLander 等 Gym 环境上训练。是《强化学习入门：从 MDP 到 PPO》一文的配套代码。",
     "files": [
       {
         "name": "README.md",
         "type": "文档",
         "size": 1086,
-        "path": "E:/reinforce_learning/README.md",
-        "relPath": "README.md",
-        "sizeFormatted": "1.1 KB"
+        "sizeFormatted": "1.1 KB",
+        "project": ""
       },
       {
         "name": "requirements.txt",
         "type": "文档",
         "size": 107,
-        "path": "E:/reinforce_learning/requirements.txt",
-        "relPath": "requirements.txt",
-        "sizeFormatted": "107 B"
+        "sizeFormatted": "107 B",
+        "project": ""
       },
       {
         "name": "PPO.py",
         "type": "Python代码",
         "size": 9417,
-        "path": "E:/reinforce_learning/PPO-PyTorch/PPO.py",
-        "relPath": "PPO-PyTorch/PPO.py",
-        "sizeFormatted": "9.2 KB"
+        "sizeFormatted": "9.2 KB",
+        "project": "PPO-PyTorch"
       },
       {
         "name": "PPO_continuous.py",
         "type": "Python代码",
         "size": 9693,
-        "path": "E:/reinforce_learning/PPO-PyTorch/PPO_continuous.py",
-        "relPath": "PPO-PyTorch/PPO_continuous.py",
-        "sizeFormatted": "9.5 KB"
+        "sizeFormatted": "9.5 KB",
+        "project": "PPO-PyTorch"
       },
       {
         "name": "test.py",
         "type": "Python代码",
         "size": 2326,
-        "path": "E:/reinforce_learning/PPO-PyTorch/test.py",
-        "relPath": "PPO-PyTorch/test.py",
-        "sizeFormatted": "2.3 KB"
+        "sizeFormatted": "2.3 KB",
+        "project": "PPO-PyTorch"
       },
       {
         "name": "test_continuous.py",
         "type": "Python代码",
         "size": 2618,
-        "path": "E:/reinforce_learning/PPO-PyTorch/test_continuous.py",
-        "relPath": "PPO-PyTorch/test_continuous.py",
-        "sizeFormatted": "2.6 KB"
+        "sizeFormatted": "2.6 KB",
+        "project": "PPO-PyTorch"
       },
       {
         "name": "PPO_continuous_BipedalWalker-v2.pth",
         "type": "其他",
         "size": 31956,
-        "path": "E:/reinforce_learning/PPO-PyTorch/preTrained/PPO_continuous_BipedalWalker-v2.pth",
-        "relPath": "PPO-PyTorch/preTrained/PPO_continuous_BipedalWalker-v2.pth",
-        "sizeFormatted": "31.2 KB"
+        "sizeFormatted": "31.2 KB",
+        "project": "PPO-PyTorch"
       },
       {
         "name": "PPO_LunarLander-v2.pth",
         "type": "其他",
         "size": 43756,
-        "path": "E:/reinforce_learning/PPO-PyTorch/preTrained/PPO_LunarLander-v2.pth",
-        "relPath": "PPO-PyTorch/preTrained/PPO_LunarLander-v2.pth",
-        "sizeFormatted": "42.7 KB"
+        "sizeFormatted": "42.7 KB",
+        "project": "PPO-PyTorch"
       },
       {
         "name": "README.md",
         "type": "文档",
         "size": 219,
-        "path": "E:/reinforce_learning/Reinforcement-learning-with-PyTorch-master/README.md",
-        "relPath": "Reinforcement-learning-with-PyTorch-master/README.md",
-        "sizeFormatted": "219 B"
+        "sizeFormatted": "219 B",
+        "project": "Reinforcement-learning-with-PyTorch-master"
       },
       {
         "name": "treasure_on_right.py",
         "type": "Python代码",
         "size": 2295,
-        "path": "E:/reinforce_learning/Reinforcement-learning-with-PyTorch-master/content/1_treasure_on_right/treasure_on_right.py",
-        "relPath": "Reinforcement-learning-with-PyTorch-master/content/1_treasure_on_right/treasure_on_right.py",
-        "sizeFormatted": "2.2 KB"
+        "sizeFormatted": "2.2 KB",
+        "project": "Reinforcement-learning-with-PyTorch-master"
       },
       {
         "name": "maze_env.py",
         "type": "Python代码",
         "size": 6036,
-        "path": "E:/reinforce_learning/Reinforcement-learning-with-PyTorch-master/content/2_Q-learning-maze/maze_env.py",
-        "relPath": "Reinforcement-learning-with-PyTorch-master/content/2_Q-learning-maze/maze_env.py",
-        "sizeFormatted": "5.9 KB"
+        "sizeFormatted": "5.9 KB",
+        "project": "Reinforcement-learning-with-PyTorch-master"
       },
       {
         "name": "RL_brain.py",
         "type": "Python代码",
         "size": 1262,
-        "path": "E:/reinforce_learning/Reinforcement-learning-with-PyTorch-master/content/2_Q-learning-maze/RL_brain.py",
-        "relPath": "Reinforcement-learning-with-PyTorch-master/content/2_Q-learning-maze/RL_brain.py",
-        "sizeFormatted": "1.2 KB"
+        "sizeFormatted": "1.2 KB",
+        "project": "Reinforcement-learning-with-PyTorch-master"
       },
       {
         "name": "run_this.py",
         "type": "Python代码",
         "size": 692,
-        "path": "E:/reinforce_learning/Reinforcement-learning-with-PyTorch-master/content/2_Q-learning-maze/run_this.py",
-        "relPath": "Reinforcement-learning-with-PyTorch-master/content/2_Q-learning-maze/run_this.py",
-        "sizeFormatted": "692 B"
+        "sizeFormatted": "692 B",
+        "project": "Reinforcement-learning-with-PyTorch-master"
       },
       {
         "name": "maze_env.py",
         "type": "Python代码",
         "size": 6036,
-        "path": "E:/reinforce_learning/Reinforcement-learning-with-PyTorch-master/content/3_Sarsa_maze/maze_env.py",
-        "relPath": "Reinforcement-learning-with-PyTorch-master/content/3_Sarsa_maze/maze_env.py",
-        "sizeFormatted": "5.9 KB"
+        "sizeFormatted": "5.9 KB",
+        "project": "Reinforcement-learning-with-PyTorch-master"
       },
       {
         "name": "RL_brain.py",
         "type": "Python代码",
         "size": 1945,
-        "path": "E:/reinforce_learning/Reinforcement-learning-with-PyTorch-master/content/3_Sarsa_maze/RL_brain.py",
-        "relPath": "Reinforcement-learning-with-PyTorch-master/content/3_Sarsa_maze/RL_brain.py",
-        "sizeFormatted": "1.9 KB"
+        "sizeFormatted": "1.9 KB",
+        "project": "Reinforcement-learning-with-PyTorch-master"
       },
       {
         "name": "run_this.py",
         "type": "Python代码",
         "size": 697,
-        "path": "E:/reinforce_learning/Reinforcement-learning-with-PyTorch-master/content/3_Sarsa_maze/run_this.py",
-        "relPath": "Reinforcement-learning-with-PyTorch-master/content/3_Sarsa_maze/run_this.py",
-        "sizeFormatted": "697 B"
+        "sizeFormatted": "697 B",
+        "project": "Reinforcement-learning-with-PyTorch-master"
       },
       {
         "name": "maze_env.py",
         "type": "Python代码",
         "size": 6066,
-        "path": "E:/reinforce_learning/Reinforcement-learning-with-PyTorch-master/content/4_Sarsa_lambda_maze/maze_env.py",
-        "relPath": "Reinforcement-learning-with-PyTorch-master/content/4_Sarsa_lambda_maze/maze_env.py",
-        "sizeFormatted": "5.9 KB"
+        "sizeFormatted": "5.9 KB",
+        "project": "Reinforcement-learning-with-PyTorch-master"
       },
       {
         "name": "RL_brain.py",
         "type": "Python代码",
         "size": 2099,
-        "path": "E:/reinforce_learning/Reinforcement-learning-with-PyTorch-master/content/4_Sarsa_lambda_maze/RL_brain.py",
-        "relPath": "Reinforcement-learning-with-PyTorch-master/content/4_Sarsa_lambda_maze/RL_brain.py",
-        "sizeFormatted": "2.0 KB"
+        "sizeFormatted": "2.0 KB",
+        "project": "Reinforcement-learning-with-PyTorch-master"
       },
       {
         "name": "run_this.py",
         "type": "Python代码",
         "size": 752,
-        "path": "E:/reinforce_learning/Reinforcement-learning-with-PyTorch-master/content/4_Sarsa_lambda_maze/run_this.py",
-        "relPath": "Reinforcement-learning-with-PyTorch-master/content/4_Sarsa_lambda_maze/run_this.py",
-        "sizeFormatted": "752 B"
+        "sizeFormatted": "752 B",
+        "project": "Reinforcement-learning-with-PyTorch-master"
       },
       {
         "name": "RL_brain.py",
         "type": "Python代码",
         "size": 4382,
-        "path": "E:/reinforce_learning/Reinforcement-learning-with-PyTorch-master/content/5.1_double_DQN/RL_brain.py",
-        "relPath": "Reinforcement-learning-with-PyTorch-master/content/5.1_double_DQN/RL_brain.py",
-        "sizeFormatted": "4.3 KB"
+        "sizeFormatted": "4.3 KB",
+        "project": "Reinforcement-learning-with-PyTorch-master"
       },
       {
         "name": "run_Pendulum.py",
         "type": "Python代码",
         "size": 1928,
-        "path": "E:/reinforce_learning/Reinforcement-learning-with-PyTorch-master/content/5.1_double_DQN/run_Pendulum.py",
-        "relPath": "Reinforcement-learning-with-PyTorch-master/content/5.1_double_DQN/run_Pendulum.py",
-        "sizeFormatted": "1.9 KB"
+        "sizeFormatted": "1.9 KB",
+        "project": "Reinforcement-learning-with-PyTorch-master"
       },
       {
         "name": "RL_brain.py",
         "type": "Python代码",
         "size": 7056,
-        "path": "E:/reinforce_learning/Reinforcement-learning-with-PyTorch-master/content/5.2_Prioritized_Replay_DQN/RL_brain.py",
-        "relPath": "Reinforcement-learning-with-PyTorch-master/content/5.2_Prioritized_Replay_DQN/RL_brain.py",
-        "sizeFormatted": "6.9 KB"
+        "sizeFormatted": "6.9 KB",
+        "project": "Reinforcement-learning-with-PyTorch-master"
       },
       {
         "name": "run_MountainCar.py",
         "type": "Python代码",
         "size": 1886,
-        "path": "E:/reinforce_learning/Reinforcement-learning-with-PyTorch-master/content/5.2_Prioritized_Replay_DQN/run_MountainCar.py",
-        "relPath": "Reinforcement-learning-with-PyTorch-master/content/5.2_Prioritized_Replay_DQN/run_MountainCar.py",
-        "sizeFormatted": "1.8 KB"
+        "sizeFormatted": "1.8 KB",
+        "project": "Reinforcement-learning-with-PyTorch-master"
       },
       {
         "name": "RL_brain.py",
         "type": "Python代码",
         "size": 3529,
-        "path": "E:/reinforce_learning/Reinforcement-learning-with-PyTorch-master/content/5.3_Dueling_DQN/RL_brain.py",
-        "relPath": "Reinforcement-learning-with-PyTorch-master/content/5.3_Dueling_DQN/RL_brain.py",
-        "sizeFormatted": "3.4 KB"
+        "sizeFormatted": "3.4 KB",
+        "project": "Reinforcement-learning-with-PyTorch-master"
       },
       {
         "name": "run_Pendulum.py",
         "type": "Python代码",
         "size": 2105,
-        "path": "E:/reinforce_learning/Reinforcement-learning-with-PyTorch-master/content/5.3_Dueling_DQN/run_Pendulum.py",
-        "relPath": "Reinforcement-learning-with-PyTorch-master/content/5.3_Dueling_DQN/run_Pendulum.py",
-        "sizeFormatted": "2.1 KB"
+        "sizeFormatted": "2.1 KB",
+        "project": "Reinforcement-learning-with-PyTorch-master"
       },
       {
         "name": "maze_env.py",
         "type": "Python代码",
         "size": 3778,
-        "path": "E:/reinforce_learning/Reinforcement-learning-with-PyTorch-master/content/5_Deep_Q_Network/maze_env.py",
-        "relPath": "Reinforcement-learning-with-PyTorch-master/content/5_Deep_Q_Network/maze_env.py",
-        "sizeFormatted": "3.7 KB"
+        "sizeFormatted": "3.7 KB",
+        "project": "Reinforcement-learning-with-PyTorch-master"
       },
       {
         "name": "RL_brain.py",
         "type": "Python代码",
         "size": 4118,
-        "path": "E:/reinforce_learning/Reinforcement-learning-with-PyTorch-master/content/5_Deep_Q_Network/RL_brain.py",
-        "relPath": "Reinforcement-learning-with-PyTorch-master/content/5_Deep_Q_Network/RL_brain.py",
-        "sizeFormatted": "4.0 KB"
+        "sizeFormatted": "4.0 KB",
+        "project": "Reinforcement-learning-with-PyTorch-master"
       },
       {
         "name": "run_this.py",
         "type": "Python代码",
         "size": 834,
-        "path": "E:/reinforce_learning/Reinforcement-learning-with-PyTorch-master/content/5_Deep_Q_Network/run_this.py",
-        "relPath": "Reinforcement-learning-with-PyTorch-master/content/5_Deep_Q_Network/run_this.py",
-        "sizeFormatted": "834 B"
+        "sizeFormatted": "834 B",
+        "project": "Reinforcement-learning-with-PyTorch-master"
       },
       {
         "name": "RL_brain.py",
         "type": "Python代码",
         "size": 2329,
-        "path": "E:/reinforce_learning/Reinforcement-learning-with-PyTorch-master/content/7_Policy_gradient_softmax/RL_brain.py",
-        "relPath": "Reinforcement-learning-with-PyTorch-master/content/7_Policy_gradient_softmax/RL_brain.py",
-        "sizeFormatted": "2.3 KB"
+        "sizeFormatted": "2.3 KB",
+        "project": "Reinforcement-learning-with-PyTorch-master"
       },
       {
         "name": "run_CartPole.py",
         "type": "Python代码",
         "size": 1573,
-        "path": "E:/reinforce_learning/Reinforcement-learning-with-PyTorch-master/content/7_Policy_gradient_softmax/run_CartPole.py",
-        "relPath": "Reinforcement-learning-with-PyTorch-master/content/7_Policy_gradient_softmax/run_CartPole.py",
-        "sizeFormatted": "1.5 KB"
+        "sizeFormatted": "1.5 KB",
+        "project": "Reinforcement-learning-with-PyTorch-master"
       },
       {
         "name": "run_MountainCar.py",
         "type": "Python代码",
         "size": 1436,
-        "path": "E:/reinforce_learning/Reinforcement-learning-with-PyTorch-master/content/7_Policy_gradient_softmax/run_MountainCar.py",
-        "relPath": "Reinforcement-learning-with-PyTorch-master/content/7_Policy_gradient_softmax/run_MountainCar.py",
-        "sizeFormatted": "1.4 KB"
+        "sizeFormatted": "1.4 KB",
+        "project": "Reinforcement-learning-with-PyTorch-master"
       },
       {
         "name": "AC_CartPole.py",
         "type": "Python代码",
         "size": 3701,
-        "path": "E:/reinforce_learning/Reinforcement-learning-with-PyTorch-master/content/8_Actor_Critic_Advantage/AC_CartPole.py",
-        "relPath": "Reinforcement-learning-with-PyTorch-master/content/8_Actor_Critic_Advantage/AC_CartPole.py",
-        "sizeFormatted": "3.6 KB"
+        "sizeFormatted": "3.6 KB",
+        "project": "Reinforcement-learning-with-PyTorch-master"
       },
       {
         "name": "AC_continue_Pendulum.py",
         "type": "Python代码",
         "size": 4418,
-        "path": "E:/reinforce_learning/Reinforcement-learning-with-PyTorch-master/content/8_Actor_Critic_Advantage/AC_continue_Pendulum.py",
-        "relPath": "Reinforcement-learning-with-PyTorch-master/content/8_Actor_Critic_Advantage/AC_continue_Pendulum.py",
-        "sizeFormatted": "4.3 KB"
+        "sizeFormatted": "4.3 KB",
+        "project": "Reinforcement-learning-with-PyTorch-master"
       },
       {
         "name": "cartpole.py",
         "type": "Python代码",
         "size": 15288,
-        "path": "E:/reinforce_learning/Reinforcement-learning-with-PyTorch-master/content/game/cartpole.py",
-        "relPath": "Reinforcement-learning-with-PyTorch-master/content/game/cartpole.py",
-        "sizeFormatted": "14.9 KB"
+        "sizeFormatted": "14.9 KB",
+        "project": "Reinforcement-learning-with-PyTorch-master"
       }
     ]
   },
   {
     "id": "math_modeling",
     "name": "数学建模上传文件夹",
-    "source": "E:/成品/数学建模上传文件夹",
     "category": "数学建模",
     "fileCount": 1,
     "totalSize": 1896989,
-    "totalSizeFormatted": "1.8 MB",
+    "totalSizeFormatted": "1.9 MB",
     "description": "数学建模参赛材料：2021 年深圳杯 / 国赛论文《C2021_赵睿_刘博_王唯勤》及支撑材料，记录一次完整建模参赛过程。",
     "guide": "`math_modeling`（数学建模上传文件夹）是我参加 **2021 年数学建模竞赛** 的参赛材料，整个目录只有两个文件：\n\n- `C2021_赵睿_刘博_王唯勤.pdf` —— 正式论文，包含**问题重述、模型假设、模型建立（评价 / 优化 / 预测等类型）、求解过程与结果分析、灵敏度检验**等标准结构；\n- `C2021_赵睿_刘博_王唯勤_支撑材料.rar` —— 支撑材料压缩包，通常是求解用的程序代码（MATLAB / Python / Lingo）、原始数据、运行结果与附件。\n\n数学建模的典型流程是：读懂赛题 → 合理简化并给出假设 → 建立数学模型（线性 / 整数规划、数据拟合、微分方程、图论、统计推断等）→ 编程求解（MATLAB / Python / Lingo）→ 把过程写成论文。这份材料就是该流程的成品示例，适合作为「如何完整做一道建模题」的参考模板。",
     "files": [
@@ -7149,20 +6168,18 @@ const CODE_LIBS = [
         "name": "C2021_赵睿_刘博_王唯勤.pdf",
         "type": "PDF文档",
         "size": 1896989,
-        "path": "E:/成品/数学建模上传文件夹/C2021_赵睿_刘博_王唯勤.pdf",
-        "relPath": "C2021_赵睿_刘博_王唯勤.pdf",
-        "sizeFormatted": "1.8 MB"
+        "sizeFormatted": "1.8 MB",
+        "project": ""
       }
     ]
   },
   {
     "id": "codeplace",
     "name": "codeplace",
-    "source": "E:/codeplace",
     "category": "综合代码仓库",
     "fileCount": 1285,
     "totalSize": 225921731,
-    "totalSizeFormatted": "215.5 MB",
+    "totalSizeFormatted": "225.9 MB",
     "description": "综合代码仓库（Java / Web 为主）：包含银行秒杀、聊天室、小说网站、外卖系统、中文 OCR（chineseocr_lite）等 Spring Boot / Web 项目，以及数据结构课程作业（AVL 自平衡树、哈希、哲学家就餐等并发同步）。",
     "guide": "`codeplace` 是我前期到中期的**综合项目仓库**，混装了数据结构作业、深度学习小实验和多个 Spring Boot 全栈网站。可以把它看作「从课本算法到能跑起来的 Web 应用」的练习场。下面挑几个有代表性的讲讲。\n\n### 1. `datastructure` —— Java 数据结构与算法\n课程作业，纯 Java 实现各种数据结构。例如 `SpecialAVLTree.java` 实现了带平衡因子的 AVL 自平衡二叉搜索树，插入后会做左旋 / 右旋保持 `|左右子树高度差| ≤ 1`：\n\n```java\n// 右旋：当左子树过高时，把左孩子提为根，再把它原来的右子树挂回来\nprivate Node rotateRight(Node y) {\n    Node x = y.left;\n    y.left = x.right;\n    x.right = y;\n    updateHeight(y);\n    updateHeight(x);\n    return x;   // 新的子树根\n}\n```\n\n### 2. `ai_test/gesture-recognition` —— TensorFlow 手势识别\n用 AlexNet 结构的 CNN 做手势分类，`Train_model.py` 搭了 5 层卷积 + 2 层全连接，最后用 softmax + 交叉熵输出分类概率：\n\n```python\nconv1 = tf.nn.conv2d(images, weights, strides=[1, 4, 4, 1], padding='SAME')\nconv1 = tf.nn.relu(tf.nn.bias_add(conv1, biases))\n# ... 输出端（省略中间几层）\nsoftmax_linear = tf.add(tf.matmul(local4, weights), biases)\nloss = tf.reduce_mean(\n    tf.nn.sparse_softmax_cross_entropy_with_logits(logits=softmax_linear, labels=labels))\n```\n\n### 3. `chineseocr_lite` —— ONNX 中文 OCR\n把 DB-Net（文字检测）+ CRNN（文字识别）+ 角度网络（方向纠正）三个模型导出成 ONNX，`config.py` 里配置模型路径与阈值，可直接推理中文场景文字：\n\n```python\ndbnet_max_size = 6000                       # 长边最大长度\nmodel_path = os.path.join(father_path, \"models/dbnet.onnx\")\ncrnn_model_path = os.path.join(father_path, \"models/crnn_lite_lstm.onnx\")\nangle_net_path = os.path.join(father_path, \"models/angle_net.onnx\")\n```\n\n### 4. `novelweb` / `takeout_web` / `eleco_new` —— Spring Boot 全栈网站\n多套 Spring Boot + MyBatis 网站（小说站、外卖点餐、电子社区），`UserController.java` 是典型的登录 / 注册 / 收藏 REST 接口，配套 JWT、Redis、MD5 等组件：\n\n```java\n@PostMapping(\"/register\")\n@ResponseBody\npublic Object register(@RequestParam(\"username\") String name,\n                        @RequestParam(\"password\") String pwd) {\n    if (userMapper.findByName(name) != null)\n        return JSON.toJSONString(new JsonUtils(-1, \"用户名已被占用\"));\n    userMapper.save(new User(name, pwd, \"customer\"));\n    return JSON.toJSONString(new JsonUtils(0, \"注册成功\"));\n}\n```\n\n其余还有 `bank_seckill`（高并发秒杀）、`Bobing`（Spring + Swing 博饼游戏）、`chatRoom`（聊天室）等，覆盖了后端、并发、桌面 GUI 多个方向。对应《机器学习入门》《VLA 模型入门》里提到的工程化实践。",
     "files": [
@@ -7170,10288 +6187,9001 @@ const CODE_LIBS = [
         "name": "CallFrame.py",
         "type": "Python代码",
         "size": 8615,
-        "path": "E:/codeplace/ai_test/gesture-recognition-master/CallFrame.py",
-        "relPath": "ai_test/gesture-recognition-master/CallFrame.py",
-        "sizeFormatted": "8.4 KB"
+        "sizeFormatted": "8.4 KB",
+        "project": "ai_test"
       },
       {
         "name": "Frame.py",
         "type": "Python代码",
         "size": 3602,
-        "path": "E:/codeplace/ai_test/gesture-recognition-master/Frame.py",
-        "relPath": "ai_test/gesture-recognition-master/Frame.py",
-        "sizeFormatted": "3.5 KB"
+        "sizeFormatted": "3.5 KB",
+        "project": "ai_test"
       },
       {
         "name": "GetTestImage.py",
         "type": "Python代码",
         "size": 966,
-        "path": "E:/codeplace/ai_test/gesture-recognition-master/GetTestImage.py",
-        "relPath": "ai_test/gesture-recognition-master/GetTestImage.py",
-        "sizeFormatted": "966 B"
+        "sizeFormatted": "966 B",
+        "project": "ai_test"
       },
       {
         "name": "GetTrainImage.py",
         "type": "Python代码",
         "size": 936,
-        "path": "E:/codeplace/ai_test/gesture-recognition-master/GetTrainImage.py",
-        "relPath": "ai_test/gesture-recognition-master/GetTrainImage.py",
-        "sizeFormatted": "936 B"
+        "sizeFormatted": "936 B",
+        "project": "ai_test"
       },
       {
         "name": "README.md",
         "type": "文档",
         "size": 2149,
-        "path": "E:/codeplace/ai_test/gesture-recognition-master/README.md",
-        "relPath": "ai_test/gesture-recognition-master/README.md",
-        "sizeFormatted": "2.1 KB"
+        "sizeFormatted": "2.1 KB",
+        "project": "ai_test"
       },
       {
         "name": "SaveGesture.py",
         "type": "Python代码",
         "size": 880,
-        "path": "E:/codeplace/ai_test/gesture-recognition-master/SaveGesture.py",
-        "relPath": "ai_test/gesture-recognition-master/SaveGesture.py",
-        "sizeFormatted": "880 B"
+        "sizeFormatted": "880 B",
+        "project": "ai_test"
       },
       {
         "name": "TestGesture.py",
         "type": "Python代码",
         "size": 2522,
-        "path": "E:/codeplace/ai_test/gesture-recognition-master/TestGesture.py",
-        "relPath": "ai_test/gesture-recognition-master/TestGesture.py",
-        "sizeFormatted": "2.5 KB"
+        "sizeFormatted": "2.5 KB",
+        "project": "ai_test"
       },
       {
         "name": "TestInTest.py",
         "type": "Python代码",
         "size": 2342,
-        "path": "E:/codeplace/ai_test/gesture-recognition-master/TestInTest.py",
-        "relPath": "ai_test/gesture-recognition-master/TestInTest.py",
-        "sizeFormatted": "2.3 KB"
+        "sizeFormatted": "2.3 KB",
+        "project": "ai_test"
       },
       {
         "name": "Train.py",
         "type": "Python代码",
         "size": 3932,
-        "path": "E:/codeplace/ai_test/gesture-recognition-master/Train.py",
-        "relPath": "ai_test/gesture-recognition-master/Train.py",
-        "sizeFormatted": "3.8 KB"
+        "sizeFormatted": "3.8 KB",
+        "project": "ai_test"
       },
       {
         "name": "Train_inputdata.py",
         "type": "Python代码",
         "size": 4544,
-        "path": "E:/codeplace/ai_test/gesture-recognition-master/Train_inputdata.py",
-        "relPath": "ai_test/gesture-recognition-master/Train_inputdata.py",
-        "sizeFormatted": "4.4 KB"
+        "sizeFormatted": "4.4 KB",
+        "project": "ai_test"
       },
       {
         "name": "Train_model.py",
         "type": "Python代码",
         "size": 10795,
-        "path": "E:/codeplace/ai_test/gesture-recognition-master/Train_model.py",
-        "relPath": "ai_test/gesture-recognition-master/Train_model.py",
-        "sizeFormatted": "10.5 KB"
+        "sizeFormatted": "10.5 KB",
+        "project": "ai_test"
       },
       {
         "name": ".gitignore",
         "type": "其他",
         "size": 428,
-        "path": "E:/codeplace/bank_seckill/bank_seckill_service/.gitignore",
-        "relPath": "bank_seckill/bank_seckill_service/.gitignore",
-        "sizeFormatted": "428 B"
+        "sizeFormatted": "428 B",
+        "project": "bank_seckill"
       },
       {
         "name": "bank_seckill_service.iml",
         "type": "其他",
         "size": 19979,
-        "path": "E:/codeplace/bank_seckill/bank_seckill_service/bank_seckill_service.iml",
-        "relPath": "bank_seckill/bank_seckill_service/bank_seckill_service.iml",
-        "sizeFormatted": "19.5 KB"
+        "sizeFormatted": "19.5 KB",
+        "project": "bank_seckill"
       },
       {
         "name": "Dockerfile",
         "type": "其他",
         "size": 166,
-        "path": "E:/codeplace/bank_seckill/bank_seckill_service/Dockerfile",
-        "relPath": "bank_seckill/bank_seckill_service/Dockerfile",
-        "sizeFormatted": "166 B"
+        "sizeFormatted": "166 B",
+        "project": "bank_seckill"
       },
       {
         "name": "pom.xml",
         "type": "YAML配置",
         "size": 7487,
-        "path": "E:/codeplace/bank_seckill/bank_seckill_service/pom.xml",
-        "relPath": "bank_seckill/bank_seckill_service/pom.xml",
-        "sizeFormatted": "7.3 KB"
+        "sizeFormatted": "7.3 KB",
+        "project": "bank_seckill"
       },
       {
         "name": "README.md",
         "type": "文档",
         "size": 299,
-        "path": "E:/codeplace/bank_seckill/bank_seckill_service/README.md",
-        "relPath": "bank_seckill/bank_seckill_service/README.md",
-        "sizeFormatted": "299 B"
+        "sizeFormatted": "299 B",
+        "project": "bank_seckill"
       },
       {
         "name": "module-back.iml",
         "type": "其他",
         "size": 20586,
-        "path": "E:/codeplace/bank_seckill/bank_seckill_service/module-back/module-back.iml",
-        "relPath": "bank_seckill/bank_seckill_service/module-back/module-back.iml",
-        "sizeFormatted": "20.1 KB"
+        "sizeFormatted": "20.1 KB",
+        "project": "bank_seckill"
       },
       {
         "name": "pom.xml",
         "type": "YAML配置",
         "size": 685,
-        "path": "E:/codeplace/bank_seckill/bank_seckill_service/module-back/pom.xml",
-        "relPath": "bank_seckill/bank_seckill_service/module-back/pom.xml",
-        "sizeFormatted": "685 B"
+        "sizeFormatted": "685 B",
+        "project": "bank_seckill"
       },
       {
         "name": "module-base.iml",
         "type": "其他",
         "size": 20680,
-        "path": "E:/codeplace/bank_seckill/bank_seckill_service/module-base/module-base.iml",
-        "relPath": "bank_seckill/bank_seckill_service/module-base/module-base.iml",
-        "sizeFormatted": "20.2 KB"
+        "sizeFormatted": "20.2 KB",
+        "project": "bank_seckill"
       },
       {
         "name": "pom.xml",
         "type": "YAML配置",
         "size": 683,
-        "path": "E:/codeplace/bank_seckill/bank_seckill_service/module-base/pom.xml",
-        "relPath": "bank_seckill/bank_seckill_service/module-base/pom.xml",
-        "sizeFormatted": "683 B"
+        "sizeFormatted": "683 B",
+        "project": "bank_seckill"
       },
       {
         "name": "GenerateUUID.java",
         "type": "Java代码",
         "size": 259,
-        "path": "E:/codeplace/bank_seckill/bank_seckill_service/module-base/src/main/java/bank/seckill/service/base/annotation/GenerateUUID.java",
-        "relPath": "bank_seckill/bank_seckill_service/module-base/src/main/java/bank/seckill/service/base/annotation/GenerateUUID.java",
-        "sizeFormatted": "259 B"
+        "sizeFormatted": "259 B",
+        "project": "bank_seckill"
       },
       {
         "name": "ServiceConfig.java",
         "type": "Java代码",
         "size": 501,
-        "path": "E:/codeplace/bank_seckill/bank_seckill_service/module-base/src/main/java/bank/seckill/service/base/annotation/ServiceConfig.java",
-        "relPath": "bank_seckill/bank_seckill_service/module-base/src/main/java/bank/seckill/service/base/annotation/ServiceConfig.java",
-        "sizeFormatted": "501 B"
+        "sizeFormatted": "501 B",
+        "project": "bank_seckill"
       },
       {
         "name": "ValidField.java",
         "type": "Java代码",
         "size": 1494,
-        "path": "E:/codeplace/bank_seckill/bank_seckill_service/module-base/src/main/java/bank/seckill/service/base/annotation/ValidField.java",
-        "relPath": "bank_seckill/bank_seckill_service/module-base/src/main/java/bank/seckill/service/base/annotation/ValidField.java",
-        "sizeFormatted": "1.5 KB"
+        "sizeFormatted": "1.5 KB",
+        "project": "bank_seckill"
       },
       {
         "name": "ServiceAroundAspect.java",
         "type": "Java代码",
         "size": 5380,
-        "path": "E:/codeplace/bank_seckill/bank_seckill_service/module-base/src/main/java/bank/seckill/service/base/aspect/ServiceAroundAspect.java",
-        "relPath": "bank_seckill/bank_seckill_service/module-base/src/main/java/bank/seckill/service/base/aspect/ServiceAroundAspect.java",
-        "sizeFormatted": "5.3 KB"
+        "sizeFormatted": "5.3 KB",
+        "project": "bank_seckill"
       },
       {
         "name": "SuperEntity.java",
         "type": "Java代码",
         "size": 1995,
-        "path": "E:/codeplace/bank_seckill/bank_seckill_service/module-base/src/main/java/bank/seckill/service/base/bean/SuperEntity.java",
-        "relPath": "bank_seckill/bank_seckill_service/module-base/src/main/java/bank/seckill/service/base/bean/SuperEntity.java",
-        "sizeFormatted": "1.9 KB"
+        "sizeFormatted": "1.9 KB",
+        "project": "bank_seckill"
       },
       {
         "name": "Pattern.java",
         "type": "Java代码",
         "size": 142,
-        "path": "E:/codeplace/bank_seckill/bank_seckill_service/module-base/src/main/java/bank/seckill/service/base/enmu/Pattern.java",
-        "relPath": "bank_seckill/bank_seckill_service/module-base/src/main/java/bank/seckill/service/base/enmu/Pattern.java",
-        "sizeFormatted": "142 B"
+        "sizeFormatted": "142 B",
+        "project": "bank_seckill"
       },
       {
         "name": "AddEvt.java",
         "type": "Java代码",
         "size": 351,
-        "path": "E:/codeplace/bank_seckill/bank_seckill_service/module-base/src/main/java/bank/seckill/service/base/evt/AddEvt.java",
-        "relPath": "bank_seckill/bank_seckill_service/module-base/src/main/java/bank/seckill/service/base/evt/AddEvt.java",
-        "sizeFormatted": "351 B"
+        "sizeFormatted": "351 B",
+        "project": "bank_seckill"
       },
       {
         "name": "EditEvt.java",
         "type": "Java代码",
         "size": 515,
-        "path": "E:/codeplace/bank_seckill/bank_seckill_service/module-base/src/main/java/bank/seckill/service/base/evt/EditEvt.java",
-        "relPath": "bank_seckill/bank_seckill_service/module-base/src/main/java/bank/seckill/service/base/evt/EditEvt.java",
-        "sizeFormatted": "515 B"
+        "sizeFormatted": "515 B",
+        "project": "bank_seckill"
       },
       {
         "name": "QueryEvt.java",
         "type": "Java代码",
         "size": 348,
-        "path": "E:/codeplace/bank_seckill/bank_seckill_service/module-base/src/main/java/bank/seckill/service/base/evt/QueryEvt.java",
-        "relPath": "bank_seckill/bank_seckill_service/module-base/src/main/java/bank/seckill/service/base/evt/QueryEvt.java",
-        "sizeFormatted": "348 B"
+        "sizeFormatted": "348 B",
+        "project": "bank_seckill"
       },
       {
         "name": "PageModel.java",
         "type": "Java代码",
         "size": 248,
-        "path": "E:/codeplace/bank_seckill/bank_seckill_service/module-base/src/main/java/bank/seckill/service/base/model/PageModel.java",
-        "relPath": "bank_seckill/bank_seckill_service/module-base/src/main/java/bank/seckill/service/base/model/PageModel.java",
-        "sizeFormatted": "248 B"
+        "sizeFormatted": "248 B",
+        "project": "bank_seckill"
       },
       {
         "name": "ServiceHeader.java",
         "type": "Java代码",
         "size": 555,
-        "path": "E:/codeplace/bank_seckill/bank_seckill_service/module-base/src/main/java/bank/seckill/service/base/model/ServiceHeader.java",
-        "relPath": "bank_seckill/bank_seckill_service/module-base/src/main/java/bank/seckill/service/base/model/ServiceHeader.java",
-        "sizeFormatted": "555 B"
+        "sizeFormatted": "555 B",
+        "project": "bank_seckill"
       },
       {
         "name": "ServiceResp.java",
         "type": "Java代码",
         "size": 2706,
-        "path": "E:/codeplace/bank_seckill/bank_seckill_service/module-base/src/main/java/bank/seckill/service/base/model/ServiceResp.java",
-        "relPath": "bank_seckill/bank_seckill_service/module-base/src/main/java/bank/seckill/service/base/model/ServiceResp.java",
-        "sizeFormatted": "2.6 KB"
+        "sizeFormatted": "2.6 KB",
+        "project": "bank_seckill"
       },
       {
         "name": "Context.java",
         "type": "Java代码",
         "size": 328,
-        "path": "E:/codeplace/bank_seckill/bank_seckill_service/module-base/src/main/java/bank/seckill/service/base/util/Context.java",
-        "relPath": "bank_seckill/bank_seckill_service/module-base/src/main/java/bank/seckill/service/base/util/Context.java",
-        "sizeFormatted": "328 B"
+        "sizeFormatted": "328 B",
+        "project": "bank_seckill"
       },
       {
         "name": "ContextLocal.java",
         "type": "Java代码",
         "size": 490,
-        "path": "E:/codeplace/bank_seckill/bank_seckill_service/module-base/src/main/java/bank/seckill/service/base/util/ContextLocal.java",
-        "relPath": "bank_seckill/bank_seckill_service/module-base/src/main/java/bank/seckill/service/base/util/ContextLocal.java",
-        "sizeFormatted": "490 B"
+        "sizeFormatted": "490 B",
+        "project": "bank_seckill"
       },
       {
         "name": "IpUtils.java",
         "type": "Java代码",
         "size": 2094,
-        "path": "E:/codeplace/bank_seckill/bank_seckill_service/module-base/src/main/java/bank/seckill/service/base/util/IpUtils.java",
-        "relPath": "bank_seckill/bank_seckill_service/module-base/src/main/java/bank/seckill/service/base/util/IpUtils.java",
-        "sizeFormatted": "2.0 KB"
+        "sizeFormatted": "2.0 KB",
+        "project": "bank_seckill"
       },
       {
         "name": "JwtUtils.java",
         "type": "Java代码",
         "size": 3241,
-        "path": "E:/codeplace/bank_seckill/bank_seckill_service/module-base/src/main/java/bank/seckill/service/base/util/JwtUtils.java",
-        "relPath": "bank_seckill/bank_seckill_service/module-base/src/main/java/bank/seckill/service/base/util/JwtUtils.java",
-        "sizeFormatted": "3.2 KB"
+        "sizeFormatted": "3.2 KB",
+        "project": "bank_seckill"
       },
       {
         "name": "ValidUtils.java",
         "type": "Java代码",
         "size": 6978,
-        "path": "E:/codeplace/bank_seckill/bank_seckill_service/module-base/src/main/java/bank/seckill/service/base/util/ValidUtils.java",
-        "relPath": "bank_seckill/bank_seckill_service/module-base/src/main/java/bank/seckill/service/base/util/ValidUtils.java",
-        "sizeFormatted": "6.8 KB"
+        "sizeFormatted": "6.8 KB",
+        "project": "bank_seckill"
       },
       {
         "name": "module-common.iml",
         "type": "其他",
         "size": 20890,
-        "path": "E:/codeplace/bank_seckill/bank_seckill_service/module-common/module-common.iml",
-        "relPath": "bank_seckill/bank_seckill_service/module-common/module-common.iml",
-        "sizeFormatted": "20.4 KB"
+        "sizeFormatted": "20.4 KB",
+        "project": "bank_seckill"
       },
       {
         "name": "pom.xml",
         "type": "YAML配置",
         "size": 1104,
-        "path": "E:/codeplace/bank_seckill/bank_seckill_service/module-common/pom.xml",
-        "relPath": "bank_seckill/bank_seckill_service/module-common/pom.xml",
-        "sizeFormatted": "1.1 KB"
+        "sizeFormatted": "1.1 KB",
+        "project": "bank_seckill"
       },
       {
         "name": "ActivityMain.java",
         "type": "Java代码",
         "size": 1870,
-        "path": "E:/codeplace/bank_seckill/bank_seckill_service/module-common/src/main/java/bank/seckill/service/common/bean/activity/ActivityMain.java",
-        "relPath": "bank_seckill/bank_seckill_service/module-common/src/main/java/bank/seckill/service/common/bean/activity/ActivityMain.java",
-        "sizeFormatted": "1.8 KB"
+        "sizeFormatted": "1.8 KB",
+        "project": "bank_seckill"
       },
       {
         "name": "ActivityProductRelation.java",
         "type": "Java代码",
         "size": 1632,
-        "path": "E:/codeplace/bank_seckill/bank_seckill_service/module-common/src/main/java/bank/seckill/service/common/bean/activity/ActivityProductRelation.java",
-        "relPath": "bank_seckill/bank_seckill_service/module-common/src/main/java/bank/seckill/service/common/bean/activity/ActivityProductRelation.java",
-        "sizeFormatted": "1.6 KB"
+        "sizeFormatted": "1.6 KB",
+        "project": "bank_seckill"
       },
       {
         "name": "ActivityRuleRelation.java",
         "type": "Java代码",
         "size": 1151,
-        "path": "E:/codeplace/bank_seckill/bank_seckill_service/module-common/src/main/java/bank/seckill/service/common/bean/activity/ActivityRuleRelation.java",
-        "relPath": "bank_seckill/bank_seckill_service/module-common/src/main/java/bank/seckill/service/common/bean/activity/ActivityRuleRelation.java",
-        "sizeFormatted": "1.1 KB"
+        "sizeFormatted": "1.1 KB",
+        "project": "bank_seckill"
       },
       {
         "name": "MqRepository.java",
         "type": "Java代码",
         "size": 1395,
-        "path": "E:/codeplace/bank_seckill/bank_seckill_service/module-common/src/main/java/bank/seckill/service/common/bean/MQLog/MqRepository.java",
-        "relPath": "bank_seckill/bank_seckill_service/module-common/src/main/java/bank/seckill/service/common/bean/MQLog/MqRepository.java",
-        "sizeFormatted": "1.4 KB"
+        "sizeFormatted": "1.4 KB",
+        "project": "bank_seckill"
       },
       {
         "name": "OrderMain.java",
         "type": "Java代码",
         "size": 2278,
-        "path": "E:/codeplace/bank_seckill/bank_seckill_service/module-common/src/main/java/bank/seckill/service/common/bean/order/OrderMain.java",
-        "relPath": "bank_seckill/bank_seckill_service/module-common/src/main/java/bank/seckill/service/common/bean/order/OrderMain.java",
-        "sizeFormatted": "2.2 KB"
+        "sizeFormatted": "2.2 KB",
+        "project": "bank_seckill"
       },
       {
         "name": "OrderType.java",
         "type": "Java代码",
         "size": 946,
-        "path": "E:/codeplace/bank_seckill/bank_seckill_service/module-common/src/main/java/bank/seckill/service/common/bean/order/OrderType.java",
-        "relPath": "bank_seckill/bank_seckill_service/module-common/src/main/java/bank/seckill/service/common/bean/order/OrderType.java",
-        "sizeFormatted": "946 B"
+        "sizeFormatted": "946 B",
+        "project": "bank_seckill"
       },
       {
         "name": "ProductMain.java",
         "type": "Java代码",
         "size": 2155,
-        "path": "E:/codeplace/bank_seckill/bank_seckill_service/module-common/src/main/java/bank/seckill/service/common/bean/product/ProductMain.java",
-        "relPath": "bank_seckill/bank_seckill_service/module-common/src/main/java/bank/seckill/service/common/bean/product/ProductMain.java",
-        "sizeFormatted": "2.1 KB"
+        "sizeFormatted": "2.1 KB",
+        "project": "bank_seckill"
       },
       {
         "name": "PaperPropertiesRelation.java",
         "type": "Java代码",
         "size": 1073,
-        "path": "E:/codeplace/bank_seckill/bank_seckill_service/module-common/src/main/java/bank/seckill/service/common/bean/properties/PaperPropertiesRelation.java",
-        "relPath": "bank_seckill/bank_seckill_service/module-common/src/main/java/bank/seckill/service/common/bean/properties/PaperPropertiesRelation.java",
-        "sizeFormatted": "1.0 KB"
+        "sizeFormatted": "1.0 KB",
+        "project": "bank_seckill"
       },
       {
         "name": "PropertiesMain.java",
         "type": "Java代码",
         "size": 1362,
-        "path": "E:/codeplace/bank_seckill/bank_seckill_service/module-common/src/main/java/bank/seckill/service/common/bean/properties/PropertiesMain.java",
-        "relPath": "bank_seckill/bank_seckill_service/module-common/src/main/java/bank/seckill/service/common/bean/properties/PropertiesMain.java",
-        "sizeFormatted": "1.3 KB"
+        "sizeFormatted": "1.3 KB",
+        "project": "bank_seckill"
       },
       {
         "name": "PropertiesQueryPaper.java",
         "type": "Java代码",
         "size": 1226,
-        "path": "E:/codeplace/bank_seckill/bank_seckill_service/module-common/src/main/java/bank/seckill/service/common/bean/properties/PropertiesQueryPaper.java",
-        "relPath": "bank_seckill/bank_seckill_service/module-common/src/main/java/bank/seckill/service/common/bean/properties/PropertiesQueryPaper.java",
-        "sizeFormatted": "1.2 KB"
+        "sizeFormatted": "1.2 KB",
+        "project": "bank_seckill"
       },
       {
         "name": "PropertiesRestrictCondition.java",
         "type": "Java代码",
         "size": 1449,
-        "path": "E:/codeplace/bank_seckill/bank_seckill_service/module-common/src/main/java/bank/seckill/service/common/bean/properties/PropertiesRestrictCondition.java",
-        "relPath": "bank_seckill/bank_seckill_service/module-common/src/main/java/bank/seckill/service/common/bean/properties/PropertiesRestrictCondition.java",
-        "sizeFormatted": "1.4 KB"
+        "sizeFormatted": "1.4 KB",
+        "project": "bank_seckill"
       },
       {
         "name": "PropertyRestrictions.java",
         "type": "Java代码",
         "size": 465,
-        "path": "E:/codeplace/bank_seckill/bank_seckill_service/module-common/src/main/java/bank/seckill/service/common/bean/properties/PropertyRestrictions.java",
-        "relPath": "bank_seckill/bank_seckill_service/module-common/src/main/java/bank/seckill/service/common/bean/properties/PropertyRestrictions.java",
-        "sizeFormatted": "465 B"
+        "sizeFormatted": "465 B",
+        "project": "bank_seckill"
       },
       {
         "name": "RuleMain.java",
         "type": "Java代码",
         "size": 1969,
-        "path": "E:/codeplace/bank_seckill/bank_seckill_service/module-common/src/main/java/bank/seckill/service/common/bean/rule/RuleMain.java",
-        "relPath": "bank_seckill/bank_seckill_service/module-common/src/main/java/bank/seckill/service/common/bean/rule/RuleMain.java",
-        "sizeFormatted": "1.9 KB"
+        "sizeFormatted": "1.9 KB",
+        "project": "bank_seckill"
       },
       {
         "name": "UserActivities.java",
         "type": "Java代码",
         "size": 1257,
-        "path": "E:/codeplace/bank_seckill/bank_seckill_service/module-common/src/main/java/bank/seckill/service/common/bean/user/UserActivities.java",
-        "relPath": "bank_seckill/bank_seckill_service/module-common/src/main/java/bank/seckill/service/common/bean/user/UserActivities.java",
-        "sizeFormatted": "1.2 KB"
+        "sizeFormatted": "1.2 KB",
+        "project": "bank_seckill"
       },
       {
         "name": "UserMain.java",
         "type": "Java代码",
         "size": 2468,
-        "path": "E:/codeplace/bank_seckill/bank_seckill_service/module-common/src/main/java/bank/seckill/service/common/bean/user/UserMain.java",
-        "relPath": "bank_seckill/bank_seckill_service/module-common/src/main/java/bank/seckill/service/common/bean/user/UserMain.java",
-        "sizeFormatted": "2.4 KB"
+        "sizeFormatted": "2.4 KB",
+        "project": "bank_seckill"
       },
       {
         "name": "UserPassQuestions.java",
         "type": "Java代码",
         "size": 1630,
-        "path": "E:/codeplace/bank_seckill/bank_seckill_service/module-common/src/main/java/bank/seckill/service/common/bean/user/UserPassQuestions.java",
-        "relPath": "bank_seckill/bank_seckill_service/module-common/src/main/java/bank/seckill/service/common/bean/user/UserPassQuestions.java",
-        "sizeFormatted": "1.6 KB"
+        "sizeFormatted": "1.6 KB",
+        "project": "bank_seckill"
       },
       {
         "name": "UserProperties.java",
         "type": "Java代码",
         "size": 1049,
-        "path": "E:/codeplace/bank_seckill/bank_seckill_service/module-common/src/main/java/bank/seckill/service/common/bean/user/UserProperties.java",
-        "relPath": "bank_seckill/bank_seckill_service/module-common/src/main/java/bank/seckill/service/common/bean/user/UserProperties.java",
-        "sizeFormatted": "1.0 KB"
+        "sizeFormatted": "1.0 KB",
+        "project": "bank_seckill"
       },
       {
         "name": "Config.java",
         "type": "Java代码",
         "size": 1336,
-        "path": "E:/codeplace/bank_seckill/bank_seckill_service/module-common/src/main/java/bank/seckill/service/common/config/Config.java",
-        "relPath": "bank_seckill/bank_seckill_service/module-common/src/main/java/bank/seckill/service/common/config/Config.java",
-        "sizeFormatted": "1.3 KB"
+        "sizeFormatted": "1.3 KB",
+        "project": "bank_seckill"
       },
       {
         "name": "CorsConfig.java",
         "type": "Java代码",
         "size": 956,
-        "path": "E:/codeplace/bank_seckill/bank_seckill_service/module-common/src/main/java/bank/seckill/service/common/config/CorsConfig.java",
-        "relPath": "bank_seckill/bank_seckill_service/module-common/src/main/java/bank/seckill/service/common/config/CorsConfig.java",
-        "sizeFormatted": "956 B"
+        "sizeFormatted": "956 B",
+        "project": "bank_seckill"
       },
       {
         "name": "MQProducerConfigure.java",
         "type": "Java代码",
         "size": 1543,
-        "path": "E:/codeplace/bank_seckill/bank_seckill_service/module-common/src/main/java/bank/seckill/service/common/config/MQProducerConfigure.java",
-        "relPath": "bank_seckill/bank_seckill_service/module-common/src/main/java/bank/seckill/service/common/config/MQProducerConfigure.java",
-        "sizeFormatted": "1.5 KB"
+        "sizeFormatted": "1.5 KB",
+        "project": "bank_seckill"
       },
       {
         "name": "MybatisPlusConfig.java",
         "type": "Java代码",
         "size": 735,
-        "path": "E:/codeplace/bank_seckill/bank_seckill_service/module-common/src/main/java/bank/seckill/service/common/config/MybatisPlusConfig.java",
-        "relPath": "bank_seckill/bank_seckill_service/module-common/src/main/java/bank/seckill/service/common/config/MybatisPlusConfig.java",
-        "sizeFormatted": "735 B"
+        "sizeFormatted": "735 B",
+        "project": "bank_seckill"
       },
       {
         "name": "MyMetaObjectHandler.java",
         "type": "Java代码",
         "size": 1609,
-        "path": "E:/codeplace/bank_seckill/bank_seckill_service/module-common/src/main/java/bank/seckill/service/common/config/MyMetaObjectHandler.java",
-        "relPath": "bank_seckill/bank_seckill_service/module-common/src/main/java/bank/seckill/service/common/config/MyMetaObjectHandler.java",
-        "sizeFormatted": "1.6 KB"
+        "sizeFormatted": "1.6 KB",
+        "project": "bank_seckill"
       },
       {
         "name": "RedisConfig.java",
         "type": "Java代码",
         "size": 1543,
-        "path": "E:/codeplace/bank_seckill/bank_seckill_service/module-common/src/main/java/bank/seckill/service/common/config/RedisConfig.java",
-        "relPath": "bank_seckill/bank_seckill_service/module-common/src/main/java/bank/seckill/service/common/config/RedisConfig.java",
-        "sizeFormatted": "1.5 KB"
+        "sizeFormatted": "1.5 KB",
+        "project": "bank_seckill"
       },
       {
         "name": "Swagger2Config.java",
         "type": "Java代码",
         "size": 3878,
-        "path": "E:/codeplace/bank_seckill/bank_seckill_service/module-common/src/main/java/bank/seckill/service/common/config/Swagger2Config.java",
-        "relPath": "bank_seckill/bank_seckill_service/module-common/src/main/java/bank/seckill/service/common/config/Swagger2Config.java",
-        "sizeFormatted": "3.8 KB"
+        "sizeFormatted": "3.8 KB",
+        "project": "bank_seckill"
       },
       {
         "name": "WhitelistConfig.java",
         "type": "Java代码",
         "size": 358,
-        "path": "E:/codeplace/bank_seckill/bank_seckill_service/module-common/src/main/java/bank/seckill/service/common/config/WhitelistConfig.java",
-        "relPath": "bank_seckill/bank_seckill_service/module-common/src/main/java/bank/seckill/service/common/config/WhitelistConfig.java",
-        "sizeFormatted": "358 B"
+        "sizeFormatted": "358 B",
+        "project": "bank_seckill"
       },
       {
         "name": "ActivityMapper.java",
         "type": "Java代码",
         "size": 2144,
-        "path": "E:/codeplace/bank_seckill/bank_seckill_service/module-common/src/main/java/bank/seckill/service/common/mapper/activity/ActivityMapper.java",
-        "relPath": "bank_seckill/bank_seckill_service/module-common/src/main/java/bank/seckill/service/common/mapper/activity/ActivityMapper.java",
-        "sizeFormatted": "2.1 KB"
+        "sizeFormatted": "2.1 KB",
+        "project": "bank_seckill"
       },
       {
         "name": "ActivityProductRelationMapper.java",
         "type": "Java代码",
         "size": 1917,
-        "path": "E:/codeplace/bank_seckill/bank_seckill_service/module-common/src/main/java/bank/seckill/service/common/mapper/activity/ActivityProductRelationMapper.java",
-        "relPath": "bank_seckill/bank_seckill_service/module-common/src/main/java/bank/seckill/service/common/mapper/activity/ActivityProductRelationMapper.java",
-        "sizeFormatted": "1.9 KB"
+        "sizeFormatted": "1.9 KB",
+        "project": "bank_seckill"
       },
       {
         "name": "ActivityRuleRelationMapper.java",
         "type": "Java代码",
         "size": 734,
-        "path": "E:/codeplace/bank_seckill/bank_seckill_service/module-common/src/main/java/bank/seckill/service/common/mapper/activity/ActivityRuleRelationMapper.java",
-        "relPath": "bank_seckill/bank_seckill_service/module-common/src/main/java/bank/seckill/service/common/mapper/activity/ActivityRuleRelationMapper.java",
-        "sizeFormatted": "734 B"
+        "sizeFormatted": "734 B",
+        "project": "bank_seckill"
       },
       {
         "name": "MQLogMapper.java",
         "type": "Java代码",
         "size": 362,
-        "path": "E:/codeplace/bank_seckill/bank_seckill_service/module-common/src/main/java/bank/seckill/service/common/mapper/mqLog/MQLogMapper.java",
-        "relPath": "bank_seckill/bank_seckill_service/module-common/src/main/java/bank/seckill/service/common/mapper/mqLog/MQLogMapper.java",
-        "sizeFormatted": "362 B"
+        "sizeFormatted": "362 B",
+        "project": "bank_seckill"
       },
       {
         "name": "OrderMapper.java",
         "type": "Java代码",
         "size": 844,
-        "path": "E:/codeplace/bank_seckill/bank_seckill_service/module-common/src/main/java/bank/seckill/service/common/mapper/order/OrderMapper.java",
-        "relPath": "bank_seckill/bank_seckill_service/module-common/src/main/java/bank/seckill/service/common/mapper/order/OrderMapper.java",
-        "sizeFormatted": "844 B"
+        "sizeFormatted": "844 B",
+        "project": "bank_seckill"
       },
       {
         "name": "OrderTypeMapper.java",
         "type": "Java代码",
         "size": 358,
-        "path": "E:/codeplace/bank_seckill/bank_seckill_service/module-common/src/main/java/bank/seckill/service/common/mapper/order/OrderTypeMapper.java",
-        "relPath": "bank_seckill/bank_seckill_service/module-common/src/main/java/bank/seckill/service/common/mapper/order/OrderTypeMapper.java",
-        "sizeFormatted": "358 B"
+        "sizeFormatted": "358 B",
+        "project": "bank_seckill"
       },
       {
         "name": "PaperMapper.java",
         "type": "Java代码",
         "size": 636,
-        "path": "E:/codeplace/bank_seckill/bank_seckill_service/module-common/src/main/java/bank/seckill/service/common/mapper/paper/PaperMapper.java",
-        "relPath": "bank_seckill/bank_seckill_service/module-common/src/main/java/bank/seckill/service/common/mapper/paper/PaperMapper.java",
-        "sizeFormatted": "636 B"
+        "sizeFormatted": "636 B",
+        "project": "bank_seckill"
       },
       {
         "name": "PaperPropertiesRelationMapper.java",
         "type": "Java代码",
         "size": 723,
-        "path": "E:/codeplace/bank_seckill/bank_seckill_service/module-common/src/main/java/bank/seckill/service/common/mapper/paper/PaperPropertiesRelationMapper.java",
-        "relPath": "bank_seckill/bank_seckill_service/module-common/src/main/java/bank/seckill/service/common/mapper/paper/PaperPropertiesRelationMapper.java",
-        "sizeFormatted": "723 B"
+        "sizeFormatted": "723 B",
+        "project": "bank_seckill"
       },
       {
         "name": "ProductMapper.java",
         "type": "Java代码",
         "size": 1261,
-        "path": "E:/codeplace/bank_seckill/bank_seckill_service/module-common/src/main/java/bank/seckill/service/common/mapper/product/ProductMapper.java",
-        "relPath": "bank_seckill/bank_seckill_service/module-common/src/main/java/bank/seckill/service/common/mapper/product/ProductMapper.java",
-        "sizeFormatted": "1.2 KB"
+        "sizeFormatted": "1.2 KB",
+        "project": "bank_seckill"
       },
       {
         "name": "PropertiesMapper.java",
         "type": "Java代码",
         "size": 872,
-        "path": "E:/codeplace/bank_seckill/bank_seckill_service/module-common/src/main/java/bank/seckill/service/common/mapper/properties/PropertiesMapper.java",
-        "relPath": "bank_seckill/bank_seckill_service/module-common/src/main/java/bank/seckill/service/common/mapper/properties/PropertiesMapper.java",
-        "sizeFormatted": "872 B"
+        "sizeFormatted": "872 B",
+        "project": "bank_seckill"
       },
       {
         "name": "PropertiesRestrictionMapper.java",
         "type": "Java代码",
         "size": 1108,
-        "path": "E:/codeplace/bank_seckill/bank_seckill_service/module-common/src/main/java/bank/seckill/service/common/mapper/properties/PropertiesRestrictionMapper.java",
-        "relPath": "bank_seckill/bank_seckill_service/module-common/src/main/java/bank/seckill/service/common/mapper/properties/PropertiesRestrictionMapper.java",
-        "sizeFormatted": "1.1 KB"
+        "sizeFormatted": "1.1 KB",
+        "project": "bank_seckill"
       },
       {
         "name": "RuleMapper.java",
         "type": "Java代码",
         "size": 952,
-        "path": "E:/codeplace/bank_seckill/bank_seckill_service/module-common/src/main/java/bank/seckill/service/common/mapper/rule/RuleMapper.java",
-        "relPath": "bank_seckill/bank_seckill_service/module-common/src/main/java/bank/seckill/service/common/mapper/rule/RuleMapper.java",
-        "sizeFormatted": "952 B"
+        "sizeFormatted": "952 B",
+        "project": "bank_seckill"
       },
       {
         "name": "UserActivityMapper.java",
         "type": "Java代码",
         "size": 794,
-        "path": "E:/codeplace/bank_seckill/bank_seckill_service/module-common/src/main/java/bank/seckill/service/common/mapper/user/UserActivityMapper.java",
-        "relPath": "bank_seckill/bank_seckill_service/module-common/src/main/java/bank/seckill/service/common/mapper/user/UserActivityMapper.java",
-        "sizeFormatted": "794 B"
+        "sizeFormatted": "794 B",
+        "project": "bank_seckill"
       },
       {
         "name": "UserMapper.java",
         "type": "Java代码",
         "size": 2099,
-        "path": "E:/codeplace/bank_seckill/bank_seckill_service/module-common/src/main/java/bank/seckill/service/common/mapper/user/UserMapper.java",
-        "relPath": "bank_seckill/bank_seckill_service/module-common/src/main/java/bank/seckill/service/common/mapper/user/UserMapper.java",
-        "sizeFormatted": "2.0 KB"
+        "sizeFormatted": "2.0 KB",
+        "project": "bank_seckill"
       },
       {
         "name": "UserPassQuestionsMapper.java",
         "type": "Java代码",
         "size": 639,
-        "path": "E:/codeplace/bank_seckill/bank_seckill_service/module-common/src/main/java/bank/seckill/service/common/mapper/user/UserPassQuestionsMapper.java",
-        "relPath": "bank_seckill/bank_seckill_service/module-common/src/main/java/bank/seckill/service/common/mapper/user/UserPassQuestionsMapper.java",
-        "sizeFormatted": "639 B"
+        "sizeFormatted": "639 B",
+        "project": "bank_seckill"
       },
       {
         "name": "UserPropertiesMapper.java",
         "type": "Java代码",
         "size": 659,
-        "path": "E:/codeplace/bank_seckill/bank_seckill_service/module-common/src/main/java/bank/seckill/service/common/mapper/user/UserPropertiesMapper.java",
-        "relPath": "bank_seckill/bank_seckill_service/module-common/src/main/java/bank/seckill/service/common/mapper/user/UserPropertiesMapper.java",
-        "sizeFormatted": "659 B"
+        "sizeFormatted": "659 B",
+        "project": "bank_seckill"
       },
       {
         "name": "mq.properties",
         "type": "其他",
         "size": 189,
-        "path": "E:/codeplace/bank_seckill/bank_seckill_service/module-common/src/main/resources/mq.properties",
-        "relPath": "bank_seckill/bank_seckill_service/module-common/src/main/resources/mq.properties",
-        "sizeFormatted": "189 B"
+        "sizeFormatted": "189 B",
+        "project": "bank_seckill"
       },
       {
         "name": "module-core.iml",
         "type": "其他",
         "size": 21449,
-        "path": "E:/codeplace/bank_seckill/bank_seckill_service/module-core/module-core.iml",
-        "relPath": "bank_seckill/bank_seckill_service/module-core/module-core.iml",
-        "sizeFormatted": "20.9 KB"
+        "sizeFormatted": "20.9 KB",
+        "project": "bank_seckill"
       },
       {
         "name": "pom.xml",
         "type": "YAML配置",
         "size": 1355,
-        "path": "E:/codeplace/bank_seckill/bank_seckill_service/module-core/pom.xml",
-        "relPath": "bank_seckill/bank_seckill_service/module-core/pom.xml",
-        "sizeFormatted": "1.3 KB"
+        "sizeFormatted": "1.3 KB",
+        "project": "bank_seckill"
       },
       {
         "name": "ModuleCoreApplication.java",
         "type": "Java代码",
         "size": 693,
-        "path": "E:/codeplace/bank_seckill/bank_seckill_service/module-core/src/main/java/com/example/modulecore/ModuleCoreApplication.java",
-        "relPath": "bank_seckill/bank_seckill_service/module-core/src/main/java/com/example/modulecore/ModuleCoreApplication.java",
-        "sizeFormatted": "693 B"
+        "sizeFormatted": "693 B",
+        "project": "bank_seckill"
       },
       {
         "name": "application.properties",
         "type": "其他",
         "size": 3783,
-        "path": "E:/codeplace/bank_seckill/bank_seckill_service/module-core/src/main/resources/application.properties",
-        "relPath": "bank_seckill/bank_seckill_service/module-core/src/main/resources/application.properties",
-        "sizeFormatted": "3.7 KB"
+        "sizeFormatted": "3.7 KB",
+        "project": "bank_seckill"
       },
       {
         "name": "stock.lua",
         "type": "其他",
         "size": 233,
-        "path": "E:/codeplace/bank_seckill/bank_seckill_service/module-core/src/main/resources/stock.lua",
-        "relPath": "bank_seckill/bank_seckill_service/module-core/src/main/resources/stock.lua",
-        "sizeFormatted": "233 B"
+        "sizeFormatted": "233 B",
+        "project": "bank_seckill"
       },
       {
         "name": "ApplicationTest.java",
         "type": "Java代码",
         "size": 10593,
-        "path": "E:/codeplace/bank_seckill/bank_seckill_service/module-core/src/test/java/com/example/modulecore/ApplicationTest.java",
-        "relPath": "bank_seckill/bank_seckill_service/module-core/src/test/java/com/example/modulecore/ApplicationTest.java",
-        "sizeFormatted": "10.3 KB"
+        "sizeFormatted": "10.3 KB",
+        "project": "bank_seckill"
       },
       {
         "name": "module-front.iml",
         "type": "其他",
         "size": 20862,
-        "path": "E:/codeplace/bank_seckill/bank_seckill_service/module-front/module-front.iml",
-        "relPath": "bank_seckill/bank_seckill_service/module-front/module-front.iml",
-        "sizeFormatted": "20.4 KB"
+        "sizeFormatted": "20.4 KB",
+        "project": "bank_seckill"
       },
       {
         "name": "pom.xml",
         "type": "YAML配置",
         "size": 1400,
-        "path": "E:/codeplace/bank_seckill/bank_seckill_service/module-front/pom.xml",
-        "relPath": "bank_seckill/bank_seckill_service/module-front/pom.xml",
-        "sizeFormatted": "1.4 KB"
+        "sizeFormatted": "1.4 KB",
+        "project": "bank_seckill"
       },
       {
         "name": "ActivityController.java",
         "type": "Java代码",
         "size": 11884,
-        "path": "E:/codeplace/bank_seckill/bank_seckill_service/module-front/src/main/java/bank/seckill/service/front/controller/ActivityController.java",
-        "relPath": "bank_seckill/bank_seckill_service/module-front/src/main/java/bank/seckill/service/front/controller/ActivityController.java",
-        "sizeFormatted": "11.6 KB"
+        "sizeFormatted": "11.6 KB",
+        "project": "bank_seckill"
       },
       {
         "name": "OrderController.java",
         "type": "Java代码",
         "size": 6657,
-        "path": "E:/codeplace/bank_seckill/bank_seckill_service/module-front/src/main/java/bank/seckill/service/front/controller/OrderController.java",
-        "relPath": "bank_seckill/bank_seckill_service/module-front/src/main/java/bank/seckill/service/front/controller/OrderController.java",
-        "sizeFormatted": "6.5 KB"
+        "sizeFormatted": "6.5 KB",
+        "project": "bank_seckill"
       },
       {
         "name": "PaperController.java",
         "type": "Java代码",
         "size": 5696,
-        "path": "E:/codeplace/bank_seckill/bank_seckill_service/module-front/src/main/java/bank/seckill/service/front/controller/PaperController.java",
-        "relPath": "bank_seckill/bank_seckill_service/module-front/src/main/java/bank/seckill/service/front/controller/PaperController.java",
-        "sizeFormatted": "5.6 KB"
+        "sizeFormatted": "5.6 KB",
+        "project": "bank_seckill"
       },
       {
         "name": "ProductController.java",
         "type": "Java代码",
         "size": 5375,
-        "path": "E:/codeplace/bank_seckill/bank_seckill_service/module-front/src/main/java/bank/seckill/service/front/controller/ProductController.java",
-        "relPath": "bank_seckill/bank_seckill_service/module-front/src/main/java/bank/seckill/service/front/controller/ProductController.java",
-        "sizeFormatted": "5.2 KB"
+        "sizeFormatted": "5.2 KB",
+        "project": "bank_seckill"
       },
       {
         "name": "TestController.java",
         "type": "Java代码",
         "size": 718,
-        "path": "E:/codeplace/bank_seckill/bank_seckill_service/module-front/src/main/java/bank/seckill/service/front/controller/TestController.java",
-        "relPath": "bank_seckill/bank_seckill_service/module-front/src/main/java/bank/seckill/service/front/controller/TestController.java",
-        "sizeFormatted": "718 B"
+        "sizeFormatted": "718 B",
+        "project": "bank_seckill"
       },
       {
         "name": "UserController.java",
         "type": "Java代码",
         "size": 12154,
-        "path": "E:/codeplace/bank_seckill/bank_seckill_service/module-front/src/main/java/bank/seckill/service/front/controller/UserController.java",
-        "relPath": "bank_seckill/bank_seckill_service/module-front/src/main/java/bank/seckill/service/front/controller/UserController.java",
-        "sizeFormatted": "11.9 KB"
+        "sizeFormatted": "11.9 KB",
+        "project": "bank_seckill"
       },
       {
         "name": "SearchEvt.java",
         "type": "Java代码",
         "size": 425,
-        "path": "E:/codeplace/bank_seckill/bank_seckill_service/module-front/src/main/java/bank/seckill/service/front/evt/SearchEvt.java",
-        "relPath": "bank_seckill/bank_seckill_service/module-front/src/main/java/bank/seckill/service/front/evt/SearchEvt.java",
-        "sizeFormatted": "425 B"
+        "sizeFormatted": "425 B",
+        "project": "bank_seckill"
       },
       {
         "name": "ActivityEvt.java",
         "type": "Java代码",
         "size": 348,
-        "path": "E:/codeplace/bank_seckill/bank_seckill_service/module-front/src/main/java/bank/seckill/service/front/evt/activity/ActivityEvt.java",
-        "relPath": "bank_seckill/bank_seckill_service/module-front/src/main/java/bank/seckill/service/front/evt/activity/ActivityEvt.java",
-        "sizeFormatted": "348 B"
+        "sizeFormatted": "348 B",
+        "project": "bank_seckill"
       },
       {
         "name": "ActivityRuleEvt.java",
         "type": "Java代码",
         "size": 1084,
-        "path": "E:/codeplace/bank_seckill/bank_seckill_service/module-front/src/main/java/bank/seckill/service/front/evt/activity/ActivityRuleEvt.java",
-        "relPath": "bank_seckill/bank_seckill_service/module-front/src/main/java/bank/seckill/service/front/evt/activity/ActivityRuleEvt.java",
-        "sizeFormatted": "1.1 KB"
+        "sizeFormatted": "1.1 KB",
+        "project": "bank_seckill"
       },
       {
         "name": "AddActivityEvt.java",
         "type": "Java代码",
         "size": 1285,
-        "path": "E:/codeplace/bank_seckill/bank_seckill_service/module-front/src/main/java/bank/seckill/service/front/evt/activity/AddActivityEvt.java",
-        "relPath": "bank_seckill/bank_seckill_service/module-front/src/main/java/bank/seckill/service/front/evt/activity/AddActivityEvt.java",
-        "sizeFormatted": "1.3 KB"
+        "sizeFormatted": "1.3 KB",
+        "project": "bank_seckill"
       },
       {
         "name": "AddCoverPageEvt.java",
         "type": "Java代码",
         "size": 598,
-        "path": "E:/codeplace/bank_seckill/bank_seckill_service/module-front/src/main/java/bank/seckill/service/front/evt/activity/AddCoverPageEvt.java",
-        "relPath": "bank_seckill/bank_seckill_service/module-front/src/main/java/bank/seckill/service/front/evt/activity/AddCoverPageEvt.java",
-        "sizeFormatted": "598 B"
+        "sizeFormatted": "598 B",
+        "project": "bank_seckill"
       },
       {
         "name": "AddProductForActivityEvt.java",
         "type": "Java代码",
         "size": 707,
-        "path": "E:/codeplace/bank_seckill/bank_seckill_service/module-front/src/main/java/bank/seckill/service/front/evt/activity/AddProductForActivityEvt.java",
-        "relPath": "bank_seckill/bank_seckill_service/module-front/src/main/java/bank/seckill/service/front/evt/activity/AddProductForActivityEvt.java",
-        "sizeFormatted": "707 B"
+        "sizeFormatted": "707 B",
+        "project": "bank_seckill"
       },
       {
         "name": "UpdateActivityEvt.java",
         "type": "Java代码",
         "size": 1422,
-        "path": "E:/codeplace/bank_seckill/bank_seckill_service/module-front/src/main/java/bank/seckill/service/front/evt/activity/UpdateActivityEvt.java",
-        "relPath": "bank_seckill/bank_seckill_service/module-front/src/main/java/bank/seckill/service/front/evt/activity/UpdateActivityEvt.java",
-        "sizeFormatted": "1.4 KB"
+        "sizeFormatted": "1.4 KB",
+        "project": "bank_seckill"
       },
       {
         "name": "OrderEvt.java",
         "type": "Java代码",
         "size": 249,
-        "path": "E:/codeplace/bank_seckill/bank_seckill_service/module-front/src/main/java/bank/seckill/service/front/evt/order/OrderEvt.java",
-        "relPath": "bank_seckill/bank_seckill_service/module-front/src/main/java/bank/seckill/service/front/evt/order/OrderEvt.java",
-        "sizeFormatted": "249 B"
+        "sizeFormatted": "249 B",
+        "project": "bank_seckill"
       },
       {
         "name": "QueryOrderForUserEvt.java",
         "type": "Java代码",
         "size": 336,
-        "path": "E:/codeplace/bank_seckill/bank_seckill_service/module-front/src/main/java/bank/seckill/service/front/evt/order/QueryOrderForUserEvt.java",
-        "relPath": "bank_seckill/bank_seckill_service/module-front/src/main/java/bank/seckill/service/front/evt/order/QueryOrderForUserEvt.java",
-        "sizeFormatted": "336 B"
+        "sizeFormatted": "336 B",
+        "project": "bank_seckill"
       },
       {
         "name": "SubmitOrderEvt.java",
         "type": "Java代码",
         "size": 947,
-        "path": "E:/codeplace/bank_seckill/bank_seckill_service/module-front/src/main/java/bank/seckill/service/front/evt/order/SubmitOrderEvt.java",
-        "relPath": "bank_seckill/bank_seckill_service/module-front/src/main/java/bank/seckill/service/front/evt/order/SubmitOrderEvt.java",
-        "sizeFormatted": "947 B"
+        "sizeFormatted": "947 B",
+        "project": "bank_seckill"
       },
       {
         "name": "UpdateOrderEvt.java",
         "type": "Java代码",
         "size": 511,
-        "path": "E:/codeplace/bank_seckill/bank_seckill_service/module-front/src/main/java/bank/seckill/service/front/evt/order/UpdateOrderEvt.java",
-        "relPath": "bank_seckill/bank_seckill_service/module-front/src/main/java/bank/seckill/service/front/evt/order/UpdateOrderEvt.java",
-        "sizeFormatted": "511 B"
+        "sizeFormatted": "511 B",
+        "project": "bank_seckill"
       },
       {
         "name": "CreatePaperEvt.java",
         "type": "Java代码",
         "size": 993,
-        "path": "E:/codeplace/bank_seckill/bank_seckill_service/module-front/src/main/java/bank/seckill/service/front/evt/paper/CreatePaperEvt.java",
-        "relPath": "bank_seckill/bank_seckill_service/module-front/src/main/java/bank/seckill/service/front/evt/paper/CreatePaperEvt.java",
-        "sizeFormatted": "993 B"
+        "sizeFormatted": "993 B",
+        "project": "bank_seckill"
       },
       {
         "name": "PaperQuestionEvt.java",
         "type": "Java代码",
         "size": 545,
-        "path": "E:/codeplace/bank_seckill/bank_seckill_service/module-front/src/main/java/bank/seckill/service/front/evt/paper/PaperQuestionEvt.java",
-        "relPath": "bank_seckill/bank_seckill_service/module-front/src/main/java/bank/seckill/service/front/evt/paper/PaperQuestionEvt.java",
-        "sizeFormatted": "545 B"
+        "sizeFormatted": "545 B",
+        "project": "bank_seckill"
       },
       {
         "name": "QueryPaperEvt.java",
         "type": "Java代码",
         "size": 454,
-        "path": "E:/codeplace/bank_seckill/bank_seckill_service/module-front/src/main/java/bank/seckill/service/front/evt/paper/QueryPaperEvt.java",
-        "relPath": "bank_seckill/bank_seckill_service/module-front/src/main/java/bank/seckill/service/front/evt/paper/QueryPaperEvt.java",
-        "sizeFormatted": "454 B"
+        "sizeFormatted": "454 B",
+        "project": "bank_seckill"
       },
       {
         "name": "UpdatePaperEvt.java",
         "type": "Java代码",
         "size": 1217,
-        "path": "E:/codeplace/bank_seckill/bank_seckill_service/module-front/src/main/java/bank/seckill/service/front/evt/paper/UpdatePaperEvt.java",
-        "relPath": "bank_seckill/bank_seckill_service/module-front/src/main/java/bank/seckill/service/front/evt/paper/UpdatePaperEvt.java",
-        "sizeFormatted": "1.2 KB"
+        "sizeFormatted": "1.2 KB",
+        "project": "bank_seckill"
       },
       {
         "name": "AddProductEvt.java",
         "type": "Java代码",
         "size": 1784,
-        "path": "E:/codeplace/bank_seckill/bank_seckill_service/module-front/src/main/java/bank/seckill/service/front/evt/product/AddProductEvt.java",
-        "relPath": "bank_seckill/bank_seckill_service/module-front/src/main/java/bank/seckill/service/front/evt/product/AddProductEvt.java",
-        "sizeFormatted": "1.7 KB"
+        "sizeFormatted": "1.7 KB",
+        "project": "bank_seckill"
       },
       {
         "name": "ChangeProductEvt.java",
         "type": "Java代码",
         "size": 2202,
-        "path": "E:/codeplace/bank_seckill/bank_seckill_service/module-front/src/main/java/bank/seckill/service/front/evt/product/ChangeProductEvt.java",
-        "relPath": "bank_seckill/bank_seckill_service/module-front/src/main/java/bank/seckill/service/front/evt/product/ChangeProductEvt.java",
-        "sizeFormatted": "2.2 KB"
+        "sizeFormatted": "2.2 KB",
+        "project": "bank_seckill"
       },
       {
         "name": "ChangePassByAnswerEvt.java",
         "type": "Java代码",
         "size": 392,
-        "path": "E:/codeplace/bank_seckill/bank_seckill_service/module-front/src/main/java/bank/seckill/service/front/evt/user/ChangePassByAnswerEvt.java",
-        "relPath": "bank_seckill/bank_seckill_service/module-front/src/main/java/bank/seckill/service/front/evt/user/ChangePassByAnswerEvt.java",
-        "sizeFormatted": "392 B"
+        "sizeFormatted": "392 B",
+        "project": "bank_seckill"
       },
       {
         "name": "ChangePassByCodeEvt.java",
         "type": "Java代码",
         "size": 368,
-        "path": "E:/codeplace/bank_seckill/bank_seckill_service/module-front/src/main/java/bank/seckill/service/front/evt/user/ChangePassByCodeEvt.java",
-        "relPath": "bank_seckill/bank_seckill_service/module-front/src/main/java/bank/seckill/service/front/evt/user/ChangePassByCodeEvt.java",
-        "sizeFormatted": "368 B"
+        "sizeFormatted": "368 B",
+        "project": "bank_seckill"
       },
       {
         "name": "NewPassEvt.java",
         "type": "Java代码",
         "size": 360,
-        "path": "E:/codeplace/bank_seckill/bank_seckill_service/module-front/src/main/java/bank/seckill/service/front/evt/user/NewPassEvt.java",
-        "relPath": "bank_seckill/bank_seckill_service/module-front/src/main/java/bank/seckill/service/front/evt/user/NewPassEvt.java",
-        "sizeFormatted": "360 B"
+        "sizeFormatted": "360 B",
+        "project": "bank_seckill"
       },
       {
         "name": "QueryUserDetailEvt.java",
         "type": "Java代码",
         "size": 374,
-        "path": "E:/codeplace/bank_seckill/bank_seckill_service/module-front/src/main/java/bank/seckill/service/front/evt/user/QueryUserDetailEvt.java",
-        "relPath": "bank_seckill/bank_seckill_service/module-front/src/main/java/bank/seckill/service/front/evt/user/QueryUserDetailEvt.java",
-        "sizeFormatted": "374 B"
+        "sizeFormatted": "374 B",
+        "project": "bank_seckill"
       },
       {
         "name": "RegisterCodeVerifyEvt.java",
         "type": "Java代码",
         "size": 526,
-        "path": "E:/codeplace/bank_seckill/bank_seckill_service/module-front/src/main/java/bank/seckill/service/front/evt/user/RegisterCodeVerifyEvt.java",
-        "relPath": "bank_seckill/bank_seckill_service/module-front/src/main/java/bank/seckill/service/front/evt/user/RegisterCodeVerifyEvt.java",
-        "sizeFormatted": "526 B"
+        "sizeFormatted": "526 B",
+        "project": "bank_seckill"
       },
       {
         "name": "RegisterVerificationCodeEvt.java",
         "type": "Java代码",
         "size": 548,
-        "path": "E:/codeplace/bank_seckill/bank_seckill_service/module-front/src/main/java/bank/seckill/service/front/evt/user/RegisterVerificationCodeEvt.java",
-        "relPath": "bank_seckill/bank_seckill_service/module-front/src/main/java/bank/seckill/service/front/evt/user/RegisterVerificationCodeEvt.java",
-        "sizeFormatted": "548 B"
+        "sizeFormatted": "548 B",
+        "project": "bank_seckill"
       },
       {
         "name": "SendRegisterCodeEvt.java",
         "type": "Java代码",
         "size": 375,
-        "path": "E:/codeplace/bank_seckill/bank_seckill_service/module-front/src/main/java/bank/seckill/service/front/evt/user/SendRegisterCodeEvt.java",
-        "relPath": "bank_seckill/bank_seckill_service/module-front/src/main/java/bank/seckill/service/front/evt/user/SendRegisterCodeEvt.java",
-        "sizeFormatted": "375 B"
+        "sizeFormatted": "375 B",
+        "project": "bank_seckill"
       },
       {
         "name": "UserDetailEvt.java",
         "type": "Java代码",
         "size": 1668,
-        "path": "E:/codeplace/bank_seckill/bank_seckill_service/module-front/src/main/java/bank/seckill/service/front/evt/user/UserDetailEvt.java",
-        "relPath": "bank_seckill/bank_seckill_service/module-front/src/main/java/bank/seckill/service/front/evt/user/UserDetailEvt.java",
-        "sizeFormatted": "1.6 KB"
+        "sizeFormatted": "1.6 KB",
+        "project": "bank_seckill"
       },
       {
         "name": "UserLoginEvt.java",
         "type": "Java代码",
         "size": 512,
-        "path": "E:/codeplace/bank_seckill/bank_seckill_service/module-front/src/main/java/bank/seckill/service/front/evt/user/UserLoginEvt.java",
-        "relPath": "bank_seckill/bank_seckill_service/module-front/src/main/java/bank/seckill/service/front/evt/user/UserLoginEvt.java",
-        "sizeFormatted": "512 B"
+        "sizeFormatted": "512 B",
+        "project": "bank_seckill"
       },
       {
         "name": "UserRegisterEvt.java",
         "type": "Java代码",
         "size": 1106,
-        "path": "E:/codeplace/bank_seckill/bank_seckill_service/module-front/src/main/java/bank/seckill/service/front/evt/user/UserRegisterEvt.java",
-        "relPath": "bank_seckill/bank_seckill_service/module-front/src/main/java/bank/seckill/service/front/evt/user/UserRegisterEvt.java",
-        "sizeFormatted": "1.1 KB"
+        "sizeFormatted": "1.1 KB",
+        "project": "bank_seckill"
       },
       {
         "name": "ActivityReturnModel.java",
         "type": "Java代码",
         "size": 2323,
-        "path": "E:/codeplace/bank_seckill/bank_seckill_service/module-front/src/main/java/bank/seckill/service/front/models/ActivityReturnModel.java",
-        "relPath": "bank_seckill/bank_seckill_service/module-front/src/main/java/bank/seckill/service/front/models/ActivityReturnModel.java",
-        "sizeFormatted": "2.3 KB"
+        "sizeFormatted": "2.3 KB",
+        "project": "bank_seckill"
       },
       {
         "name": "OrderModel.java",
         "type": "Java代码",
         "size": 1136,
-        "path": "E:/codeplace/bank_seckill/bank_seckill_service/module-front/src/main/java/bank/seckill/service/front/models/OrderModel.java",
-        "relPath": "bank_seckill/bank_seckill_service/module-front/src/main/java/bank/seckill/service/front/models/OrderModel.java",
-        "sizeFormatted": "1.1 KB"
+        "sizeFormatted": "1.1 KB",
+        "project": "bank_seckill"
       },
       {
         "name": "PropertiesResponse.java",
         "type": "Java代码",
         "size": 853,
-        "path": "E:/codeplace/bank_seckill/bank_seckill_service/module-front/src/main/java/bank/seckill/service/front/models/PropertiesResponse.java",
-        "relPath": "bank_seckill/bank_seckill_service/module-front/src/main/java/bank/seckill/service/front/models/PropertiesResponse.java",
-        "sizeFormatted": "853 B"
+        "sizeFormatted": "853 B",
+        "project": "bank_seckill"
       },
       {
         "name": "RuleModel.java",
         "type": "Java代码",
         "size": 892,
-        "path": "E:/codeplace/bank_seckill/bank_seckill_service/module-front/src/main/java/bank/seckill/service/front/models/RuleModel.java",
-        "relPath": "bank_seckill/bank_seckill_service/module-front/src/main/java/bank/seckill/service/front/models/RuleModel.java",
-        "sizeFormatted": "892 B"
+        "sizeFormatted": "892 B",
+        "project": "bank_seckill"
       },
       {
         "name": "AsyncMQProducer.java",
         "type": "Java代码",
         "size": 3079,
-        "path": "E:/codeplace/bank_seckill/bank_seckill_service/module-front/src/main/java/bank/seckill/service/front/mq/AsyncMQProducer.java",
-        "relPath": "bank_seckill/bank_seckill_service/module-front/src/main/java/bank/seckill/service/front/mq/AsyncMQProducer.java",
-        "sizeFormatted": "3.0 KB"
+        "sizeFormatted": "3.0 KB",
+        "project": "bank_seckill"
       },
       {
         "name": "OrderConfirmConsumerGroup.java",
         "type": "Java代码",
         "size": 3067,
-        "path": "E:/codeplace/bank_seckill/bank_seckill_service/module-front/src/main/java/bank/seckill/service/front/mq/OrderConfirmConsumerGroup.java",
-        "relPath": "bank_seckill/bank_seckill_service/module-front/src/main/java/bank/seckill/service/front/mq/OrderConfirmConsumerGroup.java",
-        "sizeFormatted": "3.0 KB"
+        "sizeFormatted": "3.0 KB",
+        "project": "bank_seckill"
       },
       {
         "name": "OrderConfirmListenerProcessor.java",
         "type": "Java代码",
         "size": 3348,
-        "path": "E:/codeplace/bank_seckill/bank_seckill_service/module-front/src/main/java/bank/seckill/service/front/mq/OrderConfirmListenerProcessor.java",
-        "relPath": "bank_seckill/bank_seckill_service/module-front/src/main/java/bank/seckill/service/front/mq/OrderConfirmListenerProcessor.java",
-        "sizeFormatted": "3.3 KB"
+        "sizeFormatted": "3.3 KB",
+        "project": "bank_seckill"
       },
       {
         "name": "SeckillConsumerGroup.java",
         "type": "Java代码",
         "size": 3945,
-        "path": "E:/codeplace/bank_seckill/bank_seckill_service/module-front/src/main/java/bank/seckill/service/front/mq/SeckillConsumerGroup.java",
-        "relPath": "bank_seckill/bank_seckill_service/module-front/src/main/java/bank/seckill/service/front/mq/SeckillConsumerGroup.java",
-        "sizeFormatted": "3.9 KB"
+        "sizeFormatted": "3.9 KB",
+        "project": "bank_seckill"
       },
       {
         "name": "SeckillMsgListenerProcessor.java",
         "type": "Java代码",
         "size": 4724,
-        "path": "E:/codeplace/bank_seckill/bank_seckill_service/module-front/src/main/java/bank/seckill/service/front/mq/SeckillMsgListenerProcessor.java",
-        "relPath": "bank_seckill/bank_seckill_service/module-front/src/main/java/bank/seckill/service/front/mq/SeckillMsgListenerProcessor.java",
-        "sizeFormatted": "4.6 KB"
+        "sizeFormatted": "4.6 KB",
+        "project": "bank_seckill"
       },
       {
         "name": "SMSConsumeGroup.java",
         "type": "Java代码",
         "size": 3061,
-        "path": "E:/codeplace/bank_seckill/bank_seckill_service/module-front/src/main/java/bank/seckill/service/front/mq/SMSConsumeGroup.java",
-        "relPath": "bank_seckill/bank_seckill_service/module-front/src/main/java/bank/seckill/service/front/mq/SMSConsumeGroup.java",
-        "sizeFormatted": "3.0 KB"
+        "sizeFormatted": "3.0 KB",
+        "project": "bank_seckill"
       },
       {
         "name": "SMSMsgListenerProcessor.java",
         "type": "Java代码",
         "size": 2728,
-        "path": "E:/codeplace/bank_seckill/bank_seckill_service/module-front/src/main/java/bank/seckill/service/front/mq/SMSMsgListenerProcessor.java",
-        "relPath": "bank_seckill/bank_seckill_service/module-front/src/main/java/bank/seckill/service/front/mq/SMSMsgListenerProcessor.java",
-        "sizeFormatted": "2.7 KB"
+        "sizeFormatted": "2.7 KB",
+        "project": "bank_seckill"
       },
       {
         "name": "ActivityService.java",
         "type": "Java代码",
         "size": 20365,
-        "path": "E:/codeplace/bank_seckill/bank_seckill_service/module-front/src/main/java/bank/seckill/service/front/service/ActivityService.java",
-        "relPath": "bank_seckill/bank_seckill_service/module-front/src/main/java/bank/seckill/service/front/service/ActivityService.java",
-        "sizeFormatted": "19.9 KB"
+        "sizeFormatted": "19.9 KB",
+        "project": "bank_seckill"
       },
       {
         "name": "MQLogService.java",
         "type": "Java代码",
         "size": 1069,
-        "path": "E:/codeplace/bank_seckill/bank_seckill_service/module-front/src/main/java/bank/seckill/service/front/service/MQLogService.java",
-        "relPath": "bank_seckill/bank_seckill_service/module-front/src/main/java/bank/seckill/service/front/service/MQLogService.java",
-        "sizeFormatted": "1.0 KB"
+        "sizeFormatted": "1.0 KB",
+        "project": "bank_seckill"
       },
       {
         "name": "OrderService.java",
         "type": "Java代码",
         "size": 12493,
-        "path": "E:/codeplace/bank_seckill/bank_seckill_service/module-front/src/main/java/bank/seckill/service/front/service/OrderService.java",
-        "relPath": "bank_seckill/bank_seckill_service/module-front/src/main/java/bank/seckill/service/front/service/OrderService.java",
-        "sizeFormatted": "12.2 KB"
+        "sizeFormatted": "12.2 KB",
+        "project": "bank_seckill"
       },
       {
         "name": "PaperService.java",
         "type": "Java代码",
         "size": 5194,
-        "path": "E:/codeplace/bank_seckill/bank_seckill_service/module-front/src/main/java/bank/seckill/service/front/service/PaperService.java",
-        "relPath": "bank_seckill/bank_seckill_service/module-front/src/main/java/bank/seckill/service/front/service/PaperService.java",
-        "sizeFormatted": "5.1 KB"
+        "sizeFormatted": "5.1 KB",
+        "project": "bank_seckill"
       },
       {
         "name": "ProductService.java",
         "type": "Java代码",
         "size": 7016,
-        "path": "E:/codeplace/bank_seckill/bank_seckill_service/module-front/src/main/java/bank/seckill/service/front/service/ProductService.java",
-        "relPath": "bank_seckill/bank_seckill_service/module-front/src/main/java/bank/seckill/service/front/service/ProductService.java",
-        "sizeFormatted": "6.9 KB"
+        "sizeFormatted": "6.9 KB",
+        "project": "bank_seckill"
       },
       {
         "name": "PropertiesService.java",
         "type": "Java代码",
         "size": 1795,
-        "path": "E:/codeplace/bank_seckill/bank_seckill_service/module-front/src/main/java/bank/seckill/service/front/service/PropertiesService.java",
-        "relPath": "bank_seckill/bank_seckill_service/module-front/src/main/java/bank/seckill/service/front/service/PropertiesService.java",
-        "sizeFormatted": "1.8 KB"
+        "sizeFormatted": "1.8 KB",
+        "project": "bank_seckill"
       },
       {
         "name": "RuleVerifyService.java",
         "type": "Java代码",
         "size": 7386,
-        "path": "E:/codeplace/bank_seckill/bank_seckill_service/module-front/src/main/java/bank/seckill/service/front/service/RuleVerifyService.java",
-        "relPath": "bank_seckill/bank_seckill_service/module-front/src/main/java/bank/seckill/service/front/service/RuleVerifyService.java",
-        "sizeFormatted": "7.2 KB"
+        "sizeFormatted": "7.2 KB",
+        "project": "bank_seckill"
       },
       {
         "name": "UserService.java",
         "type": "Java代码",
         "size": 14002,
-        "path": "E:/codeplace/bank_seckill/bank_seckill_service/module-front/src/main/java/bank/seckill/service/front/service/UserService.java",
-        "relPath": "bank_seckill/bank_seckill_service/module-front/src/main/java/bank/seckill/service/front/service/UserService.java",
-        "sizeFormatted": "13.7 KB"
+        "sizeFormatted": "13.7 KB",
+        "project": "bank_seckill"
       },
       {
         "name": "module-seckill.iml",
         "type": "其他",
         "size": 20771,
-        "path": "E:/codeplace/bank_seckill/bank_seckill_service/module-seckill/module-seckill.iml",
-        "relPath": "bank_seckill/bank_seckill_service/module-seckill/module-seckill.iml",
-        "sizeFormatted": "20.3 KB"
+        "sizeFormatted": "20.3 KB",
+        "project": "bank_seckill"
       },
       {
         "name": "pom.xml",
         "type": "YAML配置",
         "size": 1179,
-        "path": "E:/codeplace/bank_seckill/bank_seckill_service/module-seckill/pom.xml",
-        "relPath": "bank_seckill/bank_seckill_service/module-seckill/pom.xml",
-        "sizeFormatted": "1.2 KB"
+        "sizeFormatted": "1.2 KB",
+        "project": "bank_seckill"
       },
       {
         "name": "module-tool.iml",
         "type": "其他",
         "size": 20740,
-        "path": "E:/codeplace/bank_seckill/bank_seckill_service/module-tool/module-tool.iml",
-        "relPath": "bank_seckill/bank_seckill_service/module-tool/module-tool.iml",
-        "sizeFormatted": "20.3 KB"
+        "sizeFormatted": "20.3 KB",
+        "project": "bank_seckill"
       },
       {
         "name": "pom.xml",
         "type": "YAML配置",
         "size": 951,
-        "path": "E:/codeplace/bank_seckill/bank_seckill_service/module-tool/pom.xml",
-        "relPath": "bank_seckill/bank_seckill_service/module-tool/pom.xml",
-        "sizeFormatted": "951 B"
+        "sizeFormatted": "951 B",
+        "project": "bank_seckill"
       },
       {
         "name": "PutObjectProgressListener.java",
         "type": "Java代码",
         "size": 2038,
-        "path": "E:/codeplace/bank_seckill/bank_seckill_service/module-tool/src/main/java/bank/seckill/service/tool/config/PutObjectProgressListener.java",
-        "relPath": "bank_seckill/bank_seckill_service/module-tool/src/main/java/bank/seckill/service/tool/config/PutObjectProgressListener.java",
-        "sizeFormatted": "2.0 KB"
+        "sizeFormatted": "2.0 KB",
+        "project": "bank_seckill"
       },
       {
         "name": "GeneralExceptionHandler.java",
         "type": "Java代码",
         "size": 730,
-        "path": "E:/codeplace/bank_seckill/bank_seckill_service/module-tool/src/main/java/bank/seckill/service/tool/exceptionHandler/GeneralExceptionHandler.java",
-        "relPath": "bank_seckill/bank_seckill_service/module-tool/src/main/java/bank/seckill/service/tool/exceptionHandler/GeneralExceptionHandler.java",
-        "sizeFormatted": "730 B"
+        "sizeFormatted": "730 B",
+        "project": "bank_seckill"
       },
       {
         "name": "AsyncService.java",
         "type": "Java代码",
         "size": 1040,
-        "path": "E:/codeplace/bank_seckill/bank_seckill_service/module-tool/src/main/java/bank/seckill/service/tool/service/AsyncService.java",
-        "relPath": "bank_seckill/bank_seckill_service/module-tool/src/main/java/bank/seckill/service/tool/service/AsyncService.java",
-        "sizeFormatted": "1.0 KB"
+        "sizeFormatted": "1.0 KB",
+        "project": "bank_seckill"
       },
       {
         "name": "IpCheckService.java",
         "type": "Java代码",
         "size": 880,
-        "path": "E:/codeplace/bank_seckill/bank_seckill_service/module-tool/src/main/java/bank/seckill/service/tool/service/IpCheckService.java",
-        "relPath": "bank_seckill/bank_seckill_service/module-tool/src/main/java/bank/seckill/service/tool/service/IpCheckService.java",
-        "sizeFormatted": "880 B"
+        "sizeFormatted": "880 B",
+        "project": "bank_seckill"
       },
       {
         "name": "RedisService.java",
         "type": "Java代码",
         "size": 3357,
-        "path": "E:/codeplace/bank_seckill/bank_seckill_service/module-tool/src/main/java/bank/seckill/service/tool/service/RedisService.java",
-        "relPath": "bank_seckill/bank_seckill_service/module-tool/src/main/java/bank/seckill/service/tool/service/RedisService.java",
-        "sizeFormatted": "3.3 KB"
+        "sizeFormatted": "3.3 KB",
+        "project": "bank_seckill"
       },
       {
         "name": "AsyncUtils.java",
         "type": "Java代码",
         "size": 503,
-        "path": "E:/codeplace/bank_seckill/bank_seckill_service/module-tool/src/main/java/bank/seckill/service/tool/utils/AsyncUtils.java",
-        "relPath": "bank_seckill/bank_seckill_service/module-tool/src/main/java/bank/seckill/service/tool/utils/AsyncUtils.java",
-        "sizeFormatted": "503 B"
+        "sizeFormatted": "503 B",
+        "project": "bank_seckill"
       },
       {
         "name": "CosUtils.java",
         "type": "Java代码",
         "size": 7773,
-        "path": "E:/codeplace/bank_seckill/bank_seckill_service/module-tool/src/main/java/bank/seckill/service/tool/utils/CosUtils.java",
-        "relPath": "bank_seckill/bank_seckill_service/module-tool/src/main/java/bank/seckill/service/tool/utils/CosUtils.java",
-        "sizeFormatted": "7.6 KB"
+        "sizeFormatted": "7.6 KB",
+        "project": "bank_seckill"
       },
       {
         "name": "EmailUtil.java",
         "type": "Java代码",
         "size": 1765,
-        "path": "E:/codeplace/bank_seckill/bank_seckill_service/module-tool/src/main/java/bank/seckill/service/tool/utils/EmailUtil.java",
-        "relPath": "bank_seckill/bank_seckill_service/module-tool/src/main/java/bank/seckill/service/tool/utils/EmailUtil.java",
-        "sizeFormatted": "1.7 KB"
+        "sizeFormatted": "1.7 KB",
+        "project": "bank_seckill"
       },
       {
         "name": "FileUtil.java",
         "type": "Java代码",
         "size": 4821,
-        "path": "E:/codeplace/bank_seckill/bank_seckill_service/module-tool/src/main/java/bank/seckill/service/tool/utils/FileUtil.java",
-        "relPath": "bank_seckill/bank_seckill_service/module-tool/src/main/java/bank/seckill/service/tool/utils/FileUtil.java",
-        "sizeFormatted": "4.7 KB"
+        "sizeFormatted": "4.7 KB",
+        "project": "bank_seckill"
       },
       {
         "name": "GenerateCodeTool.java",
         "type": "Java代码",
         "size": 521,
-        "path": "E:/codeplace/bank_seckill/bank_seckill_service/module-tool/src/main/java/bank/seckill/service/tool/utils/GenerateCodeTool.java",
-        "relPath": "bank_seckill/bank_seckill_service/module-tool/src/main/java/bank/seckill/service/tool/utils/GenerateCodeTool.java",
-        "sizeFormatted": "521 B"
+        "sizeFormatted": "521 B",
+        "project": "bank_seckill"
       },
       {
         "name": "JsonUtils.java",
         "type": "Java代码",
         "size": 1439,
-        "path": "E:/codeplace/bank_seckill/bank_seckill_service/module-tool/src/main/java/bank/seckill/service/tool/utils/JsonUtils.java",
-        "relPath": "bank_seckill/bank_seckill_service/module-tool/src/main/java/bank/seckill/service/tool/utils/JsonUtils.java",
-        "sizeFormatted": "1.4 KB"
+        "sizeFormatted": "1.4 KB",
+        "project": "bank_seckill"
       },
       {
         "name": "Md5Util.java",
         "type": "Java代码",
         "size": 1749,
-        "path": "E:/codeplace/bank_seckill/bank_seckill_service/module-tool/src/main/java/bank/seckill/service/tool/utils/Md5Util.java",
-        "relPath": "bank_seckill/bank_seckill_service/module-tool/src/main/java/bank/seckill/service/tool/utils/Md5Util.java",
-        "sizeFormatted": "1.7 KB"
+        "sizeFormatted": "1.7 KB",
+        "project": "bank_seckill"
       },
       {
         "name": "OssUtil.java",
         "type": "Java代码",
         "size": 5593,
-        "path": "E:/codeplace/bank_seckill/bank_seckill_service/module-tool/src/main/java/bank/seckill/service/tool/utils/OssUtil.java",
-        "relPath": "bank_seckill/bank_seckill_service/module-tool/src/main/java/bank/seckill/service/tool/utils/OssUtil.java",
-        "sizeFormatted": "5.5 KB"
+        "sizeFormatted": "5.5 KB",
+        "project": "bank_seckill"
       },
       {
         "name": "SendSMSUtils.java",
         "type": "Java代码",
         "size": 2532,
-        "path": "E:/codeplace/bank_seckill/bank_seckill_service/module-tool/src/main/java/bank/seckill/service/tool/utils/SendSMSUtils.java",
-        "relPath": "bank_seckill/bank_seckill_service/module-tool/src/main/java/bank/seckill/service/tool/utils/SendSMSUtils.java",
-        "sizeFormatted": "2.5 KB"
+        "sizeFormatted": "2.5 KB",
+        "project": "bank_seckill"
       },
       {
         "name": "UrlUtils.java",
         "type": "Java代码",
         "size": 2287,
-        "path": "E:/codeplace/bank_seckill/bank_seckill_service/module-tool/src/main/java/bank/seckill/service/tool/utils/UrlUtils.java",
-        "relPath": "bank_seckill/bank_seckill_service/module-tool/src/main/java/bank/seckill/service/tool/utils/UrlUtils.java",
-        "sizeFormatted": "2.2 KB"
+        "sizeFormatted": "2.2 KB",
+        "project": "bank_seckill"
       },
       {
         "name": "UuidTool.java",
         "type": "Java代码",
         "size": 301,
-        "path": "E:/codeplace/bank_seckill/bank_seckill_service/module-tool/src/main/java/bank/seckill/service/tool/utils/UuidTool.java",
-        "relPath": "bank_seckill/bank_seckill_service/module-tool/src/main/java/bank/seckill/service/tool/utils/UuidTool.java",
-        "sizeFormatted": "301 B"
+        "sizeFormatted": "301 B",
+        "project": "bank_seckill"
       },
       {
         "name": "module_config.iml",
         "type": "其他",
         "size": 19978,
-        "path": "E:/codeplace/bank_seckill/bank_seckill_service/module_config/module_config.iml",
-        "relPath": "bank_seckill/bank_seckill_service/module_config/module_config.iml",
-        "sizeFormatted": "19.5 KB"
+        "sizeFormatted": "19.5 KB",
+        "project": "bank_seckill"
       },
       {
         "name": ".gitignore",
         "type": "其他",
         "size": 294,
-        "path": "E:/codeplace/Bobing/Spring-Swing-MyBatis-boGame/.gitignore",
-        "relPath": "Bobing/Spring-Swing-MyBatis-boGame/.gitignore",
-        "sizeFormatted": "294 B"
+        "sizeFormatted": "294 B",
+        "project": "Bobing"
       },
       {
         "name": "README.md",
         "type": "文档",
         "size": 1282,
-        "path": "E:/codeplace/Bobing/Spring-Swing-MyBatis-boGame/README.md",
-        "relPath": "Bobing/Spring-Swing-MyBatis-boGame/README.md",
-        "sizeFormatted": "1.3 KB"
+        "sizeFormatted": "1.3 KB",
+        "project": "Bobing"
       },
       {
         "name": "boGame.iml",
         "type": "其他",
         "size": 4643,
-        "path": "E:/codeplace/Bobing/Spring-Swing-MyBatis-boGame/boGame/boGame.iml",
-        "relPath": "Bobing/Spring-Swing-MyBatis-boGame/boGame/boGame.iml",
-        "sizeFormatted": "4.5 KB"
+        "sizeFormatted": "4.5 KB",
+        "project": "Bobing"
       },
       {
         "name": "log.txt",
         "type": "文档",
         "size": 111,
-        "path": "E:/codeplace/Bobing/Spring-Swing-MyBatis-boGame/boGame/log.txt",
-        "relPath": "Bobing/Spring-Swing-MyBatis-boGame/boGame/log.txt",
-        "sizeFormatted": "111 B"
+        "sizeFormatted": "111 B",
+        "project": "Bobing"
       },
       {
         "name": "log.txt.2018-03-29",
         "type": "其他",
         "size": 2114081,
-        "path": "E:/codeplace/Bobing/Spring-Swing-MyBatis-boGame/boGame/log.txt.2018-03-29",
-        "relPath": "Bobing/Spring-Swing-MyBatis-boGame/boGame/log.txt.2018-03-29",
-        "sizeFormatted": "2.0 MB"
+        "sizeFormatted": "2.0 MB",
+        "project": "Bobing"
       },
       {
         "name": "log.txt.2022-10-29",
         "type": "其他",
         "size": 11407,
-        "path": "E:/codeplace/Bobing/Spring-Swing-MyBatis-boGame/boGame/log.txt.2022-10-29",
-        "relPath": "Bobing/Spring-Swing-MyBatis-boGame/boGame/log.txt.2022-10-29",
-        "sizeFormatted": "11.1 KB"
+        "sizeFormatted": "11.1 KB",
+        "project": "Bobing"
       },
       {
         "name": "pom.xml",
         "type": "YAML配置",
         "size": 7700,
-        "path": "E:/codeplace/Bobing/Spring-Swing-MyBatis-boGame/boGame/pom.xml",
-        "relPath": "Bobing/Spring-Swing-MyBatis-boGame/boGame/pom.xml",
-        "sizeFormatted": "7.5 KB"
+        "sizeFormatted": "7.5 KB",
+        "project": "Bobing"
       },
       {
         "name": "App.java",
         "type": "Java代码",
         "size": 673,
-        "path": "E:/codeplace/Bobing/Spring-Swing-MyBatis-boGame/boGame/src/main/java/com/hlx/App.java",
-        "relPath": "Bobing/Spring-Swing-MyBatis-boGame/boGame/src/main/java/com/hlx/App.java",
-        "sizeFormatted": "673 B"
+        "sizeFormatted": "673 B",
+        "project": "Bobing"
       },
       {
         "name": "ApplicationConfig.java",
         "type": "Java代码",
         "size": 419,
-        "path": "E:/codeplace/Bobing/Spring-Swing-MyBatis-boGame/boGame/src/main/java/com/hlx/config/ApplicationConfig.java",
-        "relPath": "Bobing/Spring-Swing-MyBatis-boGame/boGame/src/main/java/com/hlx/config/ApplicationConfig.java",
-        "sizeFormatted": "419 B"
+        "sizeFormatted": "419 B",
+        "project": "Bobing"
       },
       {
         "name": "PrizeEnum.java",
         "type": "Java代码",
         "size": 1094,
-        "path": "E:/codeplace/Bobing/Spring-Swing-MyBatis-boGame/boGame/src/main/java/com/hlx/config/PrizeEnum.java",
-        "relPath": "Bobing/Spring-Swing-MyBatis-boGame/boGame/src/main/java/com/hlx/config/PrizeEnum.java",
-        "sizeFormatted": "1.1 KB"
+        "sizeFormatted": "1.1 KB",
+        "project": "Bobing"
       },
       {
         "name": "RuleConfig.java",
         "type": "Java代码",
         "size": 1117,
-        "path": "E:/codeplace/Bobing/Spring-Swing-MyBatis-boGame/boGame/src/main/java/com/hlx/config/RuleConfig.java",
-        "relPath": "Bobing/Spring-Swing-MyBatis-boGame/boGame/src/main/java/com/hlx/config/RuleConfig.java",
-        "sizeFormatted": "1.1 KB"
+        "sizeFormatted": "1.1 KB",
+        "project": "Bobing"
       },
       {
         "name": "SoundEnum.java",
         "type": "Java代码",
         "size": 465,
-        "path": "E:/codeplace/Bobing/Spring-Swing-MyBatis-boGame/boGame/src/main/java/com/hlx/config/SoundEnum.java",
-        "relPath": "Bobing/Spring-Swing-MyBatis-boGame/boGame/src/main/java/com/hlx/config/SoundEnum.java",
-        "sizeFormatted": "465 B"
+        "sizeFormatted": "465 B",
+        "project": "Bobing"
       },
       {
         "name": "ApplicationController.java",
         "type": "Java代码",
         "size": 820,
-        "path": "E:/codeplace/Bobing/Spring-Swing-MyBatis-boGame/boGame/src/main/java/com/hlx/controller/ApplicationController.java",
-        "relPath": "Bobing/Spring-Swing-MyBatis-boGame/boGame/src/main/java/com/hlx/controller/ApplicationController.java",
-        "sizeFormatted": "820 B"
+        "sizeFormatted": "820 B",
+        "project": "Bobing"
       },
       {
         "name": "BoDrawDao.java",
         "type": "Java代码",
         "size": 197,
-        "path": "E:/codeplace/Bobing/Spring-Swing-MyBatis-boGame/boGame/src/main/java/com/hlx/dao/BoDrawDao.java",
-        "relPath": "Bobing/Spring-Swing-MyBatis-boGame/boGame/src/main/java/com/hlx/dao/BoDrawDao.java",
-        "sizeFormatted": "197 B"
+        "sizeFormatted": "197 B",
+        "project": "Bobing"
       },
       {
         "name": "SettingDao.java",
         "type": "Java代码",
         "size": 147,
-        "path": "E:/codeplace/Bobing/Spring-Swing-MyBatis-boGame/boGame/src/main/java/com/hlx/dao/SettingDao.java",
-        "relPath": "Bobing/Spring-Swing-MyBatis-boGame/boGame/src/main/java/com/hlx/dao/SettingDao.java",
-        "sizeFormatted": "147 B"
+        "sizeFormatted": "147 B",
+        "project": "Bobing"
       },
       {
         "name": "BoDrawMapper.xml",
         "type": "YAML配置",
         "size": 588,
-        "path": "E:/codeplace/Bobing/Spring-Swing-MyBatis-boGame/boGame/src/main/java/com/hlx/mappers/BoDrawMapper.xml",
-        "relPath": "Bobing/Spring-Swing-MyBatis-boGame/boGame/src/main/java/com/hlx/mappers/BoDrawMapper.xml",
-        "sizeFormatted": "588 B"
+        "sizeFormatted": "588 B",
+        "project": "Bobing"
       },
       {
         "name": "SettingMapper.xml",
         "type": "YAML配置",
         "size": 621,
-        "path": "E:/codeplace/Bobing/Spring-Swing-MyBatis-boGame/boGame/src/main/java/com/hlx/mappers/SettingMapper.xml",
-        "relPath": "Bobing/Spring-Swing-MyBatis-boGame/boGame/src/main/java/com/hlx/mappers/SettingMapper.xml",
-        "sizeFormatted": "621 B"
+        "sizeFormatted": "621 B",
+        "project": "Bobing"
       },
       {
         "name": "BoDraw.java",
         "type": "Java代码",
         "size": 1498,
-        "path": "E:/codeplace/Bobing/Spring-Swing-MyBatis-boGame/boGame/src/main/java/com/hlx/model/BoDraw.java",
-        "relPath": "Bobing/Spring-Swing-MyBatis-boGame/boGame/src/main/java/com/hlx/model/BoDraw.java",
-        "sizeFormatted": "1.5 KB"
+        "sizeFormatted": "1.5 KB",
+        "project": "Bobing"
       },
       {
         "name": "Champion.java",
         "type": "Java代码",
         "size": 724,
-        "path": "E:/codeplace/Bobing/Spring-Swing-MyBatis-boGame/boGame/src/main/java/com/hlx/model/Champion.java",
-        "relPath": "Bobing/Spring-Swing-MyBatis-boGame/boGame/src/main/java/com/hlx/model/Champion.java",
-        "sizeFormatted": "724 B"
+        "sizeFormatted": "724 B",
+        "project": "Bobing"
       },
       {
         "name": "Score.java",
         "type": "Java代码",
         "size": 2099,
-        "path": "E:/codeplace/Bobing/Spring-Swing-MyBatis-boGame/boGame/src/main/java/com/hlx/model/Score.java",
-        "relPath": "Bobing/Spring-Swing-MyBatis-boGame/boGame/src/main/java/com/hlx/model/Score.java",
-        "sizeFormatted": "2.0 KB"
+        "sizeFormatted": "2.0 KB",
+        "project": "Bobing"
       },
       {
         "name": "Setting.java",
         "type": "Java代码",
         "size": 3140,
-        "path": "E:/codeplace/Bobing/Spring-Swing-MyBatis-boGame/boGame/src/main/java/com/hlx/model/Setting.java",
-        "relPath": "Bobing/Spring-Swing-MyBatis-boGame/boGame/src/main/java/com/hlx/model/Setting.java",
-        "sizeFormatted": "3.1 KB"
+        "sizeFormatted": "3.1 KB",
+        "project": "Bobing"
       },
       {
         "name": "User.java",
         "type": "Java代码",
         "size": 1560,
-        "path": "E:/codeplace/Bobing/Spring-Swing-MyBatis-boGame/boGame/src/main/java/com/hlx/model/User.java",
-        "relPath": "Bobing/Spring-Swing-MyBatis-boGame/boGame/src/main/java/com/hlx/model/User.java",
-        "sizeFormatted": "1.5 KB"
+        "sizeFormatted": "1.5 KB",
+        "project": "Bobing"
       },
       {
         "name": "BoDrawService.java",
         "type": "Java代码",
         "size": 229,
-        "path": "E:/codeplace/Bobing/Spring-Swing-MyBatis-boGame/boGame/src/main/java/com/hlx/service/BoDrawService.java",
-        "relPath": "Bobing/Spring-Swing-MyBatis-boGame/boGame/src/main/java/com/hlx/service/BoDrawService.java",
-        "sizeFormatted": "229 B"
+        "sizeFormatted": "229 B",
+        "project": "Bobing"
       },
       {
         "name": "BoDrawServiceImpl.java",
         "type": "Java代码",
         "size": 954,
-        "path": "E:/codeplace/Bobing/Spring-Swing-MyBatis-boGame/boGame/src/main/java/com/hlx/service/BoDrawServiceImpl.java",
-        "relPath": "Bobing/Spring-Swing-MyBatis-boGame/boGame/src/main/java/com/hlx/service/BoDrawServiceImpl.java",
-        "sizeFormatted": "954 B"
+        "sizeFormatted": "954 B",
+        "project": "Bobing"
       },
       {
         "name": "RecognitionService.java",
         "type": "Java代码",
         "size": 151,
-        "path": "E:/codeplace/Bobing/Spring-Swing-MyBatis-boGame/boGame/src/main/java/com/hlx/service/RecognitionService.java",
-        "relPath": "Bobing/Spring-Swing-MyBatis-boGame/boGame/src/main/java/com/hlx/service/RecognitionService.java",
-        "sizeFormatted": "151 B"
+        "sizeFormatted": "151 B",
+        "project": "Bobing"
       },
       {
         "name": "RecognitionServiceImpl.java",
         "type": "Java代码",
         "size": 2126,
-        "path": "E:/codeplace/Bobing/Spring-Swing-MyBatis-boGame/boGame/src/main/java/com/hlx/service/RecognitionServiceImpl.java",
-        "relPath": "Bobing/Spring-Swing-MyBatis-boGame/boGame/src/main/java/com/hlx/service/RecognitionServiceImpl.java",
-        "sizeFormatted": "2.1 KB"
+        "sizeFormatted": "2.1 KB",
+        "project": "Bobing"
       },
       {
         "name": "RouteService.java",
         "type": "Java代码",
         "size": 237,
-        "path": "E:/codeplace/Bobing/Spring-Swing-MyBatis-boGame/boGame/src/main/java/com/hlx/service/RouteService.java",
-        "relPath": "Bobing/Spring-Swing-MyBatis-boGame/boGame/src/main/java/com/hlx/service/RouteService.java",
-        "sizeFormatted": "237 B"
+        "sizeFormatted": "237 B",
+        "project": "Bobing"
       },
       {
         "name": "RouteServiceImpl.java",
         "type": "Java代码",
         "size": 971,
-        "path": "E:/codeplace/Bobing/Spring-Swing-MyBatis-boGame/boGame/src/main/java/com/hlx/service/RouteServiceImpl.java",
-        "relPath": "Bobing/Spring-Swing-MyBatis-boGame/boGame/src/main/java/com/hlx/service/RouteServiceImpl.java",
-        "sizeFormatted": "971 B"
+        "sizeFormatted": "971 B",
+        "project": "Bobing"
       },
       {
         "name": "SettingService.java",
         "type": "Java代码",
         "size": 155,
-        "path": "E:/codeplace/Bobing/Spring-Swing-MyBatis-boGame/boGame/src/main/java/com/hlx/service/SettingService.java",
-        "relPath": "Bobing/Spring-Swing-MyBatis-boGame/boGame/src/main/java/com/hlx/service/SettingService.java",
-        "sizeFormatted": "155 B"
+        "sizeFormatted": "155 B",
+        "project": "Bobing"
       },
       {
         "name": "SettingServiceImpl.java",
         "type": "Java代码",
         "size": 693,
-        "path": "E:/codeplace/Bobing/Spring-Swing-MyBatis-boGame/boGame/src/main/java/com/hlx/service/SettingServiceImpl.java",
-        "relPath": "Bobing/Spring-Swing-MyBatis-boGame/boGame/src/main/java/com/hlx/service/SettingServiceImpl.java",
-        "sizeFormatted": "693 B"
+        "sizeFormatted": "693 B",
+        "project": "Bobing"
       },
       {
         "name": "SoundService.java",
         "type": "Java代码",
         "size": 172,
-        "path": "E:/codeplace/Bobing/Spring-Swing-MyBatis-boGame/boGame/src/main/java/com/hlx/service/SoundService.java",
-        "relPath": "Bobing/Spring-Swing-MyBatis-boGame/boGame/src/main/java/com/hlx/service/SoundService.java",
-        "sizeFormatted": "172 B"
+        "sizeFormatted": "172 B",
+        "project": "Bobing"
       },
       {
         "name": "SoundServiceImpl.java",
         "type": "Java代码",
         "size": 1603,
-        "path": "E:/codeplace/Bobing/Spring-Swing-MyBatis-boGame/boGame/src/main/java/com/hlx/service/SoundServiceImpl.java",
-        "relPath": "Bobing/Spring-Swing-MyBatis-boGame/boGame/src/main/java/com/hlx/service/SoundServiceImpl.java",
-        "sizeFormatted": "1.6 KB"
+        "sizeFormatted": "1.6 KB",
+        "project": "Bobing"
       },
       {
         "name": "InfoUtil.java",
         "type": "Java代码",
         "size": 721,
-        "path": "E:/codeplace/Bobing/Spring-Swing-MyBatis-boGame/boGame/src/main/java/com/hlx/util/InfoUtil.java",
-        "relPath": "Bobing/Spring-Swing-MyBatis-boGame/boGame/src/main/java/com/hlx/util/InfoUtil.java",
-        "sizeFormatted": "721 B"
+        "sizeFormatted": "721 B",
+        "project": "Bobing"
       },
       {
         "name": "RandomUtil.java",
         "type": "Java代码",
         "size": 521,
-        "path": "E:/codeplace/Bobing/Spring-Swing-MyBatis-boGame/boGame/src/main/java/com/hlx/util/RandomUtil.java",
-        "relPath": "Bobing/Spring-Swing-MyBatis-boGame/boGame/src/main/java/com/hlx/util/RandomUtil.java",
-        "sizeFormatted": "521 B"
+        "sizeFormatted": "521 B",
+        "project": "Bobing"
       },
       {
         "name": "TimeUtil.java",
         "type": "Java代码",
         "size": 504,
-        "path": "E:/codeplace/Bobing/Spring-Swing-MyBatis-boGame/boGame/src/main/java/com/hlx/util/TimeUtil.java",
-        "relPath": "Bobing/Spring-Swing-MyBatis-boGame/boGame/src/main/java/com/hlx/util/TimeUtil.java",
-        "sizeFormatted": "504 B"
+        "sizeFormatted": "504 B",
+        "project": "Bobing"
       },
       {
         "name": "UUIDUtil.java",
         "type": "Java代码",
         "size": 205,
-        "path": "E:/codeplace/Bobing/Spring-Swing-MyBatis-boGame/boGame/src/main/java/com/hlx/util/UUIDUtil.java",
-        "relPath": "Bobing/Spring-Swing-MyBatis-boGame/boGame/src/main/java/com/hlx/util/UUIDUtil.java",
-        "sizeFormatted": "205 B"
+        "sizeFormatted": "205 B",
+        "project": "Bobing"
       },
       {
         "name": "BackgroundLabel.java",
         "type": "Java代码",
         "size": 859,
-        "path": "E:/codeplace/Bobing/Spring-Swing-MyBatis-boGame/boGame/src/main/java/com/hlx/view/common/BackgroundLabel.java",
-        "relPath": "Bobing/Spring-Swing-MyBatis-boGame/boGame/src/main/java/com/hlx/view/common/BackgroundLabel.java",
-        "sizeFormatted": "859 B"
+        "sizeFormatted": "859 B",
+        "project": "Bobing"
       },
       {
         "name": "ColorUtil.java",
         "type": "Java代码",
         "size": 551,
-        "path": "E:/codeplace/Bobing/Spring-Swing-MyBatis-boGame/boGame/src/main/java/com/hlx/view/common/ColorUtil.java",
-        "relPath": "Bobing/Spring-Swing-MyBatis-boGame/boGame/src/main/java/com/hlx/view/common/ColorUtil.java",
-        "sizeFormatted": "551 B"
+        "sizeFormatted": "551 B",
+        "project": "Bobing"
       },
       {
         "name": "FontUtil.java",
         "type": "Java代码",
         "size": 729,
-        "path": "E:/codeplace/Bobing/Spring-Swing-MyBatis-boGame/boGame/src/main/java/com/hlx/view/common/FontUtil.java",
-        "relPath": "Bobing/Spring-Swing-MyBatis-boGame/boGame/src/main/java/com/hlx/view/common/FontUtil.java",
-        "sizeFormatted": "729 B"
+        "sizeFormatted": "729 B",
+        "project": "Bobing"
       },
       {
         "name": "GeneralButton.java",
         "type": "Java代码",
         "size": 417,
-        "path": "E:/codeplace/Bobing/Spring-Swing-MyBatis-boGame/boGame/src/main/java/com/hlx/view/common/GeneralButton.java",
-        "relPath": "Bobing/Spring-Swing-MyBatis-boGame/boGame/src/main/java/com/hlx/view/common/GeneralButton.java",
-        "sizeFormatted": "417 B"
+        "sizeFormatted": "417 B",
+        "project": "Bobing"
       },
       {
         "name": "GeneralFrame.java",
         "type": "Java代码",
         "size": 1826,
-        "path": "E:/codeplace/Bobing/Spring-Swing-MyBatis-boGame/boGame/src/main/java/com/hlx/view/common/GeneralFrame.java",
-        "relPath": "Bobing/Spring-Swing-MyBatis-boGame/boGame/src/main/java/com/hlx/view/common/GeneralFrame.java",
-        "sizeFormatted": "1.8 KB"
+        "sizeFormatted": "1.8 KB",
+        "project": "Bobing"
       },
       {
         "name": "PositionUtil.java",
         "type": "Java代码",
         "size": 1400,
-        "path": "E:/codeplace/Bobing/Spring-Swing-MyBatis-boGame/boGame/src/main/java/com/hlx/view/common/PositionUtil.java",
-        "relPath": "Bobing/Spring-Swing-MyBatis-boGame/boGame/src/main/java/com/hlx/view/common/PositionUtil.java",
-        "sizeFormatted": "1.4 KB"
+        "sizeFormatted": "1.4 KB",
+        "project": "Bobing"
       },
       {
         "name": "Renewable.java",
         "type": "Java代码",
         "size": 234,
-        "path": "E:/codeplace/Bobing/Spring-Swing-MyBatis-boGame/boGame/src/main/java/com/hlx/view/common/Renewable.java",
-        "relPath": "Bobing/Spring-Swing-MyBatis-boGame/boGame/src/main/java/com/hlx/view/common/Renewable.java",
-        "sizeFormatted": "234 B"
+        "sizeFormatted": "234 B",
+        "project": "Bobing"
       },
       {
         "name": "RenewableFrame.java",
         "type": "Java代码",
         "size": 420,
-        "path": "E:/codeplace/Bobing/Spring-Swing-MyBatis-boGame/boGame/src/main/java/com/hlx/view/common/RenewableFrame.java",
-        "relPath": "Bobing/Spring-Swing-MyBatis-boGame/boGame/src/main/java/com/hlx/view/common/RenewableFrame.java",
-        "sizeFormatted": "420 B"
+        "sizeFormatted": "420 B",
+        "project": "Bobing"
       },
       {
         "name": "TipLabel.java",
         "type": "Java代码",
         "size": 768,
-        "path": "E:/codeplace/Bobing/Spring-Swing-MyBatis-boGame/boGame/src/main/java/com/hlx/view/common/TipLabel.java",
-        "relPath": "Bobing/Spring-Swing-MyBatis-boGame/boGame/src/main/java/com/hlx/view/common/TipLabel.java",
-        "sizeFormatted": "768 B"
+        "sizeFormatted": "768 B",
+        "project": "Bobing"
       },
       {
         "name": "TranslucentPanel.java",
         "type": "Java代码",
         "size": 838,
-        "path": "E:/codeplace/Bobing/Spring-Swing-MyBatis-boGame/boGame/src/main/java/com/hlx/view/common/TranslucentPanel.java",
-        "relPath": "Bobing/Spring-Swing-MyBatis-boGame/boGame/src/main/java/com/hlx/view/common/TranslucentPanel.java",
-        "sizeFormatted": "838 B"
+        "sizeFormatted": "838 B",
+        "project": "Bobing"
       },
       {
         "name": "WordsLabel.java",
         "type": "Java代码",
         "size": 1593,
-        "path": "E:/codeplace/Bobing/Spring-Swing-MyBatis-boGame/boGame/src/main/java/com/hlx/view/common/WordsLabel.java",
-        "relPath": "Bobing/Spring-Swing-MyBatis-boGame/boGame/src/main/java/com/hlx/view/common/WordsLabel.java",
-        "sizeFormatted": "1.6 KB"
+        "sizeFormatted": "1.6 KB",
+        "project": "Bobing"
       },
       {
         "name": "EntryFrame.java",
         "type": "Java代码",
         "size": 5043,
-        "path": "E:/codeplace/Bobing/Spring-Swing-MyBatis-boGame/boGame/src/main/java/com/hlx/view/entry/EntryFrame.java",
-        "relPath": "Bobing/Spring-Swing-MyBatis-boGame/boGame/src/main/java/com/hlx/view/entry/EntryFrame.java",
-        "sizeFormatted": "4.9 KB"
+        "sizeFormatted": "4.9 KB",
+        "project": "Bobing"
       },
       {
         "name": "OptionFrame.java",
         "type": "Java代码",
         "size": 6462,
-        "path": "E:/codeplace/Bobing/Spring-Swing-MyBatis-boGame/boGame/src/main/java/com/hlx/view/option/OptionFrame.java",
-        "relPath": "Bobing/Spring-Swing-MyBatis-boGame/boGame/src/main/java/com/hlx/view/option/OptionFrame.java",
-        "sizeFormatted": "6.3 KB"
+        "sizeFormatted": "6.3 KB",
+        "project": "Bobing"
       },
       {
         "name": "TabPanel.java",
         "type": "Java代码",
         "size": 4895,
-        "path": "E:/codeplace/Bobing/Spring-Swing-MyBatis-boGame/boGame/src/main/java/com/hlx/view/option/TabPanel.java",
-        "relPath": "Bobing/Spring-Swing-MyBatis-boGame/boGame/src/main/java/com/hlx/view/option/TabPanel.java",
-        "sizeFormatted": "4.8 KB"
+        "sizeFormatted": "4.8 KB",
+        "project": "Bobing"
       },
       {
         "name": "BroadcastPanel.java",
         "type": "Java代码",
         "size": 2342,
-        "path": "E:/codeplace/Bobing/Spring-Swing-MyBatis-boGame/boGame/src/main/java/com/hlx/view/play/BroadcastPanel.java",
-        "relPath": "Bobing/Spring-Swing-MyBatis-boGame/boGame/src/main/java/com/hlx/view/play/BroadcastPanel.java",
-        "sizeFormatted": "2.3 KB"
+        "sizeFormatted": "2.3 KB",
+        "project": "Bobing"
       },
       {
         "name": "DataService.java",
         "type": "Java代码",
         "size": 547,
-        "path": "E:/codeplace/Bobing/Spring-Swing-MyBatis-boGame/boGame/src/main/java/com/hlx/view/play/DataService.java",
-        "relPath": "Bobing/Spring-Swing-MyBatis-boGame/boGame/src/main/java/com/hlx/view/play/DataService.java",
-        "sizeFormatted": "547 B"
+        "sizeFormatted": "547 B",
+        "project": "Bobing"
       },
       {
         "name": "DataServiceImpl.java",
         "type": "Java代码",
         "size": 5911,
-        "path": "E:/codeplace/Bobing/Spring-Swing-MyBatis-boGame/boGame/src/main/java/com/hlx/view/play/DataServiceImpl.java",
-        "relPath": "Bobing/Spring-Swing-MyBatis-boGame/boGame/src/main/java/com/hlx/view/play/DataServiceImpl.java",
-        "sizeFormatted": "5.8 KB"
+        "sizeFormatted": "5.8 KB",
+        "project": "Bobing"
       },
       {
         "name": "ImageFactory.java",
         "type": "Java代码",
         "size": 481,
-        "path": "E:/codeplace/Bobing/Spring-Swing-MyBatis-boGame/boGame/src/main/java/com/hlx/view/play/ImageFactory.java",
-        "relPath": "Bobing/Spring-Swing-MyBatis-boGame/boGame/src/main/java/com/hlx/view/play/ImageFactory.java",
-        "sizeFormatted": "481 B"
+        "sizeFormatted": "481 B",
+        "project": "Bobing"
       },
       {
         "name": "MainPanel.java",
         "type": "Java代码",
         "size": 6276,
-        "path": "E:/codeplace/Bobing/Spring-Swing-MyBatis-boGame/boGame/src/main/java/com/hlx/view/play/MainPanel.java",
-        "relPath": "Bobing/Spring-Swing-MyBatis-boGame/boGame/src/main/java/com/hlx/view/play/MainPanel.java",
-        "sizeFormatted": "6.1 KB"
+        "sizeFormatted": "6.1 KB",
+        "project": "Bobing"
       },
       {
         "name": "Observer.java",
         "type": "Java代码",
         "size": 164,
-        "path": "E:/codeplace/Bobing/Spring-Swing-MyBatis-boGame/boGame/src/main/java/com/hlx/view/play/Observer.java",
-        "relPath": "Bobing/Spring-Swing-MyBatis-boGame/boGame/src/main/java/com/hlx/view/play/Observer.java",
-        "sizeFormatted": "164 B"
+        "sizeFormatted": "164 B",
+        "project": "Bobing"
       },
       {
         "name": "PlayFrame.java",
         "type": "Java代码",
         "size": 4158,
-        "path": "E:/codeplace/Bobing/Spring-Swing-MyBatis-boGame/boGame/src/main/java/com/hlx/view/play/PlayFrame.java",
-        "relPath": "Bobing/Spring-Swing-MyBatis-boGame/boGame/src/main/java/com/hlx/view/play/PlayFrame.java",
-        "sizeFormatted": "4.1 KB"
+        "sizeFormatted": "4.1 KB",
+        "project": "Bobing"
       },
       {
         "name": "PrizeLabel.java",
         "type": "Java代码",
         "size": 590,
-        "path": "E:/codeplace/Bobing/Spring-Swing-MyBatis-boGame/boGame/src/main/java/com/hlx/view/play/PrizeLabel.java",
-        "relPath": "Bobing/Spring-Swing-MyBatis-boGame/boGame/src/main/java/com/hlx/view/play/PrizeLabel.java",
-        "sizeFormatted": "590 B"
+        "sizeFormatted": "590 B",
+        "project": "Bobing"
       },
       {
         "name": "PrizePanel.java",
         "type": "Java代码",
         "size": 2459,
-        "path": "E:/codeplace/Bobing/Spring-Swing-MyBatis-boGame/boGame/src/main/java/com/hlx/view/play/PrizePanel.java",
-        "relPath": "Bobing/Spring-Swing-MyBatis-boGame/boGame/src/main/java/com/hlx/view/play/PrizePanel.java",
-        "sizeFormatted": "2.4 KB"
+        "sizeFormatted": "2.4 KB",
+        "project": "Bobing"
       },
       {
         "name": "RankPanel.java",
         "type": "Java代码",
         "size": 1874,
-        "path": "E:/codeplace/Bobing/Spring-Swing-MyBatis-boGame/boGame/src/main/java/com/hlx/view/play/RankPanel.java",
-        "relPath": "Bobing/Spring-Swing-MyBatis-boGame/boGame/src/main/java/com/hlx/view/play/RankPanel.java",
-        "sizeFormatted": "1.8 KB"
+        "sizeFormatted": "1.8 KB",
+        "project": "Bobing"
       },
       {
         "name": "ScorePanel.java",
         "type": "Java代码",
         "size": 1944,
-        "path": "E:/codeplace/Bobing/Spring-Swing-MyBatis-boGame/boGame/src/main/java/com/hlx/view/play/ScorePanel.java",
-        "relPath": "Bobing/Spring-Swing-MyBatis-boGame/boGame/src/main/java/com/hlx/view/play/ScorePanel.java",
-        "sizeFormatted": "1.9 KB"
+        "sizeFormatted": "1.9 KB",
+        "project": "Bobing"
       },
       {
         "name": "PrizeLabel.java",
         "type": "Java代码",
         "size": 719,
-        "path": "E:/codeplace/Bobing/Spring-Swing-MyBatis-boGame/boGame/src/main/java/com/hlx/view/record/PrizeLabel.java",
-        "relPath": "Bobing/Spring-Swing-MyBatis-boGame/boGame/src/main/java/com/hlx/view/record/PrizeLabel.java",
-        "sizeFormatted": "719 B"
+        "sizeFormatted": "719 B",
+        "project": "Bobing"
       },
       {
         "name": "RecordFrame.java",
         "type": "Java代码",
         "size": 5472,
-        "path": "E:/codeplace/Bobing/Spring-Swing-MyBatis-boGame/boGame/src/main/java/com/hlx/view/record/RecordFrame.java",
-        "relPath": "Bobing/Spring-Swing-MyBatis-boGame/boGame/src/main/java/com/hlx/view/record/RecordFrame.java",
-        "sizeFormatted": "5.3 KB"
+        "sizeFormatted": "5.3 KB",
+        "project": "Bobing"
       },
       {
         "name": "RecordPanel.java",
         "type": "Java代码",
         "size": 2966,
-        "path": "E:/codeplace/Bobing/Spring-Swing-MyBatis-boGame/boGame/src/main/java/com/hlx/view/record/RecordPanel.java",
-        "relPath": "Bobing/Spring-Swing-MyBatis-boGame/boGame/src/main/java/com/hlx/view/record/RecordPanel.java",
-        "sizeFormatted": "2.9 KB"
+        "sizeFormatted": "2.9 KB",
+        "project": "Bobing"
       },
       {
         "name": "TimeLabel.java",
         "type": "Java代码",
         "size": 562,
-        "path": "E:/codeplace/Bobing/Spring-Swing-MyBatis-boGame/boGame/src/main/java/com/hlx/view/record/TimeLabel.java",
-        "relPath": "Bobing/Spring-Swing-MyBatis-boGame/boGame/src/main/java/com/hlx/view/record/TimeLabel.java",
-        "sizeFormatted": "562 B"
+        "sizeFormatted": "562 B",
+        "project": "Bobing"
       },
       {
         "name": "UserLabel.java",
         "type": "Java代码",
         "size": 657,
-        "path": "E:/codeplace/Bobing/Spring-Swing-MyBatis-boGame/boGame/src/main/java/com/hlx/view/record/UserLabel.java",
-        "relPath": "Bobing/Spring-Swing-MyBatis-boGame/boGame/src/main/java/com/hlx/view/record/UserLabel.java",
-        "sizeFormatted": "657 B"
+        "sizeFormatted": "657 B",
+        "project": "Bobing"
       },
       {
         "name": "NavigationPanel.java",
         "type": "Java代码",
         "size": 1775,
-        "path": "E:/codeplace/Bobing/Spring-Swing-MyBatis-boGame/boGame/src/main/java/com/hlx/view/settlement/NavigationPanel.java",
-        "relPath": "Bobing/Spring-Swing-MyBatis-boGame/boGame/src/main/java/com/hlx/view/settlement/NavigationPanel.java",
-        "sizeFormatted": "1.7 KB"
+        "sizeFormatted": "1.7 KB",
+        "project": "Bobing"
       },
       {
         "name": "RecordPanel.java",
         "type": "Java代码",
         "size": 3168,
-        "path": "E:/codeplace/Bobing/Spring-Swing-MyBatis-boGame/boGame/src/main/java/com/hlx/view/settlement/RecordPanel.java",
-        "relPath": "Bobing/Spring-Swing-MyBatis-boGame/boGame/src/main/java/com/hlx/view/settlement/RecordPanel.java",
-        "sizeFormatted": "3.1 KB"
+        "sizeFormatted": "3.1 KB",
+        "project": "Bobing"
       },
       {
         "name": "SettlementFrame.java",
         "type": "Java代码",
         "size": 5452,
-        "path": "E:/codeplace/Bobing/Spring-Swing-MyBatis-boGame/boGame/src/main/java/com/hlx/view/settlement/SettlementFrame.java",
-        "relPath": "Bobing/Spring-Swing-MyBatis-boGame/boGame/src/main/java/com/hlx/view/settlement/SettlementFrame.java",
-        "sizeFormatted": "5.3 KB"
+        "sizeFormatted": "5.3 KB",
+        "project": "Bobing"
       },
       {
         "name": "MANIFEST.MF",
         "type": "其他",
         "size": 50,
-        "path": "E:/codeplace/Bobing/Spring-Swing-MyBatis-boGame/boGame/src/main/java/META-INF/MANIFEST.MF",
-        "relPath": "Bobing/Spring-Swing-MyBatis-boGame/boGame/src/main/java/META-INF/MANIFEST.MF",
-        "sizeFormatted": "50 B"
+        "sizeFormatted": "50 B",
+        "project": "Bobing"
       },
       {
         "name": "dataConfig.xml",
         "type": "YAML配置",
         "size": 1910,
-        "path": "E:/codeplace/Bobing/Spring-Swing-MyBatis-boGame/boGame/src/main/resources/dataConfig.xml",
-        "relPath": "Bobing/Spring-Swing-MyBatis-boGame/boGame/src/main/resources/dataConfig.xml",
-        "sizeFormatted": "1.9 KB"
+        "sizeFormatted": "1.9 KB",
+        "project": "Bobing"
       },
       {
         "name": "log4j.properties",
         "type": "其他",
         "size": 501,
-        "path": "E:/codeplace/Bobing/Spring-Swing-MyBatis-boGame/boGame/src/main/resources/log4j.properties",
-        "relPath": "Bobing/Spring-Swing-MyBatis-boGame/boGame/src/main/resources/log4j.properties",
-        "sizeFormatted": "501 B"
+        "sizeFormatted": "501 B",
+        "project": "Bobing"
       },
       {
         "name": "mybatisConfig.xml",
         "type": "YAML配置",
         "size": 269,
-        "path": "E:/codeplace/Bobing/Spring-Swing-MyBatis-boGame/boGame/src/main/resources/mybatisConfig.xml",
-        "relPath": "Bobing/Spring-Swing-MyBatis-boGame/boGame/src/main/resources/mybatisConfig.xml",
-        "sizeFormatted": "269 B"
+        "sizeFormatted": "269 B",
+        "project": "Bobing"
       },
       {
         "name": "sessionConfig.xml",
         "type": "YAML配置",
         "size": 2384,
-        "path": "E:/codeplace/Bobing/Spring-Swing-MyBatis-boGame/boGame/src/main/resources/sessionConfig.xml",
-        "relPath": "Bobing/Spring-Swing-MyBatis-boGame/boGame/src/main/resources/sessionConfig.xml",
-        "sizeFormatted": "2.3 KB"
+        "sizeFormatted": "2.3 KB",
+        "project": "Bobing"
       },
       {
         "name": "MANIFEST.MF",
         "type": "其他",
         "size": 50,
-        "path": "E:/codeplace/Bobing/Spring-Swing-MyBatis-boGame/boGame/src/main/resources/META-INF/MANIFEST.MF",
-        "relPath": "Bobing/Spring-Swing-MyBatis-boGame/boGame/src/main/resources/META-INF/MANIFEST.MF",
-        "sizeFormatted": "50 B"
+        "sizeFormatted": "50 B",
+        "project": "Bobing"
       },
       {
         "name": "AppTest.java",
         "type": "Java代码",
         "size": 673,
-        "path": "E:/codeplace/Bobing/Spring-Swing-MyBatis-boGame/boGame/src/test/java/com/hlx/AppTest.java",
-        "relPath": "Bobing/Spring-Swing-MyBatis-boGame/boGame/src/test/java/com/hlx/AppTest.java",
-        "sizeFormatted": "673 B"
+        "sizeFormatted": "673 B",
+        "project": "Bobing"
       },
       {
         "name": "FrameTest.java",
         "type": "Java代码",
         "size": 707,
-        "path": "E:/codeplace/Bobing/Spring-Swing-MyBatis-boGame/boGame/src/test/java/com/hlx/FrameTest.java",
-        "relPath": "Bobing/Spring-Swing-MyBatis-boGame/boGame/src/test/java/com/hlx/FrameTest.java",
-        "sizeFormatted": "707 B"
+        "sizeFormatted": "707 B",
+        "project": "Bobing"
       },
       {
         "name": "PatternTest.java",
         "type": "Java代码",
         "size": 1551,
-        "path": "E:/codeplace/Bobing/Spring-Swing-MyBatis-boGame/boGame/src/test/java/com/hlx/PatternTest.java",
-        "relPath": "Bobing/Spring-Swing-MyBatis-boGame/boGame/src/test/java/com/hlx/PatternTest.java",
-        "sizeFormatted": "1.5 KB"
+        "sizeFormatted": "1.5 KB",
+        "project": "Bobing"
       },
       {
         "name": "RecognizeTest.java",
         "type": "Java代码",
         "size": 1271,
-        "path": "E:/codeplace/Bobing/Spring-Swing-MyBatis-boGame/boGame/src/test/java/com/hlx/RecognizeTest.java",
-        "relPath": "Bobing/Spring-Swing-MyBatis-boGame/boGame/src/test/java/com/hlx/RecognizeTest.java",
-        "sizeFormatted": "1.2 KB"
+        "sizeFormatted": "1.2 KB",
+        "project": "Bobing"
       },
       {
         "name": "Rule.md",
         "type": "文档",
         "size": 781,
-        "path": "E:/codeplace/Bobing/Spring-Swing-MyBatis-boGame/rule/Rule.md",
-        "relPath": "Bobing/Spring-Swing-MyBatis-boGame/rule/Rule.md",
-        "sizeFormatted": "781 B"
+        "sizeFormatted": "781 B",
+        "project": "Bobing"
       },
       {
         "name": "ceshi.iml",
         "type": "其他",
         "size": 9371,
-        "path": "E:/codeplace/ceshi/ceshi.iml",
-        "relPath": "ceshi/ceshi.iml",
-        "sizeFormatted": "9.2 KB"
+        "sizeFormatted": "9.2 KB",
+        "project": "ceshi"
       },
       {
         "name": "pom.xml",
         "type": "YAML配置",
         "size": 2811,
-        "path": "E:/codeplace/ceshi/pom.xml",
-        "relPath": "ceshi/pom.xml",
-        "sizeFormatted": "2.7 KB"
+        "sizeFormatted": "2.7 KB",
+        "project": "ceshi"
       },
       {
         "name": "ceshi.java",
         "type": "Java代码",
         "size": 2105,
-        "path": "E:/codeplace/ceshi/src/main/java/com/example/demo/ceshi.java",
-        "relPath": "ceshi/src/main/java/com/example/demo/ceshi.java",
-        "sizeFormatted": "2.1 KB"
+        "sizeFormatted": "2.1 KB",
+        "project": "ceshi"
       },
       {
         "name": "DemoApplication.java",
         "type": "Java代码",
         "size": 317,
-        "path": "E:/codeplace/ceshi/src/main/java/com/example/demo/DemoApplication.java",
-        "relPath": "ceshi/src/main/java/com/example/demo/DemoApplication.java",
-        "sizeFormatted": "317 B"
+        "sizeFormatted": "317 B",
+        "project": "ceshi"
       },
       {
         "name": "predict.java",
         "type": "Java代码",
         "size": 1442,
-        "path": "E:/codeplace/ceshi/src/main/java/com/example/demo/controller/predict.java",
-        "relPath": "ceshi/src/main/java/com/example/demo/controller/predict.java",
-        "sizeFormatted": "1.4 KB"
+        "sizeFormatted": "1.4 KB",
+        "project": "ceshi"
       },
       {
         "name": "MobileNetV2.pt",
         "type": "其他",
         "size": 9178125,
-        "path": "E:/codeplace/ceshi/src/main/java/com/example/demo/model/MobileNetV2.pt",
-        "relPath": "ceshi/src/main/java/com/example/demo/model/MobileNetV2.pt",
-        "sizeFormatted": "8.8 MB"
+        "sizeFormatted": "8.8 MB",
+        "project": "ceshi"
       },
       {
         "name": "MobileNetV2.pth",
         "type": "其他",
         "size": 9178125,
-        "path": "E:/codeplace/ceshi/src/main/java/com/example/demo/model/MobileNetV2.pth",
-        "relPath": "ceshi/src/main/java/com/example/demo/model/MobileNetV2.pth",
-        "sizeFormatted": "8.8 MB"
+        "sizeFormatted": "8.8 MB",
+        "project": "ceshi"
       },
       {
         "name": "application.properties",
         "type": "其他",
         "size": 1,
-        "path": "E:/codeplace/ceshi/src/main/resources/application.properties",
-        "relPath": "ceshi/src/main/resources/application.properties",
-        "sizeFormatted": "1 B"
+        "sizeFormatted": "1 B",
+        "project": "ceshi"
       },
       {
         "name": "DemoApplicationTests.java",
         "type": "Java代码",
         "size": 215,
-        "path": "E:/codeplace/ceshi/src/test/java/com/example/demo/DemoApplicationTests.java",
-        "relPath": "ceshi/src/test/java/com/example/demo/DemoApplicationTests.java",
-        "sizeFormatted": "215 B"
+        "sizeFormatted": "215 B",
+        "project": "ceshi"
       },
       {
         "name": ".gitignore",
         "type": "其他",
         "size": 395,
-        "path": "E:/codeplace/chat/Chat/.gitignore",
-        "relPath": "chat/Chat/.gitignore",
-        "sizeFormatted": "395 B"
+        "sizeFormatted": "395 B",
+        "project": "chat"
       },
       {
         "name": "Chat.iml",
         "type": "其他",
         "size": 11982,
-        "path": "E:/codeplace/chat/Chat/Chat.iml",
-        "relPath": "chat/Chat/Chat.iml",
-        "sizeFormatted": "11.7 KB"
+        "sizeFormatted": "11.7 KB",
+        "project": "chat"
       },
       {
         "name": "pom.xml",
         "type": "YAML配置",
         "size": 3947,
-        "path": "E:/codeplace/chat/Chat/pom.xml",
-        "relPath": "chat/Chat/pom.xml",
-        "sizeFormatted": "3.9 KB"
+        "sizeFormatted": "3.9 KB",
+        "project": "chat"
       },
       {
         "name": "ChatApplication.java",
         "type": "Java代码",
         "size": 317,
-        "path": "E:/codeplace/chat/Chat/src/main/java/com/example/chat/ChatApplication.java",
-        "relPath": "chat/Chat/src/main/java/com/example/chat/ChatApplication.java",
-        "sizeFormatted": "317 B"
+        "sizeFormatted": "317 B",
+        "project": "chat"
       },
       {
         "name": "CorsConfig.java",
         "type": "Java代码",
         "size": 1026,
-        "path": "E:/codeplace/chat/Chat/src/main/java/com/example/chat/config/CorsConfig.java",
-        "relPath": "chat/Chat/src/main/java/com/example/chat/config/CorsConfig.java",
-        "sizeFormatted": "1.0 KB"
+        "sizeFormatted": "1.0 KB",
+        "project": "chat"
       },
       {
         "name": "MybatisPlusConfig.java",
         "type": "Java代码",
         "size": 1183,
-        "path": "E:/codeplace/chat/Chat/src/main/java/com/example/chat/config/MybatisPlusConfig.java",
-        "relPath": "chat/Chat/src/main/java/com/example/chat/config/MybatisPlusConfig.java",
-        "sizeFormatted": "1.2 KB"
+        "sizeFormatted": "1.2 KB",
+        "project": "chat"
       },
       {
         "name": "SwaggerConfig.java",
         "type": "Java代码",
         "size": 1381,
-        "path": "E:/codeplace/chat/Chat/src/main/java/com/example/chat/config/SwaggerConfig.java",
-        "relPath": "chat/Chat/src/main/java/com/example/chat/config/SwaggerConfig.java",
-        "sizeFormatted": "1.3 KB"
+        "sizeFormatted": "1.3 KB",
+        "project": "chat"
       },
       {
         "name": "WebSocketConfig.java",
         "type": "Java代码",
         "size": 738,
-        "path": "E:/codeplace/chat/Chat/src/main/java/com/example/chat/config/WebSocketConfig.java",
-        "relPath": "chat/Chat/src/main/java/com/example/chat/config/WebSocketConfig.java",
-        "sizeFormatted": "738 B"
+        "sizeFormatted": "738 B",
+        "project": "chat"
       },
       {
         "name": "MessageController.java",
         "type": "Java代码",
         "size": 1369,
-        "path": "E:/codeplace/chat/Chat/src/main/java/com/example/chat/controller/MessageController.java",
-        "relPath": "chat/Chat/src/main/java/com/example/chat/controller/MessageController.java",
-        "sizeFormatted": "1.3 KB"
+        "sizeFormatted": "1.3 KB",
+        "project": "chat"
       },
       {
         "name": "UserController.java",
         "type": "Java代码",
         "size": 4884,
-        "path": "E:/codeplace/chat/Chat/src/main/java/com/example/chat/controller/UserController.java",
-        "relPath": "chat/Chat/src/main/java/com/example/chat/controller/UserController.java",
-        "sizeFormatted": "4.8 KB"
+        "sizeFormatted": "4.8 KB",
+        "project": "chat"
       },
       {
         "name": "UserMessageController.java",
         "type": "Java代码",
         "size": 9985,
-        "path": "E:/codeplace/chat/Chat/src/main/java/com/example/chat/controller/UserMessageController.java",
-        "relPath": "chat/Chat/src/main/java/com/example/chat/controller/UserMessageController.java",
-        "sizeFormatted": "9.8 KB"
+        "sizeFormatted": "9.8 KB",
+        "project": "chat"
       },
       {
         "name": "ChatRecord.java",
         "type": "Java代码",
         "size": 863,
-        "path": "E:/codeplace/chat/Chat/src/main/java/com/example/chat/entity/ChatRecord.java",
-        "relPath": "chat/Chat/src/main/java/com/example/chat/entity/ChatRecord.java",
-        "sizeFormatted": "863 B"
+        "sizeFormatted": "863 B",
+        "project": "chat"
       },
       {
         "name": "ChatVo.java",
         "type": "Java代码",
         "size": 431,
-        "path": "E:/codeplace/chat/Chat/src/main/java/com/example/chat/entity/ChatVo.java",
-        "relPath": "chat/Chat/src/main/java/com/example/chat/entity/ChatVo.java",
-        "sizeFormatted": "431 B"
+        "sizeFormatted": "431 B",
+        "project": "chat"
       },
       {
         "name": "Group.java",
         "type": "Java代码",
         "size": 560,
-        "path": "E:/codeplace/chat/Chat/src/main/java/com/example/chat/entity/Group.java",
-        "relPath": "chat/Chat/src/main/java/com/example/chat/entity/Group.java",
-        "sizeFormatted": "560 B"
+        "sizeFormatted": "560 B",
+        "project": "chat"
       },
       {
         "name": "User.java",
         "type": "Java代码",
         "size": 953,
-        "path": "E:/codeplace/chat/Chat/src/main/java/com/example/chat/entity/User.java",
-        "relPath": "chat/Chat/src/main/java/com/example/chat/entity/User.java",
-        "sizeFormatted": "953 B"
+        "sizeFormatted": "953 B",
+        "project": "chat"
       },
       {
         "name": "UserMessage.java",
         "type": "Java代码",
         "size": 596,
-        "path": "E:/codeplace/chat/Chat/src/main/java/com/example/chat/entity/UserMessage.java",
-        "relPath": "chat/Chat/src/main/java/com/example/chat/entity/UserMessage.java",
-        "sizeFormatted": "596 B"
+        "sizeFormatted": "596 B",
+        "project": "chat"
       },
       {
         "name": "GroupMapper.java",
         "type": "Java代码",
         "size": 314,
-        "path": "E:/codeplace/chat/Chat/src/main/java/com/example/chat/mapper/GroupMapper.java",
-        "relPath": "chat/Chat/src/main/java/com/example/chat/mapper/GroupMapper.java",
-        "sizeFormatted": "314 B"
+        "sizeFormatted": "314 B",
+        "project": "chat"
       },
       {
         "name": "MessageMapper.java",
         "type": "Java代码",
         "size": 328,
-        "path": "E:/codeplace/chat/Chat/src/main/java/com/example/chat/mapper/MessageMapper.java",
-        "relPath": "chat/Chat/src/main/java/com/example/chat/mapper/MessageMapper.java",
-        "sizeFormatted": "328 B"
+        "sizeFormatted": "328 B",
+        "project": "chat"
       },
       {
         "name": "UserMapper.java",
         "type": "Java代码",
         "size": 321,
-        "path": "E:/codeplace/chat/Chat/src/main/java/com/example/chat/mapper/UserMapper.java",
-        "relPath": "chat/Chat/src/main/java/com/example/chat/mapper/UserMapper.java",
-        "sizeFormatted": "321 B"
+        "sizeFormatted": "321 B",
+        "project": "chat"
       },
       {
         "name": "UserMessageMapper.java",
         "type": "Java代码",
         "size": 852,
-        "path": "E:/codeplace/chat/Chat/src/main/java/com/example/chat/mapper/UserMessageMapper.java",
-        "relPath": "chat/Chat/src/main/java/com/example/chat/mapper/UserMessageMapper.java",
-        "sizeFormatted": "852 B"
+        "sizeFormatted": "852 B",
+        "project": "chat"
       },
       {
         "name": "FileService.java",
         "type": "Java代码",
         "size": 2401,
-        "path": "E:/codeplace/chat/Chat/src/main/java/com/example/chat/service/FileService.java",
-        "relPath": "chat/Chat/src/main/java/com/example/chat/service/FileService.java",
-        "sizeFormatted": "2.3 KB"
+        "sizeFormatted": "2.3 KB",
+        "project": "chat"
       },
       {
         "name": "GroupService.java",
         "type": "Java代码",
         "size": 711,
-        "path": "E:/codeplace/chat/Chat/src/main/java/com/example/chat/service/GroupService.java",
-        "relPath": "chat/Chat/src/main/java/com/example/chat/service/GroupService.java",
-        "sizeFormatted": "711 B"
+        "sizeFormatted": "711 B",
+        "project": "chat"
       },
       {
         "name": "LoginService.java",
         "type": "Java代码",
         "size": 1855,
-        "path": "E:/codeplace/chat/Chat/src/main/java/com/example/chat/service/LoginService.java",
-        "relPath": "chat/Chat/src/main/java/com/example/chat/service/LoginService.java",
-        "sizeFormatted": "1.8 KB"
+        "sizeFormatted": "1.8 KB",
+        "project": "chat"
       },
       {
         "name": "MessageService.java",
         "type": "Java代码",
         "size": 2086,
-        "path": "E:/codeplace/chat/Chat/src/main/java/com/example/chat/service/MessageService.java",
-        "relPath": "chat/Chat/src/main/java/com/example/chat/service/MessageService.java",
-        "sizeFormatted": "2.0 KB"
+        "sizeFormatted": "2.0 KB",
+        "project": "chat"
       },
       {
         "name": "UserMessageService.java",
         "type": "Java代码",
         "size": 257,
-        "path": "E:/codeplace/chat/Chat/src/main/java/com/example/chat/service/UserMessageService.java",
-        "relPath": "chat/Chat/src/main/java/com/example/chat/service/UserMessageService.java",
-        "sizeFormatted": "257 B"
+        "sizeFormatted": "257 B",
+        "project": "chat"
       },
       {
         "name": "UserMessageServiceImpl.java",
         "type": "Java代码",
         "size": 428,
-        "path": "E:/codeplace/chat/Chat/src/main/java/com/example/chat/service/UserMessageServiceImpl.java",
-        "relPath": "chat/Chat/src/main/java/com/example/chat/service/UserMessageServiceImpl.java",
-        "sizeFormatted": "428 B"
+        "sizeFormatted": "428 B",
+        "project": "chat"
       },
       {
         "name": "ResponseResult.java",
         "type": "Java代码",
         "size": 1292,
-        "path": "E:/codeplace/chat/Chat/src/main/java/com/example/chat/util/ResponseResult.java",
-        "relPath": "chat/Chat/src/main/java/com/example/chat/util/ResponseResult.java",
-        "sizeFormatted": "1.3 KB"
+        "sizeFormatted": "1.3 KB",
+        "project": "chat"
       },
       {
         "name": "application.properties",
         "type": "其他",
         "size": 1,
-        "path": "E:/codeplace/chat/Chat/src/main/resources/application.properties",
-        "relPath": "chat/Chat/src/main/resources/application.properties",
-        "sizeFormatted": "1 B"
+        "sizeFormatted": "1 B",
+        "project": "chat"
       },
       {
         "name": "application.yml",
         "type": "YAML配置",
         "size": 359,
-        "path": "E:/codeplace/chat/Chat/src/main/resources/application.yml",
-        "relPath": "chat/Chat/src/main/resources/application.yml",
-        "sizeFormatted": "359 B"
+        "sizeFormatted": "359 B",
+        "project": "chat"
       },
       {
         "name": "ChatApplicationTests.java",
         "type": "Java代码",
         "size": 215,
-        "path": "E:/codeplace/chat/Chat/src/test/java/com/example/chat/ChatApplicationTests.java",
-        "relPath": "chat/Chat/src/test/java/com/example/chat/ChatApplicationTests.java",
-        "sizeFormatted": "215 B"
+        "sizeFormatted": "215 B",
+        "project": "chat"
       },
       {
         "name": ".gitignore",
         "type": "其他",
         "size": 395,
-        "path": "E:/codeplace/chatRoom/chatRoom/.gitignore",
-        "relPath": "chatRoom/chatRoom/.gitignore",
-        "sizeFormatted": "395 B"
+        "sizeFormatted": "395 B",
+        "project": "chatRoom"
       },
       {
         "name": "chatRoom.iml",
         "type": "其他",
         "size": 13219,
-        "path": "E:/codeplace/chatRoom/chatRoom/chatRoom.iml",
-        "relPath": "chatRoom/chatRoom/chatRoom.iml",
-        "sizeFormatted": "12.9 KB"
+        "sizeFormatted": "12.9 KB",
+        "project": "chatRoom"
       },
       {
         "name": "pom.xml",
         "type": "YAML配置",
         "size": 4552,
-        "path": "E:/codeplace/chatRoom/chatRoom/pom.xml",
-        "relPath": "chatRoom/chatRoom/pom.xml",
-        "sizeFormatted": "4.4 KB"
+        "sizeFormatted": "4.4 KB",
+        "project": "chatRoom"
       },
       {
         "name": "ChatRoomApplication.java",
         "type": "Java代码",
         "size": 1410,
-        "path": "E:/codeplace/chatRoom/chatRoom/src/main/java/com/chat/chatroom/ChatRoomApplication.java",
-        "relPath": "chatRoom/chatRoom/src/main/java/com/chat/chatroom/ChatRoomApplication.java",
-        "sizeFormatted": "1.4 KB"
+        "sizeFormatted": "1.4 KB",
+        "project": "chatRoom"
       },
       {
         "name": "CorsConfig.java",
         "type": "Java代码",
         "size": 1027,
-        "path": "E:/codeplace/chatRoom/chatRoom/src/main/java/com/chat/chatroom/config/CorsConfig.java",
-        "relPath": "chatRoom/chatRoom/src/main/java/com/chat/chatroom/config/CorsConfig.java",
-        "sizeFormatted": "1.0 KB"
+        "sizeFormatted": "1.0 KB",
+        "project": "chatRoom"
       },
       {
         "name": "MybatisPlusConfig.java",
         "type": "Java代码",
         "size": 1184,
-        "path": "E:/codeplace/chatRoom/chatRoom/src/main/java/com/chat/chatroom/config/MybatisPlusConfig.java",
-        "relPath": "chatRoom/chatRoom/src/main/java/com/chat/chatroom/config/MybatisPlusConfig.java",
-        "sizeFormatted": "1.2 KB"
+        "sizeFormatted": "1.2 KB",
+        "project": "chatRoom"
       },
       {
         "name": "SwaggerConfig.java",
         "type": "Java代码",
         "size": 1382,
-        "path": "E:/codeplace/chatRoom/chatRoom/src/main/java/com/chat/chatroom/config/SwaggerConfig.java",
-        "relPath": "chatRoom/chatRoom/src/main/java/com/chat/chatroom/config/SwaggerConfig.java",
-        "sizeFormatted": "1.3 KB"
+        "sizeFormatted": "1.3 KB",
+        "project": "chatRoom"
       },
       {
         "name": "WebSocketConfig.java",
         "type": "Java代码",
         "size": 739,
-        "path": "E:/codeplace/chatRoom/chatRoom/src/main/java/com/chat/chatroom/config/WebSocketConfig.java",
-        "relPath": "chatRoom/chatRoom/src/main/java/com/chat/chatroom/config/WebSocketConfig.java",
-        "sizeFormatted": "739 B"
+        "sizeFormatted": "739 B",
+        "project": "chatRoom"
       },
       {
         "name": "AdminController.java",
         "type": "Java代码",
         "size": 952,
-        "path": "E:/codeplace/chatRoom/chatRoom/src/main/java/com/chat/chatroom/controller/AdminController.java",
-        "relPath": "chatRoom/chatRoom/src/main/java/com/chat/chatroom/controller/AdminController.java",
-        "sizeFormatted": "952 B"
+        "sizeFormatted": "952 B",
+        "project": "chatRoom"
       },
       {
         "name": "MessageController.java",
         "type": "Java代码",
         "size": 1694,
-        "path": "E:/codeplace/chatRoom/chatRoom/src/main/java/com/chat/chatroom/controller/MessageController.java",
-        "relPath": "chatRoom/chatRoom/src/main/java/com/chat/chatroom/controller/MessageController.java",
-        "sizeFormatted": "1.7 KB"
+        "sizeFormatted": "1.7 KB",
+        "project": "chatRoom"
       },
       {
         "name": "UserController.java",
         "type": "Java代码",
         "size": 5077,
-        "path": "E:/codeplace/chatRoom/chatRoom/src/main/java/com/chat/chatroom/controller/UserController.java",
-        "relPath": "chatRoom/chatRoom/src/main/java/com/chat/chatroom/controller/UserController.java",
-        "sizeFormatted": "5.0 KB"
+        "sizeFormatted": "5.0 KB",
+        "project": "chatRoom"
       },
       {
         "name": "UserMessageController.java",
         "type": "Java代码",
         "size": 10488,
-        "path": "E:/codeplace/chatRoom/chatRoom/src/main/java/com/chat/chatroom/controller/UserMessageController.java",
-        "relPath": "chatRoom/chatRoom/src/main/java/com/chat/chatroom/controller/UserMessageController.java",
-        "sizeFormatted": "10.2 KB"
+        "sizeFormatted": "10.2 KB",
+        "project": "chatRoom"
       },
       {
         "name": "ChatRecord.java",
         "type": "Java代码",
         "size": 878,
-        "path": "E:/codeplace/chatRoom/chatRoom/src/main/java/com/chat/chatroom/entity/ChatRecord.java",
-        "relPath": "chatRoom/chatRoom/src/main/java/com/chat/chatroom/entity/ChatRecord.java",
-        "sizeFormatted": "878 B"
+        "sizeFormatted": "878 B",
+        "project": "chatRoom"
       },
       {
         "name": "ChatVo.java",
         "type": "Java代码",
         "size": 432,
-        "path": "E:/codeplace/chatRoom/chatRoom/src/main/java/com/chat/chatroom/entity/ChatVo.java",
-        "relPath": "chatRoom/chatRoom/src/main/java/com/chat/chatroom/entity/ChatVo.java",
-        "sizeFormatted": "432 B"
+        "sizeFormatted": "432 B",
+        "project": "chatRoom"
       },
       {
         "name": "Group.java",
         "type": "Java代码",
         "size": 565,
-        "path": "E:/codeplace/chatRoom/chatRoom/src/main/java/com/chat/chatroom/entity/Group.java",
-        "relPath": "chatRoom/chatRoom/src/main/java/com/chat/chatroom/entity/Group.java",
-        "sizeFormatted": "565 B"
+        "sizeFormatted": "565 B",
+        "project": "chatRoom"
       },
       {
         "name": "User.java",
         "type": "Java代码",
         "size": 1149,
-        "path": "E:/codeplace/chatRoom/chatRoom/src/main/java/com/chat/chatroom/entity/User.java",
-        "relPath": "chatRoom/chatRoom/src/main/java/com/chat/chatroom/entity/User.java",
-        "sizeFormatted": "1.1 KB"
+        "sizeFormatted": "1.1 KB",
+        "project": "chatRoom"
       },
       {
         "name": "UserMessage.java",
         "type": "Java代码",
         "size": 597,
-        "path": "E:/codeplace/chatRoom/chatRoom/src/main/java/com/chat/chatroom/entity/UserMessage.java",
-        "relPath": "chatRoom/chatRoom/src/main/java/com/chat/chatroom/entity/UserMessage.java",
-        "sizeFormatted": "597 B"
+        "sizeFormatted": "597 B",
+        "project": "chatRoom"
       },
       {
         "name": "GroupMapper.java",
         "type": "Java代码",
         "size": 318,
-        "path": "E:/codeplace/chatRoom/chatRoom/src/main/java/com/chat/chatroom/mapper/GroupMapper.java",
-        "relPath": "chatRoom/chatRoom/src/main/java/com/chat/chatroom/mapper/GroupMapper.java",
-        "sizeFormatted": "318 B"
+        "sizeFormatted": "318 B",
+        "project": "chatRoom"
       },
       {
         "name": "MessageMapper.java",
         "type": "Java代码",
         "size": 332,
-        "path": "E:/codeplace/chatRoom/chatRoom/src/main/java/com/chat/chatroom/mapper/MessageMapper.java",
-        "relPath": "chatRoom/chatRoom/src/main/java/com/chat/chatroom/mapper/MessageMapper.java",
-        "sizeFormatted": "332 B"
+        "sizeFormatted": "332 B",
+        "project": "chatRoom"
       },
       {
         "name": "UserMapper.java",
         "type": "Java代码",
         "size": 321,
-        "path": "E:/codeplace/chatRoom/chatRoom/src/main/java/com/chat/chatroom/mapper/UserMapper.java",
-        "relPath": "chatRoom/chatRoom/src/main/java/com/chat/chatroom/mapper/UserMapper.java",
-        "sizeFormatted": "321 B"
+        "sizeFormatted": "321 B",
+        "project": "chatRoom"
       },
       {
         "name": "UserMessageMapper.java",
         "type": "Java代码",
         "size": 854,
-        "path": "E:/codeplace/chatRoom/chatRoom/src/main/java/com/chat/chatroom/mapper/UserMessageMapper.java",
-        "relPath": "chatRoom/chatRoom/src/main/java/com/chat/chatroom/mapper/UserMessageMapper.java",
-        "sizeFormatted": "854 B"
+        "sizeFormatted": "854 B",
+        "project": "chatRoom"
       },
       {
         "name": "AdminService.java",
         "type": "Java代码",
         "size": 1579,
-        "path": "E:/codeplace/chatRoom/chatRoom/src/main/java/com/chat/chatroom/serivce/AdminService.java",
-        "relPath": "chatRoom/chatRoom/src/main/java/com/chat/chatroom/serivce/AdminService.java",
-        "sizeFormatted": "1.5 KB"
+        "sizeFormatted": "1.5 KB",
+        "project": "chatRoom"
       },
       {
         "name": "FileService.java",
         "type": "Java代码",
         "size": 2402,
-        "path": "E:/codeplace/chatRoom/chatRoom/src/main/java/com/chat/chatroom/serivce/FileService.java",
-        "relPath": "chatRoom/chatRoom/src/main/java/com/chat/chatroom/serivce/FileService.java",
-        "sizeFormatted": "2.3 KB"
+        "sizeFormatted": "2.3 KB",
+        "project": "chatRoom"
       },
       {
         "name": "GroupService.java",
         "type": "Java代码",
         "size": 714,
-        "path": "E:/codeplace/chatRoom/chatRoom/src/main/java/com/chat/chatroom/serivce/GroupService.java",
-        "relPath": "chatRoom/chatRoom/src/main/java/com/chat/chatroom/serivce/GroupService.java",
-        "sizeFormatted": "714 B"
+        "sizeFormatted": "714 B",
+        "project": "chatRoom"
       },
       {
         "name": "LoginService.java",
         "type": "Java代码",
         "size": 2401,
-        "path": "E:/codeplace/chatRoom/chatRoom/src/main/java/com/chat/chatroom/serivce/LoginService.java",
-        "relPath": "chatRoom/chatRoom/src/main/java/com/chat/chatroom/serivce/LoginService.java",
-        "sizeFormatted": "2.3 KB"
+        "sizeFormatted": "2.3 KB",
+        "project": "chatRoom"
       },
       {
         "name": "MessageService.java",
         "type": "Java代码",
         "size": 2158,
-        "path": "E:/codeplace/chatRoom/chatRoom/src/main/java/com/chat/chatroom/serivce/MessageService.java",
-        "relPath": "chatRoom/chatRoom/src/main/java/com/chat/chatroom/serivce/MessageService.java",
-        "sizeFormatted": "2.1 KB"
+        "sizeFormatted": "2.1 KB",
+        "project": "chatRoom"
       },
       {
         "name": "UserMessageService.java",
         "type": "Java代码",
         "size": 259,
-        "path": "E:/codeplace/chatRoom/chatRoom/src/main/java/com/chat/chatroom/serivce/UserMessageService.java",
-        "relPath": "chatRoom/chatRoom/src/main/java/com/chat/chatroom/serivce/UserMessageService.java",
-        "sizeFormatted": "259 B"
+        "sizeFormatted": "259 B",
+        "project": "chatRoom"
       },
       {
         "name": "UserMessageServiceImpl.java",
         "type": "Java代码",
         "size": 429,
-        "path": "E:/codeplace/chatRoom/chatRoom/src/main/java/com/chat/chatroom/serivce/UserMessageServiceImpl.java",
-        "relPath": "chatRoom/chatRoom/src/main/java/com/chat/chatroom/serivce/UserMessageServiceImpl.java",
-        "sizeFormatted": "429 B"
+        "sizeFormatted": "429 B",
+        "project": "chatRoom"
       },
       {
         "name": "AesUtil.java",
         "type": "Java代码",
         "size": 3090,
-        "path": "E:/codeplace/chatRoom/chatRoom/src/main/java/com/chat/chatroom/util/AesUtil.java",
-        "relPath": "chatRoom/chatRoom/src/main/java/com/chat/chatroom/util/AesUtil.java",
-        "sizeFormatted": "3.0 KB"
+        "sizeFormatted": "3.0 KB",
+        "project": "chatRoom"
       },
       {
         "name": "ResponseResult.java",
         "type": "Java代码",
         "size": 1293,
-        "path": "E:/codeplace/chatRoom/chatRoom/src/main/java/com/chat/chatroom/util/ResponseResult.java",
-        "relPath": "chatRoom/chatRoom/src/main/java/com/chat/chatroom/util/ResponseResult.java",
-        "sizeFormatted": "1.3 KB"
+        "sizeFormatted": "1.3 KB",
+        "project": "chatRoom"
       },
       {
         "name": "SnowFlakeGenerateIdWorker.java",
         "type": "Java代码",
         "size": 4982,
-        "path": "E:/codeplace/chatRoom/chatRoom/src/main/java/com/chat/chatroom/util/SnowFlakeGenerateIdWorker.java",
-        "relPath": "chatRoom/chatRoom/src/main/java/com/chat/chatroom/util/SnowFlakeGenerateIdWorker.java",
-        "sizeFormatted": "4.9 KB"
+        "sizeFormatted": "4.9 KB",
+        "project": "chatRoom"
       },
       {
         "name": "SpringUtil.java",
         "type": "Java代码",
         "size": 1579,
-        "path": "E:/codeplace/chatRoom/chatRoom/src/main/java/com/chat/chatroom/util/SpringUtil.java",
-        "relPath": "chatRoom/chatRoom/src/main/java/com/chat/chatroom/util/SpringUtil.java",
-        "sizeFormatted": "1.5 KB"
+        "sizeFormatted": "1.5 KB",
+        "project": "chatRoom"
       },
       {
         "name": "application.properties",
         "type": "其他",
         "size": 121,
-        "path": "E:/codeplace/chatRoom/chatRoom/src/main/resources/application.properties",
-        "relPath": "chatRoom/chatRoom/src/main/resources/application.properties",
-        "sizeFormatted": "121 B"
+        "sizeFormatted": "121 B",
+        "project": "chatRoom"
       },
       {
         "name": "application.yml",
         "type": "YAML配置",
         "size": 609,
-        "path": "E:/codeplace/chatRoom/chatRoom/src/main/resources/application.yml",
-        "relPath": "chatRoom/chatRoom/src/main/resources/application.yml",
-        "sizeFormatted": "609 B"
+        "sizeFormatted": "609 B",
+        "project": "chatRoom"
       },
       {
         "name": "ChatRoomApplicationTests.java",
         "type": "Java代码",
         "size": 220,
-        "path": "E:/codeplace/chatRoom/chatRoom/src/test/java/com/chat/chatroom/ChatRoomApplicationTests.java",
-        "relPath": "chatRoom/chatRoom/src/test/java/com/chat/chatroom/ChatRoomApplicationTests.java",
-        "sizeFormatted": "220 B"
+        "sizeFormatted": "220 B",
+        "project": "chatRoom"
       },
       {
         "name": ".gitignore",
         "type": "其他",
         "size": 1893,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/.gitignore",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/.gitignore",
-        "sizeFormatted": "1.8 KB"
+        "sizeFormatted": "1.8 KB",
+        "project": "chineseocr_lite"
       },
       {
         "name": "config.py",
         "type": "Python代码",
         "size": 729,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/config.py",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/config.py",
-        "sizeFormatted": "729 B"
+        "sizeFormatted": "729 B",
+        "project": "chineseocr_lite"
       },
       {
         "name": "Dockerfile",
         "type": "其他",
         "size": 960,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/Dockerfile",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/Dockerfile",
-        "sizeFormatted": "960 B"
+        "sizeFormatted": "960 B",
+        "project": "chineseocr_lite"
       },
       {
         "name": "LICENSE",
         "type": "其他",
         "size": 18092,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/LICENSE",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/LICENSE",
-        "sizeFormatted": "17.7 KB"
+        "sizeFormatted": "17.7 KB",
+        "project": "chineseocr_lite"
       },
       {
         "name": "model.py",
         "type": "Python代码",
         "size": 2594,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/model.py",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/model.py",
-        "sizeFormatted": "2.5 KB"
+        "sizeFormatted": "2.5 KB",
+        "project": "chineseocr_lite"
       },
       {
         "name": "README.md",
         "type": "文档",
         "size": 2977,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/README.md",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/README.md",
-        "sizeFormatted": "2.9 KB"
+        "sizeFormatted": "2.9 KB",
+        "project": "chineseocr_lite"
       },
       {
         "name": "requirements.txt",
         "type": "文档",
         "size": 118,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/requirements.txt",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/requirements.txt",
-        "sizeFormatted": "118 B"
+        "sizeFormatted": "118 B",
+        "project": "chineseocr_lite"
       },
       {
         "name": "utils.py",
         "type": "Python代码",
         "size": 6084,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/utils.py",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/utils.py",
-        "sizeFormatted": "5.9 KB"
+        "sizeFormatted": "5.9 KB",
+        "project": "chineseocr_lite"
       },
       {
         "name": "README.md",
         "type": "文档",
         "size": 4221,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/android_projects/README.md",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/android_projects/README.md",
-        "sizeFormatted": "4.1 KB"
+        "sizeFormatted": "4.1 KB",
+        "project": "chineseocr_lite"
       },
       {
         "name": ".gitignore",
         "type": "其他",
         "size": 80,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidMNN/.gitignore",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidMNN/.gitignore",
-        "sizeFormatted": "80 B"
+        "sizeFormatted": "80 B",
+        "project": "chineseocr_lite"
       },
       {
         "name": "build.gradle",
         "type": "其他",
         "size": 1152,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidMNN/build.gradle",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidMNN/build.gradle",
-        "sizeFormatted": "1.1 KB"
+        "sizeFormatted": "1.1 KB",
+        "project": "chineseocr_lite"
       },
       {
         "name": "gradle.properties",
         "type": "其他",
         "size": 1194,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidMNN/gradle.properties",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidMNN/gradle.properties",
-        "sizeFormatted": "1.2 KB"
+        "sizeFormatted": "1.2 KB",
+        "project": "chineseocr_lite"
       },
       {
         "name": "gradlew",
         "type": "其他",
         "size": 5296,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidMNN/gradlew",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidMNN/gradlew",
-        "sizeFormatted": "5.2 KB"
+        "sizeFormatted": "5.2 KB",
+        "project": "chineseocr_lite"
       },
       {
         "name": "gradlew.bat",
         "type": "Shell脚本",
         "size": 2176,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidMNN/gradlew.bat",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidMNN/gradlew.bat",
-        "sizeFormatted": "2.1 KB"
+        "sizeFormatted": "2.1 KB",
+        "project": "chineseocr_lite"
       },
       {
         "name": "README.md",
         "type": "文档",
         "size": 1768,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidMNN/README.md",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidMNN/README.md",
-        "sizeFormatted": "1.7 KB"
+        "sizeFormatted": "1.7 KB",
+        "project": "chineseocr_lite"
       },
       {
         "name": "settings.gradle",
         "type": "其他",
         "size": 76,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidMNN/settings.gradle",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidMNN/settings.gradle",
-        "sizeFormatted": "76 B"
+        "sizeFormatted": "76 B",
+        "project": "chineseocr_lite"
       },
       {
         "name": "build.gradle",
         "type": "其他",
         "size": 3625,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidMNN/app/build.gradle",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidMNN/app/build.gradle",
-        "sizeFormatted": "3.5 KB"
+        "sizeFormatted": "3.5 KB",
+        "project": "chineseocr_lite"
       },
       {
         "name": "proguard-rules.pro",
         "type": "其他",
         "size": 750,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidMNN/app/proguard-rules.pro",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidMNN/app/proguard-rules.pro",
-        "sizeFormatted": "750 B"
+        "sizeFormatted": "750 B",
+        "project": "chineseocr_lite"
       },
       {
         "name": "ExampleInstrumentedTest.kt",
         "type": "其他",
         "size": 675,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidMNN/app/src/androidTest/java/com/benjaminwan/ocr/onnx/ExampleInstrumentedTest.kt",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidMNN/app/src/androidTest/java/com/benjaminwan/ocr/onnx/ExampleInstrumentedTest.kt",
-        "sizeFormatted": "675 B"
+        "sizeFormatted": "675 B",
+        "project": "chineseocr_lite"
       },
       {
         "name": "AndroidManifest.xml",
         "type": "YAML配置",
         "size": 933,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidMNN/app/src/main/AndroidManifest.xml",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidMNN/app/src/main/AndroidManifest.xml",
-        "sizeFormatted": "933 B"
+        "sizeFormatted": "933 B",
+        "project": "chineseocr_lite"
       },
       {
         "name": "GalleryActivity.kt",
         "type": "其他",
         "size": 9204,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidMNN/app/src/main/java/com/benjaminwan/ocr/onnx/GalleryActivity.kt",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidMNN/app/src/main/java/com/benjaminwan/ocr/onnx/GalleryActivity.kt",
-        "sizeFormatted": "9.0 KB"
+        "sizeFormatted": "9.0 KB",
+        "project": "chineseocr_lite"
       },
       {
         "name": "App.kt",
         "type": "其他",
         "size": 3023,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidMNN/app/src/main/java/com/benjaminwan/ocr/onnx/app/App.kt",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidMNN/app/src/main/java/com/benjaminwan/ocr/onnx/app/App.kt",
-        "sizeFormatted": "3.0 KB"
+        "sizeFormatted": "3.0 KB",
+        "project": "chineseocr_lite"
       },
       {
         "name": "BaseDialog.kt",
         "type": "其他",
         "size": 3090,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidMNN/app/src/main/java/com/benjaminwan/ocr/onnx/dialog/BaseDialog.kt",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidMNN/app/src/main/java/com/benjaminwan/ocr/onnx/dialog/BaseDialog.kt",
-        "sizeFormatted": "3.0 KB"
+        "sizeFormatted": "3.0 KB",
+        "project": "chineseocr_lite"
       },
       {
         "name": "DebugDialog.kt",
         "type": "其他",
         "size": 3982,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidMNN/app/src/main/java/com/benjaminwan/ocr/onnx/dialog/DebugDialog.kt",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidMNN/app/src/main/java/com/benjaminwan/ocr/onnx/dialog/DebugDialog.kt",
-        "sizeFormatted": "3.9 KB"
+        "sizeFormatted": "3.9 KB",
+        "project": "chineseocr_lite"
       },
       {
         "name": "TextResultDialog.kt",
         "type": "其他",
         "size": 2120,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidMNN/app/src/main/java/com/benjaminwan/ocr/onnx/dialog/TextResultDialog.kt",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidMNN/app/src/main/java/com/benjaminwan/ocr/onnx/dialog/TextResultDialog.kt",
-        "sizeFormatted": "2.1 KB"
+        "sizeFormatted": "2.1 KB",
+        "project": "chineseocr_lite"
       },
       {
         "name": "DbNetTimeItemView.kt",
         "type": "其他",
         "size": 1027,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidMNN/app/src/main/java/com/benjaminwan/ocr/onnx/models/DbNetTimeItemView.kt",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidMNN/app/src/main/java/com/benjaminwan/ocr/onnx/models/DbNetTimeItemView.kt",
-        "sizeFormatted": "1.0 KB"
+        "sizeFormatted": "1.0 KB",
+        "project": "chineseocr_lite"
       },
       {
         "name": "DebugItemView.kt",
         "type": "其他",
         "size": 1899,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidMNN/app/src/main/java/com/benjaminwan/ocr/onnx/models/DebugItemView.kt",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidMNN/app/src/main/java/com/benjaminwan/ocr/onnx/models/DebugItemView.kt",
-        "sizeFormatted": "1.9 KB"
+        "sizeFormatted": "1.9 KB",
+        "project": "chineseocr_lite"
       },
       {
         "name": "IdCardFront.kt",
         "type": "其他",
         "size": 896,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidMNN/app/src/main/java/com/benjaminwan/ocr/onnx/models/IdCardFront.kt",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidMNN/app/src/main/java/com/benjaminwan/ocr/onnx/models/IdCardFront.kt",
-        "sizeFormatted": "896 B"
+        "sizeFormatted": "896 B",
+        "project": "chineseocr_lite"
       },
       {
         "name": "BitmapUtils.kt",
         "type": "其他",
         "size": 571,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidMNN/app/src/main/java/com/benjaminwan/ocr/onnx/utils/BitmapUtils.kt",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidMNN/app/src/main/java/com/benjaminwan/ocr/onnx/utils/BitmapUtils.kt",
-        "sizeFormatted": "571 B"
+        "sizeFormatted": "571 B",
+        "project": "chineseocr_lite"
       },
       {
         "name": "ClipboardUtils.kt",
         "type": "其他",
         "size": 1041,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidMNN/app/src/main/java/com/benjaminwan/ocr/onnx/utils/ClipboardUtils.kt",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidMNN/app/src/main/java/com/benjaminwan/ocr/onnx/utils/ClipboardUtils.kt",
-        "sizeFormatted": "1.0 KB"
+        "sizeFormatted": "1.0 KB",
+        "project": "chineseocr_lite"
       },
       {
         "name": "DecimalFormatUtils.kt",
         "type": "其他",
         "size": 1122,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidMNN/app/src/main/java/com/benjaminwan/ocr/onnx/utils/DecimalFormatUtils.kt",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidMNN/app/src/main/java/com/benjaminwan/ocr/onnx/utils/DecimalFormatUtils.kt",
-        "sizeFormatted": "1.1 KB"
+        "sizeFormatted": "1.1 KB",
+        "project": "chineseocr_lite"
       },
       {
         "name": "IdCardMatchUtils.kt",
         "type": "其他",
         "size": 800,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidMNN/app/src/main/java/com/benjaminwan/ocr/onnx/utils/IdCardMatchUtils.kt",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidMNN/app/src/main/java/com/benjaminwan/ocr/onnx/utils/IdCardMatchUtils.kt",
-        "sizeFormatted": "800 B"
+        "sizeFormatted": "800 B",
+        "project": "chineseocr_lite"
       },
       {
         "name": "ImeiMatchUtils.kt",
         "type": "其他",
         "size": 650,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidMNN/app/src/main/java/com/benjaminwan/ocr/onnx/utils/ImeiMatchUtils.kt",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidMNN/app/src/main/java/com/benjaminwan/ocr/onnx/utils/ImeiMatchUtils.kt",
-        "sizeFormatted": "650 B"
+        "sizeFormatted": "650 B",
+        "project": "chineseocr_lite"
       },
       {
         "name": "PlateMatchUtils.kt",
         "type": "其他",
         "size": 980,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidMNN/app/src/main/java/com/benjaminwan/ocr/onnx/utils/PlateMatchUtils.kt",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidMNN/app/src/main/java/com/benjaminwan/ocr/onnx/utils/PlateMatchUtils.kt",
-        "sizeFormatted": "980 B"
+        "sizeFormatted": "980 B",
+        "project": "chineseocr_lite"
       },
       {
         "name": "RecyclerViewUtils.kt",
         "type": "其他",
         "size": 3325,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidMNN/app/src/main/java/com/benjaminwan/ocr/onnx/utils/RecyclerViewUtils.kt",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidMNN/app/src/main/java/com/benjaminwan/ocr/onnx/utils/RecyclerViewUtils.kt",
-        "sizeFormatted": "3.2 KB"
+        "sizeFormatted": "3.2 KB",
+        "project": "chineseocr_lite"
       },
       {
         "name": "SoftInputUtils.kt",
         "type": "其他",
         "size": 962,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidMNN/app/src/main/java/com/benjaminwan/ocr/onnx/utils/SoftInputUtils.kt",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidMNN/app/src/main/java/com/benjaminwan/ocr/onnx/utils/SoftInputUtils.kt",
-        "sizeFormatted": "962 B"
+        "sizeFormatted": "962 B",
+        "project": "chineseocr_lite"
       },
       {
         "name": "ToastUtils.kt",
         "type": "其他",
         "size": 1181,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidMNN/app/src/main/java/com/benjaminwan/ocr/onnx/utils/ToastUtils.kt",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidMNN/app/src/main/java/com/benjaminwan/ocr/onnx/utils/ToastUtils.kt",
-        "sizeFormatted": "1.2 KB"
+        "sizeFormatted": "1.2 KB",
+        "project": "chineseocr_lite"
       },
       {
         "name": "window_close_down.xml",
         "type": "YAML配置",
         "size": 403,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidMNN/app/src/main/res/anim/window_close_down.xml",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidMNN/app/src/main/res/anim/window_close_down.xml",
-        "sizeFormatted": "403 B"
+        "sizeFormatted": "403 B",
+        "project": "chineseocr_lite"
       },
       {
         "name": "window_close_up.xml",
         "type": "YAML配置",
         "size": 404,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidMNN/app/src/main/res/anim/window_close_up.xml",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidMNN/app/src/main/res/anim/window_close_up.xml",
-        "sizeFormatted": "404 B"
+        "sizeFormatted": "404 B",
+        "project": "chineseocr_lite"
       },
       {
         "name": "window_enter_anim.xml",
         "type": "YAML配置",
         "size": 478,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidMNN/app/src/main/res/anim/window_enter_anim.xml",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidMNN/app/src/main/res/anim/window_enter_anim.xml",
-        "sizeFormatted": "478 B"
+        "sizeFormatted": "478 B",
+        "project": "chineseocr_lite"
       },
       {
         "name": "window_exit_anim.xml",
         "type": "YAML配置",
         "size": 478,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidMNN/app/src/main/res/anim/window_exit_anim.xml",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidMNN/app/src/main/res/anim/window_exit_anim.xml",
-        "sizeFormatted": "478 B"
+        "sizeFormatted": "478 B",
+        "project": "chineseocr_lite"
       },
       {
         "name": "window_fade_in.xml",
         "type": "YAML配置",
         "size": 298,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidMNN/app/src/main/res/anim/window_fade_in.xml",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidMNN/app/src/main/res/anim/window_fade_in.xml",
-        "sizeFormatted": "298 B"
+        "sizeFormatted": "298 B",
+        "project": "chineseocr_lite"
       },
       {
         "name": "window_fade_out.xml",
         "type": "YAML配置",
         "size": 298,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidMNN/app/src/main/res/anim/window_fade_out.xml",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidMNN/app/src/main/res/anim/window_fade_out.xml",
-        "sizeFormatted": "298 B"
+        "sizeFormatted": "298 B",
+        "project": "chineseocr_lite"
       },
       {
         "name": "window_show_down.xml",
         "type": "YAML配置",
         "size": 404,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidMNN/app/src/main/res/anim/window_show_down.xml",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidMNN/app/src/main/res/anim/window_show_down.xml",
-        "sizeFormatted": "404 B"
+        "sizeFormatted": "404 B",
+        "project": "chineseocr_lite"
       },
       {
         "name": "window_show_up.xml",
         "type": "YAML配置",
         "size": 403,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidMNN/app/src/main/res/anim/window_show_up.xml",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidMNN/app/src/main/res/anim/window_show_up.xml",
-        "sizeFormatted": "403 B"
+        "sizeFormatted": "403 B",
+        "project": "chineseocr_lite"
       },
       {
         "name": "btn_blue3_to_blue5.xml",
         "type": "YAML配置",
         "size": 737,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidMNN/app/src/main/res/color/btn_blue3_to_blue5.xml",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidMNN/app/src/main/res/color/btn_blue3_to_blue5.xml",
-        "sizeFormatted": "737 B"
+        "sizeFormatted": "737 B",
+        "project": "chineseocr_lite"
       },
       {
         "name": "btn_blue5_to_blue7.xml",
         "type": "YAML配置",
         "size": 737,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidMNN/app/src/main/res/color/btn_blue5_to_blue7.xml",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidMNN/app/src/main/res/color/btn_blue5_to_blue7.xml",
-        "sizeFormatted": "737 B"
+        "sizeFormatted": "737 B",
+        "project": "chineseocr_lite"
       },
       {
         "name": "btn_grey3_to_grey5.xml",
         "type": "YAML配置",
         "size": 737,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidMNN/app/src/main/res/color/btn_grey3_to_grey5.xml",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidMNN/app/src/main/res/color/btn_grey3_to_grey5.xml",
-        "sizeFormatted": "737 B"
+        "sizeFormatted": "737 B",
+        "project": "chineseocr_lite"
       },
       {
         "name": "btn_grey5_to_grey7.xml",
         "type": "YAML配置",
         "size": 737,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidMNN/app/src/main/res/color/btn_grey5_to_grey7.xml",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidMNN/app/src/main/res/color/btn_grey5_to_grey7.xml",
-        "sizeFormatted": "737 B"
+        "sizeFormatted": "737 B",
+        "project": "chineseocr_lite"
       },
       {
         "name": "btn_pink5_to_pink7.xml",
         "type": "YAML配置",
         "size": 737,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidMNN/app/src/main/res/color/btn_pink5_to_pink7.xml",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidMNN/app/src/main/res/color/btn_pink5_to_pink7.xml",
-        "sizeFormatted": "737 B"
+        "sizeFormatted": "737 B",
+        "project": "chineseocr_lite"
       },
       {
         "name": "btn_white_to_grey.xml",
         "type": "YAML配置",
         "size": 729,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidMNN/app/src/main/res/color/btn_white_to_grey.xml",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidMNN/app/src/main/res/color/btn_white_to_grey.xml",
-        "sizeFormatted": "729 B"
+        "sizeFormatted": "729 B",
+        "project": "chineseocr_lite"
       },
       {
         "name": "bg_blue3_to_blue5.xml",
         "type": "YAML配置",
         "size": 550,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidMNN/app/src/main/res/drawable/bg_blue3_to_blue5.xml",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidMNN/app/src/main/res/drawable/bg_blue3_to_blue5.xml",
-        "sizeFormatted": "550 B"
+        "sizeFormatted": "550 B",
+        "project": "chineseocr_lite"
       },
       {
         "name": "bg_blue5_to_blue7.xml",
         "type": "YAML配置",
         "size": 546,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidMNN/app/src/main/res/drawable/bg_blue5_to_blue7.xml",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidMNN/app/src/main/res/drawable/bg_blue5_to_blue7.xml",
-        "sizeFormatted": "546 B"
+        "sizeFormatted": "546 B",
+        "project": "chineseocr_lite"
       },
       {
         "name": "bg_edittext.xml",
         "type": "YAML配置",
         "size": 309,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidMNN/app/src/main/res/drawable/bg_edittext.xml",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidMNN/app/src/main/res/drawable/bg_edittext.xml",
-        "sizeFormatted": "309 B"
+        "sizeFormatted": "309 B",
+        "project": "chineseocr_lite"
       },
       {
         "name": "bg_edittext_focused.xml",
         "type": "YAML配置",
         "size": 263,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidMNN/app/src/main/res/drawable/bg_edittext_focused.xml",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidMNN/app/src/main/res/drawable/bg_edittext_focused.xml",
-        "sizeFormatted": "263 B"
+        "sizeFormatted": "263 B",
+        "project": "chineseocr_lite"
       },
       {
         "name": "bg_edittext_normal.xml",
         "type": "YAML配置",
         "size": 263,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidMNN/app/src/main/res/drawable/bg_edittext_normal.xml",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidMNN/app/src/main/res/drawable/bg_edittext_normal.xml",
-        "sizeFormatted": "263 B"
+        "sizeFormatted": "263 B",
+        "project": "chineseocr_lite"
       },
       {
         "name": "bg_transparent_to_transparent_half.xml",
         "type": "YAML配置",
         "size": 367,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidMNN/app/src/main/res/drawable/bg_transparent_to_transparent_half.xml",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidMNN/app/src/main/res/drawable/bg_transparent_to_transparent_half.xml",
-        "sizeFormatted": "367 B"
+        "sizeFormatted": "367 B",
+        "project": "chineseocr_lite"
       },
       {
         "name": "ic_close.xml",
         "type": "YAML配置",
         "size": 869,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidMNN/app/src/main/res/drawable/ic_close.xml",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidMNN/app/src/main/res/drawable/ic_close.xml",
-        "sizeFormatted": "869 B"
+        "sizeFormatted": "869 B",
+        "project": "chineseocr_lite"
       },
       {
         "name": "ic_launcher_background.xml",
         "type": "YAML配置",
         "size": 5606,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidMNN/app/src/main/res/drawable/ic_launcher_background.xml",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidMNN/app/src/main/res/drawable/ic_launcher_background.xml",
-        "sizeFormatted": "5.5 KB"
+        "sizeFormatted": "5.5 KB",
+        "project": "chineseocr_lite"
       },
       {
         "name": "ic_loading.xml",
         "type": "YAML配置",
         "size": 877,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidMNN/app/src/main/res/drawable/ic_loading.xml",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidMNN/app/src/main/res/drawable/ic_loading.xml",
-        "sizeFormatted": "877 B"
+        "sizeFormatted": "877 B",
+        "project": "chineseocr_lite"
       },
       {
         "name": "ic_ocr.xml",
         "type": "YAML配置",
         "size": 2188,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidMNN/app/src/main/res/drawable/ic_ocr.xml",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidMNN/app/src/main/res/drawable/ic_ocr.xml",
-        "sizeFormatted": "2.1 KB"
+        "sizeFormatted": "2.1 KB",
+        "project": "chineseocr_lite"
       },
       {
         "name": "loading_anim.xml",
         "type": "YAML配置",
         "size": 408,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidMNN/app/src/main/res/drawable/loading_anim.xml",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidMNN/app/src/main/res/drawable/loading_anim.xml",
-        "sizeFormatted": "408 B"
+        "sizeFormatted": "408 B",
+        "project": "chineseocr_lite"
       },
       {
         "name": "ic_launcher_foreground.xml",
         "type": "YAML配置",
         "size": 1702,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidMNN/app/src/main/res/drawable-v24/ic_launcher_foreground.xml",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidMNN/app/src/main/res/drawable-v24/ic_launcher_foreground.xml",
-        "sizeFormatted": "1.7 KB"
+        "sizeFormatted": "1.7 KB",
+        "project": "chineseocr_lite"
       },
       {
         "name": "activity_gallery.xml",
         "type": "YAML配置",
         "size": 6966,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidMNN/app/src/main/res/layout/activity_gallery.xml",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidMNN/app/src/main/res/layout/activity_gallery.xml",
-        "sizeFormatted": "6.8 KB"
+        "sizeFormatted": "6.8 KB",
+        "project": "chineseocr_lite"
       },
       {
         "name": "dialog_debug.xml",
         "type": "YAML配置",
         "size": 1926,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidMNN/app/src/main/res/layout/dialog_debug.xml",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidMNN/app/src/main/res/layout/dialog_debug.xml",
-        "sizeFormatted": "1.9 KB"
+        "sizeFormatted": "1.9 KB",
+        "project": "chineseocr_lite"
       },
       {
         "name": "dialog_text_result.xml",
         "type": "YAML配置",
         "size": 2091,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidMNN/app/src/main/res/layout/dialog_text_result.xml",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidMNN/app/src/main/res/layout/dialog_text_result.xml",
-        "sizeFormatted": "2.0 KB"
+        "sizeFormatted": "2.0 KB",
+        "project": "chineseocr_lite"
       },
       {
         "name": "rv_dbnet_time_item.xml",
         "type": "YAML配置",
         "size": 726,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidMNN/app/src/main/res/layout/rv_dbnet_time_item.xml",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidMNN/app/src/main/res/layout/rv_dbnet_time_item.xml",
-        "sizeFormatted": "726 B"
+        "sizeFormatted": "726 B",
+        "project": "chineseocr_lite"
       },
       {
         "name": "rv_debug_item_content.xml",
         "type": "YAML配置",
         "size": 5914,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidMNN/app/src/main/res/layout/rv_debug_item_content.xml",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidMNN/app/src/main/res/layout/rv_debug_item_content.xml",
-        "sizeFormatted": "5.8 KB"
+        "sizeFormatted": "5.8 KB",
+        "project": "chineseocr_lite"
       },
       {
         "name": "rv_debug_view_item.xml",
         "type": "YAML配置",
         "size": 1328,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidMNN/app/src/main/res/layout/rv_debug_view_item.xml",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidMNN/app/src/main/res/layout/rv_debug_view_item.xml",
-        "sizeFormatted": "1.3 KB"
+        "sizeFormatted": "1.3 KB",
+        "project": "chineseocr_lite"
       },
       {
         "name": "ic_launcher.xml",
         "type": "YAML配置",
         "size": 272,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidMNN/app/src/main/res/mipmap-anydpi-v26/ic_launcher.xml",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidMNN/app/src/main/res/mipmap-anydpi-v26/ic_launcher.xml",
-        "sizeFormatted": "272 B"
+        "sizeFormatted": "272 B",
+        "project": "chineseocr_lite"
       },
       {
         "name": "ic_launcher_round.xml",
         "type": "YAML配置",
         "size": 272,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidMNN/app/src/main/res/mipmap-anydpi-v26/ic_launcher_round.xml",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidMNN/app/src/main/res/mipmap-anydpi-v26/ic_launcher_round.xml",
-        "sizeFormatted": "272 B"
+        "sizeFormatted": "272 B",
+        "project": "chineseocr_lite"
       },
       {
         "name": "colors.xml",
         "type": "YAML配置",
         "size": 310,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidMNN/app/src/main/res/values/colors.xml",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidMNN/app/src/main/res/values/colors.xml",
-        "sizeFormatted": "310 B"
+        "sizeFormatted": "310 B",
+        "project": "chineseocr_lite"
       },
       {
         "name": "colors_material.xml",
         "type": "YAML配置",
         "size": 14788,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidMNN/app/src/main/res/values/colors_material.xml",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidMNN/app/src/main/res/values/colors_material.xml",
-        "sizeFormatted": "14.4 KB"
+        "sizeFormatted": "14.4 KB",
+        "project": "chineseocr_lite"
       },
       {
         "name": "strings.xml",
         "type": "YAML配置",
         "size": 317,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidMNN/app/src/main/res/values/strings.xml",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidMNN/app/src/main/res/values/strings.xml",
-        "sizeFormatted": "317 B"
+        "sizeFormatted": "317 B",
+        "project": "chineseocr_lite"
       },
       {
         "name": "styles.xml",
         "type": "YAML配置",
         "size": 3233,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidMNN/app/src/main/res/values/styles.xml",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidMNN/app/src/main/res/values/styles.xml",
-        "sizeFormatted": "3.2 KB"
+        "sizeFormatted": "3.2 KB",
+        "project": "chineseocr_lite"
       },
       {
         "name": "ExampleUnitTest.kt",
         "type": "其他",
         "size": 348,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidMNN/app/src/test/java/com/benjaminwan/ocr/onnx/ExampleUnitTest.kt",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidMNN/app/src/test/java/com/benjaminwan/ocr/onnx/ExampleUnitTest.kt",
-        "sizeFormatted": "348 B"
+        "sizeFormatted": "348 B",
+        "project": "chineseocr_lite"
       },
       {
         "name": "IdCardView-1.0.aar",
         "type": "其他",
         "size": 19997,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidMNN/common-aar/IdCardView-1.0.aar",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidMNN/common-aar/IdCardView-1.0.aar",
-        "sizeFormatted": "19.5 KB"
+        "sizeFormatted": "19.5 KB",
+        "project": "chineseocr_lite"
       },
       {
         "name": "gradle-wrapper.jar",
         "type": "其他",
         "size": 54329,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidMNN/gradle/wrapper/gradle-wrapper.jar",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidMNN/gradle/wrapper/gradle-wrapper.jar",
-        "sizeFormatted": "53.1 KB"
+        "sizeFormatted": "53.1 KB",
+        "project": "chineseocr_lite"
       },
       {
         "name": "gradle-wrapper.properties",
         "type": "其他",
         "size": 230,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidMNN/gradle/wrapper/gradle-wrapper.properties",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidMNN/gradle/wrapper/gradle-wrapper.properties",
-        "sizeFormatted": "230 B"
+        "sizeFormatted": "230 B",
+        "project": "chineseocr_lite"
       },
       {
         "name": "ocrlite.keystore",
         "type": "其他",
         "size": 2577,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidMNN/keystore/ocrlite.keystore",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidMNN/keystore/ocrlite.keystore",
-        "sizeFormatted": "2.5 KB"
+        "sizeFormatted": "2.5 KB",
+        "project": "chineseocr_lite"
       },
       {
         "name": "build.gradle",
         "type": "其他",
         "size": 1543,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidMNN/OcrLibrary/build.gradle",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidMNN/OcrLibrary/build.gradle",
-        "sizeFormatted": "1.5 KB"
+        "sizeFormatted": "1.5 KB",
+        "project": "chineseocr_lite"
       },
       {
         "name": "consumer-rules.pro",
         "type": "其他",
         "size": 0,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidMNN/OcrLibrary/consumer-rules.pro",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidMNN/OcrLibrary/consumer-rules.pro",
-        "sizeFormatted": "0 B"
+        "sizeFormatted": "0 B",
+        "project": "chineseocr_lite"
       },
       {
         "name": "proguard-rules.pro",
         "type": "其他",
         "size": 750,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidMNN/OcrLibrary/proguard-rules.pro",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidMNN/OcrLibrary/proguard-rules.pro",
-        "sizeFormatted": "750 B"
+        "sizeFormatted": "750 B",
+        "project": "chineseocr_lite"
       },
       {
         "name": "ExampleInstrumentedTest.kt",
         "type": "其他",
         "size": 684,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidMNN/OcrLibrary/src/androidTest/java/com/benjaminwan/ocrlibrary/ExampleInstrumentedTest.kt",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidMNN/OcrLibrary/src/androidTest/java/com/benjaminwan/ocrlibrary/ExampleInstrumentedTest.kt",
-        "sizeFormatted": "684 B"
+        "sizeFormatted": "684 B",
+        "project": "chineseocr_lite"
       },
       {
         "name": "AndroidManifest.xml",
         "type": "YAML配置",
         "size": 129,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidMNN/OcrLibrary/src/main/AndroidManifest.xml",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidMNN/OcrLibrary/src/main/AndroidManifest.xml",
-        "sizeFormatted": "129 B"
+        "sizeFormatted": "129 B",
+        "project": "chineseocr_lite"
       },
       {
         "name": "angle_net.mnn",
         "type": "其他",
         "size": 784992,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidMNN/OcrLibrary/src/main/assets/angle_net.mnn",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidMNN/OcrLibrary/src/main/assets/angle_net.mnn",
-        "sizeFormatted": "766.6 KB"
+        "sizeFormatted": "766.6 KB",
+        "project": "chineseocr_lite"
       },
       {
         "name": "crnn_lite_lstm.mnn",
         "type": "其他",
         "size": 5281464,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidMNN/OcrLibrary/src/main/assets/crnn_lite_lstm.mnn",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidMNN/OcrLibrary/src/main/assets/crnn_lite_lstm.mnn",
-        "sizeFormatted": "5.0 MB"
+        "sizeFormatted": "5.0 MB",
+        "project": "chineseocr_lite"
       },
       {
         "name": "dbnet.mnn",
         "type": "其他",
         "size": 3759976,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidMNN/OcrLibrary/src/main/assets/dbnet.mnn",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidMNN/OcrLibrary/src/main/assets/dbnet.mnn",
-        "sizeFormatted": "3.6 MB"
+        "sizeFormatted": "3.6 MB",
+        "project": "chineseocr_lite"
       },
       {
         "name": "keys.txt",
         "type": "文档",
         "size": 21924,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidMNN/OcrLibrary/src/main/assets/keys.txt",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidMNN/OcrLibrary/src/main/assets/keys.txt",
-        "sizeFormatted": "21.4 KB"
+        "sizeFormatted": "21.4 KB",
+        "project": "chineseocr_lite"
       },
       {
         "name": "CMakeLists.txt",
         "type": "文档",
         "size": 2002,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidMNN/OcrLibrary/src/main/cpp/CMakeLists.txt",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidMNN/OcrLibrary/src/main/cpp/CMakeLists.txt",
-        "sizeFormatted": "2.0 KB"
+        "sizeFormatted": "2.0 KB",
+        "project": "chineseocr_lite"
       },
       {
         "name": "AngleNet.h",
         "type": "头文件",
         "size": 761,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidMNN/OcrLibrary/src/main/cpp/include/AngleNet.h",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidMNN/OcrLibrary/src/main/cpp/include/AngleNet.h",
-        "sizeFormatted": "761 B"
+        "sizeFormatted": "761 B",
+        "project": "chineseocr_lite"
       },
       {
         "name": "BitmapUtils.h",
         "type": "头文件",
         "size": 312,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidMNN/OcrLibrary/src/main/cpp/include/BitmapUtils.h",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidMNN/OcrLibrary/src/main/cpp/include/BitmapUtils.h",
-        "sizeFormatted": "312 B"
+        "sizeFormatted": "312 B",
+        "project": "chineseocr_lite"
       },
       {
         "name": "clipper.hpp",
         "type": "头文件",
         "size": 16486,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidMNN/OcrLibrary/src/main/cpp/include/clipper.hpp",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidMNN/OcrLibrary/src/main/cpp/include/clipper.hpp",
-        "sizeFormatted": "16.1 KB"
+        "sizeFormatted": "16.1 KB",
+        "project": "chineseocr_lite"
       },
       {
         "name": "CrnnNet.h",
         "type": "头文件",
         "size": 904,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidMNN/OcrLibrary/src/main/cpp/include/CrnnNet.h",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidMNN/OcrLibrary/src/main/cpp/include/CrnnNet.h",
-        "sizeFormatted": "904 B"
+        "sizeFormatted": "904 B",
+        "project": "chineseocr_lite"
       },
       {
         "name": "DbNet.h",
         "type": "头文件",
         "size": 729,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidMNN/OcrLibrary/src/main/cpp/include/DbNet.h",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidMNN/OcrLibrary/src/main/cpp/include/DbNet.h",
-        "sizeFormatted": "729 B"
+        "sizeFormatted": "729 B",
+        "project": "chineseocr_lite"
       },
       {
         "name": "OcrLite.h",
         "type": "头文件",
         "size": 754,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidMNN/OcrLibrary/src/main/cpp/include/OcrLite.h",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidMNN/OcrLibrary/src/main/cpp/include/OcrLite.h",
-        "sizeFormatted": "754 B"
+        "sizeFormatted": "754 B",
+        "project": "chineseocr_lite"
       },
       {
         "name": "OcrResultUtils.h",
         "type": "头文件",
         "size": 704,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidMNN/OcrLibrary/src/main/cpp/include/OcrResultUtils.h",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidMNN/OcrLibrary/src/main/cpp/include/OcrResultUtils.h",
-        "sizeFormatted": "704 B"
+        "sizeFormatted": "704 B",
+        "project": "chineseocr_lite"
       },
       {
         "name": "OcrStruct.h",
         "type": "头文件",
         "size": 901,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidMNN/OcrLibrary/src/main/cpp/include/OcrStruct.h",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidMNN/OcrLibrary/src/main/cpp/include/OcrStruct.h",
-        "sizeFormatted": "901 B"
+        "sizeFormatted": "901 B",
+        "project": "chineseocr_lite"
       },
       {
         "name": "OcrUtils.h",
         "type": "头文件",
         "size": 2763,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidMNN/OcrLibrary/src/main/cpp/include/OcrUtils.h",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidMNN/OcrLibrary/src/main/cpp/include/OcrUtils.h",
-        "sizeFormatted": "2.7 KB"
+        "sizeFormatted": "2.7 KB",
+        "project": "chineseocr_lite"
       },
       {
         "name": "AngleNet.cpp",
         "type": "C++代码",
         "size": 3388,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidMNN/OcrLibrary/src/main/cpp/src/AngleNet.cpp",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidMNN/OcrLibrary/src/main/cpp/src/AngleNet.cpp",
-        "sizeFormatted": "3.3 KB"
+        "sizeFormatted": "3.3 KB",
+        "project": "chineseocr_lite"
       },
       {
         "name": "BitmapUtils.cpp",
         "type": "C++代码",
         "size": 4530,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidMNN/OcrLibrary/src/main/cpp/src/BitmapUtils.cpp",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidMNN/OcrLibrary/src/main/cpp/src/BitmapUtils.cpp",
-        "sizeFormatted": "4.4 KB"
+        "sizeFormatted": "4.4 KB",
+        "project": "chineseocr_lite"
       },
       {
         "name": "clipper.cpp",
         "type": "C++代码",
         "size": 167317,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidMNN/OcrLibrary/src/main/cpp/src/clipper.cpp",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidMNN/OcrLibrary/src/main/cpp/src/clipper.cpp",
-        "sizeFormatted": "163.4 KB"
+        "sizeFormatted": "163.4 KB",
+        "project": "chineseocr_lite"
       },
       {
         "name": "CrnnNet.cpp",
         "type": "C++代码",
         "size": 5049,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidMNN/OcrLibrary/src/main/cpp/src/CrnnNet.cpp",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidMNN/OcrLibrary/src/main/cpp/src/CrnnNet.cpp",
-        "sizeFormatted": "4.9 KB"
+        "sizeFormatted": "4.9 KB",
+        "project": "chineseocr_lite"
       },
       {
         "name": "DbNet.cpp",
         "type": "C++代码",
         "size": 3285,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidMNN/OcrLibrary/src/main/cpp/src/DbNet.cpp",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidMNN/OcrLibrary/src/main/cpp/src/DbNet.cpp",
-        "sizeFormatted": "3.2 KB"
+        "sizeFormatted": "3.2 KB",
+        "project": "chineseocr_lite"
       },
       {
         "name": "main.cpp",
         "type": "C++代码",
         "size": 4781,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidMNN/OcrLibrary/src/main/cpp/src/main.cpp",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidMNN/OcrLibrary/src/main/cpp/src/main.cpp",
-        "sizeFormatted": "4.7 KB"
+        "sizeFormatted": "4.7 KB",
+        "project": "chineseocr_lite"
       },
       {
         "name": "OcrLite.cpp",
         "type": "C++代码",
         "size": 6162,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidMNN/OcrLibrary/src/main/cpp/src/OcrLite.cpp",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidMNN/OcrLibrary/src/main/cpp/src/OcrLite.cpp",
-        "sizeFormatted": "6.0 KB"
+        "sizeFormatted": "6.0 KB",
+        "project": "chineseocr_lite"
       },
       {
         "name": "OcrResultUtils.cpp",
         "type": "C++代码",
         "size": 4272,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidMNN/OcrLibrary/src/main/cpp/src/OcrResultUtils.cpp",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidMNN/OcrLibrary/src/main/cpp/src/OcrResultUtils.cpp",
-        "sizeFormatted": "4.2 KB"
+        "sizeFormatted": "4.2 KB",
+        "project": "chineseocr_lite"
       },
       {
         "name": "OcrUtils.cpp",
         "type": "C++代码",
         "size": 11649,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidMNN/OcrLibrary/src/main/cpp/src/OcrUtils.cpp",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidMNN/OcrLibrary/src/main/cpp/src/OcrUtils.cpp",
-        "sizeFormatted": "11.4 KB"
+        "sizeFormatted": "11.4 KB",
+        "project": "chineseocr_lite"
       },
       {
         "name": "OcrEngine.kt",
         "type": "其他",
         "size": 1366,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidMNN/OcrLibrary/src/main/java/com/benjaminwan/ocrlibrary/OcrEngine.kt",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidMNN/OcrLibrary/src/main/java/com/benjaminwan/ocrlibrary/OcrEngine.kt",
-        "sizeFormatted": "1.3 KB"
+        "sizeFormatted": "1.3 KB",
+        "project": "chineseocr_lite"
       },
       {
         "name": "OcrResult.kt",
         "type": "其他",
         "size": 1981,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidMNN/OcrLibrary/src/main/java/com/benjaminwan/ocrlibrary/OcrResult.kt",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidMNN/OcrLibrary/src/main/java/com/benjaminwan/ocrlibrary/OcrResult.kt",
-        "sizeFormatted": "1.9 KB"
+        "sizeFormatted": "1.9 KB",
+        "project": "chineseocr_lite"
       },
       {
         "name": "MNNConfig.cmake",
         "type": "其他",
         "size": 366,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidMNN/OcrLibrary/src/mnn/MNNConfig.cmake",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidMNN/OcrLibrary/src/mnn/MNNConfig.cmake",
-        "sizeFormatted": "366 B"
+        "sizeFormatted": "366 B",
+        "project": "chineseocr_lite"
       },
       {
         "name": "AutoTime.hpp",
         "type": "头文件",
         "size": 828,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidMNN/OcrLibrary/src/mnn/include/AutoTime.hpp",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidMNN/OcrLibrary/src/mnn/include/AutoTime.hpp",
-        "sizeFormatted": "828 B"
+        "sizeFormatted": "828 B",
+        "project": "chineseocr_lite"
       },
       {
         "name": "ErrorCode.hpp",
         "type": "头文件",
         "size": 573,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidMNN/OcrLibrary/src/mnn/include/ErrorCode.hpp",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidMNN/OcrLibrary/src/mnn/include/ErrorCode.hpp",
-        "sizeFormatted": "573 B"
+        "sizeFormatted": "573 B",
+        "project": "chineseocr_lite"
       },
       {
         "name": "HalideRuntime.h",
         "type": "头文件",
         "size": 11395,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidMNN/OcrLibrary/src/mnn/include/HalideRuntime.h",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidMNN/OcrLibrary/src/mnn/include/HalideRuntime.h",
-        "sizeFormatted": "11.1 KB"
+        "sizeFormatted": "11.1 KB",
+        "project": "chineseocr_lite"
       },
       {
         "name": "ImageProcess.hpp",
         "type": "头文件",
         "size": 3639,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidMNN/OcrLibrary/src/mnn/include/ImageProcess.hpp",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidMNN/OcrLibrary/src/mnn/include/ImageProcess.hpp",
-        "sizeFormatted": "3.6 KB"
+        "sizeFormatted": "3.6 KB",
+        "project": "chineseocr_lite"
       },
       {
         "name": "Interpreter.hpp",
         "type": "头文件",
         "size": 11352,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidMNN/OcrLibrary/src/mnn/include/Interpreter.hpp",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidMNN/OcrLibrary/src/mnn/include/Interpreter.hpp",
-        "sizeFormatted": "11.1 KB"
+        "sizeFormatted": "11.1 KB",
+        "project": "chineseocr_lite"
       },
       {
         "name": "Matrix.h",
         "type": "头文件",
         "size": 55940,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidMNN/OcrLibrary/src/mnn/include/Matrix.h",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidMNN/OcrLibrary/src/mnn/include/Matrix.h",
-        "sizeFormatted": "54.6 KB"
+        "sizeFormatted": "54.6 KB",
+        "project": "chineseocr_lite"
       },
       {
         "name": "MNNDefine.h",
         "type": "头文件",
         "size": 2038,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidMNN/OcrLibrary/src/mnn/include/MNNDefine.h",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidMNN/OcrLibrary/src/mnn/include/MNNDefine.h",
-        "sizeFormatted": "2.0 KB"
+        "sizeFormatted": "2.0 KB",
+        "project": "chineseocr_lite"
       },
       {
         "name": "MNNForwardType.h",
         "type": "头文件",
         "size": 1536,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidMNN/OcrLibrary/src/mnn/include/MNNForwardType.h",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidMNN/OcrLibrary/src/mnn/include/MNNForwardType.h",
-        "sizeFormatted": "1.5 KB"
+        "sizeFormatted": "1.5 KB",
+        "project": "chineseocr_lite"
       },
       {
         "name": "Rect.h",
         "type": "头文件",
         "size": 18899,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidMNN/OcrLibrary/src/mnn/include/Rect.h",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidMNN/OcrLibrary/src/mnn/include/Rect.h",
-        "sizeFormatted": "18.5 KB"
+        "sizeFormatted": "18.5 KB",
+        "project": "chineseocr_lite"
       },
       {
         "name": "Tensor.hpp",
         "type": "头文件",
         "size": 8277,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidMNN/OcrLibrary/src/mnn/include/Tensor.hpp",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidMNN/OcrLibrary/src/mnn/include/Tensor.hpp",
-        "sizeFormatted": "8.1 KB"
+        "sizeFormatted": "8.1 KB",
+        "project": "chineseocr_lite"
       },
       {
         "name": "ExampleUnitTest.kt",
         "type": "其他",
         "size": 350,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidMNN/OcrLibrary/src/test/java/com/benjaminwan/ocrlibrary/ExampleUnitTest.kt",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidMNN/OcrLibrary/src/test/java/com/benjaminwan/ocrlibrary/ExampleUnitTest.kt",
-        "sizeFormatted": "350 B"
+        "sizeFormatted": "350 B",
+        "project": "chineseocr_lite"
       },
       {
         "name": "build-onnxruntime-android.sh",
         "type": "Shell脚本",
         "size": 1036,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidMNN/scripts/build-onnxruntime-android.sh",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidMNN/scripts/build-onnxruntime-android.sh",
-        "sizeFormatted": "1.0 KB"
+        "sizeFormatted": "1.0 KB",
+        "project": "chineseocr_lite"
       },
       {
         "name": "build-opencv3-static-android.sh",
         "type": "Shell脚本",
         "size": 2700,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidMNN/scripts/build-opencv3-static-android.sh",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidMNN/scripts/build-opencv3-static-android.sh",
-        "sizeFormatted": "2.6 KB"
+        "sizeFormatted": "2.6 KB",
+        "project": "chineseocr_lite"
       },
       {
         "name": ".gitignore",
         "type": "其他",
         "size": 1295,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidNcnn/.gitignore",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidNcnn/.gitignore",
-        "sizeFormatted": "1.3 KB"
+        "sizeFormatted": "1.3 KB",
+        "project": "chineseocr_lite"
       },
       {
         "name": "build.gradle",
         "type": "其他",
         "size": 941,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidNcnn/build.gradle",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidNcnn/build.gradle",
-        "sizeFormatted": "941 B"
+        "sizeFormatted": "941 B",
+        "project": "chineseocr_lite"
       },
       {
         "name": "gradle.properties",
         "type": "其他",
         "size": 1194,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidNcnn/gradle.properties",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidNcnn/gradle.properties",
-        "sizeFormatted": "1.2 KB"
+        "sizeFormatted": "1.2 KB",
+        "project": "chineseocr_lite"
       },
       {
         "name": "gradlew",
         "type": "其他",
         "size": 5296,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidNcnn/gradlew",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidNcnn/gradlew",
-        "sizeFormatted": "5.2 KB"
+        "sizeFormatted": "5.2 KB",
+        "project": "chineseocr_lite"
       },
       {
         "name": "gradlew.bat",
         "type": "Shell脚本",
         "size": 2176,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidNcnn/gradlew.bat",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidNcnn/gradlew.bat",
-        "sizeFormatted": "2.1 KB"
+        "sizeFormatted": "2.1 KB",
+        "project": "chineseocr_lite"
       },
       {
         "name": "README.md",
         "type": "文档",
         "size": 7233,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidNcnn/README.md",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidNcnn/README.md",
-        "sizeFormatted": "7.1 KB"
+        "sizeFormatted": "7.1 KB",
+        "project": "chineseocr_lite"
       },
       {
         "name": "settings.gradle",
         "type": "其他",
         "size": 77,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidNcnn/settings.gradle",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidNcnn/settings.gradle",
-        "sizeFormatted": "77 B"
+        "sizeFormatted": "77 B",
+        "project": "chineseocr_lite"
       },
       {
         "name": ".gitignore",
         "type": "其他",
         "size": 6,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidNcnn/app/.gitignore",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidNcnn/app/.gitignore",
-        "sizeFormatted": "6 B"
+        "sizeFormatted": "6 B",
+        "project": "chineseocr_lite"
       },
       {
         "name": "build.gradle",
         "type": "其他",
         "size": 3722,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidNcnn/app/build.gradle",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidNcnn/app/build.gradle",
-        "sizeFormatted": "3.6 KB"
+        "sizeFormatted": "3.6 KB",
+        "project": "chineseocr_lite"
       },
       {
         "name": "proguard-rules.pro",
         "type": "其他",
         "size": 750,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidNcnn/app/proguard-rules.pro",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidNcnn/app/proguard-rules.pro",
-        "sizeFormatted": "750 B"
+        "sizeFormatted": "750 B",
+        "project": "chineseocr_lite"
       },
       {
         "name": "ExampleInstrumentedTest.kt",
         "type": "其他",
         "size": 665,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidNcnn/app/src/androidTest/java/com/benjaminwan/ocr/ExampleInstrumentedTest.kt",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidNcnn/app/src/androidTest/java/com/benjaminwan/ocr/ExampleInstrumentedTest.kt",
-        "sizeFormatted": "665 B"
+        "sizeFormatted": "665 B",
+        "project": "chineseocr_lite"
       },
       {
         "name": "AndroidManifest.xml",
         "type": "YAML配置",
         "size": 1612,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidNcnn/app/src/main/AndroidManifest.xml",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidNcnn/app/src/main/AndroidManifest.xml",
-        "sizeFormatted": "1.6 KB"
+        "sizeFormatted": "1.6 KB",
+        "project": "chineseocr_lite"
       },
       {
         "name": "CameraActivity.kt",
         "type": "其他",
         "size": 11276,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidNcnn/app/src/main/java/com/benjaminwan/ocr/ncnn/CameraActivity.kt",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidNcnn/app/src/main/java/com/benjaminwan/ocr/ncnn/CameraActivity.kt",
-        "sizeFormatted": "11.0 KB"
+        "sizeFormatted": "11.0 KB",
+        "project": "chineseocr_lite"
       },
       {
         "name": "GalleryActivity.kt",
         "type": "其他",
         "size": 11939,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidNcnn/app/src/main/java/com/benjaminwan/ocr/ncnn/GalleryActivity.kt",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidNcnn/app/src/main/java/com/benjaminwan/ocr/ncnn/GalleryActivity.kt",
-        "sizeFormatted": "11.7 KB"
+        "sizeFormatted": "11.7 KB",
+        "project": "chineseocr_lite"
       },
       {
         "name": "IdCardFrontActivity.kt",
         "type": "其他",
         "size": 14851,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidNcnn/app/src/main/java/com/benjaminwan/ocr/ncnn/IdCardFrontActivity.kt",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidNcnn/app/src/main/java/com/benjaminwan/ocr/ncnn/IdCardFrontActivity.kt",
-        "sizeFormatted": "14.5 KB"
+        "sizeFormatted": "14.5 KB",
+        "project": "chineseocr_lite"
       },
       {
         "name": "ImeiActivity.kt",
         "type": "其他",
         "size": 8347,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidNcnn/app/src/main/java/com/benjaminwan/ocr/ncnn/ImeiActivity.kt",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidNcnn/app/src/main/java/com/benjaminwan/ocr/ncnn/ImeiActivity.kt",
-        "sizeFormatted": "8.2 KB"
+        "sizeFormatted": "8.2 KB",
+        "project": "chineseocr_lite"
       },
       {
         "name": "MainActivity.kt",
         "type": "其他",
         "size": 1869,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidNcnn/app/src/main/java/com/benjaminwan/ocr/ncnn/MainActivity.kt",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidNcnn/app/src/main/java/com/benjaminwan/ocr/ncnn/MainActivity.kt",
-        "sizeFormatted": "1.8 KB"
+        "sizeFormatted": "1.8 KB",
+        "project": "chineseocr_lite"
       },
       {
         "name": "PlateActivity.kt",
         "type": "其他",
         "size": 8516,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidNcnn/app/src/main/java/com/benjaminwan/ocr/ncnn/PlateActivity.kt",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidNcnn/app/src/main/java/com/benjaminwan/ocr/ncnn/PlateActivity.kt",
-        "sizeFormatted": "8.3 KB"
+        "sizeFormatted": "8.3 KB",
+        "project": "chineseocr_lite"
       },
       {
         "name": "App.kt",
         "type": "其他",
         "size": 1617,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidNcnn/app/src/main/java/com/benjaminwan/ocr/ncnn/app/App.kt",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidNcnn/app/src/main/java/com/benjaminwan/ocr/ncnn/app/App.kt",
-        "sizeFormatted": "1.6 KB"
+        "sizeFormatted": "1.6 KB",
+        "project": "chineseocr_lite"
       },
       {
         "name": "BaseDialog.kt",
         "type": "其他",
         "size": 3069,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidNcnn/app/src/main/java/com/benjaminwan/ocr/ncnn/dialog/BaseDialog.kt",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidNcnn/app/src/main/java/com/benjaminwan/ocr/ncnn/dialog/BaseDialog.kt",
-        "sizeFormatted": "3.0 KB"
+        "sizeFormatted": "3.0 KB",
+        "project": "chineseocr_lite"
       },
       {
         "name": "DebugDialog.kt",
         "type": "其他",
         "size": 4212,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidNcnn/app/src/main/java/com/benjaminwan/ocr/ncnn/dialog/DebugDialog.kt",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidNcnn/app/src/main/java/com/benjaminwan/ocr/ncnn/dialog/DebugDialog.kt",
-        "sizeFormatted": "4.1 KB"
+        "sizeFormatted": "4.1 KB",
+        "project": "chineseocr_lite"
       },
       {
         "name": "TextResultDialog.kt",
         "type": "其他",
         "size": 2637,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidNcnn/app/src/main/java/com/benjaminwan/ocr/ncnn/dialog/TextResultDialog.kt",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidNcnn/app/src/main/java/com/benjaminwan/ocr/ncnn/dialog/TextResultDialog.kt",
-        "sizeFormatted": "2.6 KB"
+        "sizeFormatted": "2.6 KB",
+        "project": "chineseocr_lite"
       },
       {
         "name": "DbNetTimeItemView.kt",
         "type": "其他",
         "size": 1094,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidNcnn/app/src/main/java/com/benjaminwan/ocr/ncnn/models/DbNetTimeItemView.kt",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidNcnn/app/src/main/java/com/benjaminwan/ocr/ncnn/models/DbNetTimeItemView.kt",
-        "sizeFormatted": "1.1 KB"
+        "sizeFormatted": "1.1 KB",
+        "project": "chineseocr_lite"
       },
       {
         "name": "DebugItemView.kt",
         "type": "其他",
         "size": 2788,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidNcnn/app/src/main/java/com/benjaminwan/ocr/ncnn/models/DebugItemView.kt",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidNcnn/app/src/main/java/com/benjaminwan/ocr/ncnn/models/DebugItemView.kt",
-        "sizeFormatted": "2.7 KB"
+        "sizeFormatted": "2.7 KB",
+        "project": "chineseocr_lite"
       },
       {
         "name": "IdCardFront.kt",
         "type": "其他",
         "size": 916,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidNcnn/app/src/main/java/com/benjaminwan/ocr/ncnn/models/IdCardFront.kt",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidNcnn/app/src/main/java/com/benjaminwan/ocr/ncnn/models/IdCardFront.kt",
-        "sizeFormatted": "916 B"
+        "sizeFormatted": "916 B",
+        "project": "chineseocr_lite"
       },
       {
         "name": "BitmapUtils.kt",
         "type": "其他",
         "size": 571,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidNcnn/app/src/main/java/com/benjaminwan/ocr/ncnn/utils/BitmapUtils.kt",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidNcnn/app/src/main/java/com/benjaminwan/ocr/ncnn/utils/BitmapUtils.kt",
-        "sizeFormatted": "571 B"
+        "sizeFormatted": "571 B",
+        "project": "chineseocr_lite"
       },
       {
         "name": "ClipboardUtils.kt",
         "type": "其他",
         "size": 1041,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidNcnn/app/src/main/java/com/benjaminwan/ocr/ncnn/utils/ClipboardUtils.kt",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidNcnn/app/src/main/java/com/benjaminwan/ocr/ncnn/utils/ClipboardUtils.kt",
-        "sizeFormatted": "1.0 KB"
+        "sizeFormatted": "1.0 KB",
+        "project": "chineseocr_lite"
       },
       {
         "name": "DecimalFormatUtils.kt",
         "type": "其他",
         "size": 1122,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidNcnn/app/src/main/java/com/benjaminwan/ocr/ncnn/utils/DecimalFormatUtils.kt",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidNcnn/app/src/main/java/com/benjaminwan/ocr/ncnn/utils/DecimalFormatUtils.kt",
-        "sizeFormatted": "1.1 KB"
+        "sizeFormatted": "1.1 KB",
+        "project": "chineseocr_lite"
       },
       {
         "name": "IdCardMatchUtils.kt",
         "type": "其他",
         "size": 800,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidNcnn/app/src/main/java/com/benjaminwan/ocr/ncnn/utils/IdCardMatchUtils.kt",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidNcnn/app/src/main/java/com/benjaminwan/ocr/ncnn/utils/IdCardMatchUtils.kt",
-        "sizeFormatted": "800 B"
+        "sizeFormatted": "800 B",
+        "project": "chineseocr_lite"
       },
       {
         "name": "ImeiMatchUtils.kt",
         "type": "其他",
         "size": 650,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidNcnn/app/src/main/java/com/benjaminwan/ocr/ncnn/utils/ImeiMatchUtils.kt",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidNcnn/app/src/main/java/com/benjaminwan/ocr/ncnn/utils/ImeiMatchUtils.kt",
-        "sizeFormatted": "650 B"
+        "sizeFormatted": "650 B",
+        "project": "chineseocr_lite"
       },
       {
         "name": "PlateMatchUtils.kt",
         "type": "其他",
         "size": 980,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidNcnn/app/src/main/java/com/benjaminwan/ocr/ncnn/utils/PlateMatchUtils.kt",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidNcnn/app/src/main/java/com/benjaminwan/ocr/ncnn/utils/PlateMatchUtils.kt",
-        "sizeFormatted": "980 B"
+        "sizeFormatted": "980 B",
+        "project": "chineseocr_lite"
       },
       {
         "name": "RecyclerViewUtils.kt",
         "type": "其他",
         "size": 3325,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidNcnn/app/src/main/java/com/benjaminwan/ocr/ncnn/utils/RecyclerViewUtils.kt",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidNcnn/app/src/main/java/com/benjaminwan/ocr/ncnn/utils/RecyclerViewUtils.kt",
-        "sizeFormatted": "3.2 KB"
+        "sizeFormatted": "3.2 KB",
+        "project": "chineseocr_lite"
       },
       {
         "name": "SoftInputUtils.kt",
         "type": "其他",
         "size": 962,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidNcnn/app/src/main/java/com/benjaminwan/ocr/ncnn/utils/SoftInputUtils.kt",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidNcnn/app/src/main/java/com/benjaminwan/ocr/ncnn/utils/SoftInputUtils.kt",
-        "sizeFormatted": "962 B"
+        "sizeFormatted": "962 B",
+        "project": "chineseocr_lite"
       },
       {
         "name": "ToastUtils.kt",
         "type": "其他",
         "size": 1181,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidNcnn/app/src/main/java/com/benjaminwan/ocr/ncnn/utils/ToastUtils.kt",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidNcnn/app/src/main/java/com/benjaminwan/ocr/ncnn/utils/ToastUtils.kt",
-        "sizeFormatted": "1.2 KB"
+        "sizeFormatted": "1.2 KB",
+        "project": "chineseocr_lite"
       },
       {
         "name": "window_close_down.xml",
         "type": "YAML配置",
         "size": 403,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidNcnn/app/src/main/res/anim/window_close_down.xml",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidNcnn/app/src/main/res/anim/window_close_down.xml",
-        "sizeFormatted": "403 B"
+        "sizeFormatted": "403 B",
+        "project": "chineseocr_lite"
       },
       {
         "name": "window_close_up.xml",
         "type": "YAML配置",
         "size": 404,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidNcnn/app/src/main/res/anim/window_close_up.xml",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidNcnn/app/src/main/res/anim/window_close_up.xml",
-        "sizeFormatted": "404 B"
+        "sizeFormatted": "404 B",
+        "project": "chineseocr_lite"
       },
       {
         "name": "window_enter_anim.xml",
         "type": "YAML配置",
         "size": 478,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidNcnn/app/src/main/res/anim/window_enter_anim.xml",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidNcnn/app/src/main/res/anim/window_enter_anim.xml",
-        "sizeFormatted": "478 B"
+        "sizeFormatted": "478 B",
+        "project": "chineseocr_lite"
       },
       {
         "name": "window_exit_anim.xml",
         "type": "YAML配置",
         "size": 478,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidNcnn/app/src/main/res/anim/window_exit_anim.xml",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidNcnn/app/src/main/res/anim/window_exit_anim.xml",
-        "sizeFormatted": "478 B"
+        "sizeFormatted": "478 B",
+        "project": "chineseocr_lite"
       },
       {
         "name": "window_fade_in.xml",
         "type": "YAML配置",
         "size": 298,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidNcnn/app/src/main/res/anim/window_fade_in.xml",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidNcnn/app/src/main/res/anim/window_fade_in.xml",
-        "sizeFormatted": "298 B"
+        "sizeFormatted": "298 B",
+        "project": "chineseocr_lite"
       },
       {
         "name": "window_fade_out.xml",
         "type": "YAML配置",
         "size": 298,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidNcnn/app/src/main/res/anim/window_fade_out.xml",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidNcnn/app/src/main/res/anim/window_fade_out.xml",
-        "sizeFormatted": "298 B"
+        "sizeFormatted": "298 B",
+        "project": "chineseocr_lite"
       },
       {
         "name": "window_show_down.xml",
         "type": "YAML配置",
         "size": 404,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidNcnn/app/src/main/res/anim/window_show_down.xml",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidNcnn/app/src/main/res/anim/window_show_down.xml",
-        "sizeFormatted": "404 B"
+        "sizeFormatted": "404 B",
+        "project": "chineseocr_lite"
       },
       {
         "name": "window_show_up.xml",
         "type": "YAML配置",
         "size": 403,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidNcnn/app/src/main/res/anim/window_show_up.xml",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidNcnn/app/src/main/res/anim/window_show_up.xml",
-        "sizeFormatted": "403 B"
+        "sizeFormatted": "403 B",
+        "project": "chineseocr_lite"
       },
       {
         "name": "btn_blue3_to_blue5.xml",
         "type": "YAML配置",
         "size": 737,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidNcnn/app/src/main/res/color/btn_blue3_to_blue5.xml",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidNcnn/app/src/main/res/color/btn_blue3_to_blue5.xml",
-        "sizeFormatted": "737 B"
+        "sizeFormatted": "737 B",
+        "project": "chineseocr_lite"
       },
       {
         "name": "btn_blue5_to_blue7.xml",
         "type": "YAML配置",
         "size": 737,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidNcnn/app/src/main/res/color/btn_blue5_to_blue7.xml",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidNcnn/app/src/main/res/color/btn_blue5_to_blue7.xml",
-        "sizeFormatted": "737 B"
+        "sizeFormatted": "737 B",
+        "project": "chineseocr_lite"
       },
       {
         "name": "btn_grey3_to_grey5.xml",
         "type": "YAML配置",
         "size": 737,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidNcnn/app/src/main/res/color/btn_grey3_to_grey5.xml",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidNcnn/app/src/main/res/color/btn_grey3_to_grey5.xml",
-        "sizeFormatted": "737 B"
+        "sizeFormatted": "737 B",
+        "project": "chineseocr_lite"
       },
       {
         "name": "btn_grey5_to_grey7.xml",
         "type": "YAML配置",
         "size": 737,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidNcnn/app/src/main/res/color/btn_grey5_to_grey7.xml",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidNcnn/app/src/main/res/color/btn_grey5_to_grey7.xml",
-        "sizeFormatted": "737 B"
+        "sizeFormatted": "737 B",
+        "project": "chineseocr_lite"
       },
       {
         "name": "btn_pink5_to_pink7.xml",
         "type": "YAML配置",
         "size": 737,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidNcnn/app/src/main/res/color/btn_pink5_to_pink7.xml",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidNcnn/app/src/main/res/color/btn_pink5_to_pink7.xml",
-        "sizeFormatted": "737 B"
+        "sizeFormatted": "737 B",
+        "project": "chineseocr_lite"
       },
       {
         "name": "btn_white_to_grey.xml",
         "type": "YAML配置",
         "size": 729,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidNcnn/app/src/main/res/color/btn_white_to_grey.xml",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidNcnn/app/src/main/res/color/btn_white_to_grey.xml",
-        "sizeFormatted": "729 B"
+        "sizeFormatted": "729 B",
+        "project": "chineseocr_lite"
       },
       {
         "name": "bg_blue3_to_blue5.xml",
         "type": "YAML配置",
         "size": 550,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidNcnn/app/src/main/res/drawable/bg_blue3_to_blue5.xml",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidNcnn/app/src/main/res/drawable/bg_blue3_to_blue5.xml",
-        "sizeFormatted": "550 B"
+        "sizeFormatted": "550 B",
+        "project": "chineseocr_lite"
       },
       {
         "name": "bg_blue5_to_blue7.xml",
         "type": "YAML配置",
         "size": 546,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidNcnn/app/src/main/res/drawable/bg_blue5_to_blue7.xml",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidNcnn/app/src/main/res/drawable/bg_blue5_to_blue7.xml",
-        "sizeFormatted": "546 B"
+        "sizeFormatted": "546 B",
+        "project": "chineseocr_lite"
       },
       {
         "name": "bg_edittext.xml",
         "type": "YAML配置",
         "size": 309,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidNcnn/app/src/main/res/drawable/bg_edittext.xml",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidNcnn/app/src/main/res/drawable/bg_edittext.xml",
-        "sizeFormatted": "309 B"
+        "sizeFormatted": "309 B",
+        "project": "chineseocr_lite"
       },
       {
         "name": "bg_edittext_focused.xml",
         "type": "YAML配置",
         "size": 263,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidNcnn/app/src/main/res/drawable/bg_edittext_focused.xml",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidNcnn/app/src/main/res/drawable/bg_edittext_focused.xml",
-        "sizeFormatted": "263 B"
+        "sizeFormatted": "263 B",
+        "project": "chineseocr_lite"
       },
       {
         "name": "bg_edittext_normal.xml",
         "type": "YAML配置",
         "size": 263,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidNcnn/app/src/main/res/drawable/bg_edittext_normal.xml",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidNcnn/app/src/main/res/drawable/bg_edittext_normal.xml",
-        "sizeFormatted": "263 B"
+        "sizeFormatted": "263 B",
+        "project": "chineseocr_lite"
       },
       {
         "name": "bg_transparent_to_transparent_half.xml",
         "type": "YAML配置",
         "size": 367,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidNcnn/app/src/main/res/drawable/bg_transparent_to_transparent_half.xml",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidNcnn/app/src/main/res/drawable/bg_transparent_to_transparent_half.xml",
-        "sizeFormatted": "367 B"
+        "sizeFormatted": "367 B",
+        "project": "chineseocr_lite"
       },
       {
         "name": "ic_close.xml",
         "type": "YAML配置",
         "size": 869,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidNcnn/app/src/main/res/drawable/ic_close.xml",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidNcnn/app/src/main/res/drawable/ic_close.xml",
-        "sizeFormatted": "869 B"
+        "sizeFormatted": "869 B",
+        "project": "chineseocr_lite"
       },
       {
         "name": "ic_launcher_background.xml",
         "type": "YAML配置",
         "size": 5606,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidNcnn/app/src/main/res/drawable/ic_launcher_background.xml",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidNcnn/app/src/main/res/drawable/ic_launcher_background.xml",
-        "sizeFormatted": "5.5 KB"
+        "sizeFormatted": "5.5 KB",
+        "project": "chineseocr_lite"
       },
       {
         "name": "ic_loading.xml",
         "type": "YAML配置",
         "size": 877,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidNcnn/app/src/main/res/drawable/ic_loading.xml",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidNcnn/app/src/main/res/drawable/ic_loading.xml",
-        "sizeFormatted": "877 B"
+        "sizeFormatted": "877 B",
+        "project": "chineseocr_lite"
       },
       {
         "name": "ic_ocr.xml",
         "type": "YAML配置",
         "size": 2188,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidNcnn/app/src/main/res/drawable/ic_ocr.xml",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidNcnn/app/src/main/res/drawable/ic_ocr.xml",
-        "sizeFormatted": "2.1 KB"
+        "sizeFormatted": "2.1 KB",
+        "project": "chineseocr_lite"
       },
       {
         "name": "loading_anim.xml",
         "type": "YAML配置",
         "size": 408,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidNcnn/app/src/main/res/drawable/loading_anim.xml",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidNcnn/app/src/main/res/drawable/loading_anim.xml",
-        "sizeFormatted": "408 B"
+        "sizeFormatted": "408 B",
+        "project": "chineseocr_lite"
       },
       {
         "name": "ic_launcher_foreground.xml",
         "type": "YAML配置",
         "size": 1702,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidNcnn/app/src/main/res/drawable-v24/ic_launcher_foreground.xml",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidNcnn/app/src/main/res/drawable-v24/ic_launcher_foreground.xml",
-        "sizeFormatted": "1.7 KB"
+        "sizeFormatted": "1.7 KB",
+        "project": "chineseocr_lite"
       },
       {
         "name": "activity_camera.xml",
         "type": "YAML配置",
         "size": 6350,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidNcnn/app/src/main/res/layout/activity_camera.xml",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidNcnn/app/src/main/res/layout/activity_camera.xml",
-        "sizeFormatted": "6.2 KB"
+        "sizeFormatted": "6.2 KB",
+        "project": "chineseocr_lite"
       },
       {
         "name": "activity_gallery.xml",
         "type": "YAML配置",
         "size": 7030,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidNcnn/app/src/main/res/layout/activity_gallery.xml",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidNcnn/app/src/main/res/layout/activity_gallery.xml",
-        "sizeFormatted": "6.9 KB"
+        "sizeFormatted": "6.9 KB",
+        "project": "chineseocr_lite"
       },
       {
         "name": "activity_idcard_front.xml",
         "type": "YAML配置",
         "size": 14053,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidNcnn/app/src/main/res/layout/activity_idcard_front.xml",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidNcnn/app/src/main/res/layout/activity_idcard_front.xml",
-        "sizeFormatted": "13.7 KB"
+        "sizeFormatted": "13.7 KB",
+        "project": "chineseocr_lite"
       },
       {
         "name": "activity_imei.xml",
         "type": "YAML配置",
         "size": 4494,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidNcnn/app/src/main/res/layout/activity_imei.xml",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidNcnn/app/src/main/res/layout/activity_imei.xml",
-        "sizeFormatted": "4.4 KB"
+        "sizeFormatted": "4.4 KB",
+        "project": "chineseocr_lite"
       },
       {
         "name": "activity_main.xml",
         "type": "YAML配置",
         "size": 1288,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidNcnn/app/src/main/res/layout/activity_main.xml",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidNcnn/app/src/main/res/layout/activity_main.xml",
-        "sizeFormatted": "1.3 KB"
+        "sizeFormatted": "1.3 KB",
+        "project": "chineseocr_lite"
       },
       {
         "name": "activity_plate.xml",
         "type": "YAML配置",
         "size": 4489,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidNcnn/app/src/main/res/layout/activity_plate.xml",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidNcnn/app/src/main/res/layout/activity_plate.xml",
-        "sizeFormatted": "4.4 KB"
+        "sizeFormatted": "4.4 KB",
+        "project": "chineseocr_lite"
       },
       {
         "name": "dialog_debug.xml",
         "type": "YAML配置",
         "size": 1926,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidNcnn/app/src/main/res/layout/dialog_debug.xml",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidNcnn/app/src/main/res/layout/dialog_debug.xml",
-        "sizeFormatted": "1.9 KB"
+        "sizeFormatted": "1.9 KB",
+        "project": "chineseocr_lite"
       },
       {
         "name": "dialog_text_result.xml",
         "type": "YAML配置",
         "size": 2091,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidNcnn/app/src/main/res/layout/dialog_text_result.xml",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidNcnn/app/src/main/res/layout/dialog_text_result.xml",
-        "sizeFormatted": "2.0 KB"
+        "sizeFormatted": "2.0 KB",
+        "project": "chineseocr_lite"
       },
       {
         "name": "rv_dbnet_time_item.xml",
         "type": "YAML配置",
         "size": 726,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidNcnn/app/src/main/res/layout/rv_dbnet_time_item.xml",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidNcnn/app/src/main/res/layout/rv_dbnet_time_item.xml",
-        "sizeFormatted": "726 B"
+        "sizeFormatted": "726 B",
+        "project": "chineseocr_lite"
       },
       {
         "name": "rv_debug_item_content.xml",
         "type": "YAML配置",
         "size": 5914,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidNcnn/app/src/main/res/layout/rv_debug_item_content.xml",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidNcnn/app/src/main/res/layout/rv_debug_item_content.xml",
-        "sizeFormatted": "5.8 KB"
+        "sizeFormatted": "5.8 KB",
+        "project": "chineseocr_lite"
       },
       {
         "name": "rv_debug_view_item.xml",
         "type": "YAML配置",
         "size": 1328,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidNcnn/app/src/main/res/layout/rv_debug_view_item.xml",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidNcnn/app/src/main/res/layout/rv_debug_view_item.xml",
-        "sizeFormatted": "1.3 KB"
+        "sizeFormatted": "1.3 KB",
+        "project": "chineseocr_lite"
       },
       {
         "name": "ic_launcher.xml",
         "type": "YAML配置",
         "size": 272,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidNcnn/app/src/main/res/mipmap-anydpi-v26/ic_launcher.xml",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidNcnn/app/src/main/res/mipmap-anydpi-v26/ic_launcher.xml",
-        "sizeFormatted": "272 B"
+        "sizeFormatted": "272 B",
+        "project": "chineseocr_lite"
       },
       {
         "name": "ic_launcher_round.xml",
         "type": "YAML配置",
         "size": 272,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidNcnn/app/src/main/res/mipmap-anydpi-v26/ic_launcher_round.xml",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidNcnn/app/src/main/res/mipmap-anydpi-v26/ic_launcher_round.xml",
-        "sizeFormatted": "272 B"
+        "sizeFormatted": "272 B",
+        "project": "chineseocr_lite"
       },
       {
         "name": "colors.xml",
         "type": "YAML配置",
         "size": 310,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidNcnn/app/src/main/res/values/colors.xml",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidNcnn/app/src/main/res/values/colors.xml",
-        "sizeFormatted": "310 B"
+        "sizeFormatted": "310 B",
+        "project": "chineseocr_lite"
       },
       {
         "name": "colors_material.xml",
         "type": "YAML配置",
         "size": 14788,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidNcnn/app/src/main/res/values/colors_material.xml",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidNcnn/app/src/main/res/values/colors_material.xml",
-        "sizeFormatted": "14.4 KB"
+        "sizeFormatted": "14.4 KB",
+        "project": "chineseocr_lite"
       },
       {
         "name": "strings.xml",
         "type": "YAML配置",
         "size": 384,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidNcnn/app/src/main/res/values/strings.xml",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidNcnn/app/src/main/res/values/strings.xml",
-        "sizeFormatted": "384 B"
+        "sizeFormatted": "384 B",
+        "project": "chineseocr_lite"
       },
       {
         "name": "styles.xml",
         "type": "YAML配置",
         "size": 3233,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidNcnn/app/src/main/res/values/styles.xml",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidNcnn/app/src/main/res/values/styles.xml",
-        "sizeFormatted": "3.2 KB"
+        "sizeFormatted": "3.2 KB",
+        "project": "chineseocr_lite"
       },
       {
         "name": "ExampleUnitTest.kt",
         "type": "其他",
         "size": 343,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidNcnn/app/src/test/java/com/benjaminwan/ocr/ExampleUnitTest.kt",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidNcnn/app/src/test/java/com/benjaminwan/ocr/ExampleUnitTest.kt",
-        "sizeFormatted": "343 B"
+        "sizeFormatted": "343 B",
+        "project": "chineseocr_lite"
       },
       {
         "name": "IdCardView-1.0.aar",
         "type": "其他",
         "size": 19997,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidNcnn/common-aar/IdCardView-1.0.aar",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidNcnn/common-aar/IdCardView-1.0.aar",
-        "sizeFormatted": "19.5 KB"
+        "sizeFormatted": "19.5 KB",
+        "project": "chineseocr_lite"
       },
       {
         "name": "gradle-wrapper.jar",
         "type": "其他",
         "size": 54329,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidNcnn/gradle/wrapper/gradle-wrapper.jar",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidNcnn/gradle/wrapper/gradle-wrapper.jar",
-        "sizeFormatted": "53.1 KB"
+        "sizeFormatted": "53.1 KB",
+        "project": "chineseocr_lite"
       },
       {
         "name": "gradle-wrapper.properties",
         "type": "其他",
         "size": 232,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidNcnn/gradle/wrapper/gradle-wrapper.properties",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidNcnn/gradle/wrapper/gradle-wrapper.properties",
-        "sizeFormatted": "232 B"
+        "sizeFormatted": "232 B",
+        "project": "chineseocr_lite"
       },
       {
         "name": "ocrlite.keystore",
         "type": "其他",
         "size": 2577,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidNcnn/keystore/ocrlite.keystore",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidNcnn/keystore/ocrlite.keystore",
-        "sizeFormatted": "2.5 KB"
+        "sizeFormatted": "2.5 KB",
+        "project": "chineseocr_lite"
       },
       {
         "name": ".gitignore",
         "type": "其他",
         "size": 106,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidNcnn/OcrLibrary/.gitignore",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidNcnn/OcrLibrary/.gitignore",
-        "sizeFormatted": "106 B"
+        "sizeFormatted": "106 B",
+        "project": "chineseocr_lite"
       },
       {
         "name": "build.gradle",
         "type": "其他",
         "size": 2278,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidNcnn/OcrLibrary/build.gradle",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidNcnn/OcrLibrary/build.gradle",
-        "sizeFormatted": "2.2 KB"
+        "sizeFormatted": "2.2 KB",
+        "project": "chineseocr_lite"
       },
       {
         "name": "consumer-rules.pro",
         "type": "其他",
         "size": 0,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidNcnn/OcrLibrary/consumer-rules.pro",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidNcnn/OcrLibrary/consumer-rules.pro",
-        "sizeFormatted": "0 B"
+        "sizeFormatted": "0 B",
+        "project": "chineseocr_lite"
       },
       {
         "name": "proguard-rules.pro",
         "type": "其他",
         "size": 750,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidNcnn/OcrLibrary/proguard-rules.pro",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidNcnn/OcrLibrary/proguard-rules.pro",
-        "sizeFormatted": "750 B"
+        "sizeFormatted": "750 B",
+        "project": "chineseocr_lite"
       },
       {
         "name": "ExampleInstrumentedTest.kt",
         "type": "其他",
         "size": 684,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidNcnn/OcrLibrary/src/androidTest/java/com/benjaminwan/ocrlibrary/ExampleInstrumentedTest.kt",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidNcnn/OcrLibrary/src/androidTest/java/com/benjaminwan/ocrlibrary/ExampleInstrumentedTest.kt",
-        "sizeFormatted": "684 B"
+        "sizeFormatted": "684 B",
+        "project": "chineseocr_lite"
       },
       {
         "name": "AndroidManifest.xml",
         "type": "YAML配置",
         "size": 129,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidNcnn/OcrLibrary/src/main/AndroidManifest.xml",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidNcnn/OcrLibrary/src/main/AndroidManifest.xml",
-        "sizeFormatted": "129 B"
+        "sizeFormatted": "129 B",
+        "project": "chineseocr_lite"
       },
       {
         "name": "keys.txt",
         "type": "文档",
         "size": 21924,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidNcnn/OcrLibrary/src/main/assets/keys.txt",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidNcnn/OcrLibrary/src/main/assets/keys.txt",
-        "sizeFormatted": "21.4 KB"
+        "sizeFormatted": "21.4 KB",
+        "project": "chineseocr_lite"
       },
       {
         "name": "CMakeLists.txt",
         "type": "文档",
         "size": 1001,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidNcnn/OcrLibrary/src/main/cpp/CMakeLists.txt",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidNcnn/OcrLibrary/src/main/cpp/CMakeLists.txt",
-        "sizeFormatted": "1001 B"
+        "sizeFormatted": "1001 B",
+        "project": "chineseocr_lite"
       },
       {
         "name": "AngleNet.h",
         "type": "头文件",
         "size": 651,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidNcnn/OcrLibrary/src/main/cpp/include/AngleNet.h",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidNcnn/OcrLibrary/src/main/cpp/include/AngleNet.h",
-        "sizeFormatted": "651 B"
+        "sizeFormatted": "651 B",
+        "project": "chineseocr_lite"
       },
       {
         "name": "BitmapUtils.h",
         "type": "头文件",
         "size": 312,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidNcnn/OcrLibrary/src/main/cpp/include/BitmapUtils.h",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidNcnn/OcrLibrary/src/main/cpp/include/BitmapUtils.h",
-        "sizeFormatted": "312 B"
+        "sizeFormatted": "312 B",
+        "project": "chineseocr_lite"
       },
       {
         "name": "clipper.hpp",
         "type": "头文件",
         "size": 16486,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidNcnn/OcrLibrary/src/main/cpp/include/clipper.hpp",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidNcnn/OcrLibrary/src/main/cpp/include/clipper.hpp",
-        "sizeFormatted": "16.1 KB"
+        "sizeFormatted": "16.1 KB",
+        "project": "chineseocr_lite"
       },
       {
         "name": "CrnnNet.h",
         "type": "头文件",
         "size": 740,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidNcnn/OcrLibrary/src/main/cpp/include/CrnnNet.h",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidNcnn/OcrLibrary/src/main/cpp/include/CrnnNet.h",
-        "sizeFormatted": "740 B"
+        "sizeFormatted": "740 B",
+        "project": "chineseocr_lite"
       },
       {
         "name": "DbNet.h",
         "type": "头文件",
         "size": 731,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidNcnn/OcrLibrary/src/main/cpp/include/DbNet.h",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidNcnn/OcrLibrary/src/main/cpp/include/DbNet.h",
-        "sizeFormatted": "731 B"
+        "sizeFormatted": "731 B",
+        "project": "chineseocr_lite"
       },
       {
         "name": "OcrLite.h",
         "type": "头文件",
         "size": 664,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidNcnn/OcrLibrary/src/main/cpp/include/OcrLite.h",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidNcnn/OcrLibrary/src/main/cpp/include/OcrLite.h",
-        "sizeFormatted": "664 B"
+        "sizeFormatted": "664 B",
+        "project": "chineseocr_lite"
       },
       {
         "name": "OcrResultUtils.h",
         "type": "头文件",
         "size": 704,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidNcnn/OcrLibrary/src/main/cpp/include/OcrResultUtils.h",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidNcnn/OcrLibrary/src/main/cpp/include/OcrResultUtils.h",
-        "sizeFormatted": "704 B"
+        "sizeFormatted": "704 B",
+        "project": "chineseocr_lite"
       },
       {
         "name": "OcrStruct.h",
         "type": "头文件",
         "size": 901,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidNcnn/OcrLibrary/src/main/cpp/include/OcrStruct.h",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidNcnn/OcrLibrary/src/main/cpp/include/OcrStruct.h",
-        "sizeFormatted": "901 B"
+        "sizeFormatted": "901 B",
+        "project": "chineseocr_lite"
       },
       {
         "name": "OcrUtils.h",
         "type": "头文件",
         "size": 1751,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidNcnn/OcrLibrary/src/main/cpp/include/OcrUtils.h",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidNcnn/OcrLibrary/src/main/cpp/include/OcrUtils.h",
-        "sizeFormatted": "1.7 KB"
+        "sizeFormatted": "1.7 KB",
+        "project": "chineseocr_lite"
       },
       {
         "name": "AngleNet.cpp",
         "type": "C++代码",
         "size": 2667,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidNcnn/OcrLibrary/src/main/cpp/src/AngleNet.cpp",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidNcnn/OcrLibrary/src/main/cpp/src/AngleNet.cpp",
-        "sizeFormatted": "2.6 KB"
+        "sizeFormatted": "2.6 KB",
+        "project": "chineseocr_lite"
       },
       {
         "name": "BitmapUtils.cpp",
         "type": "C++代码",
         "size": 4538,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidNcnn/OcrLibrary/src/main/cpp/src/BitmapUtils.cpp",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidNcnn/OcrLibrary/src/main/cpp/src/BitmapUtils.cpp",
-        "sizeFormatted": "4.4 KB"
+        "sizeFormatted": "4.4 KB",
+        "project": "chineseocr_lite"
       },
       {
         "name": "clipper.cpp",
         "type": "C++代码",
         "size": 167317,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidNcnn/OcrLibrary/src/main/cpp/src/clipper.cpp",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidNcnn/OcrLibrary/src/main/cpp/src/clipper.cpp",
-        "sizeFormatted": "163.4 KB"
+        "sizeFormatted": "163.4 KB",
+        "project": "chineseocr_lite"
       },
       {
         "name": "CrnnNet.cpp",
         "type": "C++代码",
         "size": 4158,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidNcnn/OcrLibrary/src/main/cpp/src/CrnnNet.cpp",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidNcnn/OcrLibrary/src/main/cpp/src/CrnnNet.cpp",
-        "sizeFormatted": "4.1 KB"
+        "sizeFormatted": "4.1 KB",
+        "project": "chineseocr_lite"
       },
       {
         "name": "DbNet.cpp",
         "type": "C++代码",
         "size": 3099,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidNcnn/OcrLibrary/src/main/cpp/src/DbNet.cpp",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidNcnn/OcrLibrary/src/main/cpp/src/DbNet.cpp",
-        "sizeFormatted": "3.0 KB"
+        "sizeFormatted": "3.0 KB",
+        "project": "chineseocr_lite"
       },
       {
         "name": "main.cpp",
         "type": "C++代码",
         "size": 4615,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidNcnn/OcrLibrary/src/main/cpp/src/main.cpp",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidNcnn/OcrLibrary/src/main/cpp/src/main.cpp",
-        "sizeFormatted": "4.5 KB"
+        "sizeFormatted": "4.5 KB",
+        "project": "chineseocr_lite"
       },
       {
         "name": "OcrLite.cpp",
         "type": "C++代码",
         "size": 6051,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidNcnn/OcrLibrary/src/main/cpp/src/OcrLite.cpp",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidNcnn/OcrLibrary/src/main/cpp/src/OcrLite.cpp",
-        "sizeFormatted": "5.9 KB"
+        "sizeFormatted": "5.9 KB",
+        "project": "chineseocr_lite"
       },
       {
         "name": "OcrResultUtils.cpp",
         "type": "C++代码",
         "size": 4272,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidNcnn/OcrLibrary/src/main/cpp/src/OcrResultUtils.cpp",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidNcnn/OcrLibrary/src/main/cpp/src/OcrResultUtils.cpp",
-        "sizeFormatted": "4.2 KB"
+        "sizeFormatted": "4.2 KB",
+        "project": "chineseocr_lite"
       },
       {
         "name": "OcrUtils.cpp",
         "type": "C++代码",
         "size": 10072,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidNcnn/OcrLibrary/src/main/cpp/src/OcrUtils.cpp",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidNcnn/OcrLibrary/src/main/cpp/src/OcrUtils.cpp",
-        "sizeFormatted": "9.8 KB"
+        "sizeFormatted": "9.8 KB",
+        "project": "chineseocr_lite"
       },
       {
         "name": "OcrEngine.kt",
         "type": "其他",
         "size": 1183,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidNcnn/OcrLibrary/src/main/java/com/benjaminwan/ocrlibrary/OcrEngine.kt",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidNcnn/OcrLibrary/src/main/java/com/benjaminwan/ocrlibrary/OcrEngine.kt",
-        "sizeFormatted": "1.2 KB"
+        "sizeFormatted": "1.2 KB",
+        "project": "chineseocr_lite"
       },
       {
         "name": "OcrResult.kt",
         "type": "其他",
         "size": 1981,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidNcnn/OcrLibrary/src/main/java/com/benjaminwan/ocrlibrary/OcrResult.kt",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidNcnn/OcrLibrary/src/main/java/com/benjaminwan/ocrlibrary/OcrResult.kt",
-        "sizeFormatted": "1.9 KB"
+        "sizeFormatted": "1.9 KB",
+        "project": "chineseocr_lite"
       },
       {
         "name": "ExampleUnitTest.kt",
         "type": "其他",
         "size": 350,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidNcnn/OcrLibrary/src/test/java/com/benjaminwan/ocrlibrary/ExampleUnitTest.kt",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidNcnn/OcrLibrary/src/test/java/com/benjaminwan/ocrlibrary/ExampleUnitTest.kt",
-        "sizeFormatted": "350 B"
+        "sizeFormatted": "350 B",
+        "project": "chineseocr_lite"
       },
       {
         "name": "build-opencv3-android.sh",
         "type": "Shell脚本",
         "size": 1399,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidNcnn/scripts/build-opencv3-android.sh",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidNcnn/scripts/build-opencv3-android.sh",
-        "sizeFormatted": "1.4 KB"
+        "sizeFormatted": "1.4 KB",
+        "project": "chineseocr_lite"
       },
       {
         "name": "build-opencv3-static-android.sh",
         "type": "Shell脚本",
         "size": 2700,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidNcnn/scripts/build-opencv3-static-android.sh",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidNcnn/scripts/build-opencv3-static-android.sh",
-        "sizeFormatted": "2.6 KB"
+        "sizeFormatted": "2.6 KB",
+        "project": "chineseocr_lite"
       },
       {
         "name": "patch-opencv3-source.sh",
         "type": "Shell脚本",
         "size": 310,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidNcnn/scripts/patch-opencv3-source.sh",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidNcnn/scripts/patch-opencv3-source.sh",
-        "sizeFormatted": "310 B"
+        "sizeFormatted": "310 B",
+        "project": "chineseocr_lite"
       },
       {
         "name": ".gitignore",
         "type": "其他",
         "size": 1295,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidOnnx/.gitignore",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidOnnx/.gitignore",
-        "sizeFormatted": "1.3 KB"
+        "sizeFormatted": "1.3 KB",
+        "project": "chineseocr_lite"
       },
       {
         "name": "build.gradle",
         "type": "其他",
         "size": 941,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidOnnx/build.gradle",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidOnnx/build.gradle",
-        "sizeFormatted": "941 B"
+        "sizeFormatted": "941 B",
+        "project": "chineseocr_lite"
       },
       {
         "name": "gradle.properties",
         "type": "其他",
         "size": 1194,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidOnnx/gradle.properties",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidOnnx/gradle.properties",
-        "sizeFormatted": "1.2 KB"
+        "sizeFormatted": "1.2 KB",
+        "project": "chineseocr_lite"
       },
       {
         "name": "gradlew",
         "type": "其他",
         "size": 5296,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidOnnx/gradlew",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidOnnx/gradlew",
-        "sizeFormatted": "5.2 KB"
+        "sizeFormatted": "5.2 KB",
+        "project": "chineseocr_lite"
       },
       {
         "name": "gradlew.bat",
         "type": "Shell脚本",
         "size": 2176,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidOnnx/gradlew.bat",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidOnnx/gradlew.bat",
-        "sizeFormatted": "2.1 KB"
+        "sizeFormatted": "2.1 KB",
+        "project": "chineseocr_lite"
       },
       {
         "name": "README.md",
         "type": "文档",
         "size": 5558,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidOnnx/README.md",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidOnnx/README.md",
-        "sizeFormatted": "5.4 KB"
+        "sizeFormatted": "5.4 KB",
+        "project": "chineseocr_lite"
       },
       {
         "name": "settings.gradle",
         "type": "其他",
         "size": 77,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidOnnx/settings.gradle",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidOnnx/settings.gradle",
-        "sizeFormatted": "77 B"
+        "sizeFormatted": "77 B",
+        "project": "chineseocr_lite"
       },
       {
         "name": ".gitignore",
         "type": "其他",
         "size": 6,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidOnnx/app/.gitignore",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidOnnx/app/.gitignore",
-        "sizeFormatted": "6 B"
+        "sizeFormatted": "6 B",
+        "project": "chineseocr_lite"
       },
       {
         "name": "build.gradle",
         "type": "其他",
         "size": 3525,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidOnnx/app/build.gradle",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidOnnx/app/build.gradle",
-        "sizeFormatted": "3.4 KB"
+        "sizeFormatted": "3.4 KB",
+        "project": "chineseocr_lite"
       },
       {
         "name": "proguard-rules.pro",
         "type": "其他",
         "size": 750,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidOnnx/app/proguard-rules.pro",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidOnnx/app/proguard-rules.pro",
-        "sizeFormatted": "750 B"
+        "sizeFormatted": "750 B",
+        "project": "chineseocr_lite"
       },
       {
         "name": "ExampleInstrumentedTest.kt",
         "type": "其他",
         "size": 675,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidOnnx/app/src/androidTest/java/com/benjaminwan/ocr/onnx/ExampleInstrumentedTest.kt",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidOnnx/app/src/androidTest/java/com/benjaminwan/ocr/onnx/ExampleInstrumentedTest.kt",
-        "sizeFormatted": "675 B"
+        "sizeFormatted": "675 B",
+        "project": "chineseocr_lite"
       },
       {
         "name": "AndroidManifest.xml",
         "type": "YAML配置",
         "size": 1533,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidOnnx/app/src/main/AndroidManifest.xml",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidOnnx/app/src/main/AndroidManifest.xml",
-        "sizeFormatted": "1.5 KB"
+        "sizeFormatted": "1.5 KB",
+        "project": "chineseocr_lite"
       },
       {
         "name": "CameraActivity.kt",
         "type": "其他",
         "size": 11276,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidOnnx/app/src/main/java/com/benjaminwan/ocr/onnx/CameraActivity.kt",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidOnnx/app/src/main/java/com/benjaminwan/ocr/onnx/CameraActivity.kt",
-        "sizeFormatted": "11.0 KB"
+        "sizeFormatted": "11.0 KB",
+        "project": "chineseocr_lite"
       },
       {
         "name": "GalleryActivity.kt",
         "type": "其他",
         "size": 10863,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidOnnx/app/src/main/java/com/benjaminwan/ocr/onnx/GalleryActivity.kt",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidOnnx/app/src/main/java/com/benjaminwan/ocr/onnx/GalleryActivity.kt",
-        "sizeFormatted": "10.6 KB"
+        "sizeFormatted": "10.6 KB",
+        "project": "chineseocr_lite"
       },
       {
         "name": "IdCardFrontActivity.kt",
         "type": "其他",
         "size": 14851,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidOnnx/app/src/main/java/com/benjaminwan/ocr/onnx/IdCardFrontActivity.kt",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidOnnx/app/src/main/java/com/benjaminwan/ocr/onnx/IdCardFrontActivity.kt",
-        "sizeFormatted": "14.5 KB"
+        "sizeFormatted": "14.5 KB",
+        "project": "chineseocr_lite"
       },
       {
         "name": "ImeiActivity.kt",
         "type": "其他",
         "size": 8347,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidOnnx/app/src/main/java/com/benjaminwan/ocr/onnx/ImeiActivity.kt",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidOnnx/app/src/main/java/com/benjaminwan/ocr/onnx/ImeiActivity.kt",
-        "sizeFormatted": "8.2 KB"
+        "sizeFormatted": "8.2 KB",
+        "project": "chineseocr_lite"
       },
       {
         "name": "MainActivity.kt",
         "type": "其他",
         "size": 1869,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidOnnx/app/src/main/java/com/benjaminwan/ocr/onnx/MainActivity.kt",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidOnnx/app/src/main/java/com/benjaminwan/ocr/onnx/MainActivity.kt",
-        "sizeFormatted": "1.8 KB"
+        "sizeFormatted": "1.8 KB",
+        "project": "chineseocr_lite"
       },
       {
         "name": "PlateActivity.kt",
         "type": "其他",
         "size": 8516,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidOnnx/app/src/main/java/com/benjaminwan/ocr/onnx/PlateActivity.kt",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidOnnx/app/src/main/java/com/benjaminwan/ocr/onnx/PlateActivity.kt",
-        "sizeFormatted": "8.3 KB"
+        "sizeFormatted": "8.3 KB",
+        "project": "chineseocr_lite"
       },
       {
         "name": "App.kt",
         "type": "其他",
         "size": 1617,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidOnnx/app/src/main/java/com/benjaminwan/ocr/onnx/app/App.kt",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidOnnx/app/src/main/java/com/benjaminwan/ocr/onnx/app/App.kt",
-        "sizeFormatted": "1.6 KB"
+        "sizeFormatted": "1.6 KB",
+        "project": "chineseocr_lite"
       },
       {
         "name": "BaseDialog.kt",
         "type": "其他",
         "size": 3069,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidOnnx/app/src/main/java/com/benjaminwan/ocr/onnx/dialog/BaseDialog.kt",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidOnnx/app/src/main/java/com/benjaminwan/ocr/onnx/dialog/BaseDialog.kt",
-        "sizeFormatted": "3.0 KB"
+        "sizeFormatted": "3.0 KB",
+        "project": "chineseocr_lite"
       },
       {
         "name": "DebugDialog.kt",
         "type": "其他",
         "size": 4212,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidOnnx/app/src/main/java/com/benjaminwan/ocr/onnx/dialog/DebugDialog.kt",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidOnnx/app/src/main/java/com/benjaminwan/ocr/onnx/dialog/DebugDialog.kt",
-        "sizeFormatted": "4.1 KB"
+        "sizeFormatted": "4.1 KB",
+        "project": "chineseocr_lite"
       },
       {
         "name": "TextResultDialog.kt",
         "type": "其他",
         "size": 2637,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidOnnx/app/src/main/java/com/benjaminwan/ocr/onnx/dialog/TextResultDialog.kt",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidOnnx/app/src/main/java/com/benjaminwan/ocr/onnx/dialog/TextResultDialog.kt",
-        "sizeFormatted": "2.6 KB"
+        "sizeFormatted": "2.6 KB",
+        "project": "chineseocr_lite"
       },
       {
         "name": "DbNetTimeItemView.kt",
         "type": "其他",
         "size": 1094,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidOnnx/app/src/main/java/com/benjaminwan/ocr/onnx/models/DbNetTimeItemView.kt",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidOnnx/app/src/main/java/com/benjaminwan/ocr/onnx/models/DbNetTimeItemView.kt",
-        "sizeFormatted": "1.1 KB"
+        "sizeFormatted": "1.1 KB",
+        "project": "chineseocr_lite"
       },
       {
         "name": "DebugItemView.kt",
         "type": "其他",
         "size": 2788,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidOnnx/app/src/main/java/com/benjaminwan/ocr/onnx/models/DebugItemView.kt",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidOnnx/app/src/main/java/com/benjaminwan/ocr/onnx/models/DebugItemView.kt",
-        "sizeFormatted": "2.7 KB"
+        "sizeFormatted": "2.7 KB",
+        "project": "chineseocr_lite"
       },
       {
         "name": "IdCardFront.kt",
         "type": "其他",
         "size": 896,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidOnnx/app/src/main/java/com/benjaminwan/ocr/onnx/models/IdCardFront.kt",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidOnnx/app/src/main/java/com/benjaminwan/ocr/onnx/models/IdCardFront.kt",
-        "sizeFormatted": "896 B"
+        "sizeFormatted": "896 B",
+        "project": "chineseocr_lite"
       },
       {
         "name": "BitmapUtils.kt",
         "type": "其他",
         "size": 571,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidOnnx/app/src/main/java/com/benjaminwan/ocr/onnx/utils/BitmapUtils.kt",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidOnnx/app/src/main/java/com/benjaminwan/ocr/onnx/utils/BitmapUtils.kt",
-        "sizeFormatted": "571 B"
+        "sizeFormatted": "571 B",
+        "project": "chineseocr_lite"
       },
       {
         "name": "ClipboardUtils.kt",
         "type": "其他",
         "size": 1041,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidOnnx/app/src/main/java/com/benjaminwan/ocr/onnx/utils/ClipboardUtils.kt",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidOnnx/app/src/main/java/com/benjaminwan/ocr/onnx/utils/ClipboardUtils.kt",
-        "sizeFormatted": "1.0 KB"
+        "sizeFormatted": "1.0 KB",
+        "project": "chineseocr_lite"
       },
       {
         "name": "DecimalFormatUtils.kt",
         "type": "其他",
         "size": 1122,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidOnnx/app/src/main/java/com/benjaminwan/ocr/onnx/utils/DecimalFormatUtils.kt",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidOnnx/app/src/main/java/com/benjaminwan/ocr/onnx/utils/DecimalFormatUtils.kt",
-        "sizeFormatted": "1.1 KB"
+        "sizeFormatted": "1.1 KB",
+        "project": "chineseocr_lite"
       },
       {
         "name": "IdCardMatchUtils.kt",
         "type": "其他",
         "size": 800,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidOnnx/app/src/main/java/com/benjaminwan/ocr/onnx/utils/IdCardMatchUtils.kt",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidOnnx/app/src/main/java/com/benjaminwan/ocr/onnx/utils/IdCardMatchUtils.kt",
-        "sizeFormatted": "800 B"
+        "sizeFormatted": "800 B",
+        "project": "chineseocr_lite"
       },
       {
         "name": "ImeiMatchUtils.kt",
         "type": "其他",
         "size": 650,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidOnnx/app/src/main/java/com/benjaminwan/ocr/onnx/utils/ImeiMatchUtils.kt",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidOnnx/app/src/main/java/com/benjaminwan/ocr/onnx/utils/ImeiMatchUtils.kt",
-        "sizeFormatted": "650 B"
+        "sizeFormatted": "650 B",
+        "project": "chineseocr_lite"
       },
       {
         "name": "PlateMatchUtils.kt",
         "type": "其他",
         "size": 980,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidOnnx/app/src/main/java/com/benjaminwan/ocr/onnx/utils/PlateMatchUtils.kt",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidOnnx/app/src/main/java/com/benjaminwan/ocr/onnx/utils/PlateMatchUtils.kt",
-        "sizeFormatted": "980 B"
+        "sizeFormatted": "980 B",
+        "project": "chineseocr_lite"
       },
       {
         "name": "RecyclerViewUtils.kt",
         "type": "其他",
         "size": 3325,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidOnnx/app/src/main/java/com/benjaminwan/ocr/onnx/utils/RecyclerViewUtils.kt",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidOnnx/app/src/main/java/com/benjaminwan/ocr/onnx/utils/RecyclerViewUtils.kt",
-        "sizeFormatted": "3.2 KB"
+        "sizeFormatted": "3.2 KB",
+        "project": "chineseocr_lite"
       },
       {
         "name": "SoftInputUtils.kt",
         "type": "其他",
         "size": 962,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidOnnx/app/src/main/java/com/benjaminwan/ocr/onnx/utils/SoftInputUtils.kt",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidOnnx/app/src/main/java/com/benjaminwan/ocr/onnx/utils/SoftInputUtils.kt",
-        "sizeFormatted": "962 B"
+        "sizeFormatted": "962 B",
+        "project": "chineseocr_lite"
       },
       {
         "name": "ToastUtils.kt",
         "type": "其他",
         "size": 1181,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidOnnx/app/src/main/java/com/benjaminwan/ocr/onnx/utils/ToastUtils.kt",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidOnnx/app/src/main/java/com/benjaminwan/ocr/onnx/utils/ToastUtils.kt",
-        "sizeFormatted": "1.2 KB"
+        "sizeFormatted": "1.2 KB",
+        "project": "chineseocr_lite"
       },
       {
         "name": "window_close_down.xml",
         "type": "YAML配置",
         "size": 403,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidOnnx/app/src/main/res/anim/window_close_down.xml",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidOnnx/app/src/main/res/anim/window_close_down.xml",
-        "sizeFormatted": "403 B"
+        "sizeFormatted": "403 B",
+        "project": "chineseocr_lite"
       },
       {
         "name": "window_close_up.xml",
         "type": "YAML配置",
         "size": 404,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidOnnx/app/src/main/res/anim/window_close_up.xml",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidOnnx/app/src/main/res/anim/window_close_up.xml",
-        "sizeFormatted": "404 B"
+        "sizeFormatted": "404 B",
+        "project": "chineseocr_lite"
       },
       {
         "name": "window_enter_anim.xml",
         "type": "YAML配置",
         "size": 478,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidOnnx/app/src/main/res/anim/window_enter_anim.xml",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidOnnx/app/src/main/res/anim/window_enter_anim.xml",
-        "sizeFormatted": "478 B"
+        "sizeFormatted": "478 B",
+        "project": "chineseocr_lite"
       },
       {
         "name": "window_exit_anim.xml",
         "type": "YAML配置",
         "size": 478,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidOnnx/app/src/main/res/anim/window_exit_anim.xml",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidOnnx/app/src/main/res/anim/window_exit_anim.xml",
-        "sizeFormatted": "478 B"
+        "sizeFormatted": "478 B",
+        "project": "chineseocr_lite"
       },
       {
         "name": "window_fade_in.xml",
         "type": "YAML配置",
         "size": 298,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidOnnx/app/src/main/res/anim/window_fade_in.xml",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidOnnx/app/src/main/res/anim/window_fade_in.xml",
-        "sizeFormatted": "298 B"
+        "sizeFormatted": "298 B",
+        "project": "chineseocr_lite"
       },
       {
         "name": "window_fade_out.xml",
         "type": "YAML配置",
         "size": 298,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidOnnx/app/src/main/res/anim/window_fade_out.xml",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidOnnx/app/src/main/res/anim/window_fade_out.xml",
-        "sizeFormatted": "298 B"
+        "sizeFormatted": "298 B",
+        "project": "chineseocr_lite"
       },
       {
         "name": "window_show_down.xml",
         "type": "YAML配置",
         "size": 404,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidOnnx/app/src/main/res/anim/window_show_down.xml",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidOnnx/app/src/main/res/anim/window_show_down.xml",
-        "sizeFormatted": "404 B"
+        "sizeFormatted": "404 B",
+        "project": "chineseocr_lite"
       },
       {
         "name": "window_show_up.xml",
         "type": "YAML配置",
         "size": 403,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidOnnx/app/src/main/res/anim/window_show_up.xml",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidOnnx/app/src/main/res/anim/window_show_up.xml",
-        "sizeFormatted": "403 B"
+        "sizeFormatted": "403 B",
+        "project": "chineseocr_lite"
       },
       {
         "name": "btn_blue3_to_blue5.xml",
         "type": "YAML配置",
         "size": 737,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidOnnx/app/src/main/res/color/btn_blue3_to_blue5.xml",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidOnnx/app/src/main/res/color/btn_blue3_to_blue5.xml",
-        "sizeFormatted": "737 B"
+        "sizeFormatted": "737 B",
+        "project": "chineseocr_lite"
       },
       {
         "name": "btn_blue5_to_blue7.xml",
         "type": "YAML配置",
         "size": 737,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidOnnx/app/src/main/res/color/btn_blue5_to_blue7.xml",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidOnnx/app/src/main/res/color/btn_blue5_to_blue7.xml",
-        "sizeFormatted": "737 B"
+        "sizeFormatted": "737 B",
+        "project": "chineseocr_lite"
       },
       {
         "name": "btn_grey3_to_grey5.xml",
         "type": "YAML配置",
         "size": 737,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidOnnx/app/src/main/res/color/btn_grey3_to_grey5.xml",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidOnnx/app/src/main/res/color/btn_grey3_to_grey5.xml",
-        "sizeFormatted": "737 B"
+        "sizeFormatted": "737 B",
+        "project": "chineseocr_lite"
       },
       {
         "name": "btn_grey5_to_grey7.xml",
         "type": "YAML配置",
         "size": 737,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidOnnx/app/src/main/res/color/btn_grey5_to_grey7.xml",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidOnnx/app/src/main/res/color/btn_grey5_to_grey7.xml",
-        "sizeFormatted": "737 B"
+        "sizeFormatted": "737 B",
+        "project": "chineseocr_lite"
       },
       {
         "name": "btn_pink5_to_pink7.xml",
         "type": "YAML配置",
         "size": 737,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidOnnx/app/src/main/res/color/btn_pink5_to_pink7.xml",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidOnnx/app/src/main/res/color/btn_pink5_to_pink7.xml",
-        "sizeFormatted": "737 B"
+        "sizeFormatted": "737 B",
+        "project": "chineseocr_lite"
       },
       {
         "name": "btn_white_to_grey.xml",
         "type": "YAML配置",
         "size": 729,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidOnnx/app/src/main/res/color/btn_white_to_grey.xml",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidOnnx/app/src/main/res/color/btn_white_to_grey.xml",
-        "sizeFormatted": "729 B"
+        "sizeFormatted": "729 B",
+        "project": "chineseocr_lite"
       },
       {
         "name": "bg_blue3_to_blue5.xml",
         "type": "YAML配置",
         "size": 550,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidOnnx/app/src/main/res/drawable/bg_blue3_to_blue5.xml",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidOnnx/app/src/main/res/drawable/bg_blue3_to_blue5.xml",
-        "sizeFormatted": "550 B"
+        "sizeFormatted": "550 B",
+        "project": "chineseocr_lite"
       },
       {
         "name": "bg_blue5_to_blue7.xml",
         "type": "YAML配置",
         "size": 546,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidOnnx/app/src/main/res/drawable/bg_blue5_to_blue7.xml",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidOnnx/app/src/main/res/drawable/bg_blue5_to_blue7.xml",
-        "sizeFormatted": "546 B"
+        "sizeFormatted": "546 B",
+        "project": "chineseocr_lite"
       },
       {
         "name": "bg_edittext.xml",
         "type": "YAML配置",
         "size": 309,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidOnnx/app/src/main/res/drawable/bg_edittext.xml",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidOnnx/app/src/main/res/drawable/bg_edittext.xml",
-        "sizeFormatted": "309 B"
+        "sizeFormatted": "309 B",
+        "project": "chineseocr_lite"
       },
       {
         "name": "bg_edittext_focused.xml",
         "type": "YAML配置",
         "size": 263,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidOnnx/app/src/main/res/drawable/bg_edittext_focused.xml",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidOnnx/app/src/main/res/drawable/bg_edittext_focused.xml",
-        "sizeFormatted": "263 B"
+        "sizeFormatted": "263 B",
+        "project": "chineseocr_lite"
       },
       {
         "name": "bg_edittext_normal.xml",
         "type": "YAML配置",
         "size": 263,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidOnnx/app/src/main/res/drawable/bg_edittext_normal.xml",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidOnnx/app/src/main/res/drawable/bg_edittext_normal.xml",
-        "sizeFormatted": "263 B"
+        "sizeFormatted": "263 B",
+        "project": "chineseocr_lite"
       },
       {
         "name": "bg_transparent_to_transparent_half.xml",
         "type": "YAML配置",
         "size": 367,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidOnnx/app/src/main/res/drawable/bg_transparent_to_transparent_half.xml",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidOnnx/app/src/main/res/drawable/bg_transparent_to_transparent_half.xml",
-        "sizeFormatted": "367 B"
+        "sizeFormatted": "367 B",
+        "project": "chineseocr_lite"
       },
       {
         "name": "ic_close.xml",
         "type": "YAML配置",
         "size": 869,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidOnnx/app/src/main/res/drawable/ic_close.xml",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidOnnx/app/src/main/res/drawable/ic_close.xml",
-        "sizeFormatted": "869 B"
+        "sizeFormatted": "869 B",
+        "project": "chineseocr_lite"
       },
       {
         "name": "ic_launcher_background.xml",
         "type": "YAML配置",
         "size": 5606,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidOnnx/app/src/main/res/drawable/ic_launcher_background.xml",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidOnnx/app/src/main/res/drawable/ic_launcher_background.xml",
-        "sizeFormatted": "5.5 KB"
+        "sizeFormatted": "5.5 KB",
+        "project": "chineseocr_lite"
       },
       {
         "name": "ic_loading.xml",
         "type": "YAML配置",
         "size": 877,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidOnnx/app/src/main/res/drawable/ic_loading.xml",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidOnnx/app/src/main/res/drawable/ic_loading.xml",
-        "sizeFormatted": "877 B"
+        "sizeFormatted": "877 B",
+        "project": "chineseocr_lite"
       },
       {
         "name": "ic_ocr.xml",
         "type": "YAML配置",
         "size": 2188,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidOnnx/app/src/main/res/drawable/ic_ocr.xml",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidOnnx/app/src/main/res/drawable/ic_ocr.xml",
-        "sizeFormatted": "2.1 KB"
+        "sizeFormatted": "2.1 KB",
+        "project": "chineseocr_lite"
       },
       {
         "name": "loading_anim.xml",
         "type": "YAML配置",
         "size": 408,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidOnnx/app/src/main/res/drawable/loading_anim.xml",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidOnnx/app/src/main/res/drawable/loading_anim.xml",
-        "sizeFormatted": "408 B"
+        "sizeFormatted": "408 B",
+        "project": "chineseocr_lite"
       },
       {
         "name": "ic_launcher_foreground.xml",
         "type": "YAML配置",
         "size": 1702,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidOnnx/app/src/main/res/drawable-v24/ic_launcher_foreground.xml",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidOnnx/app/src/main/res/drawable-v24/ic_launcher_foreground.xml",
-        "sizeFormatted": "1.7 KB"
+        "sizeFormatted": "1.7 KB",
+        "project": "chineseocr_lite"
       },
       {
         "name": "activity_camera.xml",
         "type": "YAML配置",
         "size": 6350,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidOnnx/app/src/main/res/layout/activity_camera.xml",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidOnnx/app/src/main/res/layout/activity_camera.xml",
-        "sizeFormatted": "6.2 KB"
+        "sizeFormatted": "6.2 KB",
+        "project": "chineseocr_lite"
       },
       {
         "name": "activity_gallery.xml",
         "type": "YAML配置",
         "size": 7030,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidOnnx/app/src/main/res/layout/activity_gallery.xml",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidOnnx/app/src/main/res/layout/activity_gallery.xml",
-        "sizeFormatted": "6.9 KB"
+        "sizeFormatted": "6.9 KB",
+        "project": "chineseocr_lite"
       },
       {
         "name": "activity_idcard_front.xml",
         "type": "YAML配置",
         "size": 14053,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidOnnx/app/src/main/res/layout/activity_idcard_front.xml",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidOnnx/app/src/main/res/layout/activity_idcard_front.xml",
-        "sizeFormatted": "13.7 KB"
+        "sizeFormatted": "13.7 KB",
+        "project": "chineseocr_lite"
       },
       {
         "name": "activity_imei.xml",
         "type": "YAML配置",
         "size": 4494,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidOnnx/app/src/main/res/layout/activity_imei.xml",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidOnnx/app/src/main/res/layout/activity_imei.xml",
-        "sizeFormatted": "4.4 KB"
+        "sizeFormatted": "4.4 KB",
+        "project": "chineseocr_lite"
       },
       {
         "name": "activity_main.xml",
         "type": "YAML配置",
         "size": 1288,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidOnnx/app/src/main/res/layout/activity_main.xml",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidOnnx/app/src/main/res/layout/activity_main.xml",
-        "sizeFormatted": "1.3 KB"
+        "sizeFormatted": "1.3 KB",
+        "project": "chineseocr_lite"
       },
       {
         "name": "activity_plate.xml",
         "type": "YAML配置",
         "size": 4489,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidOnnx/app/src/main/res/layout/activity_plate.xml",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidOnnx/app/src/main/res/layout/activity_plate.xml",
-        "sizeFormatted": "4.4 KB"
+        "sizeFormatted": "4.4 KB",
+        "project": "chineseocr_lite"
       },
       {
         "name": "dialog_debug.xml",
         "type": "YAML配置",
         "size": 1926,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidOnnx/app/src/main/res/layout/dialog_debug.xml",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidOnnx/app/src/main/res/layout/dialog_debug.xml",
-        "sizeFormatted": "1.9 KB"
+        "sizeFormatted": "1.9 KB",
+        "project": "chineseocr_lite"
       },
       {
         "name": "dialog_text_result.xml",
         "type": "YAML配置",
         "size": 2091,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidOnnx/app/src/main/res/layout/dialog_text_result.xml",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidOnnx/app/src/main/res/layout/dialog_text_result.xml",
-        "sizeFormatted": "2.0 KB"
+        "sizeFormatted": "2.0 KB",
+        "project": "chineseocr_lite"
       },
       {
         "name": "rv_dbnet_time_item.xml",
         "type": "YAML配置",
         "size": 726,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidOnnx/app/src/main/res/layout/rv_dbnet_time_item.xml",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidOnnx/app/src/main/res/layout/rv_dbnet_time_item.xml",
-        "sizeFormatted": "726 B"
+        "sizeFormatted": "726 B",
+        "project": "chineseocr_lite"
       },
       {
         "name": "rv_debug_item_content.xml",
         "type": "YAML配置",
         "size": 5914,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidOnnx/app/src/main/res/layout/rv_debug_item_content.xml",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidOnnx/app/src/main/res/layout/rv_debug_item_content.xml",
-        "sizeFormatted": "5.8 KB"
+        "sizeFormatted": "5.8 KB",
+        "project": "chineseocr_lite"
       },
       {
         "name": "rv_debug_view_item.xml",
         "type": "YAML配置",
         "size": 1328,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidOnnx/app/src/main/res/layout/rv_debug_view_item.xml",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidOnnx/app/src/main/res/layout/rv_debug_view_item.xml",
-        "sizeFormatted": "1.3 KB"
+        "sizeFormatted": "1.3 KB",
+        "project": "chineseocr_lite"
       },
       {
         "name": "ic_launcher.xml",
         "type": "YAML配置",
         "size": 272,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidOnnx/app/src/main/res/mipmap-anydpi-v26/ic_launcher.xml",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidOnnx/app/src/main/res/mipmap-anydpi-v26/ic_launcher.xml",
-        "sizeFormatted": "272 B"
+        "sizeFormatted": "272 B",
+        "project": "chineseocr_lite"
       },
       {
         "name": "ic_launcher_round.xml",
         "type": "YAML配置",
         "size": 272,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidOnnx/app/src/main/res/mipmap-anydpi-v26/ic_launcher_round.xml",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidOnnx/app/src/main/res/mipmap-anydpi-v26/ic_launcher_round.xml",
-        "sizeFormatted": "272 B"
+        "sizeFormatted": "272 B",
+        "project": "chineseocr_lite"
       },
       {
         "name": "colors.xml",
         "type": "YAML配置",
         "size": 310,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidOnnx/app/src/main/res/values/colors.xml",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidOnnx/app/src/main/res/values/colors.xml",
-        "sizeFormatted": "310 B"
+        "sizeFormatted": "310 B",
+        "project": "chineseocr_lite"
       },
       {
         "name": "colors_material.xml",
         "type": "YAML配置",
         "size": 14788,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidOnnx/app/src/main/res/values/colors_material.xml",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidOnnx/app/src/main/res/values/colors_material.xml",
-        "sizeFormatted": "14.4 KB"
+        "sizeFormatted": "14.4 KB",
+        "project": "chineseocr_lite"
       },
       {
         "name": "strings.xml",
         "type": "YAML配置",
         "size": 318,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidOnnx/app/src/main/res/values/strings.xml",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidOnnx/app/src/main/res/values/strings.xml",
-        "sizeFormatted": "318 B"
+        "sizeFormatted": "318 B",
+        "project": "chineseocr_lite"
       },
       {
         "name": "styles.xml",
         "type": "YAML配置",
         "size": 3233,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidOnnx/app/src/main/res/values/styles.xml",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidOnnx/app/src/main/res/values/styles.xml",
-        "sizeFormatted": "3.2 KB"
+        "sizeFormatted": "3.2 KB",
+        "project": "chineseocr_lite"
       },
       {
         "name": "ExampleUnitTest.kt",
         "type": "其他",
         "size": 348,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidOnnx/app/src/test/java/com/benjaminwan/ocr/onnx/ExampleUnitTest.kt",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidOnnx/app/src/test/java/com/benjaminwan/ocr/onnx/ExampleUnitTest.kt",
-        "sizeFormatted": "348 B"
+        "sizeFormatted": "348 B",
+        "project": "chineseocr_lite"
       },
       {
         "name": "IdCardView-1.0.aar",
         "type": "其他",
         "size": 19997,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidOnnx/common-aar/IdCardView-1.0.aar",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidOnnx/common-aar/IdCardView-1.0.aar",
-        "sizeFormatted": "19.5 KB"
+        "sizeFormatted": "19.5 KB",
+        "project": "chineseocr_lite"
       },
       {
         "name": "gradle-wrapper.jar",
         "type": "其他",
         "size": 54329,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidOnnx/gradle/wrapper/gradle-wrapper.jar",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidOnnx/gradle/wrapper/gradle-wrapper.jar",
-        "sizeFormatted": "53.1 KB"
+        "sizeFormatted": "53.1 KB",
+        "project": "chineseocr_lite"
       },
       {
         "name": "gradle-wrapper.properties",
         "type": "其他",
         "size": 232,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidOnnx/gradle/wrapper/gradle-wrapper.properties",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidOnnx/gradle/wrapper/gradle-wrapper.properties",
-        "sizeFormatted": "232 B"
+        "sizeFormatted": "232 B",
+        "project": "chineseocr_lite"
       },
       {
         "name": "ocrlite.keystore",
         "type": "其他",
         "size": 2577,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidOnnx/keystore/ocrlite.keystore",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidOnnx/keystore/ocrlite.keystore",
-        "sizeFormatted": "2.5 KB"
+        "sizeFormatted": "2.5 KB",
+        "project": "chineseocr_lite"
       },
       {
         "name": ".gitignore",
         "type": "其他",
         "size": 57,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidOnnx/OcrLibrary/.gitignore",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidOnnx/OcrLibrary/.gitignore",
-        "sizeFormatted": "57 B"
+        "sizeFormatted": "57 B",
+        "project": "chineseocr_lite"
       },
       {
         "name": "build.gradle",
         "type": "其他",
         "size": 1794,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidOnnx/OcrLibrary/build.gradle",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidOnnx/OcrLibrary/build.gradle",
-        "sizeFormatted": "1.8 KB"
+        "sizeFormatted": "1.8 KB",
+        "project": "chineseocr_lite"
       },
       {
         "name": "consumer-rules.pro",
         "type": "其他",
         "size": 0,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidOnnx/OcrLibrary/consumer-rules.pro",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidOnnx/OcrLibrary/consumer-rules.pro",
-        "sizeFormatted": "0 B"
+        "sizeFormatted": "0 B",
+        "project": "chineseocr_lite"
       },
       {
         "name": "proguard-rules.pro",
         "type": "其他",
         "size": 750,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidOnnx/OcrLibrary/proguard-rules.pro",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidOnnx/OcrLibrary/proguard-rules.pro",
-        "sizeFormatted": "750 B"
+        "sizeFormatted": "750 B",
+        "project": "chineseocr_lite"
       },
       {
         "name": "ExampleInstrumentedTest.kt",
         "type": "其他",
         "size": 684,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidOnnx/OcrLibrary/src/androidTest/java/com/benjaminwan/ocrlibrary/ExampleInstrumentedTest.kt",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidOnnx/OcrLibrary/src/androidTest/java/com/benjaminwan/ocrlibrary/ExampleInstrumentedTest.kt",
-        "sizeFormatted": "684 B"
+        "sizeFormatted": "684 B",
+        "project": "chineseocr_lite"
       },
       {
         "name": "AndroidManifest.xml",
         "type": "YAML配置",
         "size": 129,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidOnnx/OcrLibrary/src/main/AndroidManifest.xml",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidOnnx/OcrLibrary/src/main/AndroidManifest.xml",
-        "sizeFormatted": "129 B"
+        "sizeFormatted": "129 B",
+        "project": "chineseocr_lite"
       },
       {
         "name": "keys.txt",
         "type": "文档",
         "size": 21924,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidOnnx/OcrLibrary/src/main/assets/keys.txt",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidOnnx/OcrLibrary/src/main/assets/keys.txt",
-        "sizeFormatted": "21.4 KB"
+        "sizeFormatted": "21.4 KB",
+        "project": "chineseocr_lite"
       },
       {
         "name": "CMakeLists.txt",
         "type": "文档",
         "size": 1848,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidOnnx/OcrLibrary/src/main/cpp/CMakeLists.txt",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidOnnx/OcrLibrary/src/main/cpp/CMakeLists.txt",
-        "sizeFormatted": "1.8 KB"
+        "sizeFormatted": "1.8 KB",
+        "project": "chineseocr_lite"
       },
       {
         "name": "AngleNet.h",
         "type": "头文件",
         "size": 1111,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidOnnx/OcrLibrary/src/main/cpp/include/AngleNet.h",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidOnnx/OcrLibrary/src/main/cpp/include/AngleNet.h",
-        "sizeFormatted": "1.1 KB"
+        "sizeFormatted": "1.1 KB",
+        "project": "chineseocr_lite"
       },
       {
         "name": "BitmapUtils.h",
         "type": "头文件",
         "size": 312,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidOnnx/OcrLibrary/src/main/cpp/include/BitmapUtils.h",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidOnnx/OcrLibrary/src/main/cpp/include/BitmapUtils.h",
-        "sizeFormatted": "312 B"
+        "sizeFormatted": "312 B",
+        "project": "chineseocr_lite"
       },
       {
         "name": "clipper.hpp",
         "type": "头文件",
         "size": 16486,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidOnnx/OcrLibrary/src/main/cpp/include/clipper.hpp",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidOnnx/OcrLibrary/src/main/cpp/include/clipper.hpp",
-        "sizeFormatted": "16.1 KB"
+        "sizeFormatted": "16.1 KB",
+        "project": "chineseocr_lite"
       },
       {
         "name": "CrnnNet.h",
         "type": "头文件",
         "size": 1191,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidOnnx/OcrLibrary/src/main/cpp/include/CrnnNet.h",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidOnnx/OcrLibrary/src/main/cpp/include/CrnnNet.h",
-        "sizeFormatted": "1.2 KB"
+        "sizeFormatted": "1.2 KB",
+        "project": "chineseocr_lite"
       },
       {
         "name": "DbNet.h",
         "type": "头文件",
         "size": 1108,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidOnnx/OcrLibrary/src/main/cpp/include/DbNet.h",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidOnnx/OcrLibrary/src/main/cpp/include/DbNet.h",
-        "sizeFormatted": "1.1 KB"
+        "sizeFormatted": "1.1 KB",
+        "project": "chineseocr_lite"
       },
       {
         "name": "OcrLite.h",
         "type": "头文件",
         "size": 722,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidOnnx/OcrLibrary/src/main/cpp/include/OcrLite.h",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidOnnx/OcrLibrary/src/main/cpp/include/OcrLite.h",
-        "sizeFormatted": "722 B"
+        "sizeFormatted": "722 B",
+        "project": "chineseocr_lite"
       },
       {
         "name": "OcrResultUtils.h",
         "type": "头文件",
         "size": 704,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidOnnx/OcrLibrary/src/main/cpp/include/OcrResultUtils.h",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidOnnx/OcrLibrary/src/main/cpp/include/OcrResultUtils.h",
-        "sizeFormatted": "704 B"
+        "sizeFormatted": "704 B",
+        "project": "chineseocr_lite"
       },
       {
         "name": "OcrStruct.h",
         "type": "头文件",
         "size": 901,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidOnnx/OcrLibrary/src/main/cpp/include/OcrStruct.h",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidOnnx/OcrLibrary/src/main/cpp/include/OcrStruct.h",
-        "sizeFormatted": "901 B"
+        "sizeFormatted": "901 B",
+        "project": "chineseocr_lite"
       },
       {
         "name": "OcrUtils.h",
         "type": "头文件",
         "size": 2932,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidOnnx/OcrLibrary/src/main/cpp/include/OcrUtils.h",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidOnnx/OcrLibrary/src/main/cpp/include/OcrUtils.h",
-        "sizeFormatted": "2.9 KB"
+        "sizeFormatted": "2.9 KB",
+        "project": "chineseocr_lite"
       },
       {
         "name": "AngleNet.cpp",
         "type": "C++代码",
         "size": 4577,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidOnnx/OcrLibrary/src/main/cpp/src/AngleNet.cpp",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidOnnx/OcrLibrary/src/main/cpp/src/AngleNet.cpp",
-        "sizeFormatted": "4.5 KB"
+        "sizeFormatted": "4.5 KB",
+        "project": "chineseocr_lite"
       },
       {
         "name": "BitmapUtils.cpp",
         "type": "C++代码",
         "size": 4538,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidOnnx/OcrLibrary/src/main/cpp/src/BitmapUtils.cpp",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidOnnx/OcrLibrary/src/main/cpp/src/BitmapUtils.cpp",
-        "sizeFormatted": "4.4 KB"
+        "sizeFormatted": "4.4 KB",
+        "project": "chineseocr_lite"
       },
       {
         "name": "clipper.cpp",
         "type": "C++代码",
         "size": 167317,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidOnnx/OcrLibrary/src/main/cpp/src/clipper.cpp",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidOnnx/OcrLibrary/src/main/cpp/src/clipper.cpp",
-        "sizeFormatted": "163.4 KB"
+        "sizeFormatted": "163.4 KB",
+        "project": "chineseocr_lite"
       },
       {
         "name": "CrnnNet.cpp",
         "type": "C++代码",
         "size": 6511,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidOnnx/OcrLibrary/src/main/cpp/src/CrnnNet.cpp",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidOnnx/OcrLibrary/src/main/cpp/src/CrnnNet.cpp",
-        "sizeFormatted": "6.4 KB"
+        "sizeFormatted": "6.4 KB",
+        "project": "chineseocr_lite"
       },
       {
         "name": "DbNet.cpp",
         "type": "C++代码",
         "size": 4342,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidOnnx/OcrLibrary/src/main/cpp/src/DbNet.cpp",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidOnnx/OcrLibrary/src/main/cpp/src/DbNet.cpp",
-        "sizeFormatted": "4.2 KB"
+        "sizeFormatted": "4.2 KB",
+        "project": "chineseocr_lite"
       },
       {
         "name": "main.cpp",
         "type": "C++代码",
         "size": 4673,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidOnnx/OcrLibrary/src/main/cpp/src/main.cpp",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidOnnx/OcrLibrary/src/main/cpp/src/main.cpp",
-        "sizeFormatted": "4.6 KB"
+        "sizeFormatted": "4.6 KB",
+        "project": "chineseocr_lite"
       },
       {
         "name": "OcrLite.cpp",
         "type": "C++代码",
         "size": 6101,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidOnnx/OcrLibrary/src/main/cpp/src/OcrLite.cpp",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidOnnx/OcrLibrary/src/main/cpp/src/OcrLite.cpp",
-        "sizeFormatted": "6.0 KB"
+        "sizeFormatted": "6.0 KB",
+        "project": "chineseocr_lite"
       },
       {
         "name": "OcrResultUtils.cpp",
         "type": "C++代码",
         "size": 4272,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidOnnx/OcrLibrary/src/main/cpp/src/OcrResultUtils.cpp",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidOnnx/OcrLibrary/src/main/cpp/src/OcrResultUtils.cpp",
-        "sizeFormatted": "4.2 KB"
+        "sizeFormatted": "4.2 KB",
+        "project": "chineseocr_lite"
       },
       {
         "name": "OcrUtils.cpp",
         "type": "C++代码",
         "size": 14084,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidOnnx/OcrLibrary/src/main/cpp/src/OcrUtils.cpp",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidOnnx/OcrLibrary/src/main/cpp/src/OcrUtils.cpp",
-        "sizeFormatted": "13.8 KB"
+        "sizeFormatted": "13.8 KB",
+        "project": "chineseocr_lite"
       },
       {
         "name": "OcrEngine.kt",
         "type": "其他",
         "size": 1183,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidOnnx/OcrLibrary/src/main/java/com/benjaminwan/ocrlibrary/OcrEngine.kt",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidOnnx/OcrLibrary/src/main/java/com/benjaminwan/ocrlibrary/OcrEngine.kt",
-        "sizeFormatted": "1.2 KB"
+        "sizeFormatted": "1.2 KB",
+        "project": "chineseocr_lite"
       },
       {
         "name": "OcrResult.kt",
         "type": "其他",
         "size": 1981,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidOnnx/OcrLibrary/src/main/java/com/benjaminwan/ocrlibrary/OcrResult.kt",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidOnnx/OcrLibrary/src/main/java/com/benjaminwan/ocrlibrary/OcrResult.kt",
-        "sizeFormatted": "1.9 KB"
+        "sizeFormatted": "1.9 KB",
+        "project": "chineseocr_lite"
       },
       {
         "name": "ExampleUnitTest.kt",
         "type": "其他",
         "size": 350,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidOnnx/OcrLibrary/src/test/java/com/benjaminwan/ocrlibrary/ExampleUnitTest.kt",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidOnnx/OcrLibrary/src/test/java/com/benjaminwan/ocrlibrary/ExampleUnitTest.kt",
-        "sizeFormatted": "350 B"
+        "sizeFormatted": "350 B",
+        "project": "chineseocr_lite"
       },
       {
         "name": "build-onnxruntime-android.sh",
         "type": "Shell脚本",
         "size": 1053,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidOnnx/scripts/build-onnxruntime-android.sh",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidOnnx/scripts/build-onnxruntime-android.sh",
-        "sizeFormatted": "1.0 KB"
+        "sizeFormatted": "1.0 KB",
+        "project": "chineseocr_lite"
       },
       {
         "name": "build-opencv3-android.sh",
         "type": "Shell脚本",
         "size": 1462,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidOnnx/scripts/build-opencv3-android.sh",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidOnnx/scripts/build-opencv3-android.sh",
-        "sizeFormatted": "1.4 KB"
+        "sizeFormatted": "1.4 KB",
+        "project": "chineseocr_lite"
       },
       {
         "name": "build-opencv3-static-android.sh",
         "type": "Shell脚本",
         "size": 2700,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidOnnx/scripts/build-opencv3-static-android.sh",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/android_projects/OcrLiteAndroidOnnx/scripts/build-opencv3-static-android.sh",
-        "sizeFormatted": "2.6 KB"
+        "sizeFormatted": "2.6 KB",
+        "project": "chineseocr_lite"
       },
       {
         "name": "随机IMEI.xlsx",
         "type": "Excel表格",
         "size": 9500,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/android_projects/test_resource/随机IMEI.xlsx",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/android_projects/test_resource/随机IMEI.xlsx",
-        "sizeFormatted": "9.3 KB"
+        "sizeFormatted": "9.3 KB",
+        "project": "chineseocr_lite"
       },
       {
         "name": "随机车牌.xlsx",
         "type": "Excel表格",
         "size": 177796,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/android_projects/test_resource/随机车牌.xlsx",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/android_projects/test_resource/随机车牌.xlsx",
-        "sizeFormatted": "173.6 KB"
+        "sizeFormatted": "173.6 KB",
+        "project": "chineseocr_lite"
       },
       {
         "name": "angle.py",
         "type": "Python代码",
         "size": 1570,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/angnet/angle.py",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/angnet/angle.py",
-        "sizeFormatted": "1.5 KB"
+        "sizeFormatted": "1.5 KB",
+        "project": "chineseocr_lite"
       },
       {
         "name": "__init__.py",
         "type": "Python代码",
         "size": 34,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/angnet/__init__.py",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/angnet/__init__.py",
-        "sizeFormatted": "34 B"
+        "sizeFormatted": "34 B",
+        "project": "chineseocr_lite"
       },
       {
         "name": "main.py",
         "type": "Python代码",
         "size": 1276,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/backend/main.py",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/backend/main.py",
-        "sizeFormatted": "1.2 KB"
+        "sizeFormatted": "1.2 KB",
+        "project": "chineseocr_lite"
       },
       {
         "name": "np_encoder.py",
         "type": "Python代码",
         "size": 382,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/backend/np_encoder.py",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/backend/np_encoder.py",
-        "sizeFormatted": "382 B"
+        "sizeFormatted": "382 B",
+        "project": "chineseocr_lite"
       },
       {
         "name": "__init__.py",
         "type": "Python代码",
         "size": 2,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/backend/__init__.py",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/backend/__init__.py",
-        "sizeFormatted": "2 B"
+        "sizeFormatted": "2 B",
+        "project": "chineseocr_lite"
       },
       {
         "name": "get_host_ip.py",
         "type": "Python代码",
         "size": 398,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/backend/tools/get_host_ip.py",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/backend/tools/get_host_ip.py",
-        "sizeFormatted": "398 B"
+        "sizeFormatted": "398 B",
+        "project": "chineseocr_lite"
       },
       {
         "name": "log.py",
         "type": "Python代码",
         "size": 1064,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/backend/tools/log.py",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/backend/tools/log.py",
-        "sizeFormatted": "1.0 KB"
+        "sizeFormatted": "1.0 KB",
+        "project": "chineseocr_lite"
       },
       {
         "name": "np_encoder.py",
         "type": "Python代码",
         "size": 382,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/backend/tools/np_encoder.py",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/backend/tools/np_encoder.py",
-        "sizeFormatted": "382 B"
+        "sizeFormatted": "382 B",
+        "project": "chineseocr_lite"
       },
       {
         "name": "__init__.py",
         "type": "Python代码",
         "size": 1,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/backend/tools/__init__.py",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/backend/tools/__init__.py",
-        "sizeFormatted": "1 B"
+        "sizeFormatted": "1 B",
+        "project": "chineseocr_lite"
       },
       {
         "name": "tr_index.py",
         "type": "Python代码",
         "size": 342,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/backend/webInterface/tr_index.py",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/backend/webInterface/tr_index.py",
-        "sizeFormatted": "342 B"
+        "sizeFormatted": "342 B",
+        "project": "chineseocr_lite"
       },
       {
         "name": "tr_run.py",
         "type": "Python代码",
         "size": 6547,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/backend/webInterface/tr_run.py",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/backend/webInterface/tr_run.py",
-        "sizeFormatted": "6.4 KB"
+        "sizeFormatted": "6.4 KB",
+        "project": "chineseocr_lite"
       },
       {
         "name": "__init__.py",
         "type": "Python代码",
         "size": 81,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/backend/webInterface/__init__.py",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/backend/webInterface/__init__.py",
-        "sizeFormatted": "81 B"
+        "sizeFormatted": "81 B",
+        "project": "chineseocr_lite"
       },
       {
         "name": "README.md",
         "type": "文档",
         "size": 5537,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/cpp_projects/README.md",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/cpp_projects/README.md",
-        "sizeFormatted": "5.4 KB"
+        "sizeFormatted": "5.4 KB",
+        "project": "chineseocr_lite"
       },
       {
         "name": "clear.cmd",
         "type": "其他",
         "size": 183,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/cpp_projects/images/clear.cmd",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/cpp_projects/images/clear.cmd",
-        "sizeFormatted": "183 B"
+        "sizeFormatted": "183 B",
+        "project": "chineseocr_lite"
       },
       {
         "name": "clear.sh",
         "type": "Shell脚本",
         "size": 182,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/cpp_projects/images/clear.sh",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/cpp_projects/images/clear.sh",
-        "sizeFormatted": "182 B"
+        "sizeFormatted": "182 B",
+        "project": "chineseocr_lite"
       },
       {
         "name": "build.bat",
         "type": "Shell脚本",
         "size": 2456,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/cpp_projects/OcrLiteMnn/build.bat",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/cpp_projects/OcrLiteMnn/build.bat",
-        "sizeFormatted": "2.4 KB"
+        "sizeFormatted": "2.4 KB",
+        "project": "chineseocr_lite"
       },
       {
         "name": "build.sh",
         "type": "Shell脚本",
         "size": 2172,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/cpp_projects/OcrLiteMnn/build.sh",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/cpp_projects/OcrLiteMnn/build.sh",
-        "sizeFormatted": "2.1 KB"
+        "sizeFormatted": "2.1 KB",
+        "project": "chineseocr_lite"
       },
       {
         "name": "CMakeLists.txt",
         "type": "文档",
         "size": 3801,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/cpp_projects/OcrLiteMnn/CMakeLists.txt",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/cpp_projects/OcrLiteMnn/CMakeLists.txt",
-        "sizeFormatted": "3.7 KB"
+        "sizeFormatted": "3.7 KB",
+        "project": "chineseocr_lite"
       },
       {
         "name": "generate-vs-project.bat",
         "type": "Shell脚本",
         "size": 2871,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/cpp_projects/OcrLiteMnn/generate-vs-project.bat",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/cpp_projects/OcrLiteMnn/generate-vs-project.bat",
-        "sizeFormatted": "2.8 KB"
+        "sizeFormatted": "2.8 KB",
+        "project": "chineseocr_lite"
       },
       {
         "name": "README.md",
         "type": "文档",
         "size": 4954,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/cpp_projects/OcrLiteMnn/README.md",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/cpp_projects/OcrLiteMnn/README.md",
-        "sizeFormatted": "4.8 KB"
+        "sizeFormatted": "4.8 KB",
+        "project": "chineseocr_lite"
       },
       {
         "name": "run-benchmark.bat",
         "type": "Shell脚本",
         "size": 799,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/cpp_projects/OcrLiteMnn/run-benchmark.bat",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/cpp_projects/OcrLiteMnn/run-benchmark.bat",
-        "sizeFormatted": "799 B"
+        "sizeFormatted": "799 B",
+        "project": "chineseocr_lite"
       },
       {
         "name": "run-benchmark.sh",
         "type": "Shell脚本",
         "size": 1009,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/cpp_projects/OcrLiteMnn/run-benchmark.sh",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/cpp_projects/OcrLiteMnn/run-benchmark.sh",
-        "sizeFormatted": "1009 B"
+        "sizeFormatted": "1009 B",
+        "project": "chineseocr_lite"
       },
       {
         "name": "run-test.bat",
         "type": "Shell脚本",
         "size": 724,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/cpp_projects/OcrLiteMnn/run-test.bat",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/cpp_projects/OcrLiteMnn/run-test.bat",
-        "sizeFormatted": "724 B"
+        "sizeFormatted": "724 B",
+        "project": "chineseocr_lite"
       },
       {
         "name": "run-test.sh",
         "type": "Shell脚本",
         "size": 812,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/cpp_projects/OcrLiteMnn/run-test.sh",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/cpp_projects/OcrLiteMnn/run-test.sh",
-        "sizeFormatted": "812 B"
+        "sizeFormatted": "812 B",
+        "project": "chineseocr_lite"
       },
       {
         "name": "valgrind-memcheck.sh",
         "type": "Shell脚本",
         "size": 961,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/cpp_projects/OcrLiteMnn/valgrind-memcheck.sh",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/cpp_projects/OcrLiteMnn/valgrind-memcheck.sh",
-        "sizeFormatted": "961 B"
+        "sizeFormatted": "961 B",
+        "project": "chineseocr_lite"
       },
       {
         "name": "valgrind-memcheck.txt",
         "type": "文档",
         "size": 26010,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/cpp_projects/OcrLiteMnn/valgrind-memcheck.txt",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/cpp_projects/OcrLiteMnn/valgrind-memcheck.txt",
-        "sizeFormatted": "25.4 KB"
+        "sizeFormatted": "25.4 KB",
+        "project": "chineseocr_lite"
       },
       {
         "name": "benchmark.cpp",
         "type": "C++代码",
         "size": 7646,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/cpp_projects/OcrLiteMnn/benchmark/benchmark.cpp",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/cpp_projects/OcrLiteMnn/benchmark/benchmark.cpp",
-        "sizeFormatted": "7.5 KB"
+        "sizeFormatted": "7.5 KB",
+        "project": "chineseocr_lite"
       },
       {
         "name": "AngleNet.h",
         "type": "头文件",
         "size": 850,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/cpp_projects/OcrLiteMnn/include/AngleNet.h",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/cpp_projects/OcrLiteMnn/include/AngleNet.h",
-        "sizeFormatted": "850 B"
+        "sizeFormatted": "850 B",
+        "project": "chineseocr_lite"
       },
       {
         "name": "clipper.hpp",
         "type": "头文件",
         "size": 16486,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/cpp_projects/OcrLiteMnn/include/clipper.hpp",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/cpp_projects/OcrLiteMnn/include/clipper.hpp",
-        "sizeFormatted": "16.1 KB"
+        "sizeFormatted": "16.1 KB",
+        "project": "chineseocr_lite"
       },
       {
         "name": "CrnnNet.h",
         "type": "头文件",
         "size": 916,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/cpp_projects/OcrLiteMnn/include/CrnnNet.h",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/cpp_projects/OcrLiteMnn/include/CrnnNet.h",
-        "sizeFormatted": "916 B"
+        "sizeFormatted": "916 B",
+        "project": "chineseocr_lite"
       },
       {
         "name": "DbNet.h",
         "type": "头文件",
         "size": 739,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/cpp_projects/OcrLiteMnn/include/DbNet.h",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/cpp_projects/OcrLiteMnn/include/DbNet.h",
-        "sizeFormatted": "739 B"
+        "sizeFormatted": "739 B",
+        "project": "chineseocr_lite"
       },
       {
         "name": "getopt.h",
         "type": "头文件",
         "size": 1144,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/cpp_projects/OcrLiteMnn/include/getopt.h",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/cpp_projects/OcrLiteMnn/include/getopt.h",
-        "sizeFormatted": "1.1 KB"
+        "sizeFormatted": "1.1 KB",
+        "project": "chineseocr_lite"
       },
       {
         "name": "main.h",
         "type": "头文件",
         "size": 3023,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/cpp_projects/OcrLiteMnn/include/main.h",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/cpp_projects/OcrLiteMnn/include/main.h",
-        "sizeFormatted": "3.0 KB"
+        "sizeFormatted": "3.0 KB",
+        "project": "chineseocr_lite"
       },
       {
         "name": "OcrLite.h",
         "type": "头文件",
         "size": 1544,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/cpp_projects/OcrLiteMnn/include/OcrLite.h",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/cpp_projects/OcrLiteMnn/include/OcrLite.h",
-        "sizeFormatted": "1.5 KB"
+        "sizeFormatted": "1.5 KB",
+        "project": "chineseocr_lite"
       },
       {
         "name": "OcrResultUtils.h",
         "type": "头文件",
         "size": 707,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/cpp_projects/OcrLiteMnn/include/OcrResultUtils.h",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/cpp_projects/OcrLiteMnn/include/OcrResultUtils.h",
-        "sizeFormatted": "707 B"
+        "sizeFormatted": "707 B",
+        "project": "chineseocr_lite"
       },
       {
         "name": "OcrStruct.h",
         "type": "头文件",
         "size": 901,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/cpp_projects/OcrLiteMnn/include/OcrStruct.h",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/cpp_projects/OcrLiteMnn/include/OcrStruct.h",
-        "sizeFormatted": "901 B"
+        "sizeFormatted": "901 B",
+        "project": "chineseocr_lite"
       },
       {
         "name": "OcrUtils.h",
         "type": "头文件",
         "size": 2797,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/cpp_projects/OcrLiteMnn/include/OcrUtils.h",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/cpp_projects/OcrLiteMnn/include/OcrUtils.h",
-        "sizeFormatted": "2.7 KB"
+        "sizeFormatted": "2.7 KB",
+        "project": "chineseocr_lite"
       },
       {
         "name": "version.h",
         "type": "头文件",
         "size": 114,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/cpp_projects/OcrLiteMnn/include/version.h",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/cpp_projects/OcrLiteMnn/include/version.h",
-        "sizeFormatted": "114 B"
+        "sizeFormatted": "114 B",
+        "project": "chineseocr_lite"
       },
       {
         "name": "keys.txt",
         "type": "文档",
         "size": 21924,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/cpp_projects/OcrLiteMnn/models/keys.txt",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/cpp_projects/OcrLiteMnn/models/keys.txt",
-        "sizeFormatted": "21.4 KB"
+        "sizeFormatted": "21.4 KB",
+        "project": "chineseocr_lite"
       },
       {
         "name": "AngleNet.cpp",
         "type": "C++代码",
         "size": 3867,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/cpp_projects/OcrLiteMnn/src/AngleNet.cpp",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/cpp_projects/OcrLiteMnn/src/AngleNet.cpp",
-        "sizeFormatted": "3.8 KB"
+        "sizeFormatted": "3.8 KB",
+        "project": "chineseocr_lite"
       },
       {
         "name": "clipper.cpp",
         "type": "C++代码",
         "size": 167317,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/cpp_projects/OcrLiteMnn/src/clipper.cpp",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/cpp_projects/OcrLiteMnn/src/clipper.cpp",
-        "sizeFormatted": "163.4 KB"
+        "sizeFormatted": "163.4 KB",
+        "project": "chineseocr_lite"
       },
       {
         "name": "CrnnNet.cpp",
         "type": "C++代码",
         "size": 4224,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/cpp_projects/OcrLiteMnn/src/CrnnNet.cpp",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/cpp_projects/OcrLiteMnn/src/CrnnNet.cpp",
-        "sizeFormatted": "4.1 KB"
+        "sizeFormatted": "4.1 KB",
+        "project": "chineseocr_lite"
       },
       {
         "name": "DbNet.cpp",
         "type": "C++代码",
         "size": 3569,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/cpp_projects/OcrLiteMnn/src/DbNet.cpp",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/cpp_projects/OcrLiteMnn/src/DbNet.cpp",
-        "sizeFormatted": "3.5 KB"
+        "sizeFormatted": "3.5 KB",
+        "project": "chineseocr_lite"
       },
       {
         "name": "getopt.cpp",
         "type": "C++代码",
         "size": 7220,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/cpp_projects/OcrLiteMnn/src/getopt.cpp",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/cpp_projects/OcrLiteMnn/src/getopt.cpp",
-        "sizeFormatted": "7.1 KB"
+        "sizeFormatted": "7.1 KB",
+        "project": "chineseocr_lite"
       },
       {
         "name": "main.cpp",
         "type": "C++代码",
         "size": 6656,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/cpp_projects/OcrLiteMnn/src/main.cpp",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/cpp_projects/OcrLiteMnn/src/main.cpp",
-        "sizeFormatted": "6.5 KB"
+        "sizeFormatted": "6.5 KB",
+        "project": "chineseocr_lite"
       },
       {
         "name": "OcrLite.cpp",
         "type": "C++代码",
         "size": 8567,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/cpp_projects/OcrLiteMnn/src/OcrLite.cpp",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/cpp_projects/OcrLiteMnn/src/OcrLite.cpp",
-        "sizeFormatted": "8.4 KB"
+        "sizeFormatted": "8.4 KB",
+        "project": "chineseocr_lite"
       },
       {
         "name": "OcrLiteJni.cpp",
         "type": "C++代码",
         "size": 5841,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/cpp_projects/OcrLiteMnn/src/OcrLiteJni.cpp",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/cpp_projects/OcrLiteMnn/src/OcrLiteJni.cpp",
-        "sizeFormatted": "5.7 KB"
+        "sizeFormatted": "5.7 KB",
+        "project": "chineseocr_lite"
       },
       {
         "name": "OcrResultUtils.cpp",
         "type": "C++代码",
         "size": 4262,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/cpp_projects/OcrLiteMnn/src/OcrResultUtils.cpp",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/cpp_projects/OcrLiteMnn/src/OcrResultUtils.cpp",
-        "sizeFormatted": "4.2 KB"
+        "sizeFormatted": "4.2 KB",
+        "project": "chineseocr_lite"
       },
       {
         "name": "OcrUtils.cpp",
         "type": "C++代码",
         "size": 11857,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/cpp_projects/OcrLiteMnn/src/OcrUtils.cpp",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/cpp_projects/OcrLiteMnn/src/OcrUtils.cpp",
-        "sizeFormatted": "11.6 KB"
+        "sizeFormatted": "11.6 KB",
+        "project": "chineseocr_lite"
       },
       {
         "name": ".gitignore",
         "type": "其他",
         "size": 2207,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/cpp_projects/OcrLiteNcnn/.gitignore",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/cpp_projects/OcrLiteNcnn/.gitignore",
-        "sizeFormatted": "2.2 KB"
+        "sizeFormatted": "2.2 KB",
+        "project": "chineseocr_lite"
       },
       {
         "name": "build-default.bat",
         "type": "Shell脚本",
         "size": 3694,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/cpp_projects/OcrLiteNcnn/build-default.bat",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/cpp_projects/OcrLiteNcnn/build-default.bat",
-        "sizeFormatted": "3.6 KB"
+        "sizeFormatted": "3.6 KB",
+        "project": "chineseocr_lite"
       },
       {
         "name": "build-default.sh",
         "type": "Shell脚本",
         "size": 1842,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/cpp_projects/OcrLiteNcnn/build-default.sh",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/cpp_projects/OcrLiteNcnn/build-default.sh",
-        "sizeFormatted": "1.8 KB"
+        "sizeFormatted": "1.8 KB",
+        "project": "chineseocr_lite"
       },
       {
         "name": "build.bat",
         "type": "Shell脚本",
         "size": 2108,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/cpp_projects/OcrLiteNcnn/build.bat",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/cpp_projects/OcrLiteNcnn/build.bat",
-        "sizeFormatted": "2.1 KB"
+        "sizeFormatted": "2.1 KB",
+        "project": "chineseocr_lite"
       },
       {
         "name": "BUILD.md",
         "type": "文档",
         "size": 6531,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/cpp_projects/OcrLiteNcnn/BUILD.md",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/cpp_projects/OcrLiteNcnn/BUILD.md",
-        "sizeFormatted": "6.4 KB"
+        "sizeFormatted": "6.4 KB",
+        "project": "chineseocr_lite"
       },
       {
         "name": "build.sh",
         "type": "Shell脚本",
         "size": 1754,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/cpp_projects/OcrLiteNcnn/build.sh",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/cpp_projects/OcrLiteNcnn/build.sh",
-        "sizeFormatted": "1.7 KB"
+        "sizeFormatted": "1.7 KB",
+        "project": "chineseocr_lite"
       },
       {
         "name": "CMakeLists.txt",
         "type": "文档",
         "size": 4787,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/cpp_projects/OcrLiteNcnn/CMakeLists.txt",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/cpp_projects/OcrLiteNcnn/CMakeLists.txt",
-        "sizeFormatted": "4.7 KB"
+        "sizeFormatted": "4.7 KB",
+        "project": "chineseocr_lite"
       },
       {
         "name": "generate-vs-project.bat",
         "type": "Shell脚本",
         "size": 2329,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/cpp_projects/OcrLiteNcnn/generate-vs-project.bat",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/cpp_projects/OcrLiteNcnn/generate-vs-project.bat",
-        "sizeFormatted": "2.3 KB"
+        "sizeFormatted": "2.3 KB",
+        "project": "chineseocr_lite"
       },
       {
         "name": "README.md",
         "type": "文档",
         "size": 5256,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/cpp_projects/OcrLiteNcnn/README.md",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/cpp_projects/OcrLiteNcnn/README.md",
-        "sizeFormatted": "5.1 KB"
+        "sizeFormatted": "5.1 KB",
+        "project": "chineseocr_lite"
       },
       {
         "name": "run-benchmark.bat",
         "type": "Shell脚本",
         "size": 1602,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/cpp_projects/OcrLiteNcnn/run-benchmark.bat",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/cpp_projects/OcrLiteNcnn/run-benchmark.bat",
-        "sizeFormatted": "1.6 KB"
+        "sizeFormatted": "1.6 KB",
+        "project": "chineseocr_lite"
       },
       {
         "name": "run-benchmark.sh",
         "type": "Shell脚本",
         "size": 1393,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/cpp_projects/OcrLiteNcnn/run-benchmark.sh",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/cpp_projects/OcrLiteNcnn/run-benchmark.sh",
-        "sizeFormatted": "1.4 KB"
+        "sizeFormatted": "1.4 KB",
+        "project": "chineseocr_lite"
       },
       {
         "name": "run-test.bat",
         "type": "Shell脚本",
         "size": 1524,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/cpp_projects/OcrLiteNcnn/run-test.bat",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/cpp_projects/OcrLiteNcnn/run-test.bat",
-        "sizeFormatted": "1.5 KB"
+        "sizeFormatted": "1.5 KB",
+        "project": "chineseocr_lite"
       },
       {
         "name": "run-test.sh",
         "type": "Shell脚本",
         "size": 1353,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/cpp_projects/OcrLiteNcnn/run-test.sh",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/cpp_projects/OcrLiteNcnn/run-test.sh",
-        "sizeFormatted": "1.3 KB"
+        "sizeFormatted": "1.3 KB",
+        "project": "chineseocr_lite"
       },
       {
         "name": "valgrind-memcheck.sh",
         "type": "Shell脚本",
         "size": 968,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/cpp_projects/OcrLiteNcnn/valgrind-memcheck.sh",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/cpp_projects/OcrLiteNcnn/valgrind-memcheck.sh",
-        "sizeFormatted": "968 B"
+        "sizeFormatted": "968 B",
+        "project": "chineseocr_lite"
       },
       {
         "name": "valgrind-memcheck.txt",
         "type": "文档",
         "size": 38315,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/cpp_projects/OcrLiteNcnn/valgrind-memcheck.txt",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/cpp_projects/OcrLiteNcnn/valgrind-memcheck.txt",
-        "sizeFormatted": "37.4 KB"
+        "sizeFormatted": "37.4 KB",
+        "project": "chineseocr_lite"
       },
       {
         "name": "benchmark.cpp",
         "type": "C++代码",
         "size": 8538,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/cpp_projects/OcrLiteNcnn/benchmark/benchmark.cpp",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/cpp_projects/OcrLiteNcnn/benchmark/benchmark.cpp",
-        "sizeFormatted": "8.3 KB"
+        "sizeFormatted": "8.3 KB",
+        "project": "chineseocr_lite"
       },
       {
         "name": "clear.cmd",
         "type": "其他",
         "size": 227,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/cpp_projects/OcrLiteNcnn/images/clear.cmd",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/cpp_projects/OcrLiteNcnn/images/clear.cmd",
-        "sizeFormatted": "227 B"
+        "sizeFormatted": "227 B",
+        "project": "chineseocr_lite"
       },
       {
         "name": "clear.sh",
         "type": "Shell脚本",
         "size": 225,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/cpp_projects/OcrLiteNcnn/images/clear.sh",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/cpp_projects/OcrLiteNcnn/images/clear.sh",
-        "sizeFormatted": "225 B"
+        "sizeFormatted": "225 B",
+        "project": "chineseocr_lite"
       },
       {
         "name": "AngleNet.h",
         "type": "头文件",
         "size": 810,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/cpp_projects/OcrLiteNcnn/include/AngleNet.h",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/cpp_projects/OcrLiteNcnn/include/AngleNet.h",
-        "sizeFormatted": "810 B"
+        "sizeFormatted": "810 B",
+        "project": "chineseocr_lite"
       },
       {
         "name": "clipper.hpp",
         "type": "头文件",
         "size": 16486,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/cpp_projects/OcrLiteNcnn/include/clipper.hpp",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/cpp_projects/OcrLiteNcnn/include/clipper.hpp",
-        "sizeFormatted": "16.1 KB"
+        "sizeFormatted": "16.1 KB",
+        "project": "chineseocr_lite"
       },
       {
         "name": "CrnnNet.h",
         "type": "头文件",
         "size": 877,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/cpp_projects/OcrLiteNcnn/include/CrnnNet.h",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/cpp_projects/OcrLiteNcnn/include/CrnnNet.h",
-        "sizeFormatted": "877 B"
+        "sizeFormatted": "877 B",
+        "project": "chineseocr_lite"
       },
       {
         "name": "DbNet.h",
         "type": "头文件",
         "size": 701,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/cpp_projects/OcrLiteNcnn/include/DbNet.h",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/cpp_projects/OcrLiteNcnn/include/DbNet.h",
-        "sizeFormatted": "701 B"
+        "sizeFormatted": "701 B",
+        "project": "chineseocr_lite"
       },
       {
         "name": "getopt.h",
         "type": "头文件",
         "size": 1144,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/cpp_projects/OcrLiteNcnn/include/getopt.h",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/cpp_projects/OcrLiteNcnn/include/getopt.h",
-        "sizeFormatted": "1.1 KB"
+        "sizeFormatted": "1.1 KB",
+        "project": "chineseocr_lite"
       },
       {
         "name": "main.h",
         "type": "头文件",
         "size": 3205,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/cpp_projects/OcrLiteNcnn/include/main.h",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/cpp_projects/OcrLiteNcnn/include/main.h",
-        "sizeFormatted": "3.1 KB"
+        "sizeFormatted": "3.1 KB",
+        "project": "chineseocr_lite"
       },
       {
         "name": "OcrLite.h",
         "type": "头文件",
         "size": 1782,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/cpp_projects/OcrLiteNcnn/include/OcrLite.h",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/cpp_projects/OcrLiteNcnn/include/OcrLite.h",
-        "sizeFormatted": "1.7 KB"
+        "sizeFormatted": "1.7 KB",
+        "project": "chineseocr_lite"
       },
       {
         "name": "OcrLiteCaller.h",
         "type": "头文件",
         "size": 1031,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/cpp_projects/OcrLiteNcnn/include/OcrLiteCaller.h",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/cpp_projects/OcrLiteNcnn/include/OcrLiteCaller.h",
-        "sizeFormatted": "1.0 KB"
+        "sizeFormatted": "1.0 KB",
+        "project": "chineseocr_lite"
       },
       {
         "name": "OcrLitePort.h",
         "type": "头文件",
         "size": 1139,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/cpp_projects/OcrLiteNcnn/include/OcrLitePort.h",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/cpp_projects/OcrLiteNcnn/include/OcrLitePort.h",
-        "sizeFormatted": "1.1 KB"
+        "sizeFormatted": "1.1 KB",
+        "project": "chineseocr_lite"
       },
       {
         "name": "OcrResultUtils.h",
         "type": "头文件",
         "size": 707,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/cpp_projects/OcrLiteNcnn/include/OcrResultUtils.h",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/cpp_projects/OcrLiteNcnn/include/OcrResultUtils.h",
-        "sizeFormatted": "707 B"
+        "sizeFormatted": "707 B",
+        "project": "chineseocr_lite"
       },
       {
         "name": "OcrStruct.h",
         "type": "头文件",
         "size": 953,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/cpp_projects/OcrLiteNcnn/include/OcrStruct.h",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/cpp_projects/OcrLiteNcnn/include/OcrStruct.h",
-        "sizeFormatted": "953 B"
+        "sizeFormatted": "953 B",
+        "project": "chineseocr_lite"
       },
       {
         "name": "OcrUtils.h",
         "type": "头文件",
         "size": 1921,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/cpp_projects/OcrLiteNcnn/include/OcrUtils.h",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/cpp_projects/OcrLiteNcnn/include/OcrUtils.h",
-        "sizeFormatted": "1.9 KB"
+        "sizeFormatted": "1.9 KB",
+        "project": "chineseocr_lite"
       },
       {
         "name": "version.h",
         "type": "头文件",
         "size": 114,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/cpp_projects/OcrLiteNcnn/include/version.h",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/cpp_projects/OcrLiteNcnn/include/version.h",
-        "sizeFormatted": "114 B"
+        "sizeFormatted": "114 B",
+        "project": "chineseocr_lite"
       },
       {
         "name": "keys.txt",
         "type": "文档",
         "size": 21924,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/cpp_projects/OcrLiteNcnn/models/keys.txt",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/cpp_projects/OcrLiteNcnn/models/keys.txt",
-        "sizeFormatted": "21.4 KB"
+        "sizeFormatted": "21.4 KB",
+        "project": "chineseocr_lite"
       },
       {
         "name": "NcnnWrapperConfig.cmake",
         "type": "其他",
         "size": 1198,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/cpp_projects/OcrLiteNcnn/ncnn-static/NcnnWrapperConfig.cmake",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/cpp_projects/OcrLiteNcnn/ncnn-static/NcnnWrapperConfig.cmake",
-        "sizeFormatted": "1.2 KB"
+        "sizeFormatted": "1.2 KB",
+        "project": "chineseocr_lite"
       },
       {
         "name": "NcnnWrapperConfig.cmake",
         "type": "其他",
         "size": 1198,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/cpp_projects/OcrLiteNcnn/ncnn-vulkan-static/NcnnWrapperConfig.cmake",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/cpp_projects/OcrLiteNcnn/ncnn-vulkan-static/NcnnWrapperConfig.cmake",
-        "sizeFormatted": "1.2 KB"
+        "sizeFormatted": "1.2 KB",
+        "project": "chineseocr_lite"
       },
       {
         "name": "OpenCVWrapperConfig.cmake",
         "type": "其他",
         "size": 731,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/cpp_projects/OcrLiteNcnn/opencv-static/OpenCVWrapperConfig.cmake",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/cpp_projects/OcrLiteNcnn/opencv-static/OpenCVWrapperConfig.cmake",
-        "sizeFormatted": "731 B"
+        "sizeFormatted": "731 B",
+        "project": "chineseocr_lite"
       },
       {
         "name": "build-ncnn-nmake.bat",
         "type": "Shell脚本",
         "size": 765,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/cpp_projects/OcrLiteNcnn/scripts/build-ncnn-nmake.bat",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/cpp_projects/OcrLiteNcnn/scripts/build-ncnn-nmake.bat",
-        "sizeFormatted": "765 B"
+        "sizeFormatted": "765 B",
+        "project": "chineseocr_lite"
       },
       {
         "name": "build-ncnn.sh",
         "type": "Shell脚本",
         "size": 1829,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/cpp_projects/OcrLiteNcnn/scripts/build-ncnn.sh",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/cpp_projects/OcrLiteNcnn/scripts/build-ncnn.sh",
-        "sizeFormatted": "1.8 KB"
+        "sizeFormatted": "1.8 KB",
+        "project": "chineseocr_lite"
       },
       {
         "name": "install-vulkan-linux.sh",
         "type": "Shell脚本",
         "size": 421,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/cpp_projects/OcrLiteNcnn/scripts/install-vulkan-linux.sh",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/cpp_projects/OcrLiteNcnn/scripts/install-vulkan-linux.sh",
-        "sizeFormatted": "421 B"
+        "sizeFormatted": "421 B",
+        "project": "chineseocr_lite"
       },
       {
         "name": "AngleNet.cpp",
         "type": "C++代码",
         "size": 3504,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/cpp_projects/OcrLiteNcnn/src/AngleNet.cpp",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/cpp_projects/OcrLiteNcnn/src/AngleNet.cpp",
-        "sizeFormatted": "3.4 KB"
+        "sizeFormatted": "3.4 KB",
+        "project": "chineseocr_lite"
       },
       {
         "name": "clipper.cpp",
         "type": "C++代码",
         "size": 167317,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/cpp_projects/OcrLiteNcnn/src/clipper.cpp",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/cpp_projects/OcrLiteNcnn/src/clipper.cpp",
-        "sizeFormatted": "163.4 KB"
+        "sizeFormatted": "163.4 KB",
+        "project": "chineseocr_lite"
       },
       {
         "name": "CrnnNet.cpp",
         "type": "C++代码",
         "size": 4076,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/cpp_projects/OcrLiteNcnn/src/CrnnNet.cpp",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/cpp_projects/OcrLiteNcnn/src/CrnnNet.cpp",
-        "sizeFormatted": "4.0 KB"
+        "sizeFormatted": "4.0 KB",
+        "project": "chineseocr_lite"
       },
       {
         "name": "DbNet.cpp",
         "type": "C++代码",
         "size": 3367,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/cpp_projects/OcrLiteNcnn/src/DbNet.cpp",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/cpp_projects/OcrLiteNcnn/src/DbNet.cpp",
-        "sizeFormatted": "3.3 KB"
+        "sizeFormatted": "3.3 KB",
+        "project": "chineseocr_lite"
       },
       {
         "name": "getopt.cpp",
         "type": "C++代码",
         "size": 7260,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/cpp_projects/OcrLiteNcnn/src/getopt.cpp",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/cpp_projects/OcrLiteNcnn/src/getopt.cpp",
-        "sizeFormatted": "7.1 KB"
+        "sizeFormatted": "7.1 KB",
+        "project": "chineseocr_lite"
       },
       {
         "name": "main.cpp",
         "type": "C++代码",
         "size": 7555,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/cpp_projects/OcrLiteNcnn/src/main.cpp",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/cpp_projects/OcrLiteNcnn/src/main.cpp",
-        "sizeFormatted": "7.4 KB"
+        "sizeFormatted": "7.4 KB",
+        "project": "chineseocr_lite"
       },
       {
         "name": "OcrLite.cpp",
         "type": "C++代码",
         "size": 9717,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/cpp_projects/OcrLiteNcnn/src/OcrLite.cpp",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/cpp_projects/OcrLiteNcnn/src/OcrLite.cpp",
-        "sizeFormatted": "9.5 KB"
+        "sizeFormatted": "9.5 KB",
+        "project": "chineseocr_lite"
       },
       {
         "name": "OcrLiteCaller.cpp",
         "type": "C++代码",
         "size": 1200,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/cpp_projects/OcrLiteNcnn/src/OcrLiteCaller.cpp",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/cpp_projects/OcrLiteNcnn/src/OcrLiteCaller.cpp",
-        "sizeFormatted": "1.2 KB"
+        "sizeFormatted": "1.2 KB",
+        "project": "chineseocr_lite"
       },
       {
         "name": "OcrLiteJni.cpp",
         "type": "C++代码",
         "size": 7105,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/cpp_projects/OcrLiteNcnn/src/OcrLiteJni.cpp",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/cpp_projects/OcrLiteNcnn/src/OcrLiteJni.cpp",
-        "sizeFormatted": "6.9 KB"
+        "sizeFormatted": "6.9 KB",
+        "project": "chineseocr_lite"
       },
       {
         "name": "OcrResultUtils.cpp",
         "type": "C++代码",
         "size": 4262,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/cpp_projects/OcrLiteNcnn/src/OcrResultUtils.cpp",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/cpp_projects/OcrLiteNcnn/src/OcrResultUtils.cpp",
-        "sizeFormatted": "4.2 KB"
+        "sizeFormatted": "4.2 KB",
+        "project": "chineseocr_lite"
       },
       {
         "name": "OcrUtils.cpp",
         "type": "C++代码",
         "size": 11440,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/cpp_projects/OcrLiteNcnn/src/OcrUtils.cpp",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/cpp_projects/OcrLiteNcnn/src/OcrUtils.cpp",
-        "sizeFormatted": "11.2 KB"
+        "sizeFormatted": "11.2 KB",
+        "project": "chineseocr_lite"
       },
       {
         "name": ".gitignore",
         "type": "其他",
         "size": 2109,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/cpp_projects/OcrLiteOnnx/.gitignore",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/cpp_projects/OcrLiteOnnx/.gitignore",
-        "sizeFormatted": "2.1 KB"
+        "sizeFormatted": "2.1 KB",
+        "project": "chineseocr_lite"
       },
       {
         "name": "build-default.bat",
         "type": "Shell脚本",
         "size": 1708,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/cpp_projects/OcrLiteOnnx/build-default.bat",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/cpp_projects/OcrLiteOnnx/build-default.bat",
-        "sizeFormatted": "1.7 KB"
+        "sizeFormatted": "1.7 KB",
+        "project": "chineseocr_lite"
       },
       {
         "name": "build-default.sh",
         "type": "Shell脚本",
         "size": 984,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/cpp_projects/OcrLiteOnnx/build-default.sh",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/cpp_projects/OcrLiteOnnx/build-default.sh",
-        "sizeFormatted": "984 B"
+        "sizeFormatted": "984 B",
+        "project": "chineseocr_lite"
       },
       {
         "name": "build.bat",
         "type": "Shell脚本",
         "size": 1579,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/cpp_projects/OcrLiteOnnx/build.bat",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/cpp_projects/OcrLiteOnnx/build.bat",
-        "sizeFormatted": "1.5 KB"
+        "sizeFormatted": "1.5 KB",
+        "project": "chineseocr_lite"
       },
       {
         "name": "BUILD.md",
         "type": "文档",
         "size": 5765,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/cpp_projects/OcrLiteOnnx/BUILD.md",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/cpp_projects/OcrLiteOnnx/BUILD.md",
-        "sizeFormatted": "5.6 KB"
+        "sizeFormatted": "5.6 KB",
+        "project": "chineseocr_lite"
       },
       {
         "name": "build.sh",
         "type": "Shell脚本",
         "size": 1410,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/cpp_projects/OcrLiteOnnx/build.sh",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/cpp_projects/OcrLiteOnnx/build.sh",
-        "sizeFormatted": "1.4 KB"
+        "sizeFormatted": "1.4 KB",
+        "project": "chineseocr_lite"
       },
       {
         "name": "CMakeLists.txt",
         "type": "文档",
         "size": 4520,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/cpp_projects/OcrLiteOnnx/CMakeLists.txt",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/cpp_projects/OcrLiteOnnx/CMakeLists.txt",
-        "sizeFormatted": "4.4 KB"
+        "sizeFormatted": "4.4 KB",
+        "project": "chineseocr_lite"
       },
       {
         "name": "generate-vs-project.bat",
         "type": "Shell脚本",
         "size": 1594,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/cpp_projects/OcrLiteOnnx/generate-vs-project.bat",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/cpp_projects/OcrLiteOnnx/generate-vs-project.bat",
-        "sizeFormatted": "1.6 KB"
+        "sizeFormatted": "1.6 KB",
+        "project": "chineseocr_lite"
       },
       {
         "name": "README.md",
         "type": "文档",
         "size": 4869,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/cpp_projects/OcrLiteOnnx/README.md",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/cpp_projects/OcrLiteOnnx/README.md",
-        "sizeFormatted": "4.8 KB"
+        "sizeFormatted": "4.8 KB",
+        "project": "chineseocr_lite"
       },
       {
         "name": "run-benchmark.bat",
         "type": "Shell脚本",
         "size": 1229,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/cpp_projects/OcrLiteOnnx/run-benchmark.bat",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/cpp_projects/OcrLiteOnnx/run-benchmark.bat",
-        "sizeFormatted": "1.2 KB"
+        "sizeFormatted": "1.2 KB",
+        "project": "chineseocr_lite"
       },
       {
         "name": "run-benchmark.sh",
         "type": "Shell脚本",
         "size": 1047,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/cpp_projects/OcrLiteOnnx/run-benchmark.sh",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/cpp_projects/OcrLiteOnnx/run-benchmark.sh",
-        "sizeFormatted": "1.0 KB"
+        "sizeFormatted": "1.0 KB",
+        "project": "chineseocr_lite"
       },
       {
         "name": "run-test.bat",
         "type": "Shell脚本",
         "size": 1117,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/cpp_projects/OcrLiteOnnx/run-test.bat",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/cpp_projects/OcrLiteOnnx/run-test.bat",
-        "sizeFormatted": "1.1 KB"
+        "sizeFormatted": "1.1 KB",
+        "project": "chineseocr_lite"
       },
       {
         "name": "run-test.sh",
         "type": "Shell脚本",
         "size": 1006,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/cpp_projects/OcrLiteOnnx/run-test.sh",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/cpp_projects/OcrLiteOnnx/run-test.sh",
-        "sizeFormatted": "1006 B"
+        "sizeFormatted": "1006 B",
+        "project": "chineseocr_lite"
       },
       {
         "name": "valgrind-massif.sh",
         "type": "Shell脚本",
         "size": 883,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/cpp_projects/OcrLiteOnnx/valgrind-massif.sh",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/cpp_projects/OcrLiteOnnx/valgrind-massif.sh",
-        "sizeFormatted": "883 B"
+        "sizeFormatted": "883 B",
+        "project": "chineseocr_lite"
       },
       {
         "name": "valgrind-memcheck.sh",
         "type": "Shell脚本",
         "size": 968,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/cpp_projects/OcrLiteOnnx/valgrind-memcheck.sh",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/cpp_projects/OcrLiteOnnx/valgrind-memcheck.sh",
-        "sizeFormatted": "968 B"
+        "sizeFormatted": "968 B",
+        "project": "chineseocr_lite"
       },
       {
         "name": "valgrind-memcheck.txt",
         "type": "文档",
         "size": 34862,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/cpp_projects/OcrLiteOnnx/valgrind-memcheck.txt",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/cpp_projects/OcrLiteOnnx/valgrind-memcheck.txt",
-        "sizeFormatted": "34.0 KB"
+        "sizeFormatted": "34.0 KB",
+        "project": "chineseocr_lite"
       },
       {
         "name": "benchmark.cpp",
         "type": "C++代码",
         "size": 7596,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/cpp_projects/OcrLiteOnnx/benchmark/benchmark.cpp",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/cpp_projects/OcrLiteOnnx/benchmark/benchmark.cpp",
-        "sizeFormatted": "7.4 KB"
+        "sizeFormatted": "7.4 KB",
+        "project": "chineseocr_lite"
       },
       {
         "name": "clear.cmd",
         "type": "其他",
         "size": 227,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/cpp_projects/OcrLiteOnnx/images/clear.cmd",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/cpp_projects/OcrLiteOnnx/images/clear.cmd",
-        "sizeFormatted": "227 B"
+        "sizeFormatted": "227 B",
+        "project": "chineseocr_lite"
       },
       {
         "name": "clear.sh",
         "type": "Shell脚本",
         "size": 225,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/cpp_projects/OcrLiteOnnx/images/clear.sh",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/cpp_projects/OcrLiteOnnx/images/clear.sh",
-        "sizeFormatted": "225 B"
+        "sizeFormatted": "225 B",
+        "project": "chineseocr_lite"
       },
       {
         "name": "AngleNet.h",
         "type": "头文件",
         "size": 1012,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/cpp_projects/OcrLiteOnnx/include/AngleNet.h",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/cpp_projects/OcrLiteOnnx/include/AngleNet.h",
-        "sizeFormatted": "1012 B"
+        "sizeFormatted": "1012 B",
+        "project": "chineseocr_lite"
       },
       {
         "name": "clipper.hpp",
         "type": "头文件",
         "size": 16486,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/cpp_projects/OcrLiteOnnx/include/clipper.hpp",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/cpp_projects/OcrLiteOnnx/include/clipper.hpp",
-        "sizeFormatted": "16.1 KB"
+        "sizeFormatted": "16.1 KB",
+        "project": "chineseocr_lite"
       },
       {
         "name": "CrnnNet.h",
         "type": "头文件",
         "size": 1077,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/cpp_projects/OcrLiteOnnx/include/CrnnNet.h",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/cpp_projects/OcrLiteOnnx/include/CrnnNet.h",
-        "sizeFormatted": "1.1 KB"
+        "sizeFormatted": "1.1 KB",
+        "project": "chineseocr_lite"
       },
       {
         "name": "DbNet.h",
         "type": "头文件",
         "size": 897,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/cpp_projects/OcrLiteOnnx/include/DbNet.h",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/cpp_projects/OcrLiteOnnx/include/DbNet.h",
-        "sizeFormatted": "897 B"
+        "sizeFormatted": "897 B",
+        "project": "chineseocr_lite"
       },
       {
         "name": "getopt.h",
         "type": "头文件",
         "size": 1144,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/cpp_projects/OcrLiteOnnx/include/getopt.h",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/cpp_projects/OcrLiteOnnx/include/getopt.h",
-        "sizeFormatted": "1.1 KB"
+        "sizeFormatted": "1.1 KB",
+        "project": "chineseocr_lite"
       },
       {
         "name": "main.h",
         "type": "头文件",
         "size": 3029,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/cpp_projects/OcrLiteOnnx/include/main.h",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/cpp_projects/OcrLiteOnnx/include/main.h",
-        "sizeFormatted": "3.0 KB"
+        "sizeFormatted": "3.0 KB",
+        "project": "chineseocr_lite"
       },
       {
         "name": "OcrLite.h",
         "type": "头文件",
         "size": 1804,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/cpp_projects/OcrLiteOnnx/include/OcrLite.h",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/cpp_projects/OcrLiteOnnx/include/OcrLite.h",
-        "sizeFormatted": "1.8 KB"
+        "sizeFormatted": "1.8 KB",
+        "project": "chineseocr_lite"
       },
       {
         "name": "OcrLiteCaller.h",
         "type": "头文件",
         "size": 1138,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/cpp_projects/OcrLiteOnnx/include/OcrLiteCaller.h",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/cpp_projects/OcrLiteOnnx/include/OcrLiteCaller.h",
-        "sizeFormatted": "1.1 KB"
+        "sizeFormatted": "1.1 KB",
+        "project": "chineseocr_lite"
       },
       {
         "name": "OcrLitePort.h",
         "type": "头文件",
         "size": 1139,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/cpp_projects/OcrLiteOnnx/include/OcrLitePort.h",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/cpp_projects/OcrLiteOnnx/include/OcrLitePort.h",
-        "sizeFormatted": "1.1 KB"
+        "sizeFormatted": "1.1 KB",
+        "project": "chineseocr_lite"
       },
       {
         "name": "OcrResultUtils.h",
         "type": "头文件",
         "size": 707,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/cpp_projects/OcrLiteOnnx/include/OcrResultUtils.h",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/cpp_projects/OcrLiteOnnx/include/OcrResultUtils.h",
-        "sizeFormatted": "707 B"
+        "sizeFormatted": "707 B",
+        "project": "chineseocr_lite"
       },
       {
         "name": "OcrStruct.h",
         "type": "头文件",
         "size": 953,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/cpp_projects/OcrLiteOnnx/include/OcrStruct.h",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/cpp_projects/OcrLiteOnnx/include/OcrStruct.h",
-        "sizeFormatted": "953 B"
+        "sizeFormatted": "953 B",
+        "project": "chineseocr_lite"
       },
       {
         "name": "OcrUtils.h",
         "type": "头文件",
         "size": 3098,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/cpp_projects/OcrLiteOnnx/include/OcrUtils.h",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/cpp_projects/OcrLiteOnnx/include/OcrUtils.h",
-        "sizeFormatted": "3.0 KB"
+        "sizeFormatted": "3.0 KB",
+        "project": "chineseocr_lite"
       },
       {
         "name": "version.h",
         "type": "头文件",
         "size": 114,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/cpp_projects/OcrLiteOnnx/include/version.h",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/cpp_projects/OcrLiteOnnx/include/version.h",
-        "sizeFormatted": "114 B"
+        "sizeFormatted": "114 B",
+        "project": "chineseocr_lite"
       },
       {
         "name": "keys.txt",
         "type": "文档",
         "size": 21924,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/cpp_projects/OcrLiteOnnx/models/keys.txt",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/cpp_projects/OcrLiteOnnx/models/keys.txt",
-        "sizeFormatted": "21.4 KB"
+        "sizeFormatted": "21.4 KB",
+        "project": "chineseocr_lite"
       },
       {
         "name": "OnnxRuntimeWrapper.cmake",
         "type": "其他",
         "size": 700,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/cpp_projects/OcrLiteOnnx/onnxruntime-static/OnnxRuntimeWrapper.cmake",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/cpp_projects/OcrLiteOnnx/onnxruntime-static/OnnxRuntimeWrapper.cmake",
-        "sizeFormatted": "700 B"
+        "sizeFormatted": "700 B",
+        "project": "chineseocr_lite"
       },
       {
         "name": "OpenCVWrapperConfig.cmake",
         "type": "其他",
         "size": 731,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/cpp_projects/OcrLiteOnnx/opencv-static/OpenCVWrapperConfig.cmake",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/cpp_projects/OcrLiteOnnx/opencv-static/OpenCVWrapperConfig.cmake",
-        "sizeFormatted": "731 B"
+        "sizeFormatted": "731 B",
+        "project": "chineseocr_lite"
       },
       {
         "name": "build-onnxruntime.bat",
         "type": "Shell脚本",
         "size": 1372,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/cpp_projects/OcrLiteOnnx/scripts/build-onnxruntime.bat",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/cpp_projects/OcrLiteOnnx/scripts/build-onnxruntime.bat",
-        "sizeFormatted": "1.3 KB"
+        "sizeFormatted": "1.3 KB",
+        "project": "chineseocr_lite"
       },
       {
         "name": "build-onnxruntime.sh",
         "type": "Shell脚本",
         "size": 667,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/cpp_projects/OcrLiteOnnx/scripts/build-onnxruntime.sh",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/cpp_projects/OcrLiteOnnx/scripts/build-onnxruntime.sh",
-        "sizeFormatted": "667 B"
+        "sizeFormatted": "667 B",
+        "project": "chineseocr_lite"
       },
       {
         "name": "build-opencv3-nmake.bat",
         "type": "Shell脚本",
         "size": 1487,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/cpp_projects/OcrLiteOnnx/scripts/build-opencv3-nmake.bat",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/cpp_projects/OcrLiteOnnx/scripts/build-opencv3-nmake.bat",
-        "sizeFormatted": "1.5 KB"
+        "sizeFormatted": "1.5 KB",
+        "project": "chineseocr_lite"
       },
       {
         "name": "build-opencv3-vs.bat",
         "type": "Shell脚本",
         "size": 2524,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/cpp_projects/OcrLiteOnnx/scripts/build-opencv3-vs.bat",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/cpp_projects/OcrLiteOnnx/scripts/build-opencv3-vs.bat",
-        "sizeFormatted": "2.5 KB"
+        "sizeFormatted": "2.5 KB",
+        "project": "chineseocr_lite"
       },
       {
         "name": "build-opencv3.sh",
         "type": "Shell脚本",
         "size": 1781,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/cpp_projects/OcrLiteOnnx/scripts/build-opencv3.sh",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/cpp_projects/OcrLiteOnnx/scripts/build-opencv3.sh",
-        "sizeFormatted": "1.7 KB"
+        "sizeFormatted": "1.7 KB",
+        "project": "chineseocr_lite"
       },
       {
         "name": "AngleNet.cpp",
         "type": "C++代码",
         "size": 4883,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/cpp_projects/OcrLiteOnnx/src/AngleNet.cpp",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/cpp_projects/OcrLiteOnnx/src/AngleNet.cpp",
-        "sizeFormatted": "4.8 KB"
+        "sizeFormatted": "4.8 KB",
+        "project": "chineseocr_lite"
       },
       {
         "name": "clipper.cpp",
         "type": "C++代码",
         "size": 167317,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/cpp_projects/OcrLiteOnnx/src/clipper.cpp",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/cpp_projects/OcrLiteOnnx/src/clipper.cpp",
-        "sizeFormatted": "163.4 KB"
+        "sizeFormatted": "163.4 KB",
+        "project": "chineseocr_lite"
       },
       {
         "name": "CrnnNet.cpp",
         "type": "C++代码",
         "size": 5459,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/cpp_projects/OcrLiteOnnx/src/CrnnNet.cpp",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/cpp_projects/OcrLiteOnnx/src/CrnnNet.cpp",
-        "sizeFormatted": "5.3 KB"
+        "sizeFormatted": "5.3 KB",
+        "project": "chineseocr_lite"
       },
       {
         "name": "DbNet.cpp",
         "type": "C++代码",
         "size": 4739,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/cpp_projects/OcrLiteOnnx/src/DbNet.cpp",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/cpp_projects/OcrLiteOnnx/src/DbNet.cpp",
-        "sizeFormatted": "4.6 KB"
+        "sizeFormatted": "4.6 KB",
+        "project": "chineseocr_lite"
       },
       {
         "name": "getopt.cpp",
         "type": "C++代码",
         "size": 7260,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/cpp_projects/OcrLiteOnnx/src/getopt.cpp",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/cpp_projects/OcrLiteOnnx/src/getopt.cpp",
-        "sizeFormatted": "7.1 KB"
+        "sizeFormatted": "7.1 KB",
+        "project": "chineseocr_lite"
       },
       {
         "name": "main.cpp",
         "type": "C++代码",
         "size": 6630,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/cpp_projects/OcrLiteOnnx/src/main.cpp",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/cpp_projects/OcrLiteOnnx/src/main.cpp",
-        "sizeFormatted": "6.5 KB"
+        "sizeFormatted": "6.5 KB",
+        "project": "chineseocr_lite"
       },
       {
         "name": "OcrLite.cpp",
         "type": "C++代码",
         "size": 9397,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/cpp_projects/OcrLiteOnnx/src/OcrLite.cpp",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/cpp_projects/OcrLiteOnnx/src/OcrLite.cpp",
-        "sizeFormatted": "9.2 KB"
+        "sizeFormatted": "9.2 KB",
+        "project": "chineseocr_lite"
       },
       {
         "name": "OcrLiteCaller.cpp",
         "type": "C++代码",
         "size": 1293,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/cpp_projects/OcrLiteOnnx/src/OcrLiteCaller.cpp",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/cpp_projects/OcrLiteOnnx/src/OcrLiteCaller.cpp",
-        "sizeFormatted": "1.3 KB"
+        "sizeFormatted": "1.3 KB",
+        "project": "chineseocr_lite"
       },
       {
         "name": "OcrLiteJni.cpp",
         "type": "C++代码",
         "size": 5846,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/cpp_projects/OcrLiteOnnx/src/OcrLiteJni.cpp",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/cpp_projects/OcrLiteOnnx/src/OcrLiteJni.cpp",
-        "sizeFormatted": "5.7 KB"
+        "sizeFormatted": "5.7 KB",
+        "project": "chineseocr_lite"
       },
       {
         "name": "OcrResultUtils.cpp",
         "type": "C++代码",
         "size": 4262,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/cpp_projects/OcrLiteOnnx/src/OcrResultUtils.cpp",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/cpp_projects/OcrLiteOnnx/src/OcrResultUtils.cpp",
-        "sizeFormatted": "4.2 KB"
+        "sizeFormatted": "4.2 KB",
+        "project": "chineseocr_lite"
       },
       {
         "name": "OcrUtils.cpp",
         "type": "C++代码",
         "size": 14890,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/cpp_projects/OcrLiteOnnx/src/OcrUtils.cpp",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/cpp_projects/OcrLiteOnnx/src/OcrUtils.cpp",
-        "sizeFormatted": "14.5 KB"
+        "sizeFormatted": "14.5 KB",
+        "project": "chineseocr_lite"
       },
       {
         "name": "CRNN.py",
         "type": "Python代码",
         "size": 2388,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/crnn/CRNN.py",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/crnn/CRNN.py",
-        "sizeFormatted": "2.3 KB"
+        "sizeFormatted": "2.3 KB",
+        "project": "chineseocr_lite"
       },
       {
         "name": "keys.py",
         "type": "Python代码",
         "size": 16417,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/crnn/keys.py",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/crnn/keys.py",
-        "sizeFormatted": "16.0 KB"
+        "sizeFormatted": "16.0 KB",
+        "project": "chineseocr_lite"
       },
       {
         "name": "util.py",
         "type": "Python代码",
         "size": 2155,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/crnn/util.py",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/crnn/util.py",
-        "sizeFormatted": "2.1 KB"
+        "sizeFormatted": "2.1 KB",
+        "project": "chineseocr_lite"
       },
       {
         "name": "__init__.py",
         "type": "Python代码",
         "size": 29,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/crnn/__init__.py",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/crnn/__init__.py",
-        "sizeFormatted": "29 B"
+        "sizeFormatted": "29 B",
+        "project": "chineseocr_lite"
       },
       {
         "name": ".DS_Store",
         "type": "其他",
         "size": 8196,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/dbnet/.DS_Store",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/dbnet/.DS_Store",
-        "sizeFormatted": "8.0 KB"
+        "sizeFormatted": "8.0 KB",
+        "project": "chineseocr_lite"
       },
       {
         "name": "dbnet_infer.py",
         "type": "Python代码",
         "size": 2704,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/dbnet/dbnet_infer.py",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/dbnet/dbnet_infer.py",
-        "sizeFormatted": "2.6 KB"
+        "sizeFormatted": "2.6 KB",
+        "project": "chineseocr_lite"
       },
       {
         "name": "decode.py",
         "type": "Python代码",
         "size": 5043,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/dbnet/decode.py",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/dbnet/decode.py",
-        "sizeFormatted": "4.9 KB"
+        "sizeFormatted": "4.9 KB",
+        "project": "chineseocr_lite"
       },
       {
         "name": "README.md",
         "type": "文档",
         "size": 184,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/dotnet_projects/README.md",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/dotnet_projects/README.md",
-        "sizeFormatted": "184 B"
+        "sizeFormatted": "184 B",
+        "project": "chineseocr_lite"
       },
       {
         "name": ".gitignore",
         "type": "其他",
         "size": 2304,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/dotnet_projects/OcrLiteOnnxCs/.gitignore",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/dotnet_projects/OcrLiteOnnxCs/.gitignore",
-        "sizeFormatted": "2.2 KB"
+        "sizeFormatted": "2.2 KB",
+        "project": "chineseocr_lite"
       },
       {
         "name": "OcrLiteOnnxCs.sln",
         "type": "其他",
         "size": 1749,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/dotnet_projects/OcrLiteOnnxCs/OcrLiteOnnxCs.sln",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/dotnet_projects/OcrLiteOnnxCs/OcrLiteOnnxCs.sln",
-        "sizeFormatted": "1.7 KB"
+        "sizeFormatted": "1.7 KB",
+        "project": "chineseocr_lite"
       },
       {
         "name": "README.md",
         "type": "文档",
         "size": 1723,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/dotnet_projects/OcrLiteOnnxCs/README.md",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/dotnet_projects/OcrLiteOnnxCs/README.md",
-        "sizeFormatted": "1.7 KB"
+        "sizeFormatted": "1.7 KB",
+        "project": "chineseocr_lite"
       },
       {
         "name": "AngleNet.cs",
         "type": "其他",
         "size": 5780,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/dotnet_projects/OcrLiteOnnxCs/OcrLiteLib/AngleNet.cs",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/dotnet_projects/OcrLiteOnnxCs/OcrLiteLib/AngleNet.cs",
-        "sizeFormatted": "5.6 KB"
+        "sizeFormatted": "5.6 KB",
+        "project": "chineseocr_lite"
       },
       {
         "name": "CrnnNet.cs",
         "type": "其他",
         "size": 5457,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/dotnet_projects/OcrLiteOnnxCs/OcrLiteLib/CrnnNet.cs",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/dotnet_projects/OcrLiteOnnxCs/OcrLiteLib/CrnnNet.cs",
-        "sizeFormatted": "5.3 KB"
+        "sizeFormatted": "5.3 KB",
+        "project": "chineseocr_lite"
       },
       {
         "name": "DbNet.cs",
         "type": "其他",
         "size": 12101,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/dotnet_projects/OcrLiteOnnxCs/OcrLiteLib/DbNet.cs",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/dotnet_projects/OcrLiteOnnxCs/OcrLiteLib/DbNet.cs",
-        "sizeFormatted": "11.8 KB"
+        "sizeFormatted": "11.8 KB",
+        "project": "chineseocr_lite"
       },
       {
         "name": "OcrLite.cs",
         "type": "其他",
         "size": 6192,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/dotnet_projects/OcrLiteOnnxCs/OcrLiteLib/OcrLite.cs",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/dotnet_projects/OcrLiteOnnxCs/OcrLiteLib/OcrLite.cs",
-        "sizeFormatted": "6.0 KB"
+        "sizeFormatted": "6.0 KB",
+        "project": "chineseocr_lite"
       },
       {
         "name": "OcrLiteLib.csproj",
         "type": "其他",
         "size": 13161,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/dotnet_projects/OcrLiteOnnxCs/OcrLiteLib/OcrLiteLib.csproj",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/dotnet_projects/OcrLiteOnnxCs/OcrLiteLib/OcrLiteLib.csproj",
-        "sizeFormatted": "12.9 KB"
+        "sizeFormatted": "12.9 KB",
+        "project": "chineseocr_lite"
       },
       {
         "name": "OcrResult.cs",
         "type": "其他",
         "size": 3538,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/dotnet_projects/OcrLiteOnnxCs/OcrLiteLib/OcrResult.cs",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/dotnet_projects/OcrLiteOnnxCs/OcrLiteLib/OcrResult.cs",
-        "sizeFormatted": "3.5 KB"
+        "sizeFormatted": "3.5 KB",
+        "project": "chineseocr_lite"
       },
       {
         "name": "OcrUtils.cs",
         "type": "其他",
         "size": 6053,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/dotnet_projects/OcrLiteOnnxCs/OcrLiteLib/OcrUtils.cs",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/dotnet_projects/OcrLiteOnnxCs/OcrLiteLib/OcrUtils.cs",
-        "sizeFormatted": "5.9 KB"
+        "sizeFormatted": "5.9 KB",
+        "project": "chineseocr_lite"
       },
       {
         "name": "packages.config",
         "type": "其他",
         "size": 4841,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/dotnet_projects/OcrLiteOnnxCs/OcrLiteLib/packages.config",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/dotnet_projects/OcrLiteOnnxCs/OcrLiteLib/packages.config",
-        "sizeFormatted": "4.7 KB"
+        "sizeFormatted": "4.7 KB",
+        "project": "chineseocr_lite"
       },
       {
         "name": "ScaleParam.cs",
         "type": "其他",
         "size": 2604,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/dotnet_projects/OcrLiteOnnxCs/OcrLiteLib/ScaleParam.cs",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/dotnet_projects/OcrLiteOnnxCs/OcrLiteLib/ScaleParam.cs",
-        "sizeFormatted": "2.5 KB"
+        "sizeFormatted": "2.5 KB",
+        "project": "chineseocr_lite"
       },
       {
         "name": "AssemblyInfo.cs",
         "type": "其他",
         "size": 1273,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/dotnet_projects/OcrLiteOnnxCs/OcrLiteLib/Properties/AssemblyInfo.cs",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/dotnet_projects/OcrLiteOnnxCs/OcrLiteLib/Properties/AssemblyInfo.cs",
-        "sizeFormatted": "1.2 KB"
+        "sizeFormatted": "1.2 KB",
+        "project": "chineseocr_lite"
       },
       {
         "name": "App.config",
         "type": "其他",
         "size": 184,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/dotnet_projects/OcrLiteOnnxCs/OcrLiteOnnxForm/App.config",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/dotnet_projects/OcrLiteOnnxCs/OcrLiteOnnxForm/App.config",
-        "sizeFormatted": "184 B"
+        "sizeFormatted": "184 B",
+        "project": "chineseocr_lite"
       },
       {
         "name": "FormOcrLite.cs",
         "type": "其他",
         "size": 6170,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/dotnet_projects/OcrLiteOnnxCs/OcrLiteOnnxForm/FormOcrLite.cs",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/dotnet_projects/OcrLiteOnnxCs/OcrLiteOnnxForm/FormOcrLite.cs",
-        "sizeFormatted": "6.0 KB"
+        "sizeFormatted": "6.0 KB",
+        "project": "chineseocr_lite"
       },
       {
         "name": "FormOcrLite.Designer.cs",
         "type": "其他",
         "size": 34228,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/dotnet_projects/OcrLiteOnnxCs/OcrLiteOnnxForm/FormOcrLite.Designer.cs",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/dotnet_projects/OcrLiteOnnxCs/OcrLiteOnnxForm/FormOcrLite.Designer.cs",
-        "sizeFormatted": "33.4 KB"
+        "sizeFormatted": "33.4 KB",
+        "project": "chineseocr_lite"
       },
       {
         "name": "OcrLiteOnnxForm.csproj",
         "type": "其他",
         "size": 5208,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/dotnet_projects/OcrLiteOnnxCs/OcrLiteOnnxForm/OcrLiteOnnxForm.csproj",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/dotnet_projects/OcrLiteOnnxCs/OcrLiteOnnxForm/OcrLiteOnnxForm.csproj",
-        "sizeFormatted": "5.1 KB"
+        "sizeFormatted": "5.1 KB",
+        "project": "chineseocr_lite"
       },
       {
         "name": "packages.config",
         "type": "其他",
         "size": 570,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/dotnet_projects/OcrLiteOnnxCs/OcrLiteOnnxForm/packages.config",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/dotnet_projects/OcrLiteOnnxCs/OcrLiteOnnxForm/packages.config",
-        "sizeFormatted": "570 B"
+        "sizeFormatted": "570 B",
+        "project": "chineseocr_lite"
       },
       {
         "name": "Program.cs",
         "type": "其他",
         "size": 509,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/dotnet_projects/OcrLiteOnnxCs/OcrLiteOnnxForm/Program.cs",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/dotnet_projects/OcrLiteOnnxCs/OcrLiteOnnxForm/Program.cs",
-        "sizeFormatted": "509 B"
+        "sizeFormatted": "509 B",
+        "project": "chineseocr_lite"
       },
       {
         "name": "AssemblyInfo.cs",
         "type": "其他",
         "size": 1288,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/dotnet_projects/OcrLiteOnnxCs/OcrLiteOnnxForm/Properties/AssemblyInfo.cs",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/dotnet_projects/OcrLiteOnnxCs/OcrLiteOnnxForm/Properties/AssemblyInfo.cs",
-        "sizeFormatted": "1.3 KB"
+        "sizeFormatted": "1.3 KB",
+        "project": "chineseocr_lite"
       },
       {
         "name": "Resources.Designer.cs",
         "type": "其他",
         "size": 2802,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/dotnet_projects/OcrLiteOnnxCs/OcrLiteOnnxForm/Properties/Resources.Designer.cs",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/dotnet_projects/OcrLiteOnnxCs/OcrLiteOnnxForm/Properties/Resources.Designer.cs",
-        "sizeFormatted": "2.7 KB"
+        "sizeFormatted": "2.7 KB",
+        "project": "chineseocr_lite"
       },
       {
         "name": "Resources.resx",
         "type": "其他",
         "size": 5496,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/dotnet_projects/OcrLiteOnnxCs/OcrLiteOnnxForm/Properties/Resources.resx",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/dotnet_projects/OcrLiteOnnxCs/OcrLiteOnnxForm/Properties/Resources.resx",
-        "sizeFormatted": "5.4 KB"
+        "sizeFormatted": "5.4 KB",
+        "project": "chineseocr_lite"
       },
       {
         "name": "Settings.Designer.cs",
         "type": "其他",
         "size": 1089,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/dotnet_projects/OcrLiteOnnxCs/OcrLiteOnnxForm/Properties/Settings.Designer.cs",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/dotnet_projects/OcrLiteOnnxCs/OcrLiteOnnxForm/Properties/Settings.Designer.cs",
-        "sizeFormatted": "1.1 KB"
+        "sizeFormatted": "1.1 KB",
+        "project": "chineseocr_lite"
       },
       {
         "name": "Settings.settings",
         "type": "其他",
         "size": 242,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/dotnet_projects/OcrLiteOnnxCs/OcrLiteOnnxForm/Properties/Settings.settings",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/dotnet_projects/OcrLiteOnnxCs/OcrLiteOnnxForm/Properties/Settings.settings",
-        "sizeFormatted": "242 B"
+        "sizeFormatted": "242 B",
+        "project": "chineseocr_lite"
       },
       {
         "name": ".gitignore",
         "type": "其他",
         "size": 2304,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/dotnet_projects/OcrLiteOnnxVB/.gitignore",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/dotnet_projects/OcrLiteOnnxVB/.gitignore",
-        "sizeFormatted": "2.2 KB"
+        "sizeFormatted": "2.2 KB",
+        "project": "chineseocr_lite"
       },
       {
         "name": "OcrLiteOnnxVB.sln",
         "type": "其他",
         "size": 1749,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/dotnet_projects/OcrLiteOnnxVB/OcrLiteOnnxVB.sln",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/dotnet_projects/OcrLiteOnnxVB/OcrLiteOnnxVB.sln",
-        "sizeFormatted": "1.7 KB"
+        "sizeFormatted": "1.7 KB",
+        "project": "chineseocr_lite"
       },
       {
         "name": "README.md",
         "type": "文档",
         "size": 1786,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/dotnet_projects/OcrLiteOnnxVB/README.md",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/dotnet_projects/OcrLiteOnnxVB/README.md",
-        "sizeFormatted": "1.7 KB"
+        "sizeFormatted": "1.7 KB",
+        "project": "chineseocr_lite"
       },
       {
         "name": "AngleNet.vb",
         "type": "其他",
         "size": 5674,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/dotnet_projects/OcrLiteOnnxVB/OcrLiteLib/AngleNet.vb",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/dotnet_projects/OcrLiteOnnxVB/OcrLiteLib/AngleNet.vb",
-        "sizeFormatted": "5.5 KB"
+        "sizeFormatted": "5.5 KB",
+        "project": "chineseocr_lite"
       },
       {
         "name": "CrnnNet.vb",
         "type": "其他",
         "size": 5382,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/dotnet_projects/OcrLiteOnnxVB/OcrLiteLib/CrnnNet.vb",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/dotnet_projects/OcrLiteOnnxVB/OcrLiteLib/CrnnNet.vb",
-        "sizeFormatted": "5.3 KB"
+        "sizeFormatted": "5.3 KB",
+        "project": "chineseocr_lite"
       },
       {
         "name": "DbNet.vb",
         "type": "其他",
         "size": 12063,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/dotnet_projects/OcrLiteOnnxVB/OcrLiteLib/DbNet.vb",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/dotnet_projects/OcrLiteOnnxVB/OcrLiteLib/DbNet.vb",
-        "sizeFormatted": "11.8 KB"
+        "sizeFormatted": "11.8 KB",
+        "project": "chineseocr_lite"
       },
       {
         "name": "OcrLite.vb",
         "type": "其他",
         "size": 6754,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/dotnet_projects/OcrLiteOnnxVB/OcrLiteLib/OcrLite.vb",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/dotnet_projects/OcrLiteOnnxVB/OcrLiteLib/OcrLite.vb",
-        "sizeFormatted": "6.6 KB"
+        "sizeFormatted": "6.6 KB",
+        "project": "chineseocr_lite"
       },
       {
         "name": "OcrLiteLib.vbproj",
         "type": "其他",
         "size": 15260,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/dotnet_projects/OcrLiteOnnxVB/OcrLiteLib/OcrLiteLib.vbproj",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/dotnet_projects/OcrLiteOnnxVB/OcrLiteLib/OcrLiteLib.vbproj",
-        "sizeFormatted": "14.9 KB"
+        "sizeFormatted": "14.9 KB",
+        "project": "chineseocr_lite"
       },
       {
         "name": "OcrResult.vb",
         "type": "其他",
         "size": 9786,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/dotnet_projects/OcrLiteOnnxVB/OcrLiteLib/OcrResult.vb",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/dotnet_projects/OcrLiteOnnxVB/OcrLiteLib/OcrResult.vb",
-        "sizeFormatted": "9.6 KB"
+        "sizeFormatted": "9.6 KB",
+        "project": "chineseocr_lite"
       },
       {
         "name": "OcrUtils.vb",
         "type": "其他",
         "size": 6128,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/dotnet_projects/OcrLiteOnnxVB/OcrLiteLib/OcrUtils.vb",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/dotnet_projects/OcrLiteOnnxVB/OcrLiteLib/OcrUtils.vb",
-        "sizeFormatted": "6.0 KB"
+        "sizeFormatted": "6.0 KB",
+        "project": "chineseocr_lite"
       },
       {
         "name": "packages.config",
         "type": "其他",
         "size": 4841,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/dotnet_projects/OcrLiteOnnxVB/OcrLiteLib/packages.config",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/dotnet_projects/OcrLiteOnnxVB/OcrLiteLib/packages.config",
-        "sizeFormatted": "4.7 KB"
+        "sizeFormatted": "4.7 KB",
+        "project": "chineseocr_lite"
       },
       {
         "name": "ScaleParam.vb",
         "type": "其他",
         "size": 3488,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/dotnet_projects/OcrLiteOnnxVB/OcrLiteLib/ScaleParam.vb",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/dotnet_projects/OcrLiteOnnxVB/OcrLiteLib/ScaleParam.vb",
-        "sizeFormatted": "3.4 KB"
+        "sizeFormatted": "3.4 KB",
+        "project": "chineseocr_lite"
       },
       {
         "name": "Application.Designer.vb",
         "type": "其他",
         "size": 428,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/dotnet_projects/OcrLiteOnnxVB/OcrLiteLib/My Project/Application.Designer.vb",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/dotnet_projects/OcrLiteOnnxVB/OcrLiteLib/My Project/Application.Designer.vb",
-        "sizeFormatted": "428 B"
+        "sizeFormatted": "428 B",
+        "project": "chineseocr_lite"
       },
       {
         "name": "Application.myapp",
         "type": "其他",
         "size": 471,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/dotnet_projects/OcrLiteOnnxVB/OcrLiteLib/My Project/Application.myapp",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/dotnet_projects/OcrLiteOnnxVB/OcrLiteLib/My Project/Application.myapp",
-        "sizeFormatted": "471 B"
+        "sizeFormatted": "471 B",
+        "project": "chineseocr_lite"
       },
       {
         "name": "AssemblyInfo.vb",
         "type": "其他",
         "size": 1007,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/dotnet_projects/OcrLiteOnnxVB/OcrLiteLib/My Project/AssemblyInfo.vb",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/dotnet_projects/OcrLiteOnnxVB/OcrLiteLib/My Project/AssemblyInfo.vb",
-        "sizeFormatted": "1007 B"
+        "sizeFormatted": "1007 B",
+        "project": "chineseocr_lite"
       },
       {
         "name": "Resources.Designer.vb",
         "type": "其他",
         "size": 2719,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/dotnet_projects/OcrLiteOnnxVB/OcrLiteLib/My Project/Resources.Designer.vb",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/dotnet_projects/OcrLiteOnnxVB/OcrLiteLib/My Project/Resources.Designer.vb",
-        "sizeFormatted": "2.7 KB"
+        "sizeFormatted": "2.7 KB",
+        "project": "chineseocr_lite"
       },
       {
         "name": "Resources.resx",
         "type": "其他",
         "size": 5496,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/dotnet_projects/OcrLiteOnnxVB/OcrLiteLib/My Project/Resources.resx",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/dotnet_projects/OcrLiteOnnxVB/OcrLiteLib/My Project/Resources.resx",
-        "sizeFormatted": "5.4 KB"
+        "sizeFormatted": "5.4 KB",
+        "project": "chineseocr_lite"
       },
       {
         "name": "Settings.Designer.vb",
         "type": "其他",
         "size": 2926,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/dotnet_projects/OcrLiteOnnxVB/OcrLiteLib/My Project/Settings.Designer.vb",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/dotnet_projects/OcrLiteOnnxVB/OcrLiteLib/My Project/Settings.Designer.vb",
-        "sizeFormatted": "2.9 KB"
+        "sizeFormatted": "2.9 KB",
+        "project": "chineseocr_lite"
       },
       {
         "name": "Settings.settings",
         "type": "其他",
         "size": 272,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/dotnet_projects/OcrLiteOnnxVB/OcrLiteLib/My Project/Settings.settings",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/dotnet_projects/OcrLiteOnnxVB/OcrLiteLib/My Project/Settings.settings",
-        "sizeFormatted": "272 B"
+        "sizeFormatted": "272 B",
+        "project": "chineseocr_lite"
       },
       {
         "name": "App.config",
         "type": "其他",
         "size": 547,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/dotnet_projects/OcrLiteOnnxVB/OcrLiteOnnxForm/App.config",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/dotnet_projects/OcrLiteOnnxVB/OcrLiteOnnxForm/App.config",
-        "sizeFormatted": "547 B"
+        "sizeFormatted": "547 B",
+        "project": "chineseocr_lite"
       },
       {
         "name": "FormOcrLite.Designer.vb",
         "type": "其他",
         "size": 26128,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/dotnet_projects/OcrLiteOnnxVB/OcrLiteOnnxForm/FormOcrLite.Designer.vb",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/dotnet_projects/OcrLiteOnnxVB/OcrLiteOnnxForm/FormOcrLite.Designer.vb",
-        "sizeFormatted": "25.5 KB"
+        "sizeFormatted": "25.5 KB",
+        "project": "chineseocr_lite"
       },
       {
         "name": "FormOcrLite.resx",
         "type": "其他",
         "size": 5698,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/dotnet_projects/OcrLiteOnnxVB/OcrLiteOnnxForm/FormOcrLite.resx",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/dotnet_projects/OcrLiteOnnxVB/OcrLiteOnnxForm/FormOcrLite.resx",
-        "sizeFormatted": "5.6 KB"
+        "sizeFormatted": "5.6 KB",
+        "project": "chineseocr_lite"
       },
       {
         "name": "FormOcrLite.vb",
         "type": "其他",
         "size": 3086,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/dotnet_projects/OcrLiteOnnxVB/OcrLiteOnnxForm/FormOcrLite.vb",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/dotnet_projects/OcrLiteOnnxVB/OcrLiteOnnxForm/FormOcrLite.vb",
-        "sizeFormatted": "3.0 KB"
+        "sizeFormatted": "3.0 KB",
+        "project": "chineseocr_lite"
       },
       {
         "name": "OcrLiteOnnxForm.vbproj",
         "type": "其他",
         "size": 6841,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/dotnet_projects/OcrLiteOnnxVB/OcrLiteOnnxForm/OcrLiteOnnxForm.vbproj",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/dotnet_projects/OcrLiteOnnxVB/OcrLiteOnnxForm/OcrLiteOnnxForm.vbproj",
-        "sizeFormatted": "6.7 KB"
+        "sizeFormatted": "6.7 KB",
+        "project": "chineseocr_lite"
       },
       {
         "name": "packages.config",
         "type": "其他",
         "size": 570,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/dotnet_projects/OcrLiteOnnxVB/OcrLiteOnnxForm/packages.config",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/dotnet_projects/OcrLiteOnnxVB/OcrLiteOnnxForm/packages.config",
-        "sizeFormatted": "570 B"
+        "sizeFormatted": "570 B",
+        "project": "chineseocr_lite"
       },
       {
         "name": "Application.Designer.vb",
         "type": "其他",
         "size": 1531,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/dotnet_projects/OcrLiteOnnxVB/OcrLiteOnnxForm/My Project/Application.Designer.vb",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/dotnet_projects/OcrLiteOnnxVB/OcrLiteOnnxForm/My Project/Application.Designer.vb",
-        "sizeFormatted": "1.5 KB"
+        "sizeFormatted": "1.5 KB",
+        "project": "chineseocr_lite"
       },
       {
         "name": "Application.myapp",
         "type": "其他",
         "size": 465,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/dotnet_projects/OcrLiteOnnxVB/OcrLiteOnnxForm/My Project/Application.myapp",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/dotnet_projects/OcrLiteOnnxVB/OcrLiteOnnxForm/My Project/Application.myapp",
-        "sizeFormatted": "465 B"
+        "sizeFormatted": "465 B",
+        "project": "chineseocr_lite"
       },
       {
         "name": "AssemblyInfo.vb",
         "type": "其他",
         "size": 1013,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/dotnet_projects/OcrLiteOnnxVB/OcrLiteOnnxForm/My Project/AssemblyInfo.vb",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/dotnet_projects/OcrLiteOnnxVB/OcrLiteOnnxForm/My Project/AssemblyInfo.vb",
-        "sizeFormatted": "1013 B"
+        "sizeFormatted": "1013 B",
+        "project": "chineseocr_lite"
       },
       {
         "name": "Resources.Designer.vb",
         "type": "其他",
         "size": 2728,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/dotnet_projects/OcrLiteOnnxVB/OcrLiteOnnxForm/My Project/Resources.Designer.vb",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/dotnet_projects/OcrLiteOnnxVB/OcrLiteOnnxForm/My Project/Resources.Designer.vb",
-        "sizeFormatted": "2.7 KB"
+        "sizeFormatted": "2.7 KB",
+        "project": "chineseocr_lite"
       },
       {
         "name": "Resources.resx",
         "type": "其他",
         "size": 5496,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/dotnet_projects/OcrLiteOnnxVB/OcrLiteOnnxForm/My Project/Resources.resx",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/dotnet_projects/OcrLiteOnnxVB/OcrLiteOnnxForm/My Project/Resources.resx",
-        "sizeFormatted": "5.4 KB"
+        "sizeFormatted": "5.4 KB",
+        "project": "chineseocr_lite"
       },
       {
         "name": "Settings.Designer.vb",
         "type": "其他",
         "size": 2920,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/dotnet_projects/OcrLiteOnnxVB/OcrLiteOnnxForm/My Project/Settings.Designer.vb",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/dotnet_projects/OcrLiteOnnxVB/OcrLiteOnnxForm/My Project/Settings.Designer.vb",
-        "sizeFormatted": "2.9 KB"
+        "sizeFormatted": "2.9 KB",
+        "project": "chineseocr_lite"
       },
       {
         "name": "Settings.settings",
         "type": "其他",
         "size": 272,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/dotnet_projects/OcrLiteOnnxVB/OcrLiteOnnxForm/My Project/Settings.settings",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/dotnet_projects/OcrLiteOnnxVB/OcrLiteOnnxForm/My Project/Settings.settings",
-        "sizeFormatted": "272 B"
+        "sizeFormatted": "272 B",
+        "project": "chineseocr_lite"
       },
       {
         "name": "README.md",
         "type": "文档",
         "size": 1488,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/jvm_projects/README.md",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/jvm_projects/README.md",
-        "sizeFormatted": "1.5 KB"
+        "sizeFormatted": "1.5 KB",
+        "project": "chineseocr_lite"
       },
       {
         "name": ".gitignore",
         "type": "其他",
         "size": 2227,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/jvm_projects/OcrLiteNcnnJvm/.gitignore",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/jvm_projects/OcrLiteNcnnJvm/.gitignore",
-        "sizeFormatted": "2.2 KB"
+        "sizeFormatted": "2.2 KB",
+        "project": "chineseocr_lite"
       },
       {
         "name": "build.gradle",
         "type": "其他",
         "size": 604,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/jvm_projects/OcrLiteNcnnJvm/build.gradle",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/jvm_projects/OcrLiteNcnnJvm/build.gradle",
-        "sizeFormatted": "604 B"
+        "sizeFormatted": "604 B",
+        "project": "chineseocr_lite"
       },
       {
         "name": "gradle.properties",
         "type": "其他",
         "size": 26,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/jvm_projects/OcrLiteNcnnJvm/gradle.properties",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/jvm_projects/OcrLiteNcnnJvm/gradle.properties",
-        "sizeFormatted": "26 B"
+        "sizeFormatted": "26 B",
+        "project": "chineseocr_lite"
       },
       {
         "name": "gradlew",
         "type": "其他",
         "size": 5770,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/jvm_projects/OcrLiteNcnnJvm/gradlew",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/jvm_projects/OcrLiteNcnnJvm/gradlew",
-        "sizeFormatted": "5.6 KB"
+        "sizeFormatted": "5.6 KB",
+        "project": "chineseocr_lite"
       },
       {
         "name": "gradlew.bat",
         "type": "Shell脚本",
         "size": 2954,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/jvm_projects/OcrLiteNcnnJvm/gradlew.bat",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/jvm_projects/OcrLiteNcnnJvm/gradlew.bat",
-        "sizeFormatted": "2.9 KB"
+        "sizeFormatted": "2.9 KB",
+        "project": "chineseocr_lite"
       },
       {
         "name": "README.md",
         "type": "文档",
         "size": 3432,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/jvm_projects/OcrLiteNcnnJvm/README.md",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/jvm_projects/OcrLiteNcnnJvm/README.md",
-        "sizeFormatted": "3.4 KB"
+        "sizeFormatted": "3.4 KB",
+        "project": "chineseocr_lite"
       },
       {
         "name": "settings.gradle",
         "type": "其他",
         "size": 37,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/jvm_projects/OcrLiteNcnnJvm/settings.gradle",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/jvm_projects/OcrLiteNcnnJvm/settings.gradle",
-        "sizeFormatted": "37 B"
+        "sizeFormatted": "37 B",
+        "project": "chineseocr_lite"
       },
       {
         "name": "gradle-wrapper.jar",
         "type": "其他",
         "size": 58910,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/jvm_projects/OcrLiteNcnnJvm/gradle/wrapper/gradle-wrapper.jar",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/jvm_projects/OcrLiteNcnnJvm/gradle/wrapper/gradle-wrapper.jar",
-        "sizeFormatted": "57.5 KB"
+        "sizeFormatted": "57.5 KB",
+        "project": "chineseocr_lite"
       },
       {
         "name": "gradle-wrapper.properties",
         "type": "其他",
         "size": 291,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/jvm_projects/OcrLiteNcnnJvm/gradle/wrapper/gradle-wrapper.properties",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/jvm_projects/OcrLiteNcnnJvm/gradle/wrapper/gradle-wrapper.properties",
-        "sizeFormatted": "291 B"
+        "sizeFormatted": "291 B",
+        "project": "chineseocr_lite"
       },
       {
         "name": "valgrind-memcheck-java.sh",
         "type": "Shell脚本",
         "size": 630,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/jvm_projects/OcrLiteNcnnJvm/run-test/valgrind-memcheck-java.sh",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/jvm_projects/OcrLiteNcnnJvm/run-test/valgrind-memcheck-java.sh",
-        "sizeFormatted": "630 B"
+        "sizeFormatted": "630 B",
+        "project": "chineseocr_lite"
       },
       {
         "name": "keys.txt",
         "type": "文档",
         "size": 21924,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/jvm_projects/OcrLiteNcnnJvm/run-test/models/keys.txt",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/jvm_projects/OcrLiteNcnnJvm/run-test/models/keys.txt",
-        "sizeFormatted": "21.4 KB"
+        "sizeFormatted": "21.4 KB",
+        "project": "chineseocr_lite"
       },
       {
         "name": "clear.cmd",
         "type": "其他",
         "size": 227,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/jvm_projects/OcrLiteNcnnJvm/run-test/test_imgs/clear.cmd",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/jvm_projects/OcrLiteNcnnJvm/run-test/test_imgs/clear.cmd",
-        "sizeFormatted": "227 B"
+        "sizeFormatted": "227 B",
+        "project": "chineseocr_lite"
       },
       {
         "name": "clear.sh",
         "type": "Shell脚本",
         "size": 225,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/jvm_projects/OcrLiteNcnnJvm/run-test/test_imgs/clear.sh",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/jvm_projects/OcrLiteNcnnJvm/run-test/test_imgs/clear.sh",
-        "sizeFormatted": "225 B"
+        "sizeFormatted": "225 B",
+        "project": "chineseocr_lite"
       },
       {
         "name": "Main.java",
         "type": "Java代码",
         "size": 6568,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/jvm_projects/OcrLiteNcnnJvm/src/main/java/com/benjaminwan/ocr/Main.java",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/jvm_projects/OcrLiteNcnnJvm/src/main/java/com/benjaminwan/ocr/Main.java",
-        "sizeFormatted": "6.4 KB"
+        "sizeFormatted": "6.4 KB",
+        "project": "chineseocr_lite"
       },
       {
         "name": "main.kt",
         "type": "其他",
         "size": 4201,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/jvm_projects/OcrLiteNcnnJvm/src/main/java/com/benjaminwan/ocr/main.kt",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/jvm_projects/OcrLiteNcnnJvm/src/main/java/com/benjaminwan/ocr/main.kt",
-        "sizeFormatted": "4.1 KB"
+        "sizeFormatted": "4.1 KB",
+        "project": "chineseocr_lite"
       },
       {
         "name": "OcrEngine.kt",
         "type": "其他",
         "size": 1279,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/jvm_projects/OcrLiteNcnnJvm/src/main/java/com/benjaminwan/ocrlibrary/OcrEngine.kt",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/jvm_projects/OcrLiteNcnnJvm/src/main/java/com/benjaminwan/ocrlibrary/OcrEngine.kt",
-        "sizeFormatted": "1.2 KB"
+        "sizeFormatted": "1.2 KB",
+        "project": "chineseocr_lite"
       },
       {
         "name": "OcrResult.kt",
         "type": "其他",
         "size": 1787,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/jvm_projects/OcrLiteNcnnJvm/src/main/java/com/benjaminwan/ocrlibrary/OcrResult.kt",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/jvm_projects/OcrLiteNcnnJvm/src/main/java/com/benjaminwan/ocrlibrary/OcrResult.kt",
-        "sizeFormatted": "1.7 KB"
+        "sizeFormatted": "1.7 KB",
+        "project": "chineseocr_lite"
       },
       {
         "name": "MANIFEST.MF",
         "type": "其他",
         "size": 154,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/jvm_projects/OcrLiteNcnnJvm/src/main/resources/META-INF/MANIFEST.MF",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/jvm_projects/OcrLiteNcnnJvm/src/main/resources/META-INF/MANIFEST.MF",
-        "sizeFormatted": "154 B"
+        "sizeFormatted": "154 B",
+        "project": "chineseocr_lite"
       },
       {
         "name": ".gitignore",
         "type": "其他",
         "size": 2203,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/jvm_projects/OcrLiteOnnxJvm/.gitignore",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/jvm_projects/OcrLiteOnnxJvm/.gitignore",
-        "sizeFormatted": "2.2 KB"
+        "sizeFormatted": "2.2 KB",
+        "project": "chineseocr_lite"
       },
       {
         "name": "build.gradle",
         "type": "其他",
         "size": 506,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/jvm_projects/OcrLiteOnnxJvm/build.gradle",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/jvm_projects/OcrLiteOnnxJvm/build.gradle",
-        "sizeFormatted": "506 B"
+        "sizeFormatted": "506 B",
+        "project": "chineseocr_lite"
       },
       {
         "name": "gradle.properties",
         "type": "其他",
         "size": 26,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/jvm_projects/OcrLiteOnnxJvm/gradle.properties",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/jvm_projects/OcrLiteOnnxJvm/gradle.properties",
-        "sizeFormatted": "26 B"
+        "sizeFormatted": "26 B",
+        "project": "chineseocr_lite"
       },
       {
         "name": "gradlew",
         "type": "其他",
         "size": 5770,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/jvm_projects/OcrLiteOnnxJvm/gradlew",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/jvm_projects/OcrLiteOnnxJvm/gradlew",
-        "sizeFormatted": "5.6 KB"
+        "sizeFormatted": "5.6 KB",
+        "project": "chineseocr_lite"
       },
       {
         "name": "gradlew.bat",
         "type": "Shell脚本",
         "size": 2954,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/jvm_projects/OcrLiteOnnxJvm/gradlew.bat",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/jvm_projects/OcrLiteOnnxJvm/gradlew.bat",
-        "sizeFormatted": "2.9 KB"
+        "sizeFormatted": "2.9 KB",
+        "project": "chineseocr_lite"
       },
       {
         "name": "README.md",
         "type": "文档",
         "size": 3414,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/jvm_projects/OcrLiteOnnxJvm/README.md",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/jvm_projects/OcrLiteOnnxJvm/README.md",
-        "sizeFormatted": "3.3 KB"
+        "sizeFormatted": "3.3 KB",
+        "project": "chineseocr_lite"
       },
       {
         "name": "settings.gradle",
         "type": "其他",
         "size": 37,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/jvm_projects/OcrLiteOnnxJvm/settings.gradle",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/jvm_projects/OcrLiteOnnxJvm/settings.gradle",
-        "sizeFormatted": "37 B"
+        "sizeFormatted": "37 B",
+        "project": "chineseocr_lite"
       },
       {
         "name": "gradle-wrapper.jar",
         "type": "其他",
         "size": 58910,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/jvm_projects/OcrLiteOnnxJvm/gradle/wrapper/gradle-wrapper.jar",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/jvm_projects/OcrLiteOnnxJvm/gradle/wrapper/gradle-wrapper.jar",
-        "sizeFormatted": "57.5 KB"
+        "sizeFormatted": "57.5 KB",
+        "project": "chineseocr_lite"
       },
       {
         "name": "gradle-wrapper.properties",
         "type": "其他",
         "size": 291,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/jvm_projects/OcrLiteOnnxJvm/gradle/wrapper/gradle-wrapper.properties",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/jvm_projects/OcrLiteOnnxJvm/gradle/wrapper/gradle-wrapper.properties",
-        "sizeFormatted": "291 B"
+        "sizeFormatted": "291 B",
+        "project": "chineseocr_lite"
       },
       {
         "name": "valgrind-memcheck-java.sh",
         "type": "Shell脚本",
         "size": 630,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/jvm_projects/OcrLiteOnnxJvm/run-test/valgrind-memcheck-java.sh",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/jvm_projects/OcrLiteOnnxJvm/run-test/valgrind-memcheck-java.sh",
-        "sizeFormatted": "630 B"
+        "sizeFormatted": "630 B",
+        "project": "chineseocr_lite"
       },
       {
         "name": "keys.txt",
         "type": "文档",
         "size": 21924,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/jvm_projects/OcrLiteOnnxJvm/run-test/models/keys.txt",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/jvm_projects/OcrLiteOnnxJvm/run-test/models/keys.txt",
-        "sizeFormatted": "21.4 KB"
+        "sizeFormatted": "21.4 KB",
+        "project": "chineseocr_lite"
       },
       {
         "name": "clear.cmd",
         "type": "其他",
         "size": 227,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/jvm_projects/OcrLiteOnnxJvm/run-test/test_imgs/clear.cmd",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/jvm_projects/OcrLiteOnnxJvm/run-test/test_imgs/clear.cmd",
-        "sizeFormatted": "227 B"
+        "sizeFormatted": "227 B",
+        "project": "chineseocr_lite"
       },
       {
         "name": "clear.sh",
         "type": "Shell脚本",
         "size": 225,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/jvm_projects/OcrLiteOnnxJvm/run-test/test_imgs/clear.sh",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/jvm_projects/OcrLiteOnnxJvm/run-test/test_imgs/clear.sh",
-        "sizeFormatted": "225 B"
+        "sizeFormatted": "225 B",
+        "project": "chineseocr_lite"
       },
       {
         "name": "Main.java",
         "type": "Java代码",
         "size": 6061,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/jvm_projects/OcrLiteOnnxJvm/src/main/java/com/benjaminwan/ocr/Main.java",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/jvm_projects/OcrLiteOnnxJvm/src/main/java/com/benjaminwan/ocr/Main.java",
-        "sizeFormatted": "5.9 KB"
+        "sizeFormatted": "5.9 KB",
+        "project": "chineseocr_lite"
       },
       {
         "name": "main.kt",
         "type": "其他",
         "size": 3932,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/jvm_projects/OcrLiteOnnxJvm/src/main/java/com/benjaminwan/ocr/main.kt",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/jvm_projects/OcrLiteOnnxJvm/src/main/java/com/benjaminwan/ocr/main.kt",
-        "sizeFormatted": "3.8 KB"
+        "sizeFormatted": "3.8 KB",
+        "project": "chineseocr_lite"
       },
       {
         "name": "OcrEngine.kt",
         "type": "其他",
         "size": 1234,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/jvm_projects/OcrLiteOnnxJvm/src/main/java/com/benjaminwan/ocrlibrary/OcrEngine.kt",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/jvm_projects/OcrLiteOnnxJvm/src/main/java/com/benjaminwan/ocrlibrary/OcrEngine.kt",
-        "sizeFormatted": "1.2 KB"
+        "sizeFormatted": "1.2 KB",
+        "project": "chineseocr_lite"
       },
       {
         "name": "OcrResult.kt",
         "type": "其他",
         "size": 1787,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/jvm_projects/OcrLiteOnnxJvm/src/main/java/com/benjaminwan/ocrlibrary/OcrResult.kt",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/jvm_projects/OcrLiteOnnxJvm/src/main/java/com/benjaminwan/ocrlibrary/OcrResult.kt",
-        "sizeFormatted": "1.7 KB"
+        "sizeFormatted": "1.7 KB",
+        "project": "chineseocr_lite"
       },
       {
         "name": "MANIFEST.MF",
         "type": "其他",
         "size": 154,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/jvm_projects/OcrLiteOnnxJvm/src/main/resources/META-INF/MANIFEST.MF",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/jvm_projects/OcrLiteOnnxJvm/src/main/resources/META-INF/MANIFEST.MF",
-        "sizeFormatted": "154 B"
+        "sizeFormatted": "154 B",
+        "project": "chineseocr_lite"
       },
       {
         "name": "angle_net.onnx",
         "type": "其他",
         "size": 778127,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/models/angle_net.onnx",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/models/angle_net.onnx",
-        "sizeFormatted": "759.9 KB"
+        "sizeFormatted": "759.9 KB",
+        "project": "chineseocr_lite"
       },
       {
         "name": "crnn_lite_lstm.onnx",
         "type": "其他",
         "size": 5293632,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/models/crnn_lite_lstm.onnx",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/models/crnn_lite_lstm.onnx",
-        "sizeFormatted": "5.0 MB"
+        "sizeFormatted": "5.0 MB",
+        "project": "chineseocr_lite"
       },
       {
         "name": "dbnet.onnx",
         "type": "其他",
         "size": 3637234,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/models/dbnet.onnx",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/models/dbnet.onnx",
-        "sizeFormatted": "3.5 MB"
+        "sizeFormatted": "3.5 MB",
+        "project": "chineseocr_lite"
       },
       {
         "name": "angle_op.param",
         "type": "其他",
         "size": 8831,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/models_ncnn/angle_op.param",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/models_ncnn/angle_op.param",
-        "sizeFormatted": "8.6 KB"
+        "sizeFormatted": "8.6 KB",
+        "project": "chineseocr_lite"
       },
       {
         "name": "crnn_lite_op.param",
         "type": "其他",
         "size": 17364,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/models_ncnn/crnn_lite_op.param",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/models_ncnn/crnn_lite_op.param",
-        "sizeFormatted": "17.0 KB"
+        "sizeFormatted": "17.0 KB",
+        "project": "chineseocr_lite"
       },
       {
         "name": "dbnet_op.param",
         "type": "其他",
         "size": 12168,
-        "path": "E:/codeplace/chineseocr_lite/chineseocr_lite-onnx/models_ncnn/dbnet_op.param",
-        "relPath": "chineseocr_lite/chineseocr_lite-onnx/models_ncnn/dbnet_op.param",
-        "sizeFormatted": "11.9 KB"
+        "sizeFormatted": "11.9 KB",
+        "project": "chineseocr_lite"
       },
       {
         "name": "run-benchmark.bat",
         "type": "Shell脚本",
         "size": 1289,
-        "path": "E:/codeplace/chineseocr_lite/OcrLiteOnnx-1.6.1/run-benchmark.bat",
-        "relPath": "chineseocr_lite/OcrLiteOnnx-1.6.1/run-benchmark.bat",
-        "sizeFormatted": "1.3 KB"
+        "sizeFormatted": "1.3 KB",
+        "project": "chineseocr_lite"
       },
       {
         "name": "run-benchmark.sh",
         "type": "Shell脚本",
         "size": 1047,
-        "path": "E:/codeplace/chineseocr_lite/OcrLiteOnnx-1.6.1/run-benchmark.sh",
-        "relPath": "chineseocr_lite/OcrLiteOnnx-1.6.1/run-benchmark.sh",
-        "sizeFormatted": "1.0 KB"
+        "sizeFormatted": "1.0 KB",
+        "project": "chineseocr_lite"
       },
       {
         "name": "run-test.bat",
         "type": "Shell脚本",
         "size": 1170,
-        "path": "E:/codeplace/chineseocr_lite/OcrLiteOnnx-1.6.1/run-test.bat",
-        "relPath": "chineseocr_lite/OcrLiteOnnx-1.6.1/run-test.bat",
-        "sizeFormatted": "1.1 KB"
+        "sizeFormatted": "1.1 KB",
+        "project": "chineseocr_lite"
       },
       {
         "name": "run-test.sh",
         "type": "Shell脚本",
         "size": 1006,
-        "path": "E:/codeplace/chineseocr_lite/OcrLiteOnnx-1.6.1/run-test.sh",
-        "relPath": "chineseocr_lite/OcrLiteOnnx-1.6.1/run-test.sh",
-        "sizeFormatted": "1006 B"
+        "sizeFormatted": "1006 B",
+        "project": "chineseocr_lite"
       },
       {
         "name": "benchmark",
         "type": "其他",
         "size": 26590904,
-        "path": "E:/codeplace/chineseocr_lite/OcrLiteOnnx-1.6.1/Darwin-BIN/benchmark",
-        "relPath": "chineseocr_lite/OcrLiteOnnx-1.6.1/Darwin-BIN/benchmark",
-        "sizeFormatted": "25.4 MB"
+        "sizeFormatted": "25.4 MB",
+        "project": "chineseocr_lite"
       },
       {
         "name": "OcrLiteOnnx",
         "type": "其他",
         "size": 26590912,
-        "path": "E:/codeplace/chineseocr_lite/OcrLiteOnnx-1.6.1/Darwin-BIN/OcrLiteOnnx",
-        "relPath": "chineseocr_lite/OcrLiteOnnx-1.6.1/Darwin-BIN/OcrLiteOnnx",
-        "sizeFormatted": "25.4 MB"
+        "sizeFormatted": "25.4 MB",
+        "project": "chineseocr_lite"
       },
       {
         "name": "clear.cmd",
         "type": "其他",
         "size": 242,
-        "path": "E:/codeplace/chineseocr_lite/OcrLiteOnnx-1.6.1/images/clear.cmd",
-        "relPath": "chineseocr_lite/OcrLiteOnnx-1.6.1/images/clear.cmd",
-        "sizeFormatted": "242 B"
+        "sizeFormatted": "242 B",
+        "project": "chineseocr_lite"
       },
       {
         "name": "clear.sh",
         "type": "Shell脚本",
         "size": 225,
-        "path": "E:/codeplace/chineseocr_lite/OcrLiteOnnx-1.6.1/images/clear.sh",
-        "relPath": "chineseocr_lite/OcrLiteOnnx-1.6.1/images/clear.sh",
-        "sizeFormatted": "225 B"
+        "sizeFormatted": "225 B",
+        "project": "chineseocr_lite"
       },
       {
         "name": "benchmark",
         "type": "其他",
         "size": 29587384,
-        "path": "E:/codeplace/chineseocr_lite/OcrLiteOnnx-1.6.1/Linux-BIN/benchmark",
-        "relPath": "chineseocr_lite/OcrLiteOnnx-1.6.1/Linux-BIN/benchmark",
-        "sizeFormatted": "28.2 MB"
+        "sizeFormatted": "28.2 MB",
+        "project": "chineseocr_lite"
       },
       {
         "name": "OcrLiteOnnx",
         "type": "其他",
         "size": 29587496,
-        "path": "E:/codeplace/chineseocr_lite/OcrLiteOnnx-1.6.1/Linux-BIN/OcrLiteOnnx",
-        "relPath": "chineseocr_lite/OcrLiteOnnx-1.6.1/Linux-BIN/OcrLiteOnnx",
-        "sizeFormatted": "28.2 MB"
+        "sizeFormatted": "28.2 MB",
+        "project": "chineseocr_lite"
       },
       {
         "name": "angle_net.onnx",
         "type": "其他",
         "size": 778127,
-        "path": "E:/codeplace/chineseocr_lite/OcrLiteOnnx-1.6.1/models/angle_net.onnx",
-        "relPath": "chineseocr_lite/OcrLiteOnnx-1.6.1/models/angle_net.onnx",
-        "sizeFormatted": "759.9 KB"
+        "sizeFormatted": "759.9 KB",
+        "project": "chineseocr_lite"
       },
       {
         "name": "crnn_lite_lstm.onnx",
         "type": "其他",
         "size": 5293632,
-        "path": "E:/codeplace/chineseocr_lite/OcrLiteOnnx-1.6.1/models/crnn_lite_lstm.onnx",
-        "relPath": "chineseocr_lite/OcrLiteOnnx-1.6.1/models/crnn_lite_lstm.onnx",
-        "sizeFormatted": "5.0 MB"
+        "sizeFormatted": "5.0 MB",
+        "project": "chineseocr_lite"
       },
       {
         "name": "dbnet.onnx",
         "type": "其他",
         "size": 3637234,
-        "path": "E:/codeplace/chineseocr_lite/OcrLiteOnnx-1.6.1/models/dbnet.onnx",
-        "relPath": "chineseocr_lite/OcrLiteOnnx-1.6.1/models/dbnet.onnx",
-        "sizeFormatted": "3.5 MB"
+        "sizeFormatted": "3.5 MB",
+        "project": "chineseocr_lite"
       },
       {
         "name": "keys.txt",
         "type": "文档",
         "size": 21924,
-        "path": "E:/codeplace/chineseocr_lite/OcrLiteOnnx-1.6.1/models/keys.txt",
-        "relPath": "chineseocr_lite/OcrLiteOnnx-1.6.1/models/keys.txt",
-        "sizeFormatted": "21.4 KB"
+        "sizeFormatted": "21.4 KB",
+        "project": "chineseocr_lite"
       },
       {
         "name": "angle_net.onnx",
         "type": "其他",
         "size": 778127,
-        "path": "E:/codeplace/chineseocr_lite/OcrLiteOnnx-1.6.1/win-BIN-x64/angle_net.onnx",
-        "relPath": "chineseocr_lite/OcrLiteOnnx-1.6.1/win-BIN-x64/angle_net.onnx",
-        "sizeFormatted": "759.9 KB"
+        "sizeFormatted": "759.9 KB",
+        "project": "chineseocr_lite"
       },
       {
         "name": "crnn_lite_lstm.onnx",
         "type": "其他",
         "size": 5293632,
-        "path": "E:/codeplace/chineseocr_lite/OcrLiteOnnx-1.6.1/win-BIN-x64/crnn_lite_lstm.onnx",
-        "relPath": "chineseocr_lite/OcrLiteOnnx-1.6.1/win-BIN-x64/crnn_lite_lstm.onnx",
-        "sizeFormatted": "5.0 MB"
+        "sizeFormatted": "5.0 MB",
+        "project": "chineseocr_lite"
       },
       {
         "name": "dbnet.onnx",
         "type": "其他",
         "size": 3637234,
-        "path": "E:/codeplace/chineseocr_lite/OcrLiteOnnx-1.6.1/win-BIN-x64/dbnet.onnx",
-        "relPath": "chineseocr_lite/OcrLiteOnnx-1.6.1/win-BIN-x64/dbnet.onnx",
-        "sizeFormatted": "3.5 MB"
+        "sizeFormatted": "3.5 MB",
+        "project": "chineseocr_lite"
       },
       {
         "name": "keys.txt",
         "type": "文档",
         "size": 21924,
-        "path": "E:/codeplace/chineseocr_lite/OcrLiteOnnx-1.6.1/win-BIN-x64/keys.txt",
-        "relPath": "chineseocr_lite/OcrLiteOnnx-1.6.1/win-BIN-x64/keys.txt",
-        "sizeFormatted": "21.4 KB"
+        "sizeFormatted": "21.4 KB",
+        "project": "chineseocr_lite"
       },
       {
         "name": "datastructure.iml",
         "type": "其他",
         "size": 527,
-        "path": "E:/codeplace/datastructure/datastructure.iml",
-        "relPath": "datastructure/datastructure.iml",
-        "sizeFormatted": "527 B"
+        "sizeFormatted": "527 B",
+        "project": "datastructure"
       },
       {
         "name": "test.java",
         "type": "Java代码",
         "size": 817,
-        "path": "E:/codeplace/datastructure/src/test.java",
-        "relPath": "datastructure/src/test.java",
-        "sizeFormatted": "817 B"
+        "sizeFormatted": "817 B",
+        "project": "datastructure"
       },
       {
         "name": "assignment6.java",
         "type": "Java代码",
         "size": 1963,
-        "path": "E:/codeplace/datastructure/src/assignment5/assignment6.java",
-        "relPath": "datastructure/src/assignment5/assignment6.java",
-        "sizeFormatted": "1.9 KB"
+        "sizeFormatted": "1.9 KB",
+        "project": "datastructure"
       },
       {
         "name": "Task_1.java",
         "type": "Java代码",
         "size": 974,
-        "path": "E:/codeplace/datastructure/src/assignment5/Task_1.java",
-        "relPath": "datastructure/src/assignment5/Task_1.java",
-        "sizeFormatted": "974 B"
+        "sizeFormatted": "974 B",
+        "project": "datastructure"
       },
       {
         "name": "HuffmanDecoder.java",
         "type": "Java代码",
         "size": 5539,
-        "path": "E:/codeplace/datastructure/src/experiment1/HuffmanDecoder.java",
-        "relPath": "datastructure/src/experiment1/HuffmanDecoder.java",
-        "sizeFormatted": "5.4 KB"
+        "sizeFormatted": "5.4 KB",
+        "project": "datastructure"
       },
       {
         "name": "BSTSorting.java",
         "type": "Java代码",
         "size": 4254,
-        "path": "E:/codeplace/datastructure/src/experiment1_2/BSTSorting.java",
-        "relPath": "datastructure/src/experiment1_2/BSTSorting.java",
-        "sizeFormatted": "4.2 KB"
+        "sizeFormatted": "4.2 KB",
+        "project": "datastructure"
       },
       {
         "name": "Lab1_Task2_RandomNumbers.txt",
         "type": "文档",
         "size": 5875,
-        "path": "E:/codeplace/datastructure/src/experiment1_2/Lab1_Task2_RandomNumbers.txt",
-        "relPath": "datastructure/src/experiment1_2/Lab1_Task2_RandomNumbers.txt",
-        "sizeFormatted": "5.7 KB"
+        "sizeFormatted": "5.7 KB",
+        "project": "datastructure"
       },
       {
         "name": "Lab2_PopularNames.csv",
         "type": "Excel表格",
         "size": 24558,
-        "path": "E:/codeplace/datastructure/src/experiment2/Lab2_PopularNames.csv",
-        "relPath": "datastructure/src/experiment2/Lab2_PopularNames.csv",
-        "sizeFormatted": "24.0 KB"
+        "sizeFormatted": "24.0 KB",
+        "project": "datastructure"
       },
       {
         "name": "SpecialAVLTree.java",
         "type": "Java代码",
         "size": 8118,
-        "path": "E:/codeplace/datastructure/src/experiment2/SpecialAVLTree.java",
-        "relPath": "datastructure/src/experiment2/SpecialAVLTree.java",
-        "sizeFormatted": "7.9 KB"
+        "sizeFormatted": "7.9 KB",
+        "project": "datastructure"
       },
       {
         "name": "DynamicQuicksort.java",
         "type": "Java代码",
         "size": 7173,
-        "path": "E:/codeplace/datastructure/src/experiment4/DynamicQuicksort.java",
-        "relPath": "datastructure/src/experiment4/DynamicQuicksort.java",
-        "sizeFormatted": "7.0 KB"
+        "sizeFormatted": "7.0 KB",
+        "project": "datastructure"
       },
       {
         "name": "Lab4_RandomNumbers_1M.txt",
         "type": "文档",
         "size": 10983421,
-        "path": "E:/codeplace/datastructure/src/experiment4/Lab4_RandomNumbers_1M.txt",
-        "relPath": "datastructure/src/experiment4/Lab4_RandomNumbers_1M.txt",
-        "sizeFormatted": "10.5 MB"
+        "sizeFormatted": "10.5 MB",
+        "project": "datastructure"
       },
       {
         "name": "PublicKeyCryptography.java",
         "type": "Java代码",
         "size": 1669,
-        "path": "E:/codeplace/datastructure/src/experiment5/PublicKeyCryptography.java",
-        "relPath": "datastructure/src/experiment5/PublicKeyCryptography.java",
-        "sizeFormatted": "1.6 KB"
+        "sizeFormatted": "1.6 KB",
+        "project": "datastructure"
       },
       {
         "name": "dictionary.txt",
         "type": "文档",
         "size": 2308991,
-        "path": "E:/codeplace/datastructure/src/experiment6/dictionary.txt",
-        "relPath": "datastructure/src/experiment6/dictionary.txt",
-        "sizeFormatted": "2.2 MB"
+        "sizeFormatted": "2.2 MB",
+        "project": "datastructure"
       },
       {
         "name": "Hashing.java",
         "type": "Java代码",
         "size": 5602,
-        "path": "E:/codeplace/datastructure/src/experiment6/Hashing.java",
-        "relPath": "datastructure/src/experiment6/Hashing.java",
-        "sizeFormatted": "5.5 KB"
+        "sizeFormatted": "5.5 KB",
+        "project": "datastructure"
       },
       {
         "name": "Bipartite.java",
         "type": "Java代码",
         "size": 1578,
-        "path": "E:/codeplace/datastructure/src/experiment7/Bipartite.java",
-        "relPath": "datastructure/src/experiment7/Bipartite.java",
-        "sizeFormatted": "1.5 KB"
+        "sizeFormatted": "1.5 KB",
+        "project": "datastructure"
       },
       {
         "name": "Lab3_DrugsCom.tsv",
         "type": "其他",
         "size": 8288500,
-        "path": "E:/codeplace/datastructure/src/expriment3/Lab3_DrugsCom.tsv",
-        "relPath": "datastructure/src/expriment3/Lab3_DrugsCom.tsv",
-        "sizeFormatted": "7.9 MB"
+        "sizeFormatted": "7.9 MB",
+        "project": "datastructure"
       },
       {
         "name": "Lab3_DrugsCom.tsv~",
         "type": "其他",
         "size": 9505832,
-        "path": "E:/codeplace/datastructure/src/expriment3/Lab3_DrugsCom.tsv~",
-        "relPath": "datastructure/src/expriment3/Lab3_DrugsCom.tsv~",
-        "sizeFormatted": "9.1 MB"
+        "sizeFormatted": "9.1 MB",
+        "project": "datastructure"
       },
       {
         "name": "Lab3_DrugsCom_Result.tsv",
         "type": "其他",
         "size": 8288547,
-        "path": "E:/codeplace/datastructure/src/expriment3/Lab3_DrugsCom_Result.tsv",
-        "relPath": "datastructure/src/expriment3/Lab3_DrugsCom_Result.tsv",
-        "sizeFormatted": "7.9 MB"
+        "sizeFormatted": "7.9 MB",
+        "project": "datastructure"
       },
       {
         "name": "QuicksortNeedsPartition.java",
         "type": "Java代码",
         "size": 1265,
-        "path": "E:/codeplace/datastructure/src/expriment3/QuicksortNeedsPartition.java",
-        "relPath": "datastructure/src/expriment3/QuicksortNeedsPartition.java",
-        "sizeFormatted": "1.2 KB"
+        "sizeFormatted": "1.2 KB",
+        "project": "datastructure"
       },
       {
         "name": "SortingRecords.java",
         "type": "Java代码",
         "size": 6263,
-        "path": "E:/codeplace/datastructure/src/expriment3/SortingRecords.java",
-        "relPath": "datastructure/src/expriment3/SortingRecords.java",
-        "sizeFormatted": "6.1 KB"
+        "sizeFormatted": "6.1 KB",
+        "project": "datastructure"
       },
       {
         "name": "test.java",
         "type": "Java代码",
         "size": 1601,
-        "path": "E:/codeplace/datastructure/src/expriment3/test.java",
-        "relPath": "datastructure/src/expriment3/test.java",
-        "sizeFormatted": "1.6 KB"
+        "sizeFormatted": "1.6 KB",
+        "project": "datastructure"
       },
       {
         "name": "univocity-parsers-2.9.1.jar",
         "type": "其他",
         "size": 447005,
-        "path": "E:/codeplace/datastructure/src/expriment3/univocity-parsers-2.9.1.jar",
-        "relPath": "datastructure/src/expriment3/univocity-parsers-2.9.1.jar",
-        "sizeFormatted": "436.5 KB"
+        "sizeFormatted": "436.5 KB",
+        "project": "datastructure"
       },
       {
         "name": "DateClient.java",
         "type": "Java代码",
         "size": 774,
-        "path": "E:/codeplace/datastructure/src/fuwuqi/DateClient.java",
-        "relPath": "datastructure/src/fuwuqi/DateClient.java",
-        "sizeFormatted": "774 B"
+        "sizeFormatted": "774 B",
+        "project": "datastructure"
       },
       {
         "name": "DateServer.java",
         "type": "Java代码",
         "size": 1046,
-        "path": "E:/codeplace/datastructure/src/fuwuqi/DateServer.java",
-        "relPath": "datastructure/src/fuwuqi/DateServer.java",
-        "sizeFormatted": "1.0 KB"
+        "sizeFormatted": "1.0 KB",
+        "project": "datastructure"
       },
       {
         "name": "WorkerThread.java",
         "type": "Java代码",
         "size": 776,
-        "path": "E:/codeplace/datastructure/src/fuwuqi/WorkerThread.java",
-        "relPath": "datastructure/src/fuwuqi/WorkerThread.java",
-        "sizeFormatted": "776 B"
+        "sizeFormatted": "776 B",
+        "project": "datastructure"
       },
       {
         "name": "DataAccessPolicyManager.java",
         "type": "Java代码",
         "size": 750,
-        "path": "E:/codeplace/datastructure/src/lock/DataAccessPolicyManager.java",
-        "relPath": "datastructure/src/lock/DataAccessPolicyManager.java",
-        "sizeFormatted": "750 B"
+        "sizeFormatted": "750 B",
+        "project": "datastructure"
       },
       {
         "name": "DataAccessPolicyManager2.java",
         "type": "Java代码",
         "size": 1543,
-        "path": "E:/codeplace/datastructure/src/lock/DataAccessPolicyManager2.java",
-        "relPath": "datastructure/src/lock/DataAccessPolicyManager2.java",
-        "sizeFormatted": "1.5 KB"
+        "sizeFormatted": "1.5 KB",
+        "project": "datastructure"
       },
       {
         "name": "Reader.java",
         "type": "Java代码",
         "size": 1223,
-        "path": "E:/codeplace/datastructure/src/lock/Reader.java",
-        "relPath": "datastructure/src/lock/Reader.java",
-        "sizeFormatted": "1.2 KB"
+        "sizeFormatted": "1.2 KB",
+        "project": "datastructure"
       },
       {
         "name": "ReadersWritersSimulation.java",
         "type": "Java代码",
         "size": 440,
-        "path": "E:/codeplace/datastructure/src/lock/ReadersWritersSimulation.java",
-        "relPath": "datastructure/src/lock/ReadersWritersSimulation.java",
-        "sizeFormatted": "440 B"
+        "sizeFormatted": "440 B",
+        "project": "datastructure"
       },
       {
         "name": "Semaphore.java",
         "type": "Java代码",
         "size": 624,
-        "path": "E:/codeplace/datastructure/src/lock/Semaphore.java",
-        "relPath": "datastructure/src/lock/Semaphore.java",
-        "sizeFormatted": "624 B"
+        "sizeFormatted": "624 B",
+        "project": "datastructure"
       },
       {
         "name": "Writer.java",
         "type": "Java代码",
         "size": 1204,
-        "path": "E:/codeplace/datastructure/src/lock/Writer.java",
-        "relPath": "datastructure/src/lock/Writer.java",
-        "sizeFormatted": "1.2 KB"
+        "sizeFormatted": "1.2 KB",
+        "project": "datastructure"
       },
       {
         "name": "DataAccessPolicyManager2.java",
         "type": "Java代码",
         "size": 1703,
-        "path": "E:/codeplace/datastructure/src/lock2/DataAccessPolicyManager2.java",
-        "relPath": "datastructure/src/lock2/DataAccessPolicyManager2.java",
-        "sizeFormatted": "1.7 KB"
+        "sizeFormatted": "1.7 KB",
+        "project": "datastructure"
       },
       {
         "name": "Reader.java",
         "type": "Java代码",
         "size": 1264,
-        "path": "E:/codeplace/datastructure/src/lock2/Reader.java",
-        "relPath": "datastructure/src/lock2/Reader.java",
-        "sizeFormatted": "1.2 KB"
+        "sizeFormatted": "1.2 KB",
+        "project": "datastructure"
       },
       {
         "name": "ReadersWritersSimulation.java",
         "type": "Java代码",
         "size": 448,
-        "path": "E:/codeplace/datastructure/src/lock2/ReadersWritersSimulation.java",
-        "relPath": "datastructure/src/lock2/ReadersWritersSimulation.java",
-        "sizeFormatted": "448 B"
+        "sizeFormatted": "448 B",
+        "project": "datastructure"
       },
       {
         "name": "Semaphore.java",
         "type": "Java代码",
         "size": 625,
-        "path": "E:/codeplace/datastructure/src/lock2/Semaphore.java",
-        "relPath": "datastructure/src/lock2/Semaphore.java",
-        "sizeFormatted": "625 B"
+        "sizeFormatted": "625 B",
+        "project": "datastructure"
       },
       {
         "name": "Writer.java",
         "type": "Java代码",
         "size": 1245,
-        "path": "E:/codeplace/datastructure/src/lock2/Writer.java",
-        "relPath": "datastructure/src/lock2/Writer.java",
-        "sizeFormatted": "1.2 KB"
+        "sizeFormatted": "1.2 KB",
+        "project": "datastructure"
       },
       {
         "name": "DiningPhilosophers2.java",
         "type": "Java代码",
         "size": 2508,
-        "path": "E:/codeplace/datastructure/src/test/DiningPhilosophers2.java",
-        "relPath": "datastructure/src/test/DiningPhilosophers2.java",
-        "sizeFormatted": "2.4 KB"
+        "sizeFormatted": "2.4 KB",
+        "project": "datastructure"
       },
       {
         "name": "Hashing.java",
         "type": "Java代码",
         "size": 4857,
-        "path": "E:/codeplace/datastructure/src/test/Hashing.java",
-        "relPath": "datastructure/src/test/Hashing.java",
-        "sizeFormatted": "4.7 KB"
+        "sizeFormatted": "4.7 KB",
+        "project": "datastructure"
       },
       {
         "name": "MaxQueue.java",
         "type": "Java代码",
         "size": 1138,
-        "path": "E:/codeplace/datastructure/src/test/MaxQueue.java",
-        "relPath": "datastructure/src/test/MaxQueue.java",
-        "sizeFormatted": "1.1 KB"
+        "sizeFormatted": "1.1 KB",
+        "project": "datastructure"
       },
       {
         "name": "QuicksortNeedsPartition.java",
         "type": "Java代码",
         "size": 1439,
-        "path": "E:/codeplace/datastructure/src/test/QuicksortNeedsPartition.java",
-        "relPath": "datastructure/src/test/QuicksortNeedsPartition.java",
-        "sizeFormatted": "1.4 KB"
+        "sizeFormatted": "1.4 KB",
+        "project": "datastructure"
       },
       {
         "name": "test.java",
         "type": "Java代码",
         "size": 1648,
-        "path": "E:/codeplace/datastructure/src/test/test.java",
-        "relPath": "datastructure/src/test/test.java",
-        "sizeFormatted": "1.6 KB"
+        "sizeFormatted": "1.6 KB",
+        "project": "datastructure"
       },
       {
         "name": "RedBlackTree.java",
         "type": "Java代码",
         "size": 8507,
-        "path": "E:/codeplace/datastructure/src/树/红黑树/RedBlackTree.java",
-        "relPath": "datastructure/src/树/红黑树/RedBlackTree.java",
-        "sizeFormatted": "8.3 KB"
+        "sizeFormatted": "8.3 KB",
+        "project": "datastructure"
       },
       {
         "name": ".gitignore",
         "type": "其他",
         "size": 30,
-        "path": "E:/codeplace/eleco/eleco/.gitignore",
-        "relPath": "eleco/eleco/.gitignore",
-        "sizeFormatted": "30 B"
+        "sizeFormatted": "30 B",
+        "project": "eleco"
       },
       {
         "name": "eleco.iml",
         "type": "其他",
         "size": 14291,
-        "path": "E:/codeplace/eleco/eleco/eleco.iml",
-        "relPath": "eleco/eleco/eleco.iml",
-        "sizeFormatted": "14.0 KB"
+        "sizeFormatted": "14.0 KB",
+        "project": "eleco"
       },
       {
         "name": "pom.xml",
         "type": "YAML配置",
         "size": 4777,
-        "path": "E:/codeplace/eleco/eleco/pom.xml",
-        "relPath": "eleco/eleco/pom.xml",
-        "sizeFormatted": "4.7 KB"
+        "sizeFormatted": "4.7 KB",
+        "project": "eleco"
       },
       {
         "name": "ElecoApplication.java",
         "type": "Java代码",
         "size": 542,
-        "path": "E:/codeplace/eleco/eleco/src/main/java/randomnick/eleco/ElecoApplication.java",
-        "relPath": "eleco/eleco/src/main/java/randomnick/eleco/ElecoApplication.java",
-        "sizeFormatted": "542 B"
+        "sizeFormatted": "542 B",
+        "project": "eleco"
       },
       {
         "name": "ApiErrorCode.java",
         "type": "Java代码",
         "size": 1051,
-        "path": "E:/codeplace/eleco/eleco/src/main/java/randomnick/eleco/common/api/ApiErrorCode.java",
-        "relPath": "eleco/eleco/src/main/java/randomnick/eleco/common/api/ApiErrorCode.java",
-        "sizeFormatted": "1.0 KB"
+        "sizeFormatted": "1.0 KB",
+        "project": "eleco"
       },
       {
         "name": "ApiResult.java",
         "type": "Java代码",
         "size": 4002,
-        "path": "E:/codeplace/eleco/eleco/src/main/java/randomnick/eleco/common/api/ApiResult.java",
-        "relPath": "eleco/eleco/src/main/java/randomnick/eleco/common/api/ApiResult.java",
-        "sizeFormatted": "3.9 KB"
+        "sizeFormatted": "3.9 KB",
+        "project": "eleco"
       },
       {
         "name": "IErrorCode.java",
         "type": "Java代码",
         "size": 300,
-        "path": "E:/codeplace/eleco/eleco/src/main/java/randomnick/eleco/common/api/IErrorCode.java",
-        "relPath": "eleco/eleco/src/main/java/randomnick/eleco/common/api/IErrorCode.java",
-        "sizeFormatted": "300 B"
+        "sizeFormatted": "300 B",
+        "project": "eleco"
       },
       {
         "name": "ApiAsserts.java",
         "type": "Java代码",
         "size": 493,
-        "path": "E:/codeplace/eleco/eleco/src/main/java/randomnick/eleco/common/exception/ApiAsserts.java",
-        "relPath": "eleco/eleco/src/main/java/randomnick/eleco/common/exception/ApiAsserts.java",
-        "sizeFormatted": "493 B"
+        "sizeFormatted": "493 B",
+        "project": "eleco"
       },
       {
         "name": "ApiException.java",
         "type": "Java代码",
         "size": 476,
-        "path": "E:/codeplace/eleco/eleco/src/main/java/randomnick/eleco/common/exception/ApiException.java",
-        "relPath": "eleco/eleco/src/main/java/randomnick/eleco/common/exception/ApiException.java",
-        "sizeFormatted": "476 B"
+        "sizeFormatted": "476 B",
+        "project": "eleco"
       },
       {
         "name": "GlobalExceptionHandler.java",
         "type": "Java代码",
         "size": 769,
-        "path": "E:/codeplace/eleco/eleco/src/main/java/randomnick/eleco/common/exception/GlobalExceptionHandler.java",
-        "relPath": "eleco/eleco/src/main/java/randomnick/eleco/common/exception/GlobalExceptionHandler.java",
-        "sizeFormatted": "769 B"
+        "sizeFormatted": "769 B",
+        "project": "eleco"
       },
       {
         "name": "CorsConfig.java",
         "type": "Java代码",
         "size": 1026,
-        "path": "E:/codeplace/eleco/eleco/src/main/java/randomnick/eleco/config/CorsConfig.java",
-        "relPath": "eleco/eleco/src/main/java/randomnick/eleco/config/CorsConfig.java",
-        "sizeFormatted": "1.0 KB"
+        "sizeFormatted": "1.0 KB",
+        "project": "eleco"
       },
       {
         "name": "MybatisPlusConfig.java",
         "type": "Java代码",
         "size": 1183,
-        "path": "E:/codeplace/eleco/eleco/src/main/java/randomnick/eleco/config/MybatisPlusConfig.java",
-        "relPath": "eleco/eleco/src/main/java/randomnick/eleco/config/MybatisPlusConfig.java",
-        "sizeFormatted": "1.2 KB"
+        "sizeFormatted": "1.2 KB",
+        "project": "eleco"
       },
       {
         "name": "RedisConfig.java",
         "type": "Java代码",
         "size": 1978,
-        "path": "E:/codeplace/eleco/eleco/src/main/java/randomnick/eleco/config/RedisConfig.java",
-        "relPath": "eleco/eleco/src/main/java/randomnick/eleco/config/RedisConfig.java",
-        "sizeFormatted": "1.9 KB"
+        "sizeFormatted": "1.9 KB",
+        "project": "eleco"
       },
       {
         "name": "SecurityConfig.java",
         "type": "Java代码",
         "size": 4292,
-        "path": "E:/codeplace/eleco/eleco/src/main/java/randomnick/eleco/config/SecurityConfig.java",
-        "relPath": "eleco/eleco/src/main/java/randomnick/eleco/config/SecurityConfig.java",
-        "sizeFormatted": "4.2 KB"
+        "sizeFormatted": "4.2 KB",
+        "project": "eleco"
       },
       {
         "name": "SwaggerConfig.java",
         "type": "Java代码",
         "size": 1381,
-        "path": "E:/codeplace/eleco/eleco/src/main/java/randomnick/eleco/config/SwaggerConfig.java",
-        "relPath": "eleco/eleco/src/main/java/randomnick/eleco/config/SwaggerConfig.java",
-        "sizeFormatted": "1.3 KB"
+        "sizeFormatted": "1.3 KB",
+        "project": "eleco"
       },
       {
         "name": "WebConfig.java",
         "type": "Java代码",
         "size": 998,
-        "path": "E:/codeplace/eleco/eleco/src/main/java/randomnick/eleco/config/WebConfig.java",
-        "relPath": "eleco/eleco/src/main/java/randomnick/eleco/config/WebConfig.java",
-        "sizeFormatted": "998 B"
+        "sizeFormatted": "998 B",
+        "project": "eleco"
       },
       {
         "name": "BaseController.java",
         "type": "Java代码",
         "size": 74,
-        "path": "E:/codeplace/eleco/eleco/src/main/java/randomnick/eleco/controller/BaseController.java",
-        "relPath": "eleco/eleco/src/main/java/randomnick/eleco/controller/BaseController.java",
-        "sizeFormatted": "74 B"
+        "sizeFormatted": "74 B",
+        "project": "eleco"
       },
       {
         "name": "CommentController.java",
         "type": "Java代码",
         "size": 1517,
-        "path": "E:/codeplace/eleco/eleco/src/main/java/randomnick/eleco/controller/CommentController.java",
-        "relPath": "eleco/eleco/src/main/java/randomnick/eleco/controller/CommentController.java",
-        "sizeFormatted": "1.5 KB"
+        "sizeFormatted": "1.5 KB",
+        "project": "eleco"
       },
       {
         "name": "PostController.java",
         "type": "Java代码",
         "size": 3681,
-        "path": "E:/codeplace/eleco/eleco/src/main/java/randomnick/eleco/controller/PostController.java",
-        "relPath": "eleco/eleco/src/main/java/randomnick/eleco/controller/PostController.java",
-        "sizeFormatted": "3.6 KB"
+        "sizeFormatted": "3.6 KB",
+        "project": "eleco"
       },
       {
         "name": "RelationshipController.java",
         "type": "Java代码",
         "size": 3607,
-        "path": "E:/codeplace/eleco/eleco/src/main/java/randomnick/eleco/controller/RelationshipController.java",
-        "relPath": "eleco/eleco/src/main/java/randomnick/eleco/controller/RelationshipController.java",
-        "sizeFormatted": "3.5 KB"
+        "sizeFormatted": "3.5 KB",
+        "project": "eleco"
       },
       {
         "name": "SearchController.java",
         "type": "Java代码",
         "size": 1216,
-        "path": "E:/codeplace/eleco/eleco/src/main/java/randomnick/eleco/controller/SearchController.java",
-        "relPath": "eleco/eleco/src/main/java/randomnick/eleco/controller/SearchController.java",
-        "sizeFormatted": "1.2 KB"
+        "sizeFormatted": "1.2 KB",
+        "project": "eleco"
       },
       {
         "name": "TagController.java",
         "type": "Java代码",
         "size": 1838,
-        "path": "E:/codeplace/eleco/eleco/src/main/java/randomnick/eleco/controller/TagController.java",
-        "relPath": "eleco/eleco/src/main/java/randomnick/eleco/controller/TagController.java",
-        "sizeFormatted": "1.8 KB"
+        "sizeFormatted": "1.8 KB",
+        "project": "eleco"
       },
       {
         "name": "UserController.java",
         "type": "Java代码",
         "size": 3424,
-        "path": "E:/codeplace/eleco/eleco/src/main/java/randomnick/eleco/controller/UserController.java",
-        "relPath": "eleco/eleco/src/main/java/randomnick/eleco/controller/UserController.java",
-        "sizeFormatted": "3.3 KB"
+        "sizeFormatted": "3.3 KB",
+        "project": "eleco"
       },
       {
         "name": "JwtAuthenticationTokenFilter.java",
         "type": "Java代码",
         "size": 2363,
-        "path": "E:/codeplace/eleco/eleco/src/main/java/randomnick/eleco/jwt/JwtAuthenticationTokenFilter.java",
-        "relPath": "eleco/eleco/src/main/java/randomnick/eleco/jwt/JwtAuthenticationTokenFilter.java",
-        "sizeFormatted": "2.3 KB"
+        "sizeFormatted": "2.3 KB",
+        "project": "eleco"
       },
       {
         "name": "JwtUtil.java",
         "type": "Java代码",
         "size": 3318,
-        "path": "E:/codeplace/eleco/eleco/src/main/java/randomnick/eleco/jwt/JwtUtil.java",
-        "relPath": "eleco/eleco/src/main/java/randomnick/eleco/jwt/JwtUtil.java",
-        "sizeFormatted": "3.2 KB"
+        "sizeFormatted": "3.2 KB",
+        "project": "eleco"
       },
       {
         "name": "CommentMapper.java",
         "type": "Java代码",
         "size": 560,
-        "path": "E:/codeplace/eleco/eleco/src/main/java/randomnick/eleco/mapper/CommentMapper.java",
-        "relPath": "eleco/eleco/src/main/java/randomnick/eleco/mapper/CommentMapper.java",
-        "sizeFormatted": "560 B"
+        "sizeFormatted": "560 B",
+        "project": "eleco"
       },
       {
         "name": "FollowMapper.java",
         "type": "Java代码",
         "size": 268,
-        "path": "E:/codeplace/eleco/eleco/src/main/java/randomnick/eleco/mapper/FollowMapper.java",
-        "relPath": "eleco/eleco/src/main/java/randomnick/eleco/mapper/FollowMapper.java",
-        "sizeFormatted": "268 B"
+        "sizeFormatted": "268 B",
+        "project": "eleco"
       },
       {
         "name": "TagMapper.java",
         "type": "Java代码",
         "size": 307,
-        "path": "E:/codeplace/eleco/eleco/src/main/java/randomnick/eleco/mapper/TagMapper.java",
-        "relPath": "eleco/eleco/src/main/java/randomnick/eleco/mapper/TagMapper.java",
-        "sizeFormatted": "307 B"
+        "sizeFormatted": "307 B",
+        "project": "eleco"
       },
       {
         "name": "TopicMapper.java",
         "type": "Java代码",
         "size": 1073,
-        "path": "E:/codeplace/eleco/eleco/src/main/java/randomnick/eleco/mapper/TopicMapper.java",
-        "relPath": "eleco/eleco/src/main/java/randomnick/eleco/mapper/TopicMapper.java",
-        "sizeFormatted": "1.0 KB"
+        "sizeFormatted": "1.0 KB",
+        "project": "eleco"
       },
       {
         "name": "TopicTagMapper.java",
         "type": "Java代码",
         "size": 554,
-        "path": "E:/codeplace/eleco/eleco/src/main/java/randomnick/eleco/mapper/TopicTagMapper.java",
-        "relPath": "eleco/eleco/src/main/java/randomnick/eleco/mapper/TopicTagMapper.java",
-        "sizeFormatted": "554 B"
+        "sizeFormatted": "554 B",
+        "project": "eleco"
       },
       {
         "name": "UserMapper.java",
         "type": "Java代码",
         "size": 321,
-        "path": "E:/codeplace/eleco/eleco/src/main/java/randomnick/eleco/mapper/UserMapper.java",
-        "relPath": "eleco/eleco/src/main/java/randomnick/eleco/mapper/UserMapper.java",
-        "sizeFormatted": "321 B"
+        "sizeFormatted": "321 B",
+        "project": "eleco"
       },
       {
         "name": "CommentDTO.java",
         "type": "Java代码",
         "size": 334,
-        "path": "E:/codeplace/eleco/eleco/src/main/java/randomnick/eleco/model/dto/CommentDTO.java",
-        "relPath": "eleco/eleco/src/main/java/randomnick/eleco/model/dto/CommentDTO.java",
-        "sizeFormatted": "334 B"
+        "sizeFormatted": "334 B",
+        "project": "eleco"
       },
       {
         "name": "CreateTopicDTO.java",
         "type": "Java代码",
         "size": 451,
-        "path": "E:/codeplace/eleco/eleco/src/main/java/randomnick/eleco/model/dto/CreateTopicDTO.java",
-        "relPath": "eleco/eleco/src/main/java/randomnick/eleco/model/dto/CreateTopicDTO.java",
-        "sizeFormatted": "451 B"
+        "sizeFormatted": "451 B",
+        "project": "eleco"
       },
       {
         "name": "LoginDTO.java",
         "type": "Java代码",
         "size": 528,
-        "path": "E:/codeplace/eleco/eleco/src/main/java/randomnick/eleco/model/dto/LoginDTO.java",
-        "relPath": "eleco/eleco/src/main/java/randomnick/eleco/model/dto/LoginDTO.java",
-        "sizeFormatted": "528 B"
+        "sizeFormatted": "528 B",
+        "project": "eleco"
       },
       {
         "name": "RegisterDTO.java",
         "type": "Java代码",
         "size": 775,
-        "path": "E:/codeplace/eleco/eleco/src/main/java/randomnick/eleco/model/dto/RegisterDTO.java",
-        "relPath": "eleco/eleco/src/main/java/randomnick/eleco/model/dto/RegisterDTO.java",
-        "sizeFormatted": "775 B"
+        "sizeFormatted": "775 B",
+        "project": "eleco"
       },
       {
         "name": "Comment.java",
         "type": "Java代码",
         "size": 1219,
-        "path": "E:/codeplace/eleco/eleco/src/main/java/randomnick/eleco/model/entity/Comment.java",
-        "relPath": "eleco/eleco/src/main/java/randomnick/eleco/model/entity/Comment.java",
-        "sizeFormatted": "1.2 KB"
+        "sizeFormatted": "1.2 KB",
+        "project": "eleco"
       },
       {
         "name": "Follow.java",
         "type": "Java代码",
         "size": 783,
-        "path": "E:/codeplace/eleco/eleco/src/main/java/randomnick/eleco/model/entity/Follow.java",
-        "relPath": "eleco/eleco/src/main/java/randomnick/eleco/model/entity/Follow.java",
-        "sizeFormatted": "783 B"
+        "sizeFormatted": "783 B",
+        "project": "eleco"
       },
       {
         "name": "LoginUser.java",
         "type": "Java代码",
         "size": 1078,
-        "path": "E:/codeplace/eleco/eleco/src/main/java/randomnick/eleco/model/entity/LoginUser.java",
-        "relPath": "eleco/eleco/src/main/java/randomnick/eleco/model/entity/LoginUser.java",
-        "sizeFormatted": "1.1 KB"
+        "sizeFormatted": "1.1 KB",
+        "project": "eleco"
       },
       {
         "name": "Post.java",
         "type": "Java代码",
         "size": 1857,
-        "path": "E:/codeplace/eleco/eleco/src/main/java/randomnick/eleco/model/entity/Post.java",
-        "relPath": "eleco/eleco/src/main/java/randomnick/eleco/model/entity/Post.java",
-        "sizeFormatted": "1.8 KB"
+        "sizeFormatted": "1.8 KB",
+        "project": "eleco"
       },
       {
         "name": "Tag.java",
         "type": "Java代码",
         "size": 823,
-        "path": "E:/codeplace/eleco/eleco/src/main/java/randomnick/eleco/model/entity/Tag.java",
-        "relPath": "eleco/eleco/src/main/java/randomnick/eleco/model/entity/Tag.java",
-        "sizeFormatted": "823 B"
+        "sizeFormatted": "823 B",
+        "project": "eleco"
       },
       {
         "name": "TopicTag.java",
         "type": "Java代码",
         "size": 713,
-        "path": "E:/codeplace/eleco/eleco/src/main/java/randomnick/eleco/model/entity/TopicTag.java",
-        "relPath": "eleco/eleco/src/main/java/randomnick/eleco/model/entity/TopicTag.java",
-        "sizeFormatted": "713 B"
+        "sizeFormatted": "713 B",
+        "project": "eleco"
       },
       {
         "name": "User.java",
         "type": "Java代码",
         "size": 2003,
-        "path": "E:/codeplace/eleco/eleco/src/main/java/randomnick/eleco/model/entity/User.java",
-        "relPath": "eleco/eleco/src/main/java/randomnick/eleco/model/entity/User.java",
-        "sizeFormatted": "2.0 KB"
+        "sizeFormatted": "2.0 KB",
+        "project": "eleco"
       },
       {
         "name": "CommentVO.java",
         "type": "Java代码",
         "size": 371,
-        "path": "E:/codeplace/eleco/eleco/src/main/java/randomnick/eleco/model/vo/CommentVO.java",
-        "relPath": "eleco/eleco/src/main/java/randomnick/eleco/model/vo/CommentVO.java",
-        "sizeFormatted": "371 B"
+        "sizeFormatted": "371 B",
+        "project": "eleco"
       },
       {
         "name": "PostVO.java",
         "type": "Java代码",
         "size": 1334,
-        "path": "E:/codeplace/eleco/eleco/src/main/java/randomnick/eleco/model/vo/PostVO.java",
-        "relPath": "eleco/eleco/src/main/java/randomnick/eleco/model/vo/PostVO.java",
-        "sizeFormatted": "1.3 KB"
+        "sizeFormatted": "1.3 KB",
+        "project": "eleco"
       },
       {
         "name": "ProfileVO.java",
         "type": "Java代码",
         "size": 757,
-        "path": "E:/codeplace/eleco/eleco/src/main/java/randomnick/eleco/model/vo/ProfileVO.java",
-        "relPath": "eleco/eleco/src/main/java/randomnick/eleco/model/vo/ProfileVO.java",
-        "sizeFormatted": "757 B"
+        "sizeFormatted": "757 B",
+        "project": "eleco"
       },
       {
         "name": "CommentService.java",
         "type": "Java代码",
         "size": 576,
-        "path": "E:/codeplace/eleco/eleco/src/main/java/randomnick/eleco/service/CommentService.java",
-        "relPath": "eleco/eleco/src/main/java/randomnick/eleco/service/CommentService.java",
-        "sizeFormatted": "576 B"
+        "sizeFormatted": "576 B",
+        "project": "eleco"
       },
       {
         "name": "FollowService.java",
         "type": "Java代码",
         "size": 210,
-        "path": "E:/codeplace/eleco/eleco/src/main/java/randomnick/eleco/service/FollowService.java",
-        "relPath": "eleco/eleco/src/main/java/randomnick/eleco/service/FollowService.java",
-        "sizeFormatted": "210 B"
+        "sizeFormatted": "210 B",
+        "project": "eleco"
       },
       {
         "name": "PostService.java",
         "type": "Java代码",
         "size": 1237,
-        "path": "E:/codeplace/eleco/eleco/src/main/java/randomnick/eleco/service/PostService.java",
-        "relPath": "eleco/eleco/src/main/java/randomnick/eleco/service/PostService.java",
-        "sizeFormatted": "1.2 KB"
+        "sizeFormatted": "1.2 KB",
+        "project": "eleco"
       },
       {
         "name": "TagService.java",
         "type": "Java代码",
         "size": 658,
-        "path": "E:/codeplace/eleco/eleco/src/main/java/randomnick/eleco/service/TagService.java",
-        "relPath": "eleco/eleco/src/main/java/randomnick/eleco/service/TagService.java",
-        "sizeFormatted": "658 B"
+        "sizeFormatted": "658 B",
+        "project": "eleco"
       },
       {
         "name": "TopicTagService.java",
         "type": "Java代码",
         "size": 787,
-        "path": "E:/codeplace/eleco/eleco/src/main/java/randomnick/eleco/service/TopicTagService.java",
-        "relPath": "eleco/eleco/src/main/java/randomnick/eleco/service/TopicTagService.java",
-        "sizeFormatted": "787 B"
+        "sizeFormatted": "787 B",
+        "project": "eleco"
       },
       {
         "name": "UserService.java",
         "type": "Java代码",
         "size": 1054,
-        "path": "E:/codeplace/eleco/eleco/src/main/java/randomnick/eleco/service/UserService.java",
-        "relPath": "eleco/eleco/src/main/java/randomnick/eleco/service/UserService.java",
-        "sizeFormatted": "1.0 KB"
+        "sizeFormatted": "1.0 KB",
+        "project": "eleco"
       },
       {
         "name": "CommentServiceImpl.java",
         "type": "Java代码",
         "size": 1433,
-        "path": "E:/codeplace/eleco/eleco/src/main/java/randomnick/eleco/service/impl/CommentServiceImpl.java",
-        "relPath": "eleco/eleco/src/main/java/randomnick/eleco/service/impl/CommentServiceImpl.java",
-        "sizeFormatted": "1.4 KB"
+        "sizeFormatted": "1.4 KB",
+        "project": "eleco"
       },
       {
         "name": "FollowServiceImpl.java",
         "type": "Java代码",
         "size": 417,
-        "path": "E:/codeplace/eleco/eleco/src/main/java/randomnick/eleco/service/impl/FollowServiceImpl.java",
-        "relPath": "eleco/eleco/src/main/java/randomnick/eleco/service/impl/FollowServiceImpl.java",
-        "sizeFormatted": "417 B"
+        "sizeFormatted": "417 B",
+        "project": "eleco"
       },
       {
         "name": "MyUserDetailsService.java",
         "type": "Java代码",
         "size": 1184,
-        "path": "E:/codeplace/eleco/eleco/src/main/java/randomnick/eleco/service/impl/MyUserDetailsService.java",
-        "relPath": "eleco/eleco/src/main/java/randomnick/eleco/service/impl/MyUserDetailsService.java",
-        "sizeFormatted": "1.2 KB"
+        "sizeFormatted": "1.2 KB",
+        "project": "eleco"
       },
       {
         "name": "PostServiceImpl.java",
         "type": "Java代码",
         "size": 5450,
-        "path": "E:/codeplace/eleco/eleco/src/main/java/randomnick/eleco/service/impl/PostServiceImpl.java",
-        "relPath": "eleco/eleco/src/main/java/randomnick/eleco/service/impl/PostServiceImpl.java",
-        "sizeFormatted": "5.3 KB"
+        "sizeFormatted": "5.3 KB",
+        "project": "eleco"
       },
       {
         "name": "TagServiceImpl.java",
         "type": "Java代码",
         "size": 2041,
-        "path": "E:/codeplace/eleco/eleco/src/main/java/randomnick/eleco/service/impl/TagServiceImpl.java",
-        "relPath": "eleco/eleco/src/main/java/randomnick/eleco/service/impl/TagServiceImpl.java",
-        "sizeFormatted": "2.0 KB"
+        "sizeFormatted": "2.0 KB",
+        "project": "eleco"
       },
       {
         "name": "TopicTagServiceImpl.java",
         "type": "Java代码",
         "size": 1677,
-        "path": "E:/codeplace/eleco/eleco/src/main/java/randomnick/eleco/service/impl/TopicTagServiceImpl.java",
-        "relPath": "eleco/eleco/src/main/java/randomnick/eleco/service/impl/TopicTagServiceImpl.java",
-        "sizeFormatted": "1.6 KB"
+        "sizeFormatted": "1.6 KB",
+        "project": "eleco"
       },
       {
         "name": "UserServiceImpl.java",
         "type": "Java代码",
         "size": 4924,
-        "path": "E:/codeplace/eleco/eleco/src/main/java/randomnick/eleco/service/impl/UserServiceImpl.java",
-        "relPath": "eleco/eleco/src/main/java/randomnick/eleco/service/impl/UserServiceImpl.java",
-        "sizeFormatted": "4.8 KB"
+        "sizeFormatted": "4.8 KB",
+        "project": "eleco"
       },
       {
         "name": "FastJson2JsonRedisSerializer.java",
         "type": "Java代码",
         "size": 1966,
-        "path": "E:/codeplace/eleco/eleco/src/main/java/randomnick/eleco/utils/FastJson2JsonRedisSerializer.java",
-        "relPath": "eleco/eleco/src/main/java/randomnick/eleco/utils/FastJson2JsonRedisSerializer.java",
-        "sizeFormatted": "1.9 KB"
+        "sizeFormatted": "1.9 KB",
+        "project": "eleco"
       },
       {
         "name": "RedisCache.java",
         "type": "Java代码",
         "size": 6200,
-        "path": "E:/codeplace/eleco/eleco/src/main/java/randomnick/eleco/utils/RedisCache.java",
-        "relPath": "eleco/eleco/src/main/java/randomnick/eleco/utils/RedisCache.java",
-        "sizeFormatted": "6.1 KB"
+        "sizeFormatted": "6.1 KB",
+        "project": "eleco"
       },
       {
         "name": "WebUtils.java",
         "type": "Java代码",
         "size": 756,
-        "path": "E:/codeplace/eleco/eleco/src/main/java/randomnick/eleco/utils/WebUtils.java",
-        "relPath": "eleco/eleco/src/main/java/randomnick/eleco/utils/WebUtils.java",
-        "sizeFormatted": "756 B"
+        "sizeFormatted": "756 B",
+        "project": "eleco"
       },
       {
         "name": "application.properties",
         "type": "其他",
         "size": 377,
-        "path": "E:/codeplace/eleco/eleco/src/main/resources/application.properties",
-        "relPath": "eleco/eleco/src/main/resources/application.properties",
-        "sizeFormatted": "377 B"
+        "sizeFormatted": "377 B",
+        "project": "eleco"
       },
       {
         "name": "application.yml",
         "type": "YAML配置",
         "size": 558,
-        "path": "E:/codeplace/eleco/eleco/src/main/resources/application.yml",
-        "relPath": "eleco/eleco/src/main/resources/application.yml",
-        "sizeFormatted": "558 B"
+        "sizeFormatted": "558 B",
+        "project": "eleco"
       },
       {
         "name": "CommentMapper.xml",
         "type": "YAML配置",
         "size": 909,
-        "path": "E:/codeplace/eleco/eleco/src/main/resources/mapper/CommentMapper.xml",
-        "relPath": "eleco/eleco/src/main/resources/mapper/CommentMapper.xml",
-        "sizeFormatted": "909 B"
+        "sizeFormatted": "909 B",
+        "project": "eleco"
       },
       {
         "name": "PostMapper.xml",
         "type": "YAML配置",
         "size": 2773,
-        "path": "E:/codeplace/eleco/eleco/src/main/resources/mapper/PostMapper.xml",
-        "relPath": "eleco/eleco/src/main/resources/mapper/PostMapper.xml",
-        "sizeFormatted": "2.7 KB"
+        "sizeFormatted": "2.7 KB",
+        "project": "eleco"
       },
       {
         "name": "PostTagMapper.xml",
         "type": "YAML配置",
         "size": 390,
-        "path": "E:/codeplace/eleco/eleco/src/main/resources/mapper/PostTagMapper.xml",
-        "relPath": "eleco/eleco/src/main/resources/mapper/PostTagMapper.xml",
-        "sizeFormatted": "390 B"
+        "sizeFormatted": "390 B",
+        "project": "eleco"
       },
       {
         "name": "UserMapper.xml",
         "type": "YAML配置",
         "size": 297,
-        "path": "E:/codeplace/eleco/eleco/src/main/resources/mapper/UserMapper.xml",
-        "relPath": "eleco/eleco/src/main/resources/mapper/UserMapper.xml",
-        "sizeFormatted": "297 B"
+        "sizeFormatted": "297 B",
+        "project": "eleco"
       },
       {
         "name": "ElecoApplicationTests.java",
         "type": "Java代码",
         "size": 235,
-        "path": "E:/codeplace/eleco/eleco/src/test/java/randomnick/eleco/ElecoApplicationTests.java",
-        "relPath": "eleco/eleco/src/test/java/randomnick/eleco/ElecoApplicationTests.java",
-        "sizeFormatted": "235 B"
+        "sizeFormatted": "235 B",
+        "project": "eleco"
       },
       {
         "name": ".gitignore",
         "type": "其他",
         "size": 395,
-        "path": "E:/codeplace/eleco_new/eleco/.gitignore",
-        "relPath": "eleco_new/eleco/.gitignore",
-        "sizeFormatted": "395 B"
+        "sizeFormatted": "395 B",
+        "project": "eleco_new"
       },
       {
         "name": "Dockerfile",
         "type": "其他",
         "size": 303,
-        "path": "E:/codeplace/eleco_new/eleco/Dockerfile",
-        "relPath": "eleco_new/eleco/Dockerfile",
-        "sizeFormatted": "303 B"
+        "sizeFormatted": "303 B",
+        "project": "eleco_new"
       },
       {
         "name": "eleco.iml",
         "type": "其他",
         "size": 11829,
-        "path": "E:/codeplace/eleco_new/eleco/eleco.iml",
-        "relPath": "eleco_new/eleco/eleco.iml",
-        "sizeFormatted": "11.6 KB"
+        "sizeFormatted": "11.6 KB",
+        "project": "eleco_new"
       },
       {
         "name": "pom.xml",
         "type": "YAML配置",
         "size": 3670,
-        "path": "E:/codeplace/eleco_new/eleco/pom.xml",
-        "relPath": "eleco_new/eleco/pom.xml",
-        "sizeFormatted": "3.6 KB"
+        "sizeFormatted": "3.6 KB",
+        "project": "eleco_new"
       },
       {
         "name": "README.md",
         "type": "文档",
         "size": 189,
-        "path": "E:/codeplace/eleco_new/eleco/README.md",
-        "relPath": "eleco_new/eleco/README.md",
-        "sizeFormatted": "189 B"
+        "sizeFormatted": "189 B",
+        "project": "eleco_new"
       },
       {
         "name": "ElecoApplication.java",
         "type": "Java代码",
         "size": 304,
-        "path": "E:/codeplace/eleco_new/eleco/src/main/java/com/idk/eleco/ElecoApplication.java",
-        "relPath": "eleco_new/eleco/src/main/java/com/idk/eleco/ElecoApplication.java",
-        "sizeFormatted": "304 B"
+        "sizeFormatted": "304 B",
+        "project": "eleco_new"
       },
       {
         "name": "CorsConfig.java",
         "type": "Java代码",
         "size": 1023,
-        "path": "E:/codeplace/eleco_new/eleco/src/main/java/com/idk/eleco/config/CorsConfig.java",
-        "relPath": "eleco_new/eleco/src/main/java/com/idk/eleco/config/CorsConfig.java",
-        "sizeFormatted": "1023 B"
+        "sizeFormatted": "1023 B",
+        "project": "eleco_new"
       },
       {
         "name": "MybatisPlusConfig.java",
         "type": "Java代码",
         "size": 1180,
-        "path": "E:/codeplace/eleco_new/eleco/src/main/java/com/idk/eleco/config/MybatisPlusConfig.java",
-        "relPath": "eleco_new/eleco/src/main/java/com/idk/eleco/config/MybatisPlusConfig.java",
-        "sizeFormatted": "1.2 KB"
+        "sizeFormatted": "1.2 KB",
+        "project": "eleco_new"
       },
       {
         "name": "SwaggerConfig.java",
         "type": "Java代码",
         "size": 1378,
-        "path": "E:/codeplace/eleco_new/eleco/src/main/java/com/idk/eleco/config/SwaggerConfig.java",
-        "relPath": "eleco_new/eleco/src/main/java/com/idk/eleco/config/SwaggerConfig.java",
-        "sizeFormatted": "1.3 KB"
+        "sizeFormatted": "1.3 KB",
+        "project": "eleco_new"
       },
       {
         "name": "LoginController.java",
         "type": "Java代码",
         "size": 1970,
-        "path": "E:/codeplace/eleco_new/eleco/src/main/java/com/idk/eleco/controller/LoginController.java",
-        "relPath": "eleco_new/eleco/src/main/java/com/idk/eleco/controller/LoginController.java",
-        "sizeFormatted": "1.9 KB"
+        "sizeFormatted": "1.9 KB",
+        "project": "eleco_new"
       },
       {
         "name": "PostController.java",
         "type": "Java代码",
         "size": 5314,
-        "path": "E:/codeplace/eleco_new/eleco/src/main/java/com/idk/eleco/controller/PostController.java",
-        "relPath": "eleco_new/eleco/src/main/java/com/idk/eleco/controller/PostController.java",
-        "sizeFormatted": "5.2 KB"
+        "sizeFormatted": "5.2 KB",
+        "project": "eleco_new"
       },
       {
         "name": "SearchController.java",
         "type": "Java代码",
         "size": 1136,
-        "path": "E:/codeplace/eleco_new/eleco/src/main/java/com/idk/eleco/controller/SearchController.java",
-        "relPath": "eleco_new/eleco/src/main/java/com/idk/eleco/controller/SearchController.java",
-        "sizeFormatted": "1.1 KB"
+        "sizeFormatted": "1.1 KB",
+        "project": "eleco_new"
       },
       {
         "name": "TagController.java",
         "type": "Java代码",
         "size": 1480,
-        "path": "E:/codeplace/eleco_new/eleco/src/main/java/com/idk/eleco/controller/TagController.java",
-        "relPath": "eleco_new/eleco/src/main/java/com/idk/eleco/controller/TagController.java",
-        "sizeFormatted": "1.4 KB"
+        "sizeFormatted": "1.4 KB",
+        "project": "eleco_new"
       },
       {
         "name": "UserController.java",
         "type": "Java代码",
         "size": 4129,
-        "path": "E:/codeplace/eleco_new/eleco/src/main/java/com/idk/eleco/controller/UserController.java",
-        "relPath": "eleco_new/eleco/src/main/java/com/idk/eleco/controller/UserController.java",
-        "sizeFormatted": "4.0 KB"
+        "sizeFormatted": "4.0 KB",
+        "project": "eleco_new"
       },
       {
         "name": "CollectionMapper.java",
         "type": "Java代码",
         "size": 789,
-        "path": "E:/codeplace/eleco_new/eleco/src/main/java/com/idk/eleco/mapper/CollectionMapper.java",
-        "relPath": "eleco_new/eleco/src/main/java/com/idk/eleco/mapper/CollectionMapper.java",
-        "sizeFormatted": "789 B"
+        "sizeFormatted": "789 B",
+        "project": "eleco_new"
       },
       {
         "name": "CommentMapper.java",
         "type": "Java代码",
         "size": 824,
-        "path": "E:/codeplace/eleco_new/eleco/src/main/java/com/idk/eleco/mapper/CommentMapper.java",
-        "relPath": "eleco_new/eleco/src/main/java/com/idk/eleco/mapper/CommentMapper.java",
-        "sizeFormatted": "824 B"
+        "sizeFormatted": "824 B",
+        "project": "eleco_new"
       },
       {
         "name": "FollowMapper.java",
         "type": "Java代码",
         "size": 487,
-        "path": "E:/codeplace/eleco_new/eleco/src/main/java/com/idk/eleco/mapper/FollowMapper.java",
-        "relPath": "eleco_new/eleco/src/main/java/com/idk/eleco/mapper/FollowMapper.java",
-        "sizeFormatted": "487 B"
+        "sizeFormatted": "487 B",
+        "project": "eleco_new"
       },
       {
         "name": "PostMapper.java",
         "type": "Java代码",
         "size": 836,
-        "path": "E:/codeplace/eleco_new/eleco/src/main/java/com/idk/eleco/mapper/PostMapper.java",
-        "relPath": "eleco_new/eleco/src/main/java/com/idk/eleco/mapper/PostMapper.java",
-        "sizeFormatted": "836 B"
+        "sizeFormatted": "836 B",
+        "project": "eleco_new"
       },
       {
         "name": "TagMapper.java",
         "type": "Java代码",
         "size": 560,
-        "path": "E:/codeplace/eleco_new/eleco/src/main/java/com/idk/eleco/mapper/TagMapper.java",
-        "relPath": "eleco_new/eleco/src/main/java/com/idk/eleco/mapper/TagMapper.java",
-        "sizeFormatted": "560 B"
+        "sizeFormatted": "560 B",
+        "project": "eleco_new"
       },
       {
         "name": "UserMapper.java",
         "type": "Java代码",
         "size": 477,
-        "path": "E:/codeplace/eleco_new/eleco/src/main/java/com/idk/eleco/mapper/UserMapper.java",
-        "relPath": "eleco_new/eleco/src/main/java/com/idk/eleco/mapper/UserMapper.java",
-        "sizeFormatted": "477 B"
+        "sizeFormatted": "477 B",
+        "project": "eleco_new"
       },
       {
         "name": "Comment.java",
         "type": "Java代码",
         "size": 1767,
-        "path": "E:/codeplace/eleco_new/eleco/src/main/java/com/idk/eleco/model/entity/Comment.java",
-        "relPath": "eleco_new/eleco/src/main/java/com/idk/eleco/model/entity/Comment.java",
-        "sizeFormatted": "1.7 KB"
+        "sizeFormatted": "1.7 KB",
+        "project": "eleco_new"
       },
       {
         "name": "Post.java",
         "type": "Java代码",
         "size": 2141,
-        "path": "E:/codeplace/eleco_new/eleco/src/main/java/com/idk/eleco/model/entity/Post.java",
-        "relPath": "eleco_new/eleco/src/main/java/com/idk/eleco/model/entity/Post.java",
-        "sizeFormatted": "2.1 KB"
+        "sizeFormatted": "2.1 KB",
+        "project": "eleco_new"
       },
       {
         "name": "Tag.java",
         "type": "Java代码",
         "size": 1114,
-        "path": "E:/codeplace/eleco_new/eleco/src/main/java/com/idk/eleco/model/entity/Tag.java",
-        "relPath": "eleco_new/eleco/src/main/java/com/idk/eleco/model/entity/Tag.java",
-        "sizeFormatted": "1.1 KB"
+        "sizeFormatted": "1.1 KB",
+        "project": "eleco_new"
       },
       {
         "name": "User.java",
         "type": "Java代码",
         "size": 1922,
-        "path": "E:/codeplace/eleco_new/eleco/src/main/java/com/idk/eleco/model/entity/User.java",
-        "relPath": "eleco_new/eleco/src/main/java/com/idk/eleco/model/entity/User.java",
-        "sizeFormatted": "1.9 KB"
+        "sizeFormatted": "1.9 KB",
+        "project": "eleco_new"
       },
       {
         "name": "UserCollection.java",
         "type": "Java代码",
         "size": 606,
-        "path": "E:/codeplace/eleco_new/eleco/src/main/java/com/idk/eleco/model/entity/UserCollection.java",
-        "relPath": "eleco_new/eleco/src/main/java/com/idk/eleco/model/entity/UserCollection.java",
-        "sizeFormatted": "606 B"
+        "sizeFormatted": "606 B",
+        "project": "eleco_new"
       },
       {
         "name": "UserFollow.java",
         "type": "Java代码",
         "size": 606,
-        "path": "E:/codeplace/eleco_new/eleco/src/main/java/com/idk/eleco/model/entity/UserFollow.java",
-        "relPath": "eleco_new/eleco/src/main/java/com/idk/eleco/model/entity/UserFollow.java",
-        "sizeFormatted": "606 B"
+        "sizeFormatted": "606 B",
+        "project": "eleco_new"
       },
       {
         "name": "CollectionVO.java",
         "type": "Java代码",
         "size": 403,
-        "path": "E:/codeplace/eleco_new/eleco/src/main/java/com/idk/eleco/model/Vo/CollectionVO.java",
-        "relPath": "eleco_new/eleco/src/main/java/com/idk/eleco/model/Vo/CollectionVO.java",
-        "sizeFormatted": "403 B"
+        "sizeFormatted": "403 B",
+        "project": "eleco_new"
       },
       {
         "name": "CollectPostVO.java",
         "type": "Java代码",
         "size": 1013,
-        "path": "E:/codeplace/eleco_new/eleco/src/main/java/com/idk/eleco/model/Vo/CollectPostVO.java",
-        "relPath": "eleco_new/eleco/src/main/java/com/idk/eleco/model/Vo/CollectPostVO.java",
-        "sizeFormatted": "1013 B"
+        "sizeFormatted": "1013 B",
+        "project": "eleco_new"
       },
       {
         "name": "CommentVO.java",
         "type": "Java代码",
         "size": 994,
-        "path": "E:/codeplace/eleco_new/eleco/src/main/java/com/idk/eleco/model/Vo/CommentVO.java",
-        "relPath": "eleco_new/eleco/src/main/java/com/idk/eleco/model/Vo/CommentVO.java",
-        "sizeFormatted": "994 B"
+        "sizeFormatted": "994 B",
+        "project": "eleco_new"
       },
       {
         "name": "FollowVO.java",
         "type": "Java代码",
         "size": 344,
-        "path": "E:/codeplace/eleco_new/eleco/src/main/java/com/idk/eleco/model/Vo/FollowVO.java",
-        "relPath": "eleco_new/eleco/src/main/java/com/idk/eleco/model/Vo/FollowVO.java",
-        "sizeFormatted": "344 B"
+        "sizeFormatted": "344 B",
+        "project": "eleco_new"
       },
       {
         "name": "GetTagPostVO.java",
         "type": "Java代码",
         "size": 392,
-        "path": "E:/codeplace/eleco_new/eleco/src/main/java/com/idk/eleco/model/Vo/GetTagPostVO.java",
-        "relPath": "eleco_new/eleco/src/main/java/com/idk/eleco/model/Vo/GetTagPostVO.java",
-        "sizeFormatted": "392 B"
+        "sizeFormatted": "392 B",
+        "project": "eleco_new"
       },
       {
         "name": "PostTagVO.java",
         "type": "Java代码",
         "size": 1690,
-        "path": "E:/codeplace/eleco_new/eleco/src/main/java/com/idk/eleco/model/Vo/PostTagVO.java",
-        "relPath": "eleco_new/eleco/src/main/java/com/idk/eleco/model/Vo/PostTagVO.java",
-        "sizeFormatted": "1.7 KB"
+        "sizeFormatted": "1.7 KB",
+        "project": "eleco_new"
       },
       {
         "name": "PostVO.java",
         "type": "Java代码",
         "size": 598,
-        "path": "E:/codeplace/eleco_new/eleco/src/main/java/com/idk/eleco/model/Vo/PostVO.java",
-        "relPath": "eleco_new/eleco/src/main/java/com/idk/eleco/model/Vo/PostVO.java",
-        "sizeFormatted": "598 B"
+        "sizeFormatted": "598 B",
+        "project": "eleco_new"
       },
       {
         "name": "RecommendPostVO.java",
         "type": "Java代码",
         "size": 1035,
-        "path": "E:/codeplace/eleco_new/eleco/src/main/java/com/idk/eleco/model/Vo/RecommendPostVO.java",
-        "relPath": "eleco_new/eleco/src/main/java/com/idk/eleco/model/Vo/RecommendPostVO.java",
-        "sizeFormatted": "1.0 KB"
+        "sizeFormatted": "1.0 KB",
+        "project": "eleco_new"
       },
       {
         "name": "RelateVO.java",
         "type": "Java代码",
         "size": 1028,
-        "path": "E:/codeplace/eleco_new/eleco/src/main/java/com/idk/eleco/model/Vo/RelateVO.java",
-        "relPath": "eleco_new/eleco/src/main/java/com/idk/eleco/model/Vo/RelateVO.java",
-        "sizeFormatted": "1.0 KB"
+        "sizeFormatted": "1.0 KB",
+        "project": "eleco_new"
       },
       {
         "name": "SearchPostVO.java",
         "type": "Java代码",
         "size": 903,
-        "path": "E:/codeplace/eleco_new/eleco/src/main/java/com/idk/eleco/model/Vo/SearchPostVO.java",
-        "relPath": "eleco_new/eleco/src/main/java/com/idk/eleco/model/Vo/SearchPostVO.java",
-        "sizeFormatted": "903 B"
+        "sizeFormatted": "903 B",
+        "project": "eleco_new"
       },
       {
         "name": "TagVO.java",
         "type": "Java代码",
         "size": 729,
-        "path": "E:/codeplace/eleco_new/eleco/src/main/java/com/idk/eleco/model/Vo/TagVO.java",
-        "relPath": "eleco_new/eleco/src/main/java/com/idk/eleco/model/Vo/TagVO.java",
-        "sizeFormatted": "729 B"
+        "sizeFormatted": "729 B",
+        "project": "eleco_new"
       },
       {
         "name": "CommentService.java",
         "type": "Java代码",
         "size": 3249,
-        "path": "E:/codeplace/eleco_new/eleco/src/main/java/com/idk/eleco/serivce/CommentService.java",
-        "relPath": "eleco_new/eleco/src/main/java/com/idk/eleco/serivce/CommentService.java",
-        "sizeFormatted": "3.2 KB"
+        "sizeFormatted": "3.2 KB",
+        "project": "eleco_new"
       },
       {
         "name": "FileService.java",
         "type": "Java代码",
         "size": 2835,
-        "path": "E:/codeplace/eleco_new/eleco/src/main/java/com/idk/eleco/serivce/FileService.java",
-        "relPath": "eleco_new/eleco/src/main/java/com/idk/eleco/serivce/FileService.java",
-        "sizeFormatted": "2.8 KB"
+        "sizeFormatted": "2.8 KB",
+        "project": "eleco_new"
       },
       {
         "name": "LoginService.java",
         "type": "Java代码",
         "size": 2121,
-        "path": "E:/codeplace/eleco_new/eleco/src/main/java/com/idk/eleco/serivce/LoginService.java",
-        "relPath": "eleco_new/eleco/src/main/java/com/idk/eleco/serivce/LoginService.java",
-        "sizeFormatted": "2.1 KB"
+        "sizeFormatted": "2.1 KB",
+        "project": "eleco_new"
       },
       {
         "name": "PostService.java",
         "type": "Java代码",
         "size": 14860,
-        "path": "E:/codeplace/eleco_new/eleco/src/main/java/com/idk/eleco/serivce/PostService.java",
-        "relPath": "eleco_new/eleco/src/main/java/com/idk/eleco/serivce/PostService.java",
-        "sizeFormatted": "14.5 KB"
+        "sizeFormatted": "14.5 KB",
+        "project": "eleco_new"
       },
       {
         "name": "TagService.java",
         "type": "Java代码",
         "size": 4311,
-        "path": "E:/codeplace/eleco_new/eleco/src/main/java/com/idk/eleco/serivce/TagService.java",
-        "relPath": "eleco_new/eleco/src/main/java/com/idk/eleco/serivce/TagService.java",
-        "sizeFormatted": "4.2 KB"
+        "sizeFormatted": "4.2 KB",
+        "project": "eleco_new"
       },
       {
         "name": "UserService.java",
         "type": "Java代码",
         "size": 11414,
-        "path": "E:/codeplace/eleco_new/eleco/src/main/java/com/idk/eleco/serivce/UserService.java",
-        "relPath": "eleco_new/eleco/src/main/java/com/idk/eleco/serivce/UserService.java",
-        "sizeFormatted": "11.1 KB"
+        "sizeFormatted": "11.1 KB",
+        "project": "eleco_new"
       },
       {
         "name": "HttpUtils.java",
         "type": "Java代码",
         "size": 3653,
-        "path": "E:/codeplace/eleco_new/eleco/src/main/java/com/idk/eleco/util/HttpUtils.java",
-        "relPath": "eleco_new/eleco/src/main/java/com/idk/eleco/util/HttpUtils.java",
-        "sizeFormatted": "3.6 KB"
+        "sizeFormatted": "3.6 KB",
+        "project": "eleco_new"
       },
       {
         "name": "IPUtil.java",
         "type": "Java代码",
         "size": 4408,
-        "path": "E:/codeplace/eleco_new/eleco/src/main/java/com/idk/eleco/util/IPUtil.java",
-        "relPath": "eleco_new/eleco/src/main/java/com/idk/eleco/util/IPUtil.java",
-        "sizeFormatted": "4.3 KB"
+        "sizeFormatted": "4.3 KB",
+        "project": "eleco_new"
       },
       {
         "name": "ResponseResult.java",
         "type": "Java代码",
         "size": 1289,
-        "path": "E:/codeplace/eleco_new/eleco/src/main/java/com/idk/eleco/util/ResponseResult.java",
-        "relPath": "eleco_new/eleco/src/main/java/com/idk/eleco/util/ResponseResult.java",
-        "sizeFormatted": "1.3 KB"
+        "sizeFormatted": "1.3 KB",
+        "project": "eleco_new"
       },
       {
         "name": "application.properties",
         "type": "其他",
         "size": 94,
-        "path": "E:/codeplace/eleco_new/eleco/src/main/resources/application.properties",
-        "relPath": "eleco_new/eleco/src/main/resources/application.properties",
-        "sizeFormatted": "94 B"
+        "sizeFormatted": "94 B",
+        "project": "eleco_new"
       },
       {
         "name": "application.yml",
         "type": "YAML配置",
         "size": 456,
-        "path": "E:/codeplace/eleco_new/eleco/src/main/resources/application.yml",
-        "relPath": "eleco_new/eleco/src/main/resources/application.yml",
-        "sizeFormatted": "456 B"
+        "sizeFormatted": "456 B",
+        "project": "eleco_new"
       },
       {
         "name": "MANIFEST.MF",
         "type": "其他",
         "size": 69,
-        "path": "E:/codeplace/eleco_new/eleco/src/main/resources/META-INF/MANIFEST.MF",
-        "relPath": "eleco_new/eleco/src/main/resources/META-INF/MANIFEST.MF",
-        "sizeFormatted": "69 B"
+        "sizeFormatted": "69 B",
+        "project": "eleco_new"
       },
       {
         "name": "generatorConfig.xml",
         "type": "YAML配置",
         "size": 3189,
-        "path": "E:/codeplace/eleco_new/eleco/src/main/resources/mybatis-generator/generatorConfig.xml",
-        "relPath": "eleco_new/eleco/src/main/resources/mybatis-generator/generatorConfig.xml",
-        "sizeFormatted": "3.1 KB"
+        "sizeFormatted": "3.1 KB",
+        "project": "eleco_new"
       },
       {
         "name": "ElecoApplicationTests.java",
         "type": "Java代码",
         "size": 421,
-        "path": "E:/codeplace/eleco_new/eleco/src/test/java/com/idk/eleco/ElecoApplicationTests.java",
-        "relPath": "eleco_new/eleco/src/test/java/com/idk/eleco/ElecoApplicationTests.java",
-        "sizeFormatted": "421 B"
+        "sizeFormatted": "421 B",
+        "project": "eleco_new"
       },
       {
         "name": "pom.xml",
         "type": "YAML配置",
         "size": 4070,
-        "path": "E:/codeplace/history/pom.xml",
-        "relPath": "history/pom.xml",
-        "sizeFormatted": "4.0 KB"
+        "sizeFormatted": "4.0 KB",
+        "project": "history"
       },
       {
         "name": "takeout_web.iml",
         "type": "其他",
         "size": 13544,
-        "path": "E:/codeplace/history/takeout_web.iml",
-        "relPath": "history/takeout_web.iml",
-        "sizeFormatted": "13.2 KB"
+        "sizeFormatted": "13.2 KB",
+        "project": "history"
       },
       {
         "name": "MainwebApplication.java",
         "type": "Java代码",
         "size": 322,
-        "path": "E:/codeplace/history/src/main/java/takeout/mainweb/MainwebApplication.java",
-        "relPath": "history/src/main/java/takeout/mainweb/MainwebApplication.java",
-        "sizeFormatted": "322 B"
+        "sizeFormatted": "322 B",
+        "project": "history"
       },
       {
         "name": "FastJson2JsonRedisSerializer.java",
         "type": "Java代码",
         "size": 1903,
-        "path": "E:/codeplace/history/src/main/java/takeout/mainweb/component/FastJson2JsonRedisSerializer.java",
-        "relPath": "history/src/main/java/takeout/mainweb/component/FastJson2JsonRedisSerializer.java",
-        "sizeFormatted": "1.9 KB"
+        "sizeFormatted": "1.9 KB",
+        "project": "history"
       },
       {
         "name": "JsonUtils.java",
         "type": "Java代码",
         "size": 275,
-        "path": "E:/codeplace/history/src/main/java/takeout/mainweb/component/JsonUtils.java",
-        "relPath": "history/src/main/java/takeout/mainweb/component/JsonUtils.java",
-        "sizeFormatted": "275 B"
+        "sizeFormatted": "275 B",
+        "project": "history"
       },
       {
         "name": "JwtAuthenticationTokenFilter.java",
         "type": "Java代码",
         "size": 2204,
-        "path": "E:/codeplace/history/src/main/java/takeout/mainweb/component/JwtAuthenticationTokenFilter.java",
-        "relPath": "history/src/main/java/takeout/mainweb/component/JwtAuthenticationTokenFilter.java",
-        "sizeFormatted": "2.2 KB"
+        "sizeFormatted": "2.2 KB",
+        "project": "history"
       },
       {
         "name": "JwtUtil.java",
         "type": "Java代码",
         "size": 3601,
-        "path": "E:/codeplace/history/src/main/java/takeout/mainweb/component/JwtUtil.java",
-        "relPath": "history/src/main/java/takeout/mainweb/component/JwtUtil.java",
-        "sizeFormatted": "3.5 KB"
+        "sizeFormatted": "3.5 KB",
+        "project": "history"
       },
       {
         "name": "MD5Util.java",
         "type": "Java代码",
         "size": 977,
-        "path": "E:/codeplace/history/src/main/java/takeout/mainweb/component/MD5Util.java",
-        "relPath": "history/src/main/java/takeout/mainweb/component/MD5Util.java",
-        "sizeFormatted": "977 B"
+        "sizeFormatted": "977 B",
+        "project": "history"
       },
       {
         "name": "RedisCache.java",
         "type": "Java代码",
         "size": 5967,
-        "path": "E:/codeplace/history/src/main/java/takeout/mainweb/component/RedisCache.java",
-        "relPath": "history/src/main/java/takeout/mainweb/component/RedisCache.java",
-        "sizeFormatted": "5.8 KB"
+        "sizeFormatted": "5.8 KB",
+        "project": "history"
       },
       {
         "name": "ResponseResult.java",
         "type": "Java代码",
         "size": 1233,
-        "path": "E:/codeplace/history/src/main/java/takeout/mainweb/component/ResponseResult.java",
-        "relPath": "history/src/main/java/takeout/mainweb/component/ResponseResult.java",
-        "sizeFormatted": "1.2 KB"
+        "sizeFormatted": "1.2 KB",
+        "project": "history"
       },
       {
         "name": "UuidTool.java",
         "type": "Java代码",
         "size": 279,
-        "path": "E:/codeplace/history/src/main/java/takeout/mainweb/component/UuidTool.java",
-        "relPath": "history/src/main/java/takeout/mainweb/component/UuidTool.java",
-        "sizeFormatted": "279 B"
+        "sizeFormatted": "279 B",
+        "project": "history"
       },
       {
         "name": "WebUtils.java",
         "type": "Java代码",
         "size": 719,
-        "path": "E:/codeplace/history/src/main/java/takeout/mainweb/component/WebUtils.java",
-        "relPath": "history/src/main/java/takeout/mainweb/component/WebUtils.java",
-        "sizeFormatted": "719 B"
+        "sizeFormatted": "719 B",
+        "project": "history"
       },
       {
         "name": "CorsConfig.java",
         "type": "Java代码",
         "size": 999,
-        "path": "E:/codeplace/history/src/main/java/takeout/mainweb/config/CorsConfig.java",
-        "relPath": "history/src/main/java/takeout/mainweb/config/CorsConfig.java",
-        "sizeFormatted": "999 B"
+        "sizeFormatted": "999 B",
+        "project": "history"
       },
       {
         "name": "RedisConfig.java",
         "type": "Java代码",
         "size": 1938,
-        "path": "E:/codeplace/history/src/main/java/takeout/mainweb/config/RedisConfig.java",
-        "relPath": "history/src/main/java/takeout/mainweb/config/RedisConfig.java",
-        "sizeFormatted": "1.9 KB"
+        "sizeFormatted": "1.9 KB",
+        "project": "history"
       },
       {
         "name": "SecurityConfig.java",
         "type": "Java代码",
         "size": 3767,
-        "path": "E:/codeplace/history/src/main/java/takeout/mainweb/config/SecurityConfig.java",
-        "relPath": "history/src/main/java/takeout/mainweb/config/SecurityConfig.java",
-        "sizeFormatted": "3.7 KB"
+        "sizeFormatted": "3.7 KB",
+        "project": "history"
       },
       {
         "name": "SwaggerConfig.java",
         "type": "Java代码",
         "size": 1345,
-        "path": "E:/codeplace/history/src/main/java/takeout/mainweb/config/SwaggerConfig.java",
-        "relPath": "history/src/main/java/takeout/mainweb/config/SwaggerConfig.java",
-        "sizeFormatted": "1.3 KB"
+        "sizeFormatted": "1.3 KB",
+        "project": "history"
       },
       {
         "name": "UserController.java",
         "type": "Java代码",
         "size": 1628,
-        "path": "E:/codeplace/history/src/main/java/takeout/mainweb/Controller/UserController.java",
-        "relPath": "history/src/main/java/takeout/mainweb/Controller/UserController.java",
-        "sizeFormatted": "1.6 KB"
+        "sizeFormatted": "1.6 KB",
+        "project": "history"
       },
       {
         "name": "LoginUser.java",
         "type": "Java代码",
         "size": 1018,
-        "path": "E:/codeplace/history/src/main/java/takeout/mainweb/entiy/LoginUser.java",
-        "relPath": "history/src/main/java/takeout/mainweb/entiy/LoginUser.java",
-        "sizeFormatted": "1018 B"
+        "sizeFormatted": "1018 B",
+        "project": "history"
       },
       {
         "name": "User.java",
         "type": "Java代码",
         "size": 294,
-        "path": "E:/codeplace/history/src/main/java/takeout/mainweb/entiy/User.java",
-        "relPath": "history/src/main/java/takeout/mainweb/entiy/User.java",
-        "sizeFormatted": "294 B"
+        "sizeFormatted": "294 B",
+        "project": "history"
       },
       {
         "name": "UserMapper.java",
         "type": "Java代码",
         "size": 390,
-        "path": "E:/codeplace/history/src/main/java/takeout/mainweb/Mapper/UserMapper.java",
-        "relPath": "history/src/main/java/takeout/mainweb/Mapper/UserMapper.java",
-        "sizeFormatted": "390 B"
+        "sizeFormatted": "390 B",
+        "project": "history"
       },
       {
         "name": "LoginService.java",
         "type": "Java代码",
         "size": 199,
-        "path": "E:/codeplace/history/src/main/java/takeout/mainweb/Service/LoginService.java",
-        "relPath": "history/src/main/java/takeout/mainweb/Service/LoginService.java",
-        "sizeFormatted": "199 B"
+        "sizeFormatted": "199 B",
+        "project": "history"
       },
       {
         "name": "LoginServiceImp.java",
         "type": "Java代码",
         "size": 2406,
-        "path": "E:/codeplace/history/src/main/java/takeout/mainweb/Service/LoginServiceImp.java",
-        "relPath": "history/src/main/java/takeout/mainweb/Service/LoginServiceImp.java",
-        "sizeFormatted": "2.3 KB"
+        "sizeFormatted": "2.3 KB",
+        "project": "history"
       },
       {
         "name": "MyUserDetailsService.java",
         "type": "Java代码",
         "size": 1803,
-        "path": "E:/codeplace/history/src/main/java/takeout/mainweb/Service/MyUserDetailsService.java",
-        "relPath": "history/src/main/java/takeout/mainweb/Service/MyUserDetailsService.java",
-        "sizeFormatted": "1.8 KB"
+        "sizeFormatted": "1.8 KB",
+        "project": "history"
       },
       {
         "name": "application.properties",
         "type": "其他",
         "size": 56,
-        "path": "E:/codeplace/history/src/main/resources/application.properties",
-        "relPath": "history/src/main/resources/application.properties",
-        "sizeFormatted": "56 B"
+        "sizeFormatted": "56 B",
+        "project": "history"
       },
       {
         "name": "application.yml",
         "type": "YAML配置",
         "size": 443,
-        "path": "E:/codeplace/history/src/main/resources/application.yml",
-        "relPath": "history/src/main/resources/application.yml",
-        "sizeFormatted": "443 B"
+        "sizeFormatted": "443 B",
+        "project": "history"
       },
       {
         "name": "UserMapper.xml",
         "type": "YAML配置",
         "size": 287,
-        "path": "E:/codeplace/history/src/main/resources/mapper/UserMapper.xml",
-        "relPath": "history/src/main/resources/mapper/UserMapper.xml",
-        "sizeFormatted": "287 B"
+        "sizeFormatted": "287 B",
+        "project": "history"
       },
       {
         "name": "MainwebApplicationTests.java",
         "type": "Java代码",
         "size": 217,
-        "path": "E:/codeplace/history/src/test/java/takeout/mainweb/MainwebApplicationTests.java",
-        "relPath": "history/src/test/java/takeout/mainweb/MainwebApplicationTests.java",
-        "sizeFormatted": "217 B"
+        "sizeFormatted": "217 B",
+        "project": "history"
       },
       {
         "name": "novelweb.iml",
         "type": "其他",
         "size": 17817,
-        "path": "E:/codeplace/novelweb/novelweb.iml",
-        "relPath": "novelweb/novelweb.iml",
-        "sizeFormatted": "17.4 KB"
+        "sizeFormatted": "17.4 KB",
+        "project": "novelweb"
       },
       {
         "name": "pom.xml",
         "type": "YAML配置",
         "size": 4358,
-        "path": "E:/codeplace/novelweb/pom.xml",
-        "relPath": "novelweb/pom.xml",
-        "sizeFormatted": "4.3 KB"
+        "sizeFormatted": "4.3 KB",
+        "project": "novelweb"
       },
       {
         "name": "NovelwebApplication.java",
         "type": "Java代码",
         "size": 327,
-        "path": "E:/codeplace/novelweb/src/main/java/com/novel/novelweb/NovelwebApplication.java",
-        "relPath": "novelweb/src/main/java/com/novel/novelweb/NovelwebApplication.java",
-        "sizeFormatted": "327 B"
+        "sizeFormatted": "327 B",
+        "project": "novelweb"
       },
       {
         "name": "JsonUtils.java",
         "type": "Java代码",
         "size": 294,
-        "path": "E:/codeplace/novelweb/src/main/java/com/novel/novelweb/component/JsonUtils.java",
-        "relPath": "novelweb/src/main/java/com/novel/novelweb/component/JsonUtils.java",
-        "sizeFormatted": "294 B"
+        "sizeFormatted": "294 B",
+        "project": "novelweb"
       },
       {
         "name": "CorsConfig.java",
         "type": "Java代码",
         "size": 1028,
-        "path": "E:/codeplace/novelweb/src/main/java/com/novel/novelweb/Config/CorsConfig.java",
-        "relPath": "novelweb/src/main/java/com/novel/novelweb/Config/CorsConfig.java",
-        "sizeFormatted": "1.0 KB"
+        "sizeFormatted": "1.0 KB",
+        "project": "novelweb"
       },
       {
         "name": "MyMvcConfig.java",
         "type": "Java代码",
         "size": 781,
-        "path": "E:/codeplace/novelweb/src/main/java/com/novel/novelweb/Config/MyMvcConfig.java",
-        "relPath": "novelweb/src/main/java/com/novel/novelweb/Config/MyMvcConfig.java",
-        "sizeFormatted": "781 B"
+        "sizeFormatted": "781 B",
+        "project": "novelweb"
       },
       {
         "name": "SwaggerConfig.java",
         "type": "Java代码",
         "size": 1383,
-        "path": "E:/codeplace/novelweb/src/main/java/com/novel/novelweb/Config/SwaggerConfig.java",
-        "relPath": "novelweb/src/main/java/com/novel/novelweb/Config/SwaggerConfig.java",
-        "sizeFormatted": "1.4 KB"
+        "sizeFormatted": "1.4 KB",
+        "project": "novelweb"
       },
       {
         "name": "checkedController.java",
         "type": "Java代码",
         "size": 3505,
-        "path": "E:/codeplace/novelweb/src/main/java/com/novel/novelweb/Controller/checkedController.java",
-        "relPath": "novelweb/src/main/java/com/novel/novelweb/Controller/checkedController.java",
-        "sizeFormatted": "3.4 KB"
+        "sizeFormatted": "3.4 KB",
+        "project": "novelweb"
       },
       {
         "name": "FileController.java",
         "type": "Java代码",
         "size": 6800,
-        "path": "E:/codeplace/novelweb/src/main/java/com/novel/novelweb/Controller/FileController.java",
-        "relPath": "novelweb/src/main/java/com/novel/novelweb/Controller/FileController.java",
-        "sizeFormatted": "6.6 KB"
+        "sizeFormatted": "6.6 KB",
+        "project": "novelweb"
       },
       {
         "name": "helloworld.py",
         "type": "Python代码",
         "size": 20,
-        "path": "E:/codeplace/novelweb/src/main/java/com/novel/novelweb/Controller/helloworld.py",
-        "relPath": "novelweb/src/main/java/com/novel/novelweb/Controller/helloworld.py",
-        "sizeFormatted": "20 B"
+        "sizeFormatted": "20 B",
+        "project": "novelweb"
       },
       {
         "name": "MobileNetV2.pth",
         "type": "其他",
         "size": 9178125,
-        "path": "E:/codeplace/novelweb/src/main/java/com/novel/novelweb/Controller/MobileNetV2.pth",
-        "relPath": "novelweb/src/main/java/com/novel/novelweb/Controller/MobileNetV2.pth",
-        "sizeFormatted": "8.8 MB"
+        "sizeFormatted": "8.8 MB",
+        "project": "novelweb"
       },
       {
         "name": "pictureController.java",
         "type": "Java代码",
         "size": 3588,
-        "path": "E:/codeplace/novelweb/src/main/java/com/novel/novelweb/Controller/pictureController.java",
-        "relPath": "novelweb/src/main/java/com/novel/novelweb/Controller/pictureController.java",
-        "sizeFormatted": "3.5 KB"
+        "sizeFormatted": "3.5 KB",
+        "project": "novelweb"
       },
       {
         "name": "UserController.java",
         "type": "Java代码",
         "size": 5763,
-        "path": "E:/codeplace/novelweb/src/main/java/com/novel/novelweb/Controller/UserController.java",
-        "relPath": "novelweb/src/main/java/com/novel/novelweb/Controller/UserController.java",
-        "sizeFormatted": "5.6 KB"
+        "sizeFormatted": "5.6 KB",
+        "project": "novelweb"
       },
       {
         "name": "valtest.py",
         "type": "Python代码",
         "size": 719,
-        "path": "E:/codeplace/novelweb/src/main/java/com/novel/novelweb/Controller/valtest.py",
-        "relPath": "novelweb/src/main/java/com/novel/novelweb/Controller/valtest.py",
-        "sizeFormatted": "719 B"
+        "sizeFormatted": "719 B",
+        "project": "novelweb"
       },
       {
         "name": "novel.java",
         "type": "Java代码",
         "size": 341,
-        "path": "E:/codeplace/novelweb/src/main/java/com/novel/novelweb/entiy/novel.java",
-        "relPath": "novelweb/src/main/java/com/novel/novelweb/entiy/novel.java",
-        "sizeFormatted": "341 B"
+        "sizeFormatted": "341 B",
+        "project": "novelweb"
       },
       {
         "name": "novelcollect.java",
         "type": "Java代码",
         "size": 454,
-        "path": "E:/codeplace/novelweb/src/main/java/com/novel/novelweb/entiy/novelcollect.java",
-        "relPath": "novelweb/src/main/java/com/novel/novelweb/entiy/novelcollect.java",
-        "sizeFormatted": "454 B"
+        "sizeFormatted": "454 B",
+        "project": "novelweb"
       },
       {
         "name": "novelCommend.java",
         "type": "Java代码",
         "size": 284,
-        "path": "E:/codeplace/novelweb/src/main/java/com/novel/novelweb/entiy/novelCommend.java",
-        "relPath": "novelweb/src/main/java/com/novel/novelweb/entiy/novelCommend.java",
-        "sizeFormatted": "284 B"
+        "sizeFormatted": "284 B",
+        "project": "novelweb"
       },
       {
         "name": "noveldownload.java",
         "type": "Java代码",
         "size": 282,
-        "path": "E:/codeplace/novelweb/src/main/java/com/novel/novelweb/entiy/noveldownload.java",
-        "relPath": "novelweb/src/main/java/com/novel/novelweb/entiy/noveldownload.java",
-        "sizeFormatted": "282 B"
+        "sizeFormatted": "282 B",
+        "project": "novelweb"
       },
       {
         "name": "novelShow.java",
         "type": "Java代码",
         "size": 320,
-        "path": "E:/codeplace/novelweb/src/main/java/com/novel/novelweb/entiy/novelShow.java",
-        "relPath": "novelweb/src/main/java/com/novel/novelweb/entiy/novelShow.java",
-        "sizeFormatted": "320 B"
+        "sizeFormatted": "320 B",
+        "project": "novelweb"
       },
       {
         "name": "picture.java",
         "type": "Java代码",
         "size": 257,
-        "path": "E:/codeplace/novelweb/src/main/java/com/novel/novelweb/entiy/picture.java",
-        "relPath": "novelweb/src/main/java/com/novel/novelweb/entiy/picture.java",
-        "sizeFormatted": "257 B"
+        "sizeFormatted": "257 B",
+        "project": "novelweb"
       },
       {
         "name": "User.java",
         "type": "Java代码",
         "size": 286,
-        "path": "E:/codeplace/novelweb/src/main/java/com/novel/novelweb/entiy/User.java",
-        "relPath": "novelweb/src/main/java/com/novel/novelweb/entiy/User.java",
-        "sizeFormatted": "286 B"
+        "sizeFormatted": "286 B",
+        "project": "novelweb"
       },
       {
         "name": "NovelMapper.java",
         "type": "Java代码",
         "size": 1062,
-        "path": "E:/codeplace/novelweb/src/main/java/com/novel/novelweb/Mapper/NovelMapper.java",
-        "relPath": "novelweb/src/main/java/com/novel/novelweb/Mapper/NovelMapper.java",
-        "sizeFormatted": "1.0 KB"
+        "sizeFormatted": "1.0 KB",
+        "project": "novelweb"
       },
       {
         "name": "pictureMapper.java",
         "type": "Java代码",
         "size": 481,
-        "path": "E:/codeplace/novelweb/src/main/java/com/novel/novelweb/Mapper/pictureMapper.java",
-        "relPath": "novelweb/src/main/java/com/novel/novelweb/Mapper/pictureMapper.java",
-        "sizeFormatted": "481 B"
+        "sizeFormatted": "481 B",
+        "project": "novelweb"
       },
       {
         "name": "UserMapper.java",
         "type": "Java代码",
         "size": 741,
-        "path": "E:/codeplace/novelweb/src/main/java/com/novel/novelweb/Mapper/UserMapper.java",
-        "relPath": "novelweb/src/main/java/com/novel/novelweb/Mapper/UserMapper.java",
-        "sizeFormatted": "741 B"
+        "sizeFormatted": "741 B",
+        "project": "novelweb"
       },
       {
         "name": "application.properties",
         "type": "其他",
         "size": 194,
-        "path": "E:/codeplace/novelweb/src/main/resources/application.properties",
-        "relPath": "novelweb/src/main/resources/application.properties",
-        "sizeFormatted": "194 B"
+        "sizeFormatted": "194 B",
+        "project": "novelweb"
       },
       {
         "name": "application.yml",
         "type": "YAML配置",
         "size": 388,
-        "path": "E:/codeplace/novelweb/src/main/resources/application.yml",
-        "relPath": "novelweb/src/main/resources/application.yml",
-        "sizeFormatted": "388 B"
+        "sizeFormatted": "388 B",
+        "project": "novelweb"
       },
       {
         "name": "NovelMapper.xml",
         "type": "YAML配置",
         "size": 2519,
-        "path": "E:/codeplace/novelweb/src/main/resources/mapper/NovelMapper.xml",
-        "relPath": "novelweb/src/main/resources/mapper/NovelMapper.xml",
-        "sizeFormatted": "2.5 KB"
+        "sizeFormatted": "2.5 KB",
+        "project": "novelweb"
       },
       {
         "name": "PictureMapper",
         "type": "其他",
         "size": 970,
-        "path": "E:/codeplace/novelweb/src/main/resources/mapper/PictureMapper",
-        "relPath": "novelweb/src/main/resources/mapper/PictureMapper",
-        "sizeFormatted": "970 B"
+        "sizeFormatted": "970 B",
+        "project": "novelweb"
       },
       {
         "name": "UserMapper.xml",
         "type": "YAML配置",
         "size": 1523,
-        "path": "E:/codeplace/novelweb/src/main/resources/mapper/UserMapper.xml",
-        "relPath": "novelweb/src/main/resources/mapper/UserMapper.xml",
-        "sizeFormatted": "1.5 KB"
+        "sizeFormatted": "1.5 KB",
+        "project": "novelweb"
       },
       {
         "name": "download.html",
         "type": "HTML文件",
         "size": 425,
-        "path": "E:/codeplace/novelweb/src/main/resources/templates/download.html",
-        "relPath": "novelweb/src/main/resources/templates/download.html",
-        "sizeFormatted": "425 B"
+        "sizeFormatted": "425 B",
+        "project": "novelweb"
       },
       {
         "name": "upload.html",
         "type": "HTML文件",
         "size": 309,
-        "path": "E:/codeplace/novelweb/src/main/resources/templates/upload.html",
-        "relPath": "novelweb/src/main/resources/templates/upload.html",
-        "sizeFormatted": "309 B"
+        "sizeFormatted": "309 B",
+        "project": "novelweb"
       },
       {
         "name": "NovelwebApplicationTests.java",
         "type": "Java代码",
         "size": 1284,
-        "path": "E:/codeplace/novelweb/src/test/java/com/novel/novelweb/NovelwebApplicationTests.java",
-        "relPath": "novelweb/src/test/java/com/novel/novelweb/NovelwebApplicationTests.java",
-        "sizeFormatted": "1.3 KB"
+        "sizeFormatted": "1.3 KB",
+        "project": "novelweb"
       },
       {
         "name": "software_lab.iml",
         "type": "其他",
         "size": 433,
-        "path": "E:/codeplace/software_lab/software_lab.iml",
-        "relPath": "software_lab/software_lab.iml",
-        "sizeFormatted": "433 B"
+        "sizeFormatted": "433 B",
+        "project": "software_lab"
       },
       {
         "name": "lab1_2.java",
         "type": "Java代码",
         "size": 4877,
-        "path": "E:/codeplace/software_lab/src/lab1_2.java",
-        "relPath": "software_lab/src/lab1_2.java",
-        "sizeFormatted": "4.8 KB"
+        "sizeFormatted": "4.8 KB",
+        "project": "software_lab"
       },
       {
         "name": "samplec.c",
         "type": "C代码",
         "size": 662,
-        "path": "E:/codeplace/software_lab/src/samplec.c",
-        "relPath": "software_lab/src/samplec.c",
-        "sizeFormatted": "662 B"
+        "sizeFormatted": "662 B",
+        "project": "software_lab"
       },
       {
         "name": ".gitignore",
         "type": "其他",
         "size": 395,
-        "path": "E:/codeplace/springboot_boGame/.gitignore",
-        "relPath": "springboot_boGame/.gitignore",
-        "sizeFormatted": "395 B"
+        "sizeFormatted": "395 B",
+        "project": "springboot_boGame"
       },
       {
         "name": "pom.xml",
         "type": "YAML配置",
         "size": 2997,
-        "path": "E:/codeplace/springboot_boGame/pom.xml",
-        "relPath": "springboot_boGame/pom.xml",
-        "sizeFormatted": "2.9 KB"
+        "sizeFormatted": "2.9 KB",
+        "project": "springboot_boGame"
       },
       {
         "name": "springboot_boGame.iml",
         "type": "其他",
         "size": 12635,
-        "path": "E:/codeplace/springboot_boGame/springboot_boGame.iml",
-        "relPath": "springboot_boGame/springboot_boGame.iml",
-        "sizeFormatted": "12.3 KB"
+        "sizeFormatted": "12.3 KB",
+        "project": "springboot_boGame"
       },
       {
         "name": "SpringbootBoGameApplication.java",
         "type": "Java代码",
         "size": 353,
-        "path": "E:/codeplace/springboot_boGame/src/main/java/com/zrgame/springboot_bogame/SpringbootBoGameApplication.java",
-        "relPath": "springboot_boGame/src/main/java/com/zrgame/springboot_bogame/SpringbootBoGameApplication.java",
-        "sizeFormatted": "353 B"
+        "sizeFormatted": "353 B",
+        "project": "springboot_boGame"
       },
       {
         "name": "CorsConfig.java",
         "type": "Java代码",
         "size": 1038,
-        "path": "E:/codeplace/springboot_boGame/src/main/java/com/zrgame/springboot_bogame/config/CorsConfig.java",
-        "relPath": "springboot_boGame/src/main/java/com/zrgame/springboot_bogame/config/CorsConfig.java",
-        "sizeFormatted": "1.0 KB"
+        "sizeFormatted": "1.0 KB",
+        "project": "springboot_boGame"
       },
       {
         "name": "RuleConfig.java",
         "type": "Java代码",
         "size": 1410,
-        "path": "E:/codeplace/springboot_boGame/src/main/java/com/zrgame/springboot_bogame/config/RuleConfig.java",
-        "relPath": "springboot_boGame/src/main/java/com/zrgame/springboot_bogame/config/RuleConfig.java",
-        "sizeFormatted": "1.4 KB"
+        "sizeFormatted": "1.4 KB",
+        "project": "springboot_boGame"
       },
       {
         "name": "SwaggerConfig.java",
         "type": "Java代码",
         "size": 1393,
-        "path": "E:/codeplace/springboot_boGame/src/main/java/com/zrgame/springboot_bogame/config/SwaggerConfig.java",
-        "relPath": "springboot_boGame/src/main/java/com/zrgame/springboot_bogame/config/SwaggerConfig.java",
-        "sizeFormatted": "1.4 KB"
+        "sizeFormatted": "1.4 KB",
+        "project": "springboot_boGame"
       },
       {
         "name": "GameController.java",
         "type": "Java代码",
         "size": 1468,
-        "path": "E:/codeplace/springboot_boGame/src/main/java/com/zrgame/springboot_bogame/controller/GameController.java",
-        "relPath": "springboot_boGame/src/main/java/com/zrgame/springboot_bogame/controller/GameController.java",
-        "sizeFormatted": "1.4 KB"
+        "sizeFormatted": "1.4 KB",
+        "project": "springboot_boGame"
       },
       {
         "name": "UserController.java",
         "type": "Java代码",
         "size": 2340,
-        "path": "E:/codeplace/springboot_boGame/src/main/java/com/zrgame/springboot_bogame/controller/UserController.java",
-        "relPath": "springboot_boGame/src/main/java/com/zrgame/springboot_bogame/controller/UserController.java",
-        "sizeFormatted": "2.3 KB"
+        "sizeFormatted": "2.3 KB",
+        "project": "springboot_boGame"
       },
       {
         "name": "GameResult.java",
         "type": "Java代码",
         "size": 318,
-        "path": "E:/codeplace/springboot_boGame/src/main/java/com/zrgame/springboot_bogame/entity/GameResult.java",
-        "relPath": "springboot_boGame/src/main/java/com/zrgame/springboot_bogame/entity/GameResult.java",
-        "sizeFormatted": "318 B"
+        "sizeFormatted": "318 B",
+        "project": "springboot_boGame"
       },
       {
         "name": "PrizeEnum.java",
         "type": "Java代码",
         "size": 1049,
-        "path": "E:/codeplace/springboot_boGame/src/main/java/com/zrgame/springboot_bogame/entity/PrizeEnum.java",
-        "relPath": "springboot_boGame/src/main/java/com/zrgame/springboot_bogame/entity/PrizeEnum.java",
-        "sizeFormatted": "1.0 KB"
+        "sizeFormatted": "1.0 KB",
+        "project": "springboot_boGame"
       },
       {
         "name": "User.java",
         "type": "Java代码",
         "size": 650,
-        "path": "E:/codeplace/springboot_boGame/src/main/java/com/zrgame/springboot_bogame/entity/User.java",
-        "relPath": "springboot_boGame/src/main/java/com/zrgame/springboot_bogame/entity/User.java",
-        "sizeFormatted": "650 B"
+        "sizeFormatted": "650 B",
+        "project": "springboot_boGame"
       },
       {
         "name": "UserMapper.java",
         "type": "Java代码",
         "size": 340,
-        "path": "E:/codeplace/springboot_boGame/src/main/java/com/zrgame/springboot_bogame/mappers/UserMapper.java",
-        "relPath": "springboot_boGame/src/main/java/com/zrgame/springboot_bogame/mappers/UserMapper.java",
-        "sizeFormatted": "340 B"
+        "sizeFormatted": "340 B",
+        "project": "springboot_boGame"
       },
       {
         "name": "GameService.java",
         "type": "Java代码",
         "size": 4771,
-        "path": "E:/codeplace/springboot_boGame/src/main/java/com/zrgame/springboot_bogame/service/GameService.java",
-        "relPath": "springboot_boGame/src/main/java/com/zrgame/springboot_bogame/service/GameService.java",
-        "sizeFormatted": "4.7 KB"
+        "sizeFormatted": "4.7 KB",
+        "project": "springboot_boGame"
       },
       {
         "name": "UserService.java",
         "type": "Java代码",
         "size": 1430,
-        "path": "E:/codeplace/springboot_boGame/src/main/java/com/zrgame/springboot_bogame/service/UserService.java",
-        "relPath": "springboot_boGame/src/main/java/com/zrgame/springboot_bogame/service/UserService.java",
-        "sizeFormatted": "1.4 KB"
+        "sizeFormatted": "1.4 KB",
+        "project": "springboot_boGame"
       },
       {
         "name": "RandomUtil.java",
         "type": "Java代码",
         "size": 989,
-        "path": "E:/codeplace/springboot_boGame/src/main/java/com/zrgame/springboot_bogame/util/RandomUtil.java",
-        "relPath": "springboot_boGame/src/main/java/com/zrgame/springboot_bogame/util/RandomUtil.java",
-        "sizeFormatted": "989 B"
+        "sizeFormatted": "989 B",
+        "project": "springboot_boGame"
       },
       {
         "name": "ResponseResult.java",
         "type": "Java代码",
         "size": 1304,
-        "path": "E:/codeplace/springboot_boGame/src/main/java/com/zrgame/springboot_bogame/util/ResponseResult.java",
-        "relPath": "springboot_boGame/src/main/java/com/zrgame/springboot_bogame/util/ResponseResult.java",
-        "sizeFormatted": "1.3 KB"
+        "sizeFormatted": "1.3 KB",
+        "project": "springboot_boGame"
       },
       {
         "name": "application.properties",
         "type": "其他",
         "size": 1,
-        "path": "E:/codeplace/springboot_boGame/src/main/resources/application.properties",
-        "relPath": "springboot_boGame/src/main/resources/application.properties",
-        "sizeFormatted": "1 B"
+        "sizeFormatted": "1 B",
+        "project": "springboot_boGame"
       },
       {
         "name": "application.yml",
         "type": "YAML配置",
         "size": 284,
-        "path": "E:/codeplace/springboot_boGame/src/main/resources/application.yml",
-        "relPath": "springboot_boGame/src/main/resources/application.yml",
-        "sizeFormatted": "284 B"
+        "sizeFormatted": "284 B",
+        "project": "springboot_boGame"
       },
       {
         "name": "SpringbootBoGameApplicationTests.java",
         "type": "Java代码",
         "size": 2836,
-        "path": "E:/codeplace/springboot_boGame/src/test/java/com/zrgame/springboot_bogame/SpringbootBoGameApplicationTests.java",
-        "relPath": "springboot_boGame/src/test/java/com/zrgame/springboot_bogame/SpringbootBoGameApplicationTests.java",
-        "sizeFormatted": "2.8 KB"
+        "sizeFormatted": "2.8 KB",
+        "project": "springboot_boGame"
       },
       {
         "name": "pom.xml",
         "type": "YAML配置",
         "size": 4192,
-        "path": "E:/codeplace/takeout_web/takeout_web/pom.xml",
-        "relPath": "takeout_web/takeout_web/pom.xml",
-        "sizeFormatted": "4.1 KB"
+        "sizeFormatted": "4.1 KB",
+        "project": "takeout_web"
       },
       {
         "name": "takeout_web.iml",
         "type": "其他",
         "size": 13684,
-        "path": "E:/codeplace/takeout_web/takeout_web/takeout_web.iml",
-        "relPath": "takeout_web/takeout_web/takeout_web.iml",
-        "sizeFormatted": "13.4 KB"
+        "sizeFormatted": "13.4 KB",
+        "project": "takeout_web"
       },
       {
         "name": "takeout_web.sql",
         "type": "文档",
         "size": 17704,
-        "path": "E:/codeplace/takeout_web/takeout_web/takeout_web.sql",
-        "relPath": "takeout_web/takeout_web/takeout_web.sql",
-        "sizeFormatted": "17.3 KB"
+        "sizeFormatted": "17.3 KB",
+        "project": "takeout_web"
       },
       {
         "name": "MainwebApplication.java",
         "type": "Java代码",
         "size": 338,
-        "path": "E:/codeplace/takeout_web/takeout_web/src/main/java/takeout/mainweb/MainwebApplication.java",
-        "relPath": "takeout_web/takeout_web/src/main/java/takeout/mainweb/MainwebApplication.java",
-        "sizeFormatted": "338 B"
+        "sizeFormatted": "338 B",
+        "project": "takeout_web"
       },
       {
         "name": "FastJson2JsonRedisSerializer.java",
         "type": "Java代码",
         "size": 1970,
-        "path": "E:/codeplace/takeout_web/takeout_web/src/main/java/takeout/mainweb/component/FastJson2JsonRedisSerializer.java",
-        "relPath": "takeout_web/takeout_web/src/main/java/takeout/mainweb/component/FastJson2JsonRedisSerializer.java",
-        "sizeFormatted": "1.9 KB"
+        "sizeFormatted": "1.9 KB",
+        "project": "takeout_web"
       },
       {
         "name": "JwtAuthenticationTokenFilter.java",
         "type": "Java代码",
         "size": 2261,
-        "path": "E:/codeplace/takeout_web/takeout_web/src/main/java/takeout/mainweb/component/JwtAuthenticationTokenFilter.java",
-        "relPath": "takeout_web/takeout_web/src/main/java/takeout/mainweb/component/JwtAuthenticationTokenFilter.java",
-        "sizeFormatted": "2.2 KB"
+        "sizeFormatted": "2.2 KB",
+        "project": "takeout_web"
       },
       {
         "name": "JwtUtil.java",
         "type": "Java代码",
         "size": 3705,
-        "path": "E:/codeplace/takeout_web/takeout_web/src/main/java/takeout/mainweb/component/JwtUtil.java",
-        "relPath": "takeout_web/takeout_web/src/main/java/takeout/mainweb/component/JwtUtil.java",
-        "sizeFormatted": "3.6 KB"
+        "sizeFormatted": "3.6 KB",
+        "project": "takeout_web"
       },
       {
         "name": "KeyUtil.java",
         "type": "Java代码",
         "size": 439,
-        "path": "E:/codeplace/takeout_web/takeout_web/src/main/java/takeout/mainweb/component/KeyUtil.java",
-        "relPath": "takeout_web/takeout_web/src/main/java/takeout/mainweb/component/KeyUtil.java",
-        "sizeFormatted": "439 B"
+        "sizeFormatted": "439 B",
+        "project": "takeout_web"
       },
       {
         "name": "MD5Util.java",
         "type": "Java代码",
         "size": 1020,
-        "path": "E:/codeplace/takeout_web/takeout_web/src/main/java/takeout/mainweb/component/MD5Util.java",
-        "relPath": "takeout_web/takeout_web/src/main/java/takeout/mainweb/component/MD5Util.java",
-        "sizeFormatted": "1020 B"
+        "sizeFormatted": "1020 B",
+        "project": "takeout_web"
       },
       {
         "name": "MyMetaObjectHandler.java",
         "type": "Java代码",
         "size": 1252,
-        "path": "E:/codeplace/takeout_web/takeout_web/src/main/java/takeout/mainweb/component/MyMetaObjectHandler.java",
-        "relPath": "takeout_web/takeout_web/src/main/java/takeout/mainweb/component/MyMetaObjectHandler.java",
-        "sizeFormatted": "1.2 KB"
+        "sizeFormatted": "1.2 KB",
+        "project": "takeout_web"
       },
       {
         "name": "RedisCache.java",
         "type": "Java代码",
         "size": 6203,
-        "path": "E:/codeplace/takeout_web/takeout_web/src/main/java/takeout/mainweb/component/RedisCache.java",
-        "relPath": "takeout_web/takeout_web/src/main/java/takeout/mainweb/component/RedisCache.java",
-        "sizeFormatted": "6.1 KB"
+        "sizeFormatted": "6.1 KB",
+        "project": "takeout_web"
       },
       {
         "name": "ResponseResult.java",
         "type": "Java代码",
         "size": 1296,
-        "path": "E:/codeplace/takeout_web/takeout_web/src/main/java/takeout/mainweb/component/ResponseResult.java",
-        "relPath": "takeout_web/takeout_web/src/main/java/takeout/mainweb/component/ResponseResult.java",
-        "sizeFormatted": "1.3 KB"
+        "sizeFormatted": "1.3 KB",
+        "project": "takeout_web"
       },
       {
         "name": "UuidTool.java",
         "type": "Java代码",
         "size": 295,
-        "path": "E:/codeplace/takeout_web/takeout_web/src/main/java/takeout/mainweb/component/UuidTool.java",
-        "relPath": "takeout_web/takeout_web/src/main/java/takeout/mainweb/component/UuidTool.java",
-        "sizeFormatted": "295 B"
+        "sizeFormatted": "295 B",
+        "project": "takeout_web"
       },
       {
         "name": "WebUtils.java",
         "type": "Java代码",
         "size": 759,
-        "path": "E:/codeplace/takeout_web/takeout_web/src/main/java/takeout/mainweb/component/WebUtils.java",
-        "relPath": "takeout_web/takeout_web/src/main/java/takeout/mainweb/component/WebUtils.java",
-        "sizeFormatted": "759 B"
+        "sizeFormatted": "759 B",
+        "project": "takeout_web"
       },
       {
         "name": "CorsConfig.java",
         "type": "Java代码",
         "size": 1025,
-        "path": "E:/codeplace/takeout_web/takeout_web/src/main/java/takeout/mainweb/config/CorsConfig.java",
-        "relPath": "takeout_web/takeout_web/src/main/java/takeout/mainweb/config/CorsConfig.java",
-        "sizeFormatted": "1.0 KB"
+        "sizeFormatted": "1.0 KB",
+        "project": "takeout_web"
       },
       {
         "name": "RedisConfig.java",
         "type": "Java代码",
         "size": 1980,
-        "path": "E:/codeplace/takeout_web/takeout_web/src/main/java/takeout/mainweb/config/RedisConfig.java",
-        "relPath": "takeout_web/takeout_web/src/main/java/takeout/mainweb/config/RedisConfig.java",
-        "sizeFormatted": "1.9 KB"
+        "sizeFormatted": "1.9 KB",
+        "project": "takeout_web"
       },
       {
         "name": "SecurityConfig.java",
         "type": "Java代码",
         "size": 4070,
-        "path": "E:/codeplace/takeout_web/takeout_web/src/main/java/takeout/mainweb/config/SecurityConfig.java",
-        "relPath": "takeout_web/takeout_web/src/main/java/takeout/mainweb/config/SecurityConfig.java",
-        "sizeFormatted": "4.0 KB"
+        "sizeFormatted": "4.0 KB",
+        "project": "takeout_web"
       },
       {
         "name": "SwaggerConfig.java",
         "type": "Java代码",
         "size": 1380,
-        "path": "E:/codeplace/takeout_web/takeout_web/src/main/java/takeout/mainweb/config/SwaggerConfig.java",
-        "relPath": "takeout_web/takeout_web/src/main/java/takeout/mainweb/config/SwaggerConfig.java",
-        "sizeFormatted": "1.3 KB"
+        "sizeFormatted": "1.3 KB",
+        "project": "takeout_web"
       },
       {
         "name": "WebConfig.java",
         "type": "Java代码",
         "size": 995,
-        "path": "E:/codeplace/takeout_web/takeout_web/src/main/java/takeout/mainweb/config/WebConfig.java",
-        "relPath": "takeout_web/takeout_web/src/main/java/takeout/mainweb/config/WebConfig.java",
-        "sizeFormatted": "995 B"
+        "sizeFormatted": "995 B",
+        "project": "takeout_web"
       },
       {
         "name": "AdminController.java",
         "type": "Java代码",
         "size": 4722,
-        "path": "E:/codeplace/takeout_web/takeout_web/src/main/java/takeout/mainweb/Controller/AdminController.java",
-        "relPath": "takeout_web/takeout_web/src/main/java/takeout/mainweb/Controller/AdminController.java",
-        "sizeFormatted": "4.6 KB"
+        "sizeFormatted": "4.6 KB",
+        "project": "takeout_web"
       },
       {
         "name": "CollectController.java",
         "type": "Java代码",
         "size": 2995,
-        "path": "E:/codeplace/takeout_web/takeout_web/src/main/java/takeout/mainweb/Controller/CollectController.java",
-        "relPath": "takeout_web/takeout_web/src/main/java/takeout/mainweb/Controller/CollectController.java",
-        "sizeFormatted": "2.9 KB"
+        "sizeFormatted": "2.9 KB",
+        "project": "takeout_web"
       },
       {
         "name": "CommentController.java",
         "type": "Java代码",
         "size": 2697,
-        "path": "E:/codeplace/takeout_web/takeout_web/src/main/java/takeout/mainweb/Controller/CommentController.java",
-        "relPath": "takeout_web/takeout_web/src/main/java/takeout/mainweb/Controller/CommentController.java",
-        "sizeFormatted": "2.6 KB"
+        "sizeFormatted": "2.6 KB",
+        "project": "takeout_web"
       },
       {
         "name": "GoodController.java",
         "type": "Java代码",
         "size": 14507,
-        "path": "E:/codeplace/takeout_web/takeout_web/src/main/java/takeout/mainweb/Controller/GoodController.java",
-        "relPath": "takeout_web/takeout_web/src/main/java/takeout/mainweb/Controller/GoodController.java",
-        "sizeFormatted": "14.2 KB"
+        "sizeFormatted": "14.2 KB",
+        "project": "takeout_web"
       },
       {
         "name": "UserController.java",
         "type": "Java代码",
         "size": 9596,
-        "path": "E:/codeplace/takeout_web/takeout_web/src/main/java/takeout/mainweb/Controller/UserController.java",
-        "relPath": "takeout_web/takeout_web/src/main/java/takeout/mainweb/Controller/UserController.java",
-        "sizeFormatted": "9.4 KB"
+        "sizeFormatted": "9.4 KB",
+        "project": "takeout_web"
       },
       {
         "name": "Collect.java",
         "type": "Java代码",
         "size": 301,
-        "path": "E:/codeplace/takeout_web/takeout_web/src/main/java/takeout/mainweb/entiy/Collect.java",
-        "relPath": "takeout_web/takeout_web/src/main/java/takeout/mainweb/entiy/Collect.java",
-        "sizeFormatted": "301 B"
+        "sizeFormatted": "301 B",
+        "project": "takeout_web"
       },
       {
         "name": "Comment.java",
         "type": "Java代码",
         "size": 594,
-        "path": "E:/codeplace/takeout_web/takeout_web/src/main/java/takeout/mainweb/entiy/Comment.java",
-        "relPath": "takeout_web/takeout_web/src/main/java/takeout/mainweb/entiy/Comment.java",
-        "sizeFormatted": "594 B"
+        "sizeFormatted": "594 B",
+        "project": "takeout_web"
       },
       {
         "name": "Good.java",
         "type": "Java代码",
         "size": 957,
-        "path": "E:/codeplace/takeout_web/takeout_web/src/main/java/takeout/mainweb/entiy/Good.java",
-        "relPath": "takeout_web/takeout_web/src/main/java/takeout/mainweb/entiy/Good.java",
-        "sizeFormatted": "957 B"
+        "sizeFormatted": "957 B",
+        "project": "takeout_web"
       },
       {
         "name": "History.java",
         "type": "Java代码",
         "size": 565,
-        "path": "E:/codeplace/takeout_web/takeout_web/src/main/java/takeout/mainweb/entiy/History.java",
-        "relPath": "takeout_web/takeout_web/src/main/java/takeout/mainweb/entiy/History.java",
-        "sizeFormatted": "565 B"
+        "sizeFormatted": "565 B",
+        "project": "takeout_web"
       },
       {
         "name": "LoginUser.java",
         "type": "Java代码",
         "size": 1070,
-        "path": "E:/codeplace/takeout_web/takeout_web/src/main/java/takeout/mainweb/entiy/LoginUser.java",
-        "relPath": "takeout_web/takeout_web/src/main/java/takeout/mainweb/entiy/LoginUser.java",
-        "sizeFormatted": "1.0 KB"
+        "sizeFormatted": "1.0 KB",
+        "project": "takeout_web"
       },
       {
         "name": "OrderForm.java",
         "type": "Java代码",
         "size": 960,
-        "path": "E:/codeplace/takeout_web/takeout_web/src/main/java/takeout/mainweb/entiy/OrderForm.java",
-        "relPath": "takeout_web/takeout_web/src/main/java/takeout/mainweb/entiy/OrderForm.java",
-        "sizeFormatted": "960 B"
+        "sizeFormatted": "960 B",
+        "project": "takeout_web"
       },
       {
         "name": "SellGood.java",
         "type": "Java代码",
         "size": 1051,
-        "path": "E:/codeplace/takeout_web/takeout_web/src/main/java/takeout/mainweb/entiy/SellGood.java",
-        "relPath": "takeout_web/takeout_web/src/main/java/takeout/mainweb/entiy/SellGood.java",
-        "sizeFormatted": "1.0 KB"
+        "sizeFormatted": "1.0 KB",
+        "project": "takeout_web"
       },
       {
         "name": "User.java",
         "type": "Java代码",
         "size": 448,
-        "path": "E:/codeplace/takeout_web/takeout_web/src/main/java/takeout/mainweb/entiy/User.java",
-        "relPath": "takeout_web/takeout_web/src/main/java/takeout/mainweb/entiy/User.java",
-        "sizeFormatted": "448 B"
+        "sizeFormatted": "448 B",
+        "project": "takeout_web"
       },
       {
         "name": "CollectMapper.java",
         "type": "Java代码",
         "size": 318,
-        "path": "E:/codeplace/takeout_web/takeout_web/src/main/java/takeout/mainweb/Mapper/CollectMapper.java",
-        "relPath": "takeout_web/takeout_web/src/main/java/takeout/mainweb/Mapper/CollectMapper.java",
-        "sizeFormatted": "318 B"
+        "sizeFormatted": "318 B",
+        "project": "takeout_web"
       },
       {
         "name": "CommentMapper.java",
         "type": "Java代码",
         "size": 317,
-        "path": "E:/codeplace/takeout_web/takeout_web/src/main/java/takeout/mainweb/Mapper/CommentMapper.java",
-        "relPath": "takeout_web/takeout_web/src/main/java/takeout/mainweb/Mapper/CommentMapper.java",
-        "sizeFormatted": "317 B"
+        "sizeFormatted": "317 B",
+        "project": "takeout_web"
       },
       {
         "name": "GoodMapper.java",
         "type": "Java代码",
         "size": 308,
-        "path": "E:/codeplace/takeout_web/takeout_web/src/main/java/takeout/mainweb/Mapper/GoodMapper.java",
-        "relPath": "takeout_web/takeout_web/src/main/java/takeout/mainweb/Mapper/GoodMapper.java",
-        "sizeFormatted": "308 B"
+        "sizeFormatted": "308 B",
+        "project": "takeout_web"
       },
       {
         "name": "HistoryMapper.java",
         "type": "Java代码",
         "size": 317,
-        "path": "E:/codeplace/takeout_web/takeout_web/src/main/java/takeout/mainweb/Mapper/HistoryMapper.java",
-        "relPath": "takeout_web/takeout_web/src/main/java/takeout/mainweb/Mapper/HistoryMapper.java",
-        "sizeFormatted": "317 B"
+        "sizeFormatted": "317 B",
+        "project": "takeout_web"
       },
       {
         "name": "OrderFormMapper.java",
         "type": "Java代码",
         "size": 323,
-        "path": "E:/codeplace/takeout_web/takeout_web/src/main/java/takeout/mainweb/Mapper/OrderFormMapper.java",
-        "relPath": "takeout_web/takeout_web/src/main/java/takeout/mainweb/Mapper/OrderFormMapper.java",
-        "sizeFormatted": "323 B"
+        "sizeFormatted": "323 B",
+        "project": "takeout_web"
       },
       {
         "name": "UserMapper.java",
         "type": "Java代码",
         "size": 312,
-        "path": "E:/codeplace/takeout_web/takeout_web/src/main/java/takeout/mainweb/Mapper/UserMapper.java",
-        "relPath": "takeout_web/takeout_web/src/main/java/takeout/mainweb/Mapper/UserMapper.java",
-        "sizeFormatted": "312 B"
+        "sizeFormatted": "312 B",
+        "project": "takeout_web"
       },
       {
         "name": "LoginService.java",
         "type": "Java代码",
         "size": 208,
-        "path": "E:/codeplace/takeout_web/takeout_web/src/main/java/takeout/mainweb/Service/LoginService.java",
-        "relPath": "takeout_web/takeout_web/src/main/java/takeout/mainweb/Service/LoginService.java",
-        "sizeFormatted": "208 B"
+        "sizeFormatted": "208 B",
+        "project": "takeout_web"
       },
       {
         "name": "LoginServiceImp.java",
         "type": "Java代码",
         "size": 2544,
-        "path": "E:/codeplace/takeout_web/takeout_web/src/main/java/takeout/mainweb/Service/LoginServiceImp.java",
-        "relPath": "takeout_web/takeout_web/src/main/java/takeout/mainweb/Service/LoginServiceImp.java",
-        "sizeFormatted": "2.5 KB"
+        "sizeFormatted": "2.5 KB",
+        "project": "takeout_web"
       },
       {
         "name": "MyUserDetailsService.java",
         "type": "Java代码",
         "size": 1853,
-        "path": "E:/codeplace/takeout_web/takeout_web/src/main/java/takeout/mainweb/Service/MyUserDetailsService.java",
-        "relPath": "takeout_web/takeout_web/src/main/java/takeout/mainweb/Service/MyUserDetailsService.java",
-        "sizeFormatted": "1.8 KB"
+        "sizeFormatted": "1.8 KB",
+        "project": "takeout_web"
       },
       {
         "name": "application.properties",
         "type": "其他",
         "size": 377,
-        "path": "E:/codeplace/takeout_web/takeout_web/src/main/resources/application.properties",
-        "relPath": "takeout_web/takeout_web/src/main/resources/application.properties",
-        "sizeFormatted": "377 B"
+        "sizeFormatted": "377 B",
+        "project": "takeout_web"
       },
       {
         "name": "application.yml",
         "type": "YAML配置",
         "size": 459,
-        "path": "E:/codeplace/takeout_web/takeout_web/src/main/resources/application.yml",
-        "relPath": "takeout_web/takeout_web/src/main/resources/application.yml",
-        "sizeFormatted": "459 B"
+        "sizeFormatted": "459 B",
+        "project": "takeout_web"
       },
       {
         "name": "UserMapper.xml",
         "type": "YAML配置",
         "size": 296,
-        "path": "E:/codeplace/takeout_web/takeout_web/src/main/resources/mapper/UserMapper.xml",
-        "relPath": "takeout_web/takeout_web/src/main/resources/mapper/UserMapper.xml",
-        "sizeFormatted": "296 B"
+        "sizeFormatted": "296 B",
+        "project": "takeout_web"
       },
       {
         "name": "MainwebApplicationTests.java",
         "type": "Java代码",
         "size": 344,
-        "path": "E:/codeplace/takeout_web/takeout_web/src/test/java/takeout/mainweb/MainwebApplicationTests.java",
-        "relPath": "takeout_web/takeout_web/src/test/java/takeout/mainweb/MainwebApplicationTests.java",
-        "sizeFormatted": "344 B"
+        "sizeFormatted": "344 B",
+        "project": "takeout_web"
       },
       {
         "name": "pom.xml",
         "type": "YAML配置",
         "size": 572,
-        "path": "E:/codeplace/testcode/pom.xml",
-        "relPath": "testcode/pom.xml",
-        "sizeFormatted": "572 B"
+        "sizeFormatted": "572 B",
+        "project": "testcode"
       },
       {
         "name": "testcode.iml",
         "type": "其他",
         "size": 81,
-        "path": "E:/codeplace/testcode/testcode.iml",
-        "relPath": "testcode/testcode.iml",
-        "sizeFormatted": "81 B"
+        "sizeFormatted": "81 B",
+        "project": "testcode"
       },
       {
         "name": "pom.xml",
         "type": "YAML配置",
         "size": 2761,
-        "path": "E:/codeplace/west_two_noval/pom.xml",
-        "relPath": "west_two_noval/pom.xml",
-        "sizeFormatted": "2.7 KB"
+        "sizeFormatted": "2.7 KB",
+        "project": "west_two_noval"
       },
       {
         "name": "west_two_noval.iml",
         "type": "其他",
         "size": 8977,
-        "path": "E:/codeplace/west_two_noval/west_two_noval.iml",
-        "relPath": "west_two_noval/west_two_noval.iml",
-        "sizeFormatted": "8.8 KB"
+        "sizeFormatted": "8.8 KB",
+        "project": "west_two_noval"
       },
       {
         "name": "NovalwebApplication.java",
         "type": "Java代码",
         "size": 327,
-        "path": "E:/codeplace/west_two_noval/src/main/java/com/noval/novalweb/NovalwebApplication.java",
-        "relPath": "west_two_noval/src/main/java/com/noval/novalweb/NovalwebApplication.java",
-        "sizeFormatted": "327 B"
+        "sizeFormatted": "327 B",
+        "project": "west_two_noval"
       },
       {
         "name": "novalController.java",
         "type": "Java代码",
         "size": 1043,
-        "path": "E:/codeplace/west_two_noval/src/main/java/com/noval/novalweb/Controller/novalController.java",
-        "relPath": "west_two_noval/src/main/java/com/noval/novalweb/Controller/novalController.java",
-        "sizeFormatted": "1.0 KB"
+        "sizeFormatted": "1.0 KB",
+        "project": "west_two_noval"
       },
       {
         "name": "novalMapper.java",
         "type": "Java代码",
         "size": 265,
-        "path": "E:/codeplace/west_two_noval/src/main/java/com/noval/novalweb/Mapper/novalMapper.java",
-        "relPath": "west_two_noval/src/main/java/com/noval/novalweb/Mapper/novalMapper.java",
-        "sizeFormatted": "265 B"
+        "sizeFormatted": "265 B",
+        "project": "west_two_noval"
       },
       {
         "name": "noval.java",
         "type": "Java代码",
         "size": 289,
-        "path": "E:/codeplace/west_two_noval/src/main/java/com/noval/novalweb/pojo/noval.java",
-        "relPath": "west_two_noval/src/main/java/com/noval/novalweb/pojo/noval.java",
-        "sizeFormatted": "289 B"
+        "sizeFormatted": "289 B",
+        "project": "west_two_noval"
       },
       {
         "name": "noval_se.java",
         "type": "Java代码",
         "size": 143,
-        "path": "E:/codeplace/west_two_noval/src/main/java/com/noval/novalweb/service/noval_se.java",
-        "relPath": "west_two_noval/src/main/java/com/noval/novalweb/service/noval_se.java",
-        "sizeFormatted": "143 B"
+        "sizeFormatted": "143 B",
+        "project": "west_two_noval"
       },
       {
         "name": "noval_seImp.java",
         "type": "Java代码",
         "size": 470,
-        "path": "E:/codeplace/west_two_noval/src/main/java/com/noval/novalweb/service/noval_seImp.java",
-        "relPath": "west_two_noval/src/main/java/com/noval/novalweb/service/noval_seImp.java",
-        "sizeFormatted": "470 B"
+        "sizeFormatted": "470 B",
+        "project": "west_two_noval"
       },
       {
         "name": "application.properties",
         "type": "其他",
         "size": 422,
-        "path": "E:/codeplace/west_two_noval/src/main/resources/application.properties",
-        "relPath": "west_two_noval/src/main/resources/application.properties",
-        "sizeFormatted": "422 B"
+        "sizeFormatted": "422 B",
+        "project": "west_two_noval"
       },
       {
         "name": "upload.html",
         "type": "HTML文件",
         "size": 300,
-        "path": "E:/codeplace/west_two_noval/src/main/resources/upload.html",
-        "relPath": "west_two_noval/src/main/resources/upload.html",
-        "sizeFormatted": "300 B"
+        "sizeFormatted": "300 B",
+        "project": "west_two_noval"
       },
       {
         "name": "novalMapper.xml",
         "type": "YAML配置",
         "size": 360,
-        "path": "E:/codeplace/west_two_noval/src/main/resources/mapper/novalMapper.xml",
-        "relPath": "west_two_noval/src/main/resources/mapper/novalMapper.xml",
-        "sizeFormatted": "360 B"
+        "sizeFormatted": "360 B",
+        "project": "west_two_noval"
       },
       {
         "name": "NovalwebApplicationTests.java",
         "type": "Java代码",
         "size": 221,
-        "path": "E:/codeplace/west_two_noval/src/test/java/com/noval/novalweb/NovalwebApplicationTests.java",
-        "relPath": "west_two_noval/src/test/java/com/noval/novalweb/NovalwebApplicationTests.java",
-        "sizeFormatted": "221 B"
+        "sizeFormatted": "221 B",
+        "project": "west_two_noval"
       },
       {
         "name": ".gitignore",
         "type": "其他",
         "size": 395,
-        "path": "E:/codeplace/ylsearch/search/.gitignore",
-        "relPath": "ylsearch/search/.gitignore",
-        "sizeFormatted": "395 B"
+        "sizeFormatted": "395 B",
+        "project": "ylsearch"
       },
       {
         "name": "pom.xml",
         "type": "YAML配置",
         "size": 6222,
-        "path": "E:/codeplace/ylsearch/search/pom.xml",
-        "relPath": "ylsearch/search/pom.xml",
-        "sizeFormatted": "6.1 KB"
+        "sizeFormatted": "6.1 KB",
+        "project": "ylsearch"
       },
       {
         "name": "search.iml",
         "type": "其他",
         "size": 18991,
-        "path": "E:/codeplace/ylsearch/search/search.iml",
-        "relPath": "ylsearch/search/search.iml",
-        "sizeFormatted": "18.5 KB"
+        "sizeFormatted": "18.5 KB",
+        "project": "ylsearch"
       },
       {
         "name": "SearchApplication.java",
         "type": "Java代码",
         "size": 319,
-        "path": "E:/codeplace/ylsearch/search/src/main/java/com/dev/search/SearchApplication.java",
-        "relPath": "ylsearch/search/src/main/java/com/dev/search/SearchApplication.java",
-        "sizeFormatted": "319 B"
+        "sizeFormatted": "319 B",
+        "project": "ylsearch"
       },
       {
         "name": "CorsConfig.java",
         "type": "Java代码",
         "size": 1024,
-        "path": "E:/codeplace/ylsearch/search/src/main/java/com/dev/search/config/CorsConfig.java",
-        "relPath": "ylsearch/search/src/main/java/com/dev/search/config/CorsConfig.java",
-        "sizeFormatted": "1.0 KB"
+        "sizeFormatted": "1.0 KB",
+        "project": "ylsearch"
       },
       {
         "name": "ElasticsearchConfig.java",
         "type": "Java代码",
         "size": 636,
-        "path": "E:/codeplace/ylsearch/search/src/main/java/com/dev/search/config/ElasticsearchConfig.java",
-        "relPath": "ylsearch/search/src/main/java/com/dev/search/config/ElasticsearchConfig.java",
-        "sizeFormatted": "636 B"
+        "sizeFormatted": "636 B",
+        "project": "ylsearch"
       },
       {
         "name": "KaptchaConfig.java",
         "type": "Java代码",
         "size": 1098,
-        "path": "E:/codeplace/ylsearch/search/src/main/java/com/dev/search/config/KaptchaConfig.java",
-        "relPath": "ylsearch/search/src/main/java/com/dev/search/config/KaptchaConfig.java",
-        "sizeFormatted": "1.1 KB"
+        "sizeFormatted": "1.1 KB",
+        "project": "ylsearch"
       },
       {
         "name": "MybatisPlusConfig.java",
         "type": "Java代码",
         "size": 1181,
-        "path": "E:/codeplace/ylsearch/search/src/main/java/com/dev/search/config/MybatisPlusConfig.java",
-        "relPath": "ylsearch/search/src/main/java/com/dev/search/config/MybatisPlusConfig.java",
-        "sizeFormatted": "1.2 KB"
+        "sizeFormatted": "1.2 KB",
+        "project": "ylsearch"
       },
       {
         "name": "RedisConfig.java",
         "type": "Java代码",
         "size": 1975,
-        "path": "E:/codeplace/ylsearch/search/src/main/java/com/dev/search/config/RedisConfig.java",
-        "relPath": "ylsearch/search/src/main/java/com/dev/search/config/RedisConfig.java",
-        "sizeFormatted": "1.9 KB"
+        "sizeFormatted": "1.9 KB",
+        "project": "ylsearch"
       },
       {
         "name": "SwaggerConfig.java",
         "type": "Java代码",
         "size": 1380,
-        "path": "E:/codeplace/ylsearch/search/src/main/java/com/dev/search/config/SwaggerConfig.java",
-        "relPath": "ylsearch/search/src/main/java/com/dev/search/config/SwaggerConfig.java",
-        "sizeFormatted": "1.3 KB"
+        "sizeFormatted": "1.3 KB",
+        "project": "ylsearch"
       },
       {
         "name": "CommonController.java",
         "type": "Java代码",
         "size": 2325,
-        "path": "E:/codeplace/ylsearch/search/src/main/java/com/dev/search/controller/CommonController.java",
-        "relPath": "ylsearch/search/src/main/java/com/dev/search/controller/CommonController.java",
-        "sizeFormatted": "2.3 KB"
+        "sizeFormatted": "2.3 KB",
+        "project": "ylsearch"
       },
       {
         "name": "FileController.java",
         "type": "Java代码",
         "size": 2346,
-        "path": "E:/codeplace/ylsearch/search/src/main/java/com/dev/search/controller/FileController.java",
-        "relPath": "ylsearch/search/src/main/java/com/dev/search/controller/FileController.java",
-        "sizeFormatted": "2.3 KB"
+        "sizeFormatted": "2.3 KB",
+        "project": "ylsearch"
       },
       {
         "name": "LoginController.java",
         "type": "Java代码",
         "size": 2239,
-        "path": "E:/codeplace/ylsearch/search/src/main/java/com/dev/search/controller/LoginController.java",
-        "relPath": "ylsearch/search/src/main/java/com/dev/search/controller/LoginController.java",
-        "sizeFormatted": "2.2 KB"
+        "sizeFormatted": "2.2 KB",
+        "project": "ylsearch"
       },
       {
         "name": "SearchController.java",
         "type": "Java代码",
         "size": 4803,
-        "path": "E:/codeplace/ylsearch/search/src/main/java/com/dev/search/controller/SearchController.java",
-        "relPath": "ylsearch/search/src/main/java/com/dev/search/controller/SearchController.java",
-        "sizeFormatted": "4.7 KB"
+        "sizeFormatted": "4.7 KB",
+        "project": "ylsearch"
       },
       {
         "name": "Document.java",
         "type": "Java代码",
         "size": 1006,
-        "path": "E:/codeplace/ylsearch/search/src/main/java/com/dev/search/entity/Document.java",
-        "relPath": "ylsearch/search/src/main/java/com/dev/search/entity/Document.java",
-        "sizeFormatted": "1006 B"
+        "sizeFormatted": "1006 B",
+        "project": "ylsearch"
       },
       {
         "name": "FileData.java",
         "type": "Java代码",
         "size": 553,
-        "path": "E:/codeplace/ylsearch/search/src/main/java/com/dev/search/entity/FileData.java",
-        "relPath": "ylsearch/search/src/main/java/com/dev/search/entity/FileData.java",
-        "sizeFormatted": "553 B"
+        "sizeFormatted": "553 B",
+        "project": "ylsearch"
       },
       {
         "name": "OCRInfo.java",
         "type": "Java代码",
         "size": 1323,
-        "path": "E:/codeplace/ylsearch/search/src/main/java/com/dev/search/entity/OCRInfo.java",
-        "relPath": "ylsearch/search/src/main/java/com/dev/search/entity/OCRInfo.java",
-        "sizeFormatted": "1.3 KB"
+        "sizeFormatted": "1.3 KB",
+        "project": "ylsearch"
       },
       {
         "name": "PictureInfo.java",
         "type": "Java代码",
         "size": 261,
-        "path": "E:/codeplace/ylsearch/search/src/main/java/com/dev/search/entity/PictureInfo.java",
-        "relPath": "ylsearch/search/src/main/java/com/dev/search/entity/PictureInfo.java",
-        "sizeFormatted": "261 B"
+        "sizeFormatted": "261 B",
+        "project": "ylsearch"
       },
       {
         "name": "SearchResult.java",
         "type": "Java代码",
         "size": 675,
-        "path": "E:/codeplace/ylsearch/search/src/main/java/com/dev/search/entity/SearchResult.java",
-        "relPath": "ylsearch/search/src/main/java/com/dev/search/entity/SearchResult.java",
-        "sizeFormatted": "675 B"
+        "sizeFormatted": "675 B",
+        "project": "ylsearch"
       },
       {
         "name": "User.java",
         "type": "Java代码",
         "size": 1312,
-        "path": "E:/codeplace/ylsearch/search/src/main/java/com/dev/search/entity/User.java",
-        "relPath": "ylsearch/search/src/main/java/com/dev/search/entity/User.java",
-        "sizeFormatted": "1.3 KB"
+        "sizeFormatted": "1.3 KB",
+        "project": "ylsearch"
       },
       {
         "name": "documentVO.java",
         "type": "Java代码",
         "size": 664,
-        "path": "E:/codeplace/ylsearch/search/src/main/java/com/dev/search/entity/VO/documentVO.java",
-        "relPath": "ylsearch/search/src/main/java/com/dev/search/entity/VO/documentVO.java",
-        "sizeFormatted": "664 B"
+        "sizeFormatted": "664 B",
+        "project": "ylsearch"
       },
       {
         "name": "DocMapper.java",
         "type": "Java代码",
         "size": 314,
-        "path": "E:/codeplace/ylsearch/search/src/main/java/com/dev/search/mapper/DocMapper.java",
-        "relPath": "ylsearch/search/src/main/java/com/dev/search/mapper/DocMapper.java",
-        "sizeFormatted": "314 B"
+        "sizeFormatted": "314 B",
+        "project": "ylsearch"
       },
       {
         "name": "UserMapper.java",
         "type": "Java代码",
         "size": 315,
-        "path": "E:/codeplace/ylsearch/search/src/main/java/com/dev/search/mapper/UserMapper.java",
-        "relPath": "ylsearch/search/src/main/java/com/dev/search/mapper/UserMapper.java",
-        "sizeFormatted": "315 B"
+        "sizeFormatted": "315 B",
+        "project": "ylsearch"
       },
       {
         "name": "BaseElasticsearchService.java",
         "type": "Java代码",
         "size": 15604,
-        "path": "E:/codeplace/ylsearch/search/src/main/java/com/dev/search/serivce/BaseElasticsearchService.java",
-        "relPath": "ylsearch/search/src/main/java/com/dev/search/serivce/BaseElasticsearchService.java",
-        "sizeFormatted": "15.2 KB"
+        "sizeFormatted": "15.2 KB",
+        "project": "ylsearch"
       },
       {
         "name": "FileService.java",
         "type": "Java代码",
         "size": 10232,
-        "path": "E:/codeplace/ylsearch/search/src/main/java/com/dev/search/serivce/FileService.java",
-        "relPath": "ylsearch/search/src/main/java/com/dev/search/serivce/FileService.java",
-        "sizeFormatted": "10.0 KB"
+        "sizeFormatted": "10.0 KB",
+        "project": "ylsearch"
       },
       {
         "name": "LoginService.java",
         "type": "Java代码",
         "size": 2678,
-        "path": "E:/codeplace/ylsearch/search/src/main/java/com/dev/search/serivce/LoginService.java",
-        "relPath": "ylsearch/search/src/main/java/com/dev/search/serivce/LoginService.java",
-        "sizeFormatted": "2.6 KB"
+        "sizeFormatted": "2.6 KB",
+        "project": "ylsearch"
       },
       {
         "name": "OCRRpc.java",
         "type": "Java代码",
         "size": 5114,
-        "path": "E:/codeplace/ylsearch/search/src/main/java/com/dev/search/serivce/OCRRpc.java",
-        "relPath": "ylsearch/search/src/main/java/com/dev/search/serivce/OCRRpc.java",
-        "sizeFormatted": "5.0 KB"
+        "sizeFormatted": "5.0 KB",
+        "project": "ylsearch"
       },
       {
         "name": "SearchService.java",
         "type": "Java代码",
         "size": 2014,
-        "path": "E:/codeplace/ylsearch/search/src/main/java/com/dev/search/serivce/SearchService.java",
-        "relPath": "ylsearch/search/src/main/java/com/dev/search/serivce/SearchService.java",
-        "sizeFormatted": "2.0 KB"
+        "sizeFormatted": "2.0 KB",
+        "project": "ylsearch"
       },
       {
         "name": "FastJson2JsonRedisSerializer.java",
         "type": "Java代码",
         "size": 1963,
-        "path": "E:/codeplace/ylsearch/search/src/main/java/com/dev/search/util/FastJson2JsonRedisSerializer.java",
-        "relPath": "ylsearch/search/src/main/java/com/dev/search/util/FastJson2JsonRedisSerializer.java",
-        "sizeFormatted": "1.9 KB"
+        "sizeFormatted": "1.9 KB",
+        "project": "ylsearch"
       },
       {
         "name": "ItemPosition.java",
         "type": "Java代码",
         "size": 385,
-        "path": "E:/codeplace/ylsearch/search/src/main/java/com/dev/search/util/ItemPosition.java",
-        "relPath": "ylsearch/search/src/main/java/com/dev/search/util/ItemPosition.java",
-        "sizeFormatted": "385 B"
+        "sizeFormatted": "385 B",
+        "project": "ylsearch"
       },
       {
         "name": "KeyWordPosition.java",
         "type": "Java代码",
         "size": 349,
-        "path": "E:/codeplace/ylsearch/search/src/main/java/com/dev/search/util/KeyWordPosition.java",
-        "relPath": "ylsearch/search/src/main/java/com/dev/search/util/KeyWordPosition.java",
-        "sizeFormatted": "349 B"
+        "sizeFormatted": "349 B",
+        "project": "ylsearch"
       },
       {
         "name": "PdfMatchKeyword.java",
         "type": "Java代码",
         "size": 8665,
-        "path": "E:/codeplace/ylsearch/search/src/main/java/com/dev/search/util/PdfMatchKeyword.java",
-        "relPath": "ylsearch/search/src/main/java/com/dev/search/util/PdfMatchKeyword.java",
-        "sizeFormatted": "8.5 KB"
+        "sizeFormatted": "8.5 KB",
+        "project": "ylsearch"
       },
       {
         "name": "PdfUtil.java",
         "type": "Java代码",
         "size": 9011,
-        "path": "E:/codeplace/ylsearch/search/src/main/java/com/dev/search/util/PdfUtil.java",
-        "relPath": "ylsearch/search/src/main/java/com/dev/search/util/PdfUtil.java",
-        "sizeFormatted": "8.8 KB"
+        "sizeFormatted": "8.8 KB",
+        "project": "ylsearch"
       },
       {
         "name": "ReadUtil.java",
         "type": "Java代码",
         "size": 4236,
-        "path": "E:/codeplace/ylsearch/search/src/main/java/com/dev/search/util/ReadUtil.java",
-        "relPath": "ylsearch/search/src/main/java/com/dev/search/util/ReadUtil.java",
-        "sizeFormatted": "4.1 KB"
+        "sizeFormatted": "4.1 KB",
+        "project": "ylsearch"
       },
       {
         "name": "RedisCache.java",
         "type": "Java代码",
         "size": 6197,
-        "path": "E:/codeplace/ylsearch/search/src/main/java/com/dev/search/util/RedisCache.java",
-        "relPath": "ylsearch/search/src/main/java/com/dev/search/util/RedisCache.java",
-        "sizeFormatted": "6.1 KB"
+        "sizeFormatted": "6.1 KB",
+        "project": "ylsearch"
       },
       {
         "name": "ResponseResult.java",
         "type": "Java代码",
         "size": 1290,
-        "path": "E:/codeplace/ylsearch/search/src/main/java/com/dev/search/util/ResponseResult.java",
-        "relPath": "ylsearch/search/src/main/java/com/dev/search/util/ResponseResult.java",
-        "sizeFormatted": "1.3 KB"
+        "sizeFormatted": "1.3 KB",
+        "project": "ylsearch"
       },
       {
         "name": "application.properties",
         "type": "其他",
         "size": 186,
-        "path": "E:/codeplace/ylsearch/search/src/main/resources/application.properties",
-        "relPath": "ylsearch/search/src/main/resources/application.properties",
-        "sizeFormatted": "186 B"
+        "sizeFormatted": "186 B",
+        "project": "ylsearch"
       },
       {
         "name": "application.yml",
         "type": "YAML配置",
         "size": 457,
-        "path": "E:/codeplace/ylsearch/search/src/main/resources/application.yml",
-        "relPath": "ylsearch/search/src/main/resources/application.yml",
-        "sizeFormatted": "457 B"
+        "sizeFormatted": "457 B",
+        "project": "ylsearch"
       },
       {
         "name": "SearchApplicationTests.java",
         "type": "Java代码",
         "size": 215,
-        "path": "E:/codeplace/ylsearch/search/src/test/java/com/dev/search/SearchApplicationTests.java",
-        "relPath": "ylsearch/search/src/test/java/com/dev/search/SearchApplicationTests.java",
-        "sizeFormatted": "215 B"
+        "sizeFormatted": "215 B",
+        "project": "ylsearch"
       }
     ]
   }
 ];
 
-
-// Compute CODE_CATEGORIES from CODE_LIBS array
 const CODE_CATEGORIES = {};
 CODE_LIBS.forEach(function (l) {
   if (!CODE_CATEGORIES[l.category]) {

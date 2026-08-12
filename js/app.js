@@ -83,44 +83,7 @@ var _filePathCache = [];
 // Detect if running locally (file:// open only works on localhost)
 var _isLocal = location.hostname === 'localhost' || location.hostname === '127.0.0.1' || location.protocol === 'file:';
 
-// Event delegation: single click listener on document for all [data-fidx] elements
-document.addEventListener('click', function(e) {
-  var item = e.target.closest('[data-fidx]');
-  if (item) {
-    e.preventDefault();
-    e.stopPropagation();
-    var idx = parseInt(item.getAttribute('data-fidx'), 10);
-    var fp = _filePathCache[idx];
-    if (!fp) return;
-    if (_isLocal) {
-      window.open('file:///' + encodeURI(fp), '_blank');
-    } else {
-      // Online: show path in a modal so user can find the file locally
-      showFilePathModal(fp);
-    }
-  }
-});
-
-// Modal for online users: shows file path, explains local-only access
-function showFilePathModal(filePath) {
-  var existing = document.getElementById('file-path-modal');
-  if (existing) existing.remove();
-  var modal = document.createElement('div');
-  modal.id = 'file-path-modal';
-  modal.style.cssText = 'position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.5);z-index:9999;display:flex;align-items:center;justify-content:center;padding:20px;';
-  modal.innerHTML =
-    '<div style="background:#fff;border-radius:12px;padding:28px;max-width:520px;width:100%;box-shadow:0 8px 32px rgba(0,0,0,0.2);">' +
-    '<h3 style="margin:0 0 12px;font-size:1.1rem;">📂 文件路径</h3>' +
-    '<p style="color:#666;font-size:0.85rem;margin:0 0 16px;">在线版无法直接打开本地文件。请在本地运行博客后点击打开，或复制路径到文件资源管理器：</p>' +
-    '<div style="background:#f5f5f5;border-radius:8px;padding:12px;font-family:monospace;font-size:0.8rem;word-break:break-all;margin:0 0 16px;user-select:all;cursor:pointer;" onclick="this.select();document.execCommand(\'copy\');" title="点击复制">' +
-    escapeHtml(filePath) +
-    '</div>' +
-    '<div style="display:flex;gap:8px;justify-content:flex-end;">' +
-    '<button onclick="document.getElementById(\'file-path-modal\').remove();" style="padding:8px 20px;border:1px solid #ddd;background:#fff;border-radius:6px;cursor:pointer;font-size:0.9rem;">关闭</button>' +
-    '</div></div>';
-  modal.addEventListener('click', function(e) { if (e.target === modal) modal.remove(); });
-  document.body.appendChild(modal);
-}
+// 文件以清单形式展示，不暴露、不打开本地路径（已移除 data-fidx 点击打开逻辑与路径弹窗）
 
 // ============================================
 // Utilities
@@ -600,7 +563,6 @@ function renderCourses() {
           <div class="course-card" onclick="location.hash='#/course/${encodeURIComponent(course.id)}'">
             <div class="course-card-header">
               <div class="course-card-title">${escapeHtml(course.name)}</div>
-              <span class="course-card-source">${escapeHtml(course.source)}</span>
             </div>
             ${course.description ? `<div class="course-card-desc">${escapeHtml(course.description)}</div>` : ''}
             <div class="course-card-meta">
@@ -646,7 +608,6 @@ function renderCourseDetail(courseId) {
         <h1 class="course-detail-title">${escapeHtml(course.name)}</h1>
         <div class="course-detail-meta">
           <span class="meta-item">📂 ${escapeHtml(course.category)}</span>
-          <span class="meta-item">📚 ${escapeHtml(course.source)}</span>
           ${course.year ? `<span class="meta-item">📅 ${course.year}</span>` : ''}
           <span class="meta-item">📁 ${course.fileCount} 个文件</span>
           <span class="meta-item">💾 ${course.totalSizeFormatted}</span>
@@ -662,17 +623,11 @@ function renderCourseDetail(courseId) {
   for (let i = 0; i < visibleFiles.length; i++) {
     const file = visibleFiles[i];
     const typeClass = getFileTypeClass(file.type);
-    const filePath = (file.path || '').replace(/\\/g, '/');
-    const relPath = file.relPath || file.path || '';
-    // Store path in JS array, use index in HTML
-    _filePathCache.push(filePath);
     html += `
-      <div class="file-item file-item-link" data-fidx="${_filePathCache.length - 1}">
+      <div class="file-item">
         <span class="file-type-badge ${typeClass}">${escapeHtml(file.type)}</span>
         <span class="file-name">${escapeHtml(file.name)}</span>
-        <span class="file-path">${escapeHtml(relPath)}</span>
         <span class="file-size">${file.sizeFormatted}</span>
-        <span class="file-open-icon">🔗</span>
       </div>
     `;
   }
@@ -692,7 +647,7 @@ function renderCourseDetail(courseId) {
   html += `
       </div>
       <div style="margin-top: 20px; padding: 12px 16px; background: var(--color-bg); border-radius: var(--radius-sm); font-size: 0.82rem; color: var(--color-text-muted);">
-        ${_isLocal ? '💡 点击任意文件可在本地打开，文件保留在原始目录，未做任何复制' : '💡 在线版仅可浏览文件列表。如需打开文件，请在本地运行博客（<code>python -m http.server</code>），或点击文件复制路径到资源管理器打开。'}
+        💡 文件保留在原始磁盘，未做任何复制，此处仅展示文件清单。
       </div>
     </div>
   `;
@@ -802,11 +757,8 @@ function renderCodeDetail(libId) {
   const _groups = {};
   const _root = [];
   for (const f of lib.files) {
-    const rp = f.relPath || f.path || '';
-    const parts = rp.split('/');
-    if (parts.length > 1) {
-      const key = parts[0];
-      (_groups[key] = _groups[key] || []).push(f);
+    if (f.project) {
+      (_groups[f.project] = _groups[f.project] || []).push(f);
     } else {
       _root.push(f);
     }
@@ -833,7 +785,7 @@ function renderCodeDetail(libId) {
         </div>
       </div>
       <div style="margin-top: 20px; padding: 12px 16px; background: var(--color-bg); border-radius: var(--radius-sm); font-size: 0.82rem; color: var(--color-text-muted);">
-        ${_isLocal ? '💡 点击任意文件可在本地打开，文件保留在原始目录，未做任何复制' : '💡 在线版仅可浏览文件列表。如需打开文件，请在本地运行博客（<code>python -m http.server</code>），或点击文件复制路径到资源管理器打开。'}
+        💡 文件保留在原始磁盘，未做任何复制，此处仅展示文件清单。
       </div>
     </div>
   `;
@@ -843,16 +795,11 @@ function renderCodeDetail(libId) {
 
 function renderCodeFileItem(file) {
   const typeClass = getFileTypeClass(file.type);
-  const filePath = (file.path || '').replace(/\\/g, '/');
-  const relPath = file.relPath || file.path || '';
-  _filePathCache.push(filePath);
   return `
-      <div class="file-item file-item-link" data-fidx="${_filePathCache.length - 1}">
+      <div class="file-item">
         <span class="file-type-badge ${typeClass}">${escapeHtml(file.type)}</span>
         <span class="file-name">${escapeHtml(file.name)}</span>
-        <span class="file-path">${escapeHtml(relPath)}</span>
         <span class="file-size">${file.sizeFormatted}</span>
-        <span class="file-open-icon">🔗</span>
       </div>
   `;
 }
@@ -1004,9 +951,8 @@ function renderPapersTab() {
       for (const paper of grouped[cat]) {
         const typeClass = paper.type || 'other';
         let pdfLink = '';
-        if (paper.pdfPath) {
-          _filePathCache.push(paper.pdfPath.replace(/\\/g, '/'));
-          pdfLink = `<span class="paper-pdf-link" data-fidx="${_filePathCache.length - 1}">🔗 PDF</span>`;
+        if (paper.url) {
+          pdfLink = `<a class="paper-pdf-link" href="${escapeHtml(paper.url)}" target="_blank" rel="noopener">🔗 PDF</a>`;
         }
         const venue = paper.venue ? `<span class="meta-item">📰 ${escapeHtml(paper.venue)}</span>` : '';
         const date = paper.date ? `<span class="meta-item">📅 ${escapeHtml(paper.date)}</span>` : '';
@@ -1061,7 +1007,7 @@ function renderMaterialsTab() {
       grouped[m.category].push(m);
     });
 
-    const catIcons = { 'ANSYS仿真': '🔧', '机械臂CAD模型': '🦾', 'CAD建模': '📐', '学术Seminar': '🎤', '其他': '📦' };
+    const catIcons = { 'ANSYS仿真': '🔧', '机械臂CAD模型': '🦾', 'CAD建模': '📐' };
 
     for (const [cat, materials] of Object.entries(grouped)) {
       html += `
@@ -1075,15 +1021,12 @@ function renderMaterialsTab() {
       `;
       for (const m of materials) {
         const typeClass = getFileTypeClass(m.type);
-        const filePath = (m.path || '').replace(/\\/g, '/');
-        _filePathCache.push(filePath);
         html += `
-          <div class="file-item file-item-link" data-fidx="${_filePathCache.length - 1}">
+          <div class="file-item">
             <span class="file-type-badge ${typeClass}">${escapeHtml(m.type)}</span>
             <span class="file-name">${escapeHtml(m.name)}</span>
             ${m.subcategory ? `<span class="file-path">${escapeHtml(m.subcategory)}</span>` : ''}
             <span class="file-size">${m.sizeFormatted}</span>
-            <span class="file-open-icon">🔗</span>
           </div>
         `;
       }
@@ -1662,16 +1605,11 @@ window.loadMoreCourseFiles = function(courseId) {
   let html = '';
   for (const file of nextBatch) {
     const typeClass = getFileTypeClass(file.type);
-    const filePath = (file.path || '').replace(/\\/g, '/');
-    const relPath = file.relPath || file.path || '';
-    _filePathCache.push(filePath);
     html += `
-      <div class="file-item file-item-link" data-fidx="${_filePathCache.length - 1}">
+      <div class="file-item">
         <span class="file-type-badge ${typeClass}">${escapeHtml(file.type)}</span>
         <span class="file-name">${escapeHtml(file.name)}</span>
-        <span class="file-path">${escapeHtml(relPath)}</span>
         <span class="file-size">${file.sizeFormatted}</span>
-        <span class="file-open-icon">🔗</span>
       </div>
     `;
   }

@@ -1,9 +1,3 @@
-/**
- * Papers & Learning Materials Data
- * Auto-generated from Zotero database and E:\杂项\个人资料\学习
- * Papers: 32 | Learning materials: 102 files
- */
-
 const PAPERS = [
   {
     "id": "paper-4",
@@ -17,8 +11,7 @@ const PAPERS = [
     "category": "双足机器人",
     "collections": [
       "双足机器人"
-    ],
-    "pdfPath": "D:/zotero/storage/1/Jeon 等 - 2023 - Benchmarking Potential Based Rewards for Learning Humanoid Locomotion.pdf"
+    ]
   },
   {
     "id": "paper-5",
@@ -32,8 +25,7 @@ const PAPERS = [
     "category": "双足机器人",
     "collections": [
       "双足机器人"
-    ],
-    "pdfPath": "D:/zotero/storage/2/Lee 等 - 2024 - Integrating Model-Based Footstep Planning with Model-Free Reinforcement Learning for Dynamic Legged.pdf"
+    ]
   },
   {
     "id": "paper-7",
@@ -47,8 +39,7 @@ const PAPERS = [
     "category": "双足机器人",
     "collections": [
       "双足机器人"
-    ],
-    "pdfPath": "D:/zotero/storage/3/Gu 等 - 2024 - Advancing Humanoid Locomotion Mastering Challenging Terrains with Denoising World Model Learning.pdf"
+    ]
   },
   {
     "id": "paper-13",
@@ -62,8 +53,7 @@ const PAPERS = [
     "category": "港大教授论文",
     "collections": [
       "港大教授机器人论文"
-    ],
-    "pdfPath": "D:/zotero/storage/8/Luo 等 - 2023 - FT-Net Learning Failure Recovery and Fault-Tolerant Locomotion for Quadruped Robots.pdf"
+    ]
   },
   {
     "id": "paper-14",
@@ -77,8 +67,7 @@ const PAPERS = [
     "category": "港大教授论文",
     "collections": [
       "港大教授机器人论文"
-    ],
-    "pdfPath": "D:/zotero/storage/9/Yu 等 - 2024 - BiKC Keypose-Conditioned Consistency Policy for Bimanual Robotic Manipulation.pdf"
+    ]
   },
   {
     "id": "paper-16",
@@ -92,8 +81,7 @@ const PAPERS = [
     "category": "港大教授论文",
     "collections": [
       "港大教授机器人论文"
-    ],
-    "pdfPath": "D:/zotero/storage/10/Tao 等 - 2024 - Mobile Robot Collision Avoidance Based on Deep Reinforcement Learning with Motion Constraints.pdf"
+    ]
   },
   {
     "id": "paper-17",
@@ -107,8 +95,7 @@ const PAPERS = [
     "category": "港大教授论文",
     "collections": [
       "港大教授机器人论文"
-    ],
-    "pdfPath": "D:/zotero/storage/11/Luo 等 - 2024 - MorAL Learning Morphologically Adaptive Locomotion Controller for Quadrupedal Robots on Challenging.pdf"
+    ]
   },
   {
     "id": "paper-18",
@@ -122,8 +109,7 @@ const PAPERS = [
     "category": "港大教授论文",
     "collections": [
       "港大教授机器人论文"
-    ],
-    "pdfPath": "D:/zotero/storage/12/Peng 等 - 2024 - A Tendon-Driven Continuum Manipulator With Robust Shape Estimation by Multiple IMUs.pdf"
+    ]
   },
   {
     "id": "paper-25",
@@ -137,8 +123,7 @@ const PAPERS = [
     "category": "已读论文",
     "collections": [
       "已读"
-    ],
-    "pdfPath": "D:/zotero/storage/19/Takacs 等 - 2018 - Highly Automated Vehicles and Self-Driving Cars [Industry Tutorial].pdf"
+    ]
   },
   {
     "id": "paper-26",
@@ -152,8 +137,7 @@ const PAPERS = [
     "category": "已读论文",
     "collections": [
       "已读"
-    ],
-    "pdfPath": "D:/zotero/storage/20/Mahony 等 - 2012 - Multirotor Aerial Vehicles Modeling, Estimation, and Control of Quadrotor.pdf"
+    ]
   },
   {
     "id": "paper-27",
@@ -167,8 +151,7 @@ const PAPERS = [
     "category": "已读论文",
     "collections": [
       "已读"
-    ],
-    "pdfPath": "D:/zotero/storage/21/Brandt和Selig - 2011 - Propeller Performance Data at Low Reynolds Numbers.pdf"
+    ]
   },
   {
     "id": "paper-28",
@@ -182,8 +165,7 @@ const PAPERS = [
     "category": "已读论文",
     "collections": [
       "已读"
-    ],
-    "pdfPath": "D:/zotero/storage/22/Sandbrook - 2015 - The social implications of using drones for biodiversity conservation.pdf"
+    ]
   },
   {
     "id": "paper-29",
@@ -197,8 +179,7 @@ const PAPERS = [
     "category": "已读论文",
     "collections": [
       "已读"
-    ],
-    "pdfPath": "D:/zotero/storage/23/Ollero 等 - 2018 - The AEROARMS Project Aerial Robots with Advanced Manipulation Capabilities for Inspection and Maint.pdf"
+    ]
   },
   {
     "id": "paper-30",
@@ -212,8 +193,7 @@ const PAPERS = [
     "category": "已读论文",
     "collections": [
       "已读"
-    ],
-    "pdfPath": "D:/zotero/storage/24/Meyer 等 - 2012 - Comprehensive Simulation of Quadrotor UAVs Using ROS and Gazebo.pdf"
+    ]
   },
   {
     "id": "paper-38",
@@ -227,8 +207,7 @@ const PAPERS = [
     "category": "课程论文",
     "collections": [
       "课程机器人论文"
-    ],
-    "pdfPath": "D:/zotero/storage/31/Xu 等 - 2021 - FAST-LIO2 Fast Direct LiDAR-inertial Odometry.pdf"
+    ]
   },
   {
     "id": "paper-39",
@@ -242,8 +221,7 @@ const PAPERS = [
     "category": "课程论文",
     "collections": [
       "课程机器人论文"
-    ],
-    "pdfPath": "D:/zotero/storage/32/Lee 等 - 2010 - Geometric tracking control of a quadrotor UAV on SE(3).pdf"
+    ]
   },
   {
     "id": "paper-40",
@@ -257,8 +235,7 @@ const PAPERS = [
     "category": "课程论文",
     "collections": [
       "课程机器人论文"
-    ],
-    "pdfPath": "D:/zotero/storage/33/Lu和Zhang - 2019 - IMU-Based Attitude Estimation in the Presence of Narrow-Band Noise.pdf"
+    ]
   },
   {
     "id": "paper-41",
@@ -272,8 +249,7 @@ const PAPERS = [
     "category": "课程论文",
     "collections": [
       "课程机器人论文"
-    ],
-    "pdfPath": "D:/zotero/storage/34/Mur-Artal 等 - 2015 - ORB-SLAM A Versatile and Accurate Monocular SLAM System.pdf"
+    ]
   },
   {
     "id": "paper-42",
@@ -287,8 +263,7 @@ const PAPERS = [
     "category": "课程论文",
     "collections": [
       "课程机器人论文"
-    ],
-    "pdfPath": "D:/zotero/storage/35/Qin 等 - 2018 - VINS-Mono A Robust and Versatile Monocular Visual-Inertial State Estimator.pdf"
+    ]
   },
   {
     "id": "paper-43",
@@ -302,8 +277,7 @@ const PAPERS = [
     "category": "课程论文",
     "collections": [
       "课程机器人论文"
-    ],
-    "pdfPath": "D:/zotero/storage/36/Mourikis和Roumeliotis - 2007 - A Multi-State Constraint Kalman Filter for Vision-aided Inertial Navigation.pdf"
+    ]
   },
   {
     "id": "paper-45",
@@ -317,8 +291,7 @@ const PAPERS = [
     "category": "双足机器人",
     "collections": [
       "双足机器人"
-    ],
-    "pdfPath": "D:/zotero/storage/44/Xu 等 - 2010 - Mechanical design and balance control of a Humanoid Waist Joint.pdf"
+    ]
   },
   {
     "id": "paper-49",
@@ -332,8 +305,7 @@ const PAPERS = [
     "category": "软体机器人",
     "collections": [
       "软体机器人"
-    ],
-    "pdfPath": "D:/zotero/storage/47/Lai 等 - 2022 - Verticalized-Tip Trajectory Tracking of a 3D-Printable Soft Continuum Robot Enabling Surgical Blood.pdf"
+    ]
   },
   {
     "id": "paper-50",
@@ -347,8 +319,7 @@ const PAPERS = [
     "category": "软体机器人",
     "collections": [
       "软体机器人"
-    ],
-    "pdfPath": "D:/zotero/storage/48/Lai 等 - 2022 - Constrained Motion Planning of a Cable-Driven Soft Robot With Compressible Curvature Modeling.pdf"
+    ]
   },
   {
     "id": "paper-53",
@@ -362,8 +333,7 @@ const PAPERS = [
     "category": "其他机器人",
     "collections": [
       "其他机器人"
-    ],
-    "pdfPath": "D:/zotero/storage/51/Vogel 等 - 2024 - Robust Ladder Climbing with a Quadrupedal Robot.pdf"
+    ]
   },
   {
     "id": "paper-55",
@@ -377,8 +347,7 @@ const PAPERS = [
     "category": "其他机器人",
     "collections": [
       "其他机器人"
-    ],
-    "pdfPath": "D:/zotero/storage/52/Ma 等 - 2023 - Action Planning for Packing Long Linear Elastic Objects Into Compact Boxes With Bimanual Robotic Man.pdf"
+    ]
   },
   {
     "id": "paper-60",
@@ -392,8 +361,7 @@ const PAPERS = [
     "category": "双足机器人",
     "collections": [
       "双足机器人"
-    ],
-    "pdfPath": "D:/zotero/storage/56/Gu 等 - 2024 - Humanoid-Gym Reinforcement Learning for Humanoid Robot with Zero-Shot Sim2Real Transfer.pdf"
+    ]
   },
   {
     "id": "paper-61",
@@ -407,8 +375,7 @@ const PAPERS = [
     "category": "双足机器人",
     "collections": [
       "双足机器人"
-    ],
-    "pdfPath": "D:/zotero/storage/57/Li 等 - 2024 - FLD Fourier Latent Dynamics for Structured Motion Representation and Learning.pdf"
+    ]
   },
   {
     "id": "paper-62",
@@ -422,8 +389,7 @@ const PAPERS = [
     "category": "双足机器人",
     "collections": [
       "双足机器人"
-    ],
-    "pdfPath": "D:/zotero/storage/58/Cheng 等 - 2024 - Expressive Whole-Body Control for Humanoid Robots.pdf"
+    ]
   },
   {
     "id": "paper-64",
@@ -437,8 +403,7 @@ const PAPERS = [
     "category": "双足机器人",
     "collections": [
       "双足机器人"
-    ],
-    "pdfPath": "D:/zotero/storage/59/Fu 等 - HumanPlus Humanoid Shadowing and Imitation from Humans.pdf"
+    ]
   },
   {
     "id": "paper-68",
@@ -452,8 +417,7 @@ const PAPERS = [
     "category": "软体机器人",
     "collections": [
       "软体机器人"
-    ],
-    "pdfPath": "D:/zotero/storage/67/Giorelli 等 - 2015 - Neural Network and Jacobian Method for Solving the Inverse Statics of a Cable-Driven Soft Arm With N.pdf"
+    ]
   },
   {
     "id": "paper-72",
@@ -467,8 +431,7 @@ const PAPERS = [
     "category": "软体机器人",
     "collections": [
       "软体机器人"
-    ],
-    "pdfPath": "D:/zotero/storage/71/Lee 等 - 2017 - Nonparametric Online Learning Control for Soft Continuum Robot An Enabling Technique for Effective.pdf"
+    ]
   },
   {
     "id": "paper-74",
@@ -482,8 +445,7 @@ const PAPERS = [
     "category": "具身智能",
     "collections": [
       "具身智能"
-    ],
-    "pdfPath": "D:/zotero/storage/73/Kim 等 - 2024 - OpenVLA An Open-Source Vision-Language-Action Model.pdf"
+    ]
   }
 ];
 
@@ -546,8 +508,6 @@ const LEARNING_MATERIALS = [
     "type": "Parasolid模型",
     "size": 5997,
     "sizeFormatted": "5.9 KB",
-    "path": "E:/杂项/个人资料/学习/ANSYS学习素材/第一课/几何模型/带孔矩形板.x_t",
-    "relPath": "ANSYS学习素材/第一课/几何模型/带孔矩形板.x_t",
     "category": "ANSYS仿真",
     "subcategory": "第一课"
   },
@@ -556,8 +516,6 @@ const LEARNING_MATERIALS = [
     "type": "PDF",
     "size": 1625850,
     "sizeFormatted": "1.6 MB",
-    "path": "E:/杂项/个人资料/学习/ANSYS学习素材/第一课/PPT/第一课.pdf",
-    "relPath": "ANSYS学习素材/第一课/PPT/第一课.pdf",
     "category": "ANSYS仿真",
     "subcategory": "第一课"
   },
@@ -566,8 +524,6 @@ const LEARNING_MATERIALS = [
     "type": "PDF",
     "size": 1162080,
     "sizeFormatted": "1.1 MB",
-    "path": "E:/杂项/个人资料/学习/ANSYS学习素材/第七课/PPT/第七课.pdf",
-    "relPath": "ANSYS学习素材/第七课/PPT/第七课.pdf",
     "category": "ANSYS仿真",
     "subcategory": "第七课"
   },
@@ -576,8 +532,6 @@ const LEARNING_MATERIALS = [
     "type": "Parasolid模型",
     "size": 34681,
     "sizeFormatted": "33.9 KB",
-    "path": "E:/杂项/个人资料/学习/ANSYS学习素材/第七课/几何模型/虎钳.x_t",
-    "relPath": "ANSYS学习素材/第七课/几何模型/虎钳.x_t",
     "category": "ANSYS仿真",
     "subcategory": "第七课"
   },
@@ -586,8 +540,6 @@ const LEARNING_MATERIALS = [
     "type": "Parasolid模型",
     "size": 7415,
     "sizeFormatted": "7.2 KB",
-    "path": "E:/杂项/个人资料/学习/ANSYS学习素材/第三课/几何模型/L bracket无圆角.x_t",
-    "relPath": "ANSYS学习素材/第三课/几何模型/L bracket无圆角.x_t",
     "category": "ANSYS仿真",
     "subcategory": "第三课"
   },
@@ -596,8 +548,6 @@ const LEARNING_MATERIALS = [
     "type": "PDF",
     "size": 995278,
     "sizeFormatted": "972.0 KB",
-    "path": "E:/杂项/个人资料/学习/ANSYS学习素材/第三课/PPT/第三课.pdf",
-    "relPath": "ANSYS学习素材/第三课/PPT/第三课.pdf",
     "category": "ANSYS仿真",
     "subcategory": "第三课"
   },
@@ -606,8 +556,6 @@ const LEARNING_MATERIALS = [
     "type": "PDF",
     "size": 1277041,
     "sizeFormatted": "1.2 MB",
-    "path": "E:/杂项/个人资料/学习/ANSYS学习素材/第九课/PPT/第九课.pdf",
-    "relPath": "ANSYS学习素材/第九课/PPT/第九课.pdf",
     "category": "ANSYS仿真",
     "subcategory": "第九课"
   },
@@ -616,8 +564,6 @@ const LEARNING_MATERIALS = [
     "type": "Parasolid模型",
     "size": 34681,
     "sizeFormatted": "33.9 KB",
-    "path": "E:/杂项/个人资料/学习/ANSYS学习素材/第九课/几何模型/虎钳.x_t",
-    "relPath": "ANSYS学习素材/第九课/几何模型/虎钳.x_t",
     "category": "ANSYS仿真",
     "subcategory": "第九课"
   },
@@ -626,8 +572,6 @@ const LEARNING_MATERIALS = [
     "type": "Parasolid模型",
     "size": 18677,
     "sizeFormatted": "18.2 KB",
-    "path": "E:/杂项/个人资料/学习/ANSYS学习素材/第二十一课/梁完整.SLDPRT.x_t",
-    "relPath": "ANSYS学习素材/第二十一课/梁完整.SLDPRT.x_t",
     "category": "ANSYS仿真",
     "subcategory": "第二十一课"
   },
@@ -636,8 +580,6 @@ const LEARNING_MATERIALS = [
     "type": "PDF",
     "size": 1115976,
     "sizeFormatted": "1.1 MB",
-    "path": "E:/杂项/个人资料/学习/ANSYS学习素材/第二十一课/第二十一课.pdf",
-    "relPath": "ANSYS学习素材/第二十一课/第二十一课.pdf",
     "category": "ANSYS仿真",
     "subcategory": "第二十一课"
   },
@@ -646,8 +588,6 @@ const LEARNING_MATERIALS = [
     "type": "Parasolid模型",
     "size": 771114,
     "sizeFormatted": "753.0 KB",
-    "path": "E:/杂项/个人资料/学习/ANSYS学习素材/第二十七课/直齿轮装配原始.x_t",
-    "relPath": "ANSYS学习素材/第二十七课/直齿轮装配原始.x_t",
     "category": "ANSYS仿真",
     "subcategory": "第二十七课"
   },
@@ -656,8 +596,6 @@ const LEARNING_MATERIALS = [
     "type": "Parasolid模型",
     "size": 791540,
     "sizeFormatted": "773.0 KB",
-    "path": "E:/杂项/个人资料/学习/ANSYS学习素材/第二十七课/直齿轮装配已分割.x_t",
-    "relPath": "ANSYS学习素材/第二十七课/直齿轮装配已分割.x_t",
     "category": "ANSYS仿真",
     "subcategory": "第二十七课"
   },
@@ -666,8 +604,6 @@ const LEARNING_MATERIALS = [
     "type": "PDF",
     "size": 4519816,
     "sizeFormatted": "4.3 MB",
-    "path": "E:/杂项/个人资料/学习/ANSYS学习素材/第二十七课/第二十七课.pdf",
-    "relPath": "ANSYS学习素材/第二十七课/第二十七课.pdf",
     "category": "ANSYS仿真",
     "subcategory": "第二十七课"
   },
@@ -676,8 +612,6 @@ const LEARNING_MATERIALS = [
     "type": "Parasolid模型",
     "size": 771114,
     "sizeFormatted": "753.0 KB",
-    "path": "E:/杂项/个人资料/学习/ANSYS学习素材/第二十七课(1)/直齿轮装配原始.x_t",
-    "relPath": "ANSYS学习素材/第二十七课(1)/直齿轮装配原始.x_t",
     "category": "ANSYS仿真",
     "subcategory": "第二十七课(1)"
   },
@@ -686,8 +620,6 @@ const LEARNING_MATERIALS = [
     "type": "Parasolid模型",
     "size": 791540,
     "sizeFormatted": "773.0 KB",
-    "path": "E:/杂项/个人资料/学习/ANSYS学习素材/第二十七课(1)/直齿轮装配已分割.x_t",
-    "relPath": "ANSYS学习素材/第二十七课(1)/直齿轮装配已分割.x_t",
     "category": "ANSYS仿真",
     "subcategory": "第二十七课(1)"
   },
@@ -696,8 +628,6 @@ const LEARNING_MATERIALS = [
     "type": "PDF",
     "size": 4519816,
     "sizeFormatted": "4.3 MB",
-    "path": "E:/杂项/个人资料/学习/ANSYS学习素材/第二十七课(1)/第二十七课.pdf",
-    "relPath": "ANSYS学习素材/第二十七课(1)/第二十七课.pdf",
     "category": "ANSYS仿真",
     "subcategory": "第二十七课(1)"
   },
@@ -706,8 +636,6 @@ const LEARNING_MATERIALS = [
     "type": "PDF",
     "size": 840521,
     "sizeFormatted": "820.8 KB",
-    "path": "E:/杂项/个人资料/学习/ANSYS学习素材/第二十三课/第二十三课.pdf",
-    "relPath": "ANSYS学习素材/第二十三课/第二十三课.pdf",
     "category": "ANSYS仿真",
     "subcategory": "第二十三课"
   },
@@ -716,8 +644,6 @@ const LEARNING_MATERIALS = [
     "type": "PDF",
     "size": 925343,
     "sizeFormatted": "903.7 KB",
-    "path": "E:/杂项/个人资料/学习/ANSYS学习素材/第二十二课/第二十二课.pdf",
-    "relPath": "ANSYS学习素材/第二十二课/第二十二课.pdf",
     "category": "ANSYS仿真",
     "subcategory": "第二十二课"
   },
@@ -726,8 +652,6 @@ const LEARNING_MATERIALS = [
     "type": "Parasolid模型",
     "size": 11495,
     "sizeFormatted": "11.2 KB",
-    "path": "E:/杂项/个人资料/学习/ANSYS学习素材/第二十五课/平面接触无间隙.x_t",
-    "relPath": "ANSYS学习素材/第二十五课/平面接触无间隙.x_t",
     "category": "ANSYS仿真",
     "subcategory": "第二十五课"
   },
@@ -736,8 +660,6 @@ const LEARNING_MATERIALS = [
     "type": "Parasolid模型",
     "size": 11513,
     "sizeFormatted": "11.2 KB",
-    "path": "E:/杂项/个人资料/学习/ANSYS学习素材/第二十五课/平面接触有间隙.x_t",
-    "relPath": "ANSYS学习素材/第二十五课/平面接触有间隙.x_t",
     "category": "ANSYS仿真",
     "subcategory": "第二十五课"
   },
@@ -746,8 +668,6 @@ const LEARNING_MATERIALS = [
     "type": "Parasolid模型",
     "size": 9277,
     "sizeFormatted": "9.1 KB",
-    "path": "E:/杂项/个人资料/学习/ANSYS学习素材/第二十五课/曲面接触.x_t",
-    "relPath": "ANSYS学习素材/第二十五课/曲面接触.x_t",
     "category": "ANSYS仿真",
     "subcategory": "第二十五课"
   },
@@ -756,8 +676,6 @@ const LEARNING_MATERIALS = [
     "type": "PDF",
     "size": 1120615,
     "sizeFormatted": "1.1 MB",
-    "path": "E:/杂项/个人资料/学习/ANSYS学习素材/第二十五课/第二十五课.pdf",
-    "relPath": "ANSYS学习素材/第二十五课/第二十五课.pdf",
     "category": "ANSYS仿真",
     "subcategory": "第二十五课"
   },
@@ -766,8 +684,6 @@ const LEARNING_MATERIALS = [
     "type": "PDF",
     "size": 1096620,
     "sizeFormatted": "1.0 MB",
-    "path": "E:/杂项/个人资料/学习/ANSYS学习素材/第二十六课/第二十六课.pdf",
-    "relPath": "ANSYS学习素材/第二十六课/第二十六课.pdf",
     "category": "ANSYS仿真",
     "subcategory": "第二十六课"
   },
@@ -776,8 +692,6 @@ const LEARNING_MATERIALS = [
     "type": "Parasolid模型",
     "size": 11340,
     "sizeFormatted": "11.1 KB",
-    "path": "E:/杂项/个人资料/学习/ANSYS学习素材/第二十六课/赫兹接触.x_t",
-    "relPath": "ANSYS学习素材/第二十六课/赫兹接触.x_t",
     "category": "ANSYS仿真",
     "subcategory": "第二十六课"
   },
@@ -786,8 +700,6 @@ const LEARNING_MATERIALS = [
     "type": "Parasolid模型",
     "size": 12478,
     "sizeFormatted": "12.2 KB",
-    "path": "E:/杂项/个人资料/学习/ANSYS学习素材/第二十四课/梁.x_t",
-    "relPath": "ANSYS学习素材/第二十四课/梁.x_t",
     "category": "ANSYS仿真",
     "subcategory": "第二十四课"
   },
@@ -796,8 +708,6 @@ const LEARNING_MATERIALS = [
     "type": "PDF",
     "size": 751489,
     "sizeFormatted": "733.9 KB",
-    "path": "E:/杂项/个人资料/学习/ANSYS学习素材/第二十四课/第二十四课.pdf",
-    "relPath": "ANSYS学习素材/第二十四课/第二十四课.pdf",
     "category": "ANSYS仿真",
     "subcategory": "第二十四课"
   },
@@ -806,8 +716,6 @@ const LEARNING_MATERIALS = [
     "type": "Parasolid模型",
     "size": 28412,
     "sizeFormatted": "27.7 KB",
-    "path": "E:/杂项/个人资料/学习/ANSYS学习素材/第二十课/几何模型/桌子小物体.x_t",
-    "relPath": "ANSYS学习素材/第二十课/几何模型/桌子小物体.x_t",
     "category": "ANSYS仿真",
     "subcategory": "第二十课"
   },
@@ -816,8 +724,6 @@ const LEARNING_MATERIALS = [
     "type": "PDF",
     "size": 1015691,
     "sizeFormatted": "991.9 KB",
-    "path": "E:/杂项/个人资料/学习/ANSYS学习素材/第二十课/PPT/第二十课.pdf",
-    "relPath": "ANSYS学习素材/第二十课/PPT/第二十课.pdf",
     "category": "ANSYS仿真",
     "subcategory": "第二十课"
   },
@@ -826,8 +732,6 @@ const LEARNING_MATERIALS = [
     "type": "Parasolid模型",
     "size": 7415,
     "sizeFormatted": "7.2 KB",
-    "path": "E:/杂项/个人资料/学习/ANSYS学习素材/第二课/几何模型/L bracket无圆角.x_t",
-    "relPath": "ANSYS学习素材/第二课/几何模型/L bracket无圆角.x_t",
     "category": "ANSYS仿真",
     "subcategory": "第二课"
   },
@@ -836,8 +740,6 @@ const LEARNING_MATERIALS = [
     "type": "PDF",
     "size": 1058142,
     "sizeFormatted": "1.0 MB",
-    "path": "E:/杂项/个人资料/学习/ANSYS学习素材/第二课/PPT/第二课.pdf",
-    "relPath": "ANSYS学习素材/第二课/PPT/第二课.pdf",
     "category": "ANSYS仿真",
     "subcategory": "第二课"
   },
@@ -846,8 +748,6 @@ const LEARNING_MATERIALS = [
     "type": "PDF",
     "size": 894001,
     "sizeFormatted": "873.0 KB",
-    "path": "E:/杂项/个人资料/学习/ANSYS学习素材/第五课/第五课.pdf",
-    "relPath": "ANSYS学习素材/第五课/第五课.pdf",
     "category": "ANSYS仿真",
     "subcategory": "第五课"
   },
@@ -856,8 +756,6 @@ const LEARNING_MATERIALS = [
     "type": "Parasolid模型",
     "size": 5997,
     "sizeFormatted": "5.9 KB",
-    "path": "E:/杂项/个人资料/学习/ANSYS学习素材/第八课/几何模型/带孔矩形板.x_t",
-    "relPath": "ANSYS学习素材/第八课/几何模型/带孔矩形板.x_t",
     "category": "ANSYS仿真",
     "subcategory": "第八课"
   },
@@ -866,8 +764,6 @@ const LEARNING_MATERIALS = [
     "type": "PDF",
     "size": 913113,
     "sizeFormatted": "891.7 KB",
-    "path": "E:/杂项/个人资料/学习/ANSYS学习素材/第八课/PPT/第八课.pdf",
-    "relPath": "ANSYS学习素材/第八课/PPT/第八课.pdf",
     "category": "ANSYS仿真",
     "subcategory": "第八课"
   },
@@ -876,8 +772,6 @@ const LEARNING_MATERIALS = [
     "type": "Parasolid模型",
     "size": 49478,
     "sizeFormatted": "48.3 KB",
-    "path": "E:/杂项/个人资料/学习/ANSYS学习素材/第六课/几何模型/支架.x_t",
-    "relPath": "ANSYS学习素材/第六课/几何模型/支架.x_t",
     "category": "ANSYS仿真",
     "subcategory": "第六课"
   },
@@ -886,8 +780,6 @@ const LEARNING_MATERIALS = [
     "type": "PDF",
     "size": 833139,
     "sizeFormatted": "813.6 KB",
-    "path": "E:/杂项/个人资料/学习/ANSYS学习素材/第六课/PPT/第六课.pdf",
-    "relPath": "ANSYS学习素材/第六课/PPT/第六课.pdf",
     "category": "ANSYS仿真",
     "subcategory": "第六课"
   },
@@ -896,8 +788,6 @@ const LEARNING_MATERIALS = [
     "type": "Parasolid模型",
     "size": 28104,
     "sizeFormatted": "27.4 KB",
-    "path": "E:/杂项/个人资料/学习/ANSYS学习素材/第十一课/几何模型/L型支架装配.x_t",
-    "relPath": "ANSYS学习素材/第十一课/几何模型/L型支架装配.x_t",
     "category": "ANSYS仿真",
     "subcategory": "第十一课"
   },
@@ -906,8 +796,6 @@ const LEARNING_MATERIALS = [
     "type": "Parasolid模型",
     "size": 23450,
     "sizeFormatted": "22.9 KB",
-    "path": "E:/杂项/个人资料/学习/ANSYS学习素材/第十一课/几何模型/带孔矩形板圣维南原理.x_t",
-    "relPath": "ANSYS学习素材/第十一课/几何模型/带孔矩形板圣维南原理.x_t",
     "category": "ANSYS仿真",
     "subcategory": "第十一课"
   },
@@ -916,8 +804,6 @@ const LEARNING_MATERIALS = [
     "type": "PDF",
     "size": 985611,
     "sizeFormatted": "962.5 KB",
-    "path": "E:/杂项/个人资料/学习/ANSYS学习素材/第十一课/PPT/第十一课.pdf",
-    "relPath": "ANSYS学习素材/第十一课/PPT/第十一课.pdf",
     "category": "ANSYS仿真",
     "subcategory": "第十一课"
   },
@@ -926,8 +812,6 @@ const LEARNING_MATERIALS = [
     "type": "Parasolid模型",
     "size": 9337,
     "sizeFormatted": "9.1 KB",
-    "path": "E:/杂项/个人资料/学习/ANSYS学习素材/第十三课/几何模型/水杯带桌面.x_t",
-    "relPath": "ANSYS学习素材/第十三课/几何模型/水杯带桌面.x_t",
     "category": "ANSYS仿真",
     "subcategory": "第十三课"
   },
@@ -936,8 +820,6 @@ const LEARNING_MATERIALS = [
     "type": "PDF",
     "size": 946565,
     "sizeFormatted": "924.4 KB",
-    "path": "E:/杂项/个人资料/学习/ANSYS学习素材/第十三课/PPT/第十三课.pdf",
-    "relPath": "ANSYS学习素材/第十三课/PPT/第十三课.pdf",
     "category": "ANSYS仿真",
     "subcategory": "第十三课"
   },
@@ -946,8 +828,6 @@ const LEARNING_MATERIALS = [
     "type": "Parasolid模型",
     "size": 28412,
     "sizeFormatted": "27.7 KB",
-    "path": "E:/杂项/个人资料/学习/ANSYS学习素材/第十九课/几何模型/桌子小物体.x_t",
-    "relPath": "ANSYS学习素材/第十九课/几何模型/桌子小物体.x_t",
     "category": "ANSYS仿真",
     "subcategory": "第十九课"
   },
@@ -956,8 +836,6 @@ const LEARNING_MATERIALS = [
     "type": "PDF",
     "size": 2790827,
     "sizeFormatted": "2.7 MB",
-    "path": "E:/杂项/个人资料/学习/ANSYS学习素材/第十九课/PPT/第十九课.pdf",
-    "relPath": "ANSYS学习素材/第十九课/PPT/第十九课.pdf",
     "category": "ANSYS仿真",
     "subcategory": "第十九课"
   },
@@ -966,8 +844,6 @@ const LEARNING_MATERIALS = [
     "type": "Parasolid模型",
     "size": 9337,
     "sizeFormatted": "9.1 KB",
-    "path": "E:/杂项/个人资料/学习/ANSYS学习素材/第十五课/几何模型/水杯带桌面.x_t",
-    "relPath": "ANSYS学习素材/第十五课/几何模型/水杯带桌面.x_t",
     "category": "ANSYS仿真",
     "subcategory": "第十五课"
   },
@@ -976,8 +852,6 @@ const LEARNING_MATERIALS = [
     "type": "PDF",
     "size": 928692,
     "sizeFormatted": "906.9 KB",
-    "path": "E:/杂项/个人资料/学习/ANSYS学习素材/第十五课/PPT/第十五课.pdf",
-    "relPath": "ANSYS学习素材/第十五课/PPT/第十五课.pdf",
     "category": "ANSYS仿真",
     "subcategory": "第十五课"
   },
@@ -986,8 +860,6 @@ const LEARNING_MATERIALS = [
     "type": "Parasolid模型",
     "size": 28412,
     "sizeFormatted": "27.7 KB",
-    "path": "E:/杂项/个人资料/学习/ANSYS学习素材/第十八课/几何模型/桌子小物体.x_t",
-    "relPath": "ANSYS学习素材/第十八课/几何模型/桌子小物体.x_t",
     "category": "ANSYS仿真",
     "subcategory": "第十八课"
   },
@@ -996,8 +868,6 @@ const LEARNING_MATERIALS = [
     "type": "PDF",
     "size": 895712,
     "sizeFormatted": "874.7 KB",
-    "path": "E:/杂项/个人资料/学习/ANSYS学习素材/第十八课/PPT/第十八课.pdf",
-    "relPath": "ANSYS学习素材/第十八课/PPT/第十八课.pdf",
     "category": "ANSYS仿真",
     "subcategory": "第十八课"
   },
@@ -1006,8 +876,6 @@ const LEARNING_MATERIALS = [
     "type": "Parasolid模型",
     "size": 8423,
     "sizeFormatted": "8.2 KB",
-    "path": "E:/杂项/个人资料/学习/ANSYS学习素材/第十六课/几何模型/L bracket圆角.x_t",
-    "relPath": "ANSYS学习素材/第十六课/几何模型/L bracket圆角.x_t",
     "category": "ANSYS仿真",
     "subcategory": "第十六课"
   },
@@ -1016,8 +884,6 @@ const LEARNING_MATERIALS = [
     "type": "Parasolid模型",
     "size": 7216,
     "sizeFormatted": "7.0 KB",
-    "path": "E:/杂项/个人资料/学习/ANSYS学习素材/第十六课/几何模型/带孔矩形板二分之一.x_t",
-    "relPath": "ANSYS学习素材/第十六课/几何模型/带孔矩形板二分之一.x_t",
     "category": "ANSYS仿真",
     "subcategory": "第十六课"
   },
@@ -1026,8 +892,6 @@ const LEARNING_MATERIALS = [
     "type": "PDF",
     "size": 1089110,
     "sizeFormatted": "1.0 MB",
-    "path": "E:/杂项/个人资料/学习/ANSYS学习素材/第十六课/PPT/第十六课.pdf",
-    "relPath": "ANSYS学习素材/第十六课/PPT/第十六课.pdf",
     "category": "ANSYS仿真",
     "subcategory": "第十六课"
   },
@@ -1036,8 +900,6 @@ const LEARNING_MATERIALS = [
     "type": "Parasolid模型",
     "size": 9337,
     "sizeFormatted": "9.1 KB",
-    "path": "E:/杂项/个人资料/学习/ANSYS学习素材/第十四课/几何模型/水杯带桌面.x_t",
-    "relPath": "ANSYS学习素材/第十四课/几何模型/水杯带桌面.x_t",
     "category": "ANSYS仿真",
     "subcategory": "第十四课"
   },
@@ -1046,8 +908,6 @@ const LEARNING_MATERIALS = [
     "type": "PDF",
     "size": 977316,
     "sizeFormatted": "954.4 KB",
-    "path": "E:/杂项/个人资料/学习/ANSYS学习素材/第十四课/PPT/第十四课.pdf",
-    "relPath": "ANSYS学习素材/第十四课/PPT/第十四课.pdf",
     "category": "ANSYS仿真",
     "subcategory": "第十四课"
   },
@@ -1056,8 +916,6 @@ const LEARNING_MATERIALS = [
     "type": "Parasolid模型",
     "size": 28104,
     "sizeFormatted": "27.4 KB",
-    "path": "E:/杂项/个人资料/学习/ANSYS学习素材/第十课/几何模型/L型支架装配.x_t",
-    "relPath": "ANSYS学习素材/第十课/几何模型/L型支架装配.x_t",
     "category": "ANSYS仿真",
     "subcategory": "第十课"
   },
@@ -1066,8 +924,6 @@ const LEARNING_MATERIALS = [
     "type": "PDF",
     "size": 1278487,
     "sizeFormatted": "1.2 MB",
-    "path": "E:/杂项/个人资料/学习/ANSYS学习素材/第十课/PPT/第十课.pdf",
-    "relPath": "ANSYS学习素材/第十课/PPT/第十课.pdf",
     "category": "ANSYS仿真",
     "subcategory": "第十课"
   },
@@ -1076,8 +932,6 @@ const LEARNING_MATERIALS = [
     "type": "PDF",
     "size": 973809,
     "sizeFormatted": "951.0 KB",
-    "path": "E:/杂项/个人资料/学习/ANSYS学习素材/第四课/PPT/第四课.pdf",
-    "relPath": "ANSYS学习素材/第四课/PPT/第四课.pdf",
     "category": "ANSYS仿真",
     "subcategory": "第四课"
   },
@@ -1086,8 +940,6 @@ const LEARNING_MATERIALS = [
     "type": "SolidWorks零件",
     "size": 52751,
     "sizeFormatted": "51.5 KB",
-    "path": "E:/杂项/个人资料/学习/抽屉/小抽屉.SLDPRT",
-    "relPath": "抽屉/小抽屉.SLDPRT",
     "category": "CAD建模",
     "subcategory": "SolidWorks"
   },
@@ -1096,8 +948,6 @@ const LEARNING_MATERIALS = [
     "type": "SolidWorks零件",
     "size": 101387,
     "sizeFormatted": "99.0 KB",
-    "path": "E:/杂项/个人资料/学习/风扇/底座.SLDPRT",
-    "relPath": "风扇/底座.SLDPRT",
     "category": "CAD建模",
     "subcategory": "SolidWorks"
   },
@@ -1106,8 +956,6 @@ const LEARNING_MATERIALS = [
     "type": "SolidWorks零件",
     "size": 178856,
     "sizeFormatted": "174.7 KB",
-    "path": "E:/杂项/个人资料/学习/抽屉/抽屉.SLDPRT",
-    "relPath": "抽屉/抽屉.SLDPRT",
     "category": "CAD建模",
     "subcategory": "SolidWorks"
   },
@@ -1116,8 +964,6 @@ const LEARNING_MATERIALS = [
     "type": "SolidWorks装配体",
     "size": 103787,
     "sizeFormatted": "101.4 KB",
-    "path": "E:/杂项/个人资料/学习/抽屉/桌下抽屉.SLDASM",
-    "relPath": "抽屉/桌下抽屉.SLDASM",
     "category": "CAD建模",
     "subcategory": "SolidWorks"
   },
@@ -1126,298 +972,14 @@ const LEARNING_MATERIALS = [
     "type": "SolidWorks零件",
     "size": 60047,
     "sizeFormatted": "58.6 KB",
-    "path": "E:/杂项/个人资料/学习/抽屉/零件2.SLDPRT",
-    "relPath": "抽屉/零件2.SLDPRT",
     "category": "CAD建模",
     "subcategory": "SolidWorks"
-  },
-  {
-    "name": "031-赵睿-1203.pptx",
-    "type": "PPT",
-    "size": 6890187,
-    "sizeFormatted": "6.6 MB",
-    "path": "E:/杂项/个人资料/学习/031-赵睿-1203.pptx",
-    "relPath": "031-赵睿-1203.pptx",
-    "category": "其他",
-    "subcategory": ""
-  },
-  {
-    "name": "031号-赵睿-1203.pdf",
-    "type": "PDF",
-    "size": 979938,
-    "sizeFormatted": "957.0 KB",
-    "path": "E:/杂项/个人资料/学习/031号-赵睿-1203.pdf",
-    "relPath": "031号-赵睿-1203.pdf",
-    "category": "其他",
-    "subcategory": ""
-  },
-  {
-    "name": "LIDAR sensor.pptx",
-    "type": "PPT",
-    "size": 1673923,
-    "sizeFormatted": "1.6 MB",
-    "path": "E:/杂项/个人资料/学习/LIDAR sensor.pptx",
-    "relPath": "LIDAR sensor.pptx",
-    "category": "其他",
-    "subcategory": ""
-  },
-  {
-    "name": "Latency-Tolerant Cloud-Edge.pdf",
-    "type": "PDF",
-    "size": 5573191,
-    "sizeFormatted": "5.3 MB",
-    "path": "E:/杂项/个人资料/学习/Latency-Tolerant Cloud-Edge.pdf",
-    "relPath": "Latency-Tolerant Cloud-Edge.pdf",
-    "category": "其他",
-    "subcategory": ""
-  },
-  {
-    "name": "OpenVLA.pdf",
-    "type": "PDF",
-    "size": 13240309,
-    "sizeFormatted": "12.6 MB",
-    "path": "E:/杂项/个人资料/学习/OpenVLA.pdf",
-    "relPath": "OpenVLA.pdf",
-    "category": "其他",
-    "subcategory": ""
-  },
-  {
-    "name": "ZhaoRui_R&D.pptx",
-    "type": "PPT",
-    "size": 4069000,
-    "sizeFormatted": "3.9 MB",
-    "path": "E:/杂项/个人资料/学习/ZhaoRui_R&D.pptx",
-    "relPath": "ZhaoRui_R&D.pptx",
-    "category": "其他",
-    "subcategory": ""
-  },
-  {
-    "name": "pi07.pdf",
-    "type": "PDF",
-    "size": 5357105,
-    "sizeFormatted": "5.1 MB",
-    "path": "E:/杂项/个人资料/学习/pi07.pdf",
-    "relPath": "pi07.pdf",
-    "category": "其他",
-    "subcategory": ""
-  },
-  {
-    "name": "华为笔试.docx",
-    "type": "Word",
-    "size": 103622,
-    "sizeFormatted": "101.2 KB",
-    "path": "E:/杂项/个人资料/学习/华为笔试.docx",
-    "relPath": "华为笔试.docx",
-    "category": "其他",
-    "subcategory": ""
-  },
-  {
-    "name": "厦门航空地面岗位应聘报名表.doc",
-    "type": "Word",
-    "size": 78336,
-    "sizeFormatted": "76.5 KB",
-    "path": "E:/杂项/个人资料/学习/厦门航空地面岗位应聘报名表.doc",
-    "relPath": "厦门航空地面岗位应聘报名表.doc",
-    "category": "其他",
-    "subcategory": ""
-  },
-  {
-    "name": "手机支架.SLDPRT",
-    "type": "SolidWorks零件",
-    "size": 351291,
-    "sizeFormatted": "343.1 KB",
-    "path": "E:/杂项/个人资料/学习/手机支架.SLDPRT",
-    "relPath": "手机支架.SLDPRT",
-    "category": "其他",
-    "subcategory": ""
-  },
-  {
-    "name": "机械臂.SLDPRT",
-    "type": "SolidWorks零件",
-    "size": 88633,
-    "sizeFormatted": "86.6 KB",
-    "path": "E:/杂项/个人资料/学习/机械臂.SLDPRT",
-    "relPath": "机械臂.SLDPRT",
-    "category": "其他",
-    "subcategory": ""
-  },
-  {
-    "name": "赵睿 part E.docx",
-    "type": "Word",
-    "size": 237277,
-    "sizeFormatted": "231.7 KB",
-    "path": "E:/杂项/个人资料/学习/赵睿 part E.docx",
-    "relPath": "赵睿 part E.docx",
-    "category": "其他",
-    "subcategory": ""
-  },
-  {
-    "name": "香港大学课程.lnk",
-    "type": "快捷方式",
-    "size": 793,
-    "sizeFormatted": "793 B",
-    "path": "E:/杂项/个人资料/学习/香港大学课程.lnk",
-    "relPath": "香港大学课程.lnk",
-    "category": "其他",
-    "subcategory": ""
-  },
-  {
-    "name": "IMG_20241009_144527.jpg",
-    "type": "图片",
-    "size": 2632049,
-    "sizeFormatted": "2.5 MB",
-    "path": "E:/杂项/个人资料/学习/seminar/IMG_20241009_144527.jpg",
-    "relPath": "seminar/IMG_20241009_144527.jpg",
-    "category": "学术Seminar",
-    "subcategory": "seminar"
-  },
-  {
-    "name": "Report Template for Entrepreneurship Seminars.docx",
-    "type": "Word",
-    "size": 2648347,
-    "sizeFormatted": "2.5 MB",
-    "path": "E:/杂项/个人资料/学习/seminar/Report Template for Entrepreneurship Seminars.docx",
-    "relPath": "seminar/Report Template for Entrepreneurship Seminars.docx",
-    "category": "学术Seminar",
-    "subcategory": "seminar"
-  },
-  {
-    "name": "Report Template for Technical Visit (Company visit).docx",
-    "type": "Word",
-    "size": 16315,
-    "sizeFormatted": "15.9 KB",
-    "path": "E:/杂项/个人资料/学习/seminar/Report Template for Technical Visit (Company visit).docx",
-    "relPath": "seminar/Report Template for Technical Visit (Company visit).docx",
-    "category": "学术Seminar",
-    "subcategory": "seminar"
-  },
-  {
-    "name": "Report Template for Academic Seminars_webinar .docx",
-    "type": "Word",
-    "size": 283815,
-    "sizeFormatted": "277.2 KB",
-    "path": "E:/杂项/个人资料/学习/seminar/学术/学术1/Report Template for Academic Seminars_webinar .docx",
-    "relPath": "seminar/学术/学术1/Report Template for Academic Seminars_webinar .docx",
-    "category": "学术Seminar",
-    "subcategory": "学术1"
-  },
-  {
-    "name": "Seminar - Prof Qi Ge SUSTech (2).pdf",
-    "type": "PDF",
-    "size": 308552,
-    "sizeFormatted": "301.3 KB",
-    "path": "E:/杂项/个人资料/学习/seminar/学术/学术1/Seminar - Prof Qi Ge SUSTech (2).pdf",
-    "relPath": "seminar/学术/学术1/Seminar - Prof Qi Ge SUSTech (2).pdf",
-    "category": "学术Seminar",
-    "subcategory": "学术1"
-  },
-  {
-    "name": "屏幕截图 2024-10-09 104151.jpg",
-    "type": "图片",
-    "size": 265690,
-    "sizeFormatted": "259.5 KB",
-    "path": "E:/杂项/个人资料/学习/seminar/学术/学术1/屏幕截图 2024-10-09 104151.jpg",
-    "relPath": "seminar/学术/学术1/屏幕截图 2024-10-09 104151.jpg",
-    "category": "学术Seminar",
-    "subcategory": "学术1"
-  },
-  {
-    "name": "Report  for Academic Seminars_webinar.docx",
-    "type": "Word",
-    "size": 162404,
-    "sizeFormatted": "158.6 KB",
-    "path": "E:/杂项/个人资料/学习/seminar/学术/学术2/Report  for Academic Seminars_webinar.docx",
-    "relPath": "seminar/学术/学术2/Report  for Academic Seminars_webinar.docx",
-    "category": "学术Seminar",
-    "subcategory": "学术2"
-  },
-  {
-    "name": "mmexport1739944833177.jpg",
-    "type": "图片",
-    "size": 6366119,
-    "sizeFormatted": "6.1 MB",
-    "path": "E:/杂项/个人资料/学习/seminar/学术/学术2/mmexport1739944833177.jpg",
-    "relPath": "seminar/学术/学术2/mmexport1739944833177.jpg",
-    "category": "学术Seminar",
-    "subcategory": "学术2"
-  },
-  {
-    "name": "屏幕截图 2025-02-20 100506.jpg",
-    "type": "图片",
-    "size": 144499,
-    "sizeFormatted": "141.1 KB",
-    "path": "E:/杂项/个人资料/学习/seminar/学术/学术2/屏幕截图 2025-02-20 100506.jpg",
-    "relPath": "seminar/学术/学术2/屏幕截图 2025-02-20 100506.jpg",
-    "category": "学术Seminar",
-    "subcategory": "学术2"
-  },
-  {
-    "name": "IMG_20250306_152543.jpg",
-    "type": "图片",
-    "size": 2416318,
-    "sizeFormatted": "2.3 MB",
-    "path": "E:/杂项/个人资料/学习/seminar/学术/学术3/IMG_20250306_152543.jpg",
-    "relPath": "seminar/学术/学术3/IMG_20250306_152543.jpg",
-    "category": "学术Seminar",
-    "subcategory": "学术3"
-  },
-  {
-    "name": "IMG_20250306_152945.jpg",
-    "type": "图片",
-    "size": 3198401,
-    "sizeFormatted": "3.1 MB",
-    "path": "E:/杂项/个人资料/学习/seminar/学术/学术3/IMG_20250306_152945.jpg",
-    "relPath": "seminar/学术/学术3/IMG_20250306_152945.jpg",
-    "category": "学术Seminar",
-    "subcategory": "学术3"
-  },
-  {
-    "name": "Report  for Academic Seminars_webinar.docx",
-    "type": "Word",
-    "size": 5633296,
-    "sizeFormatted": "5.4 MB",
-    "path": "E:/杂项/个人资料/学习/seminar/学术/学术3/Report  for Academic Seminars_webinar.docx",
-    "relPath": "seminar/学术/学术3/Report  for Academic Seminars_webinar.docx",
-    "category": "学术Seminar",
-    "subcategory": "学术3"
-  },
-  {
-    "name": "mmexport1740046191473.jpg",
-    "type": "图片",
-    "size": 202857,
-    "sizeFormatted": "198.1 KB",
-    "path": "E:/杂项/个人资料/学习/seminar/学术/学术3/mmexport1740046191473.jpg",
-    "relPath": "seminar/学术/学术3/mmexport1740046191473.jpg",
-    "category": "学术Seminar",
-    "subcategory": "学术3"
-  },
-  {
-    "name": "Report  for Academic Seminars_webinar.docx",
-    "type": "Word",
-    "size": 304384,
-    "sizeFormatted": "297.2 KB",
-    "path": "E:/杂项/个人资料/学习/seminar/学术/学术4/Report  for Academic Seminars_webinar.docx",
-    "relPath": "seminar/学术/学术4/Report  for Academic Seminars_webinar.docx",
-    "category": "学术Seminar",
-    "subcategory": "学术4"
-  },
-  {
-    "name": "屏幕截图 2025-04-10 163256.jpg",
-    "type": "图片",
-    "size": 286106,
-    "sizeFormatted": "279.4 KB",
-    "path": "E:/杂项/个人资料/学习/seminar/学术/学术4/屏幕截图 2025-04-10 163256.jpg",
-    "relPath": "seminar/学术/学术4/屏幕截图 2025-04-10 163256.jpg",
-    "category": "学术Seminar",
-    "subcategory": "学术4"
   },
   {
     "name": "Assem1.JPG",
     "type": "图片",
     "size": 156287,
     "sizeFormatted": "152.6 KB",
-    "path": "E:/杂项/个人资料/学习/机械臂/Assem1.JPG",
-    "relPath": "机械臂/Assem1.JPG",
     "category": "机械臂CAD模型",
     "subcategory": "SolidWorks"
   },
@@ -1426,8 +988,6 @@ const LEARNING_MATERIALS = [
     "type": "SolidWorks装配体",
     "size": 900851,
     "sizeFormatted": "879.7 KB",
-    "path": "E:/杂项/个人资料/学习/机械臂/Assem1.SLDASM",
-    "relPath": "机械臂/Assem1.SLDASM",
     "category": "机械臂CAD模型",
     "subcategory": "SolidWorks"
   },
@@ -1436,8 +996,6 @@ const LEARNING_MATERIALS = [
     "type": "SolidWorks零件",
     "size": 911492,
     "sizeFormatted": "890.1 KB",
-    "path": "E:/杂项/个人资料/学习/机械臂/BASE.SLDPRT",
-    "relPath": "机械臂/BASE.SLDPRT",
     "category": "机械臂CAD模型",
     "subcategory": "SolidWorks"
   },
@@ -1446,8 +1004,6 @@ const LEARNING_MATERIALS = [
     "type": "SolidWorks零件",
     "size": 122345,
     "sizeFormatted": "119.5 KB",
-    "path": "E:/杂项/个人资料/学习/机械臂/BigHorn.SLDPRT",
-    "relPath": "机械臂/BigHorn.SLDPRT",
     "category": "机械臂CAD模型",
     "subcategory": "SolidWorks"
   },
@@ -1456,8 +1012,6 @@ const LEARNING_MATERIALS = [
     "type": "SolidWorks零件",
     "size": 277186,
     "sizeFormatted": "270.7 KB",
-    "path": "E:/杂项/个人资料/学习/机械臂/BigServo.SLDPRT",
-    "relPath": "机械臂/BigServo.SLDPRT",
     "category": "机械臂CAD模型",
     "subcategory": "SolidWorks"
   },
@@ -1466,8 +1020,6 @@ const LEARNING_MATERIALS = [
     "type": "SolidWorks零件",
     "size": 663103,
     "sizeFormatted": "647.6 KB",
-    "path": "E:/杂项/个人资料/学习/机械臂/GripArm.SLDPRT",
-    "relPath": "机械臂/GripArm.SLDPRT",
     "category": "机械臂CAD模型",
     "subcategory": "SolidWorks"
   },
@@ -1476,8 +1028,6 @@ const LEARNING_MATERIALS = [
     "type": "SolidWorks零件",
     "size": 70598,
     "sizeFormatted": "68.9 KB",
-    "path": "E:/杂项/个人资料/学习/机械臂/Gripper.SLDPRT",
-    "relPath": "机械臂/Gripper.SLDPRT",
     "category": "机械臂CAD模型",
     "subcategory": "SolidWorks"
   },
@@ -1486,8 +1036,6 @@ const LEARNING_MATERIALS = [
     "type": "图片",
     "size": 1771296,
     "sizeFormatted": "1.7 MB",
-    "path": "E:/杂项/个人资料/学习/机械臂/ISO.jpg",
-    "relPath": "机械臂/ISO.jpg",
     "category": "机械臂CAD模型",
     "subcategory": "SolidWorks"
   },
@@ -1496,8 +1044,6 @@ const LEARNING_MATERIALS = [
     "type": "图片",
     "size": 1600932,
     "sizeFormatted": "1.5 MB",
-    "path": "E:/杂项/个人资料/学习/机械臂/ISO2.jpg",
-    "relPath": "机械臂/ISO2.jpg",
     "category": "机械臂CAD模型",
     "subcategory": "SolidWorks"
   },
@@ -1506,8 +1052,6 @@ const LEARNING_MATERIALS = [
     "type": "图片",
     "size": 1676423,
     "sizeFormatted": "1.6 MB",
-    "path": "E:/杂项/个人资料/学习/机械臂/ISO3.jpg",
-    "relPath": "机械臂/ISO3.jpg",
     "category": "机械臂CAD模型",
     "subcategory": "SolidWorks"
   },
@@ -1516,8 +1060,6 @@ const LEARNING_MATERIALS = [
     "type": "图片",
     "size": 198296,
     "sizeFormatted": "193.6 KB",
-    "path": "E:/杂项/个人资料/学习/机械臂/Project_Mass_and_Volume.JPG",
-    "relPath": "机械臂/Project_Mass_and_Volume.JPG",
     "category": "机械臂CAD模型",
     "subcategory": "SolidWorks"
   },
@@ -1526,8 +1068,6 @@ const LEARNING_MATERIALS = [
     "type": "Arduino代码",
     "size": 3281,
     "sizeFormatted": "3.2 KB",
-    "path": "E:/杂项/个人资料/学习/机械臂/Robot_Arm.ino",
-    "relPath": "机械臂/Robot_Arm.ino",
     "category": "机械臂CAD模型",
     "subcategory": "SolidWorks"
   },
@@ -1536,8 +1076,6 @@ const LEARNING_MATERIALS = [
     "type": "SolidWorks零件",
     "size": 63274,
     "sizeFormatted": "61.8 KB",
-    "path": "E:/杂项/个人资料/学习/机械臂/S3114_servo_CAD_Model.SLDPRT",
-    "relPath": "机械臂/S3114_servo_CAD_Model.SLDPRT",
     "category": "机械臂CAD模型",
     "subcategory": "SolidWorks"
   },
@@ -1546,8 +1084,6 @@ const LEARNING_MATERIALS = [
     "type": "SolidWorks零件",
     "size": 747131,
     "sizeFormatted": "729.6 KB",
-    "path": "E:/杂项/个人资料/学习/机械臂/SecondArm.SLDPRT",
-    "relPath": "机械臂/SecondArm.SLDPRT",
     "category": "机械臂CAD模型",
     "subcategory": "SolidWorks"
   },
@@ -1556,8 +1092,6 @@ const LEARNING_MATERIALS = [
     "type": "SolidWorks零件",
     "size": 398451,
     "sizeFormatted": "389.1 KB",
-    "path": "E:/杂项/个人资料/学习/机械臂/baseArm.SLDPRT",
-    "relPath": "机械臂/baseArm.SLDPRT",
     "category": "机械臂CAD模型",
     "subcategory": "SolidWorks"
   }
@@ -1571,14 +1105,6 @@ const LEARN_CATEGORIES = {
   "CAD建模": {
     "count": 5,
     "files": 5
-  },
-  "其他": {
-    "count": 13,
-    "files": 13
-  },
-  "学术Seminar": {
-    "count": 15,
-    "files": 15
   },
   "机械臂CAD模型": {
     "count": 15,

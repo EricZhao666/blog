@@ -13,3 +13,10 @@ desktop.ini
 # Temp
 *.tmp
 *.log
+
+# Python cache
+__pycache__/
+
+# One-off data cleanup scripts (not part of the site)
+cleanup_local_addresses.js
+strip_local_paths.js

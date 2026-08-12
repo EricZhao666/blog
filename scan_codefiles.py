@@ -43,6 +43,14 @@ ROOT_DROP_TOP = {
     'study': {'其他', '学术Seminar'},
 }
 
+# MATLAB installation-level runtime files — never project code, always drop
+RUNTIME_BASENAMES = {
+    'deploytool.bat', 'mbuild.bat', 'mcc.bat', 'mex.bat', 'mexext.bat',
+    'mw_mpiexec.bat', 'worker.bat',
+    'lcdata.xml', 'lcdata.xsd', 'lcdata_utf8.xml',
+    'mex.pl', 'mexsetup.pm', 'mexutils.pm',
+}
+
 
 def is_env_dir(name):
     """True for environment / tool / IDE / runtime directories."""
@@ -138,6 +146,8 @@ def scan_root(root_path, root_id, category):
             ext = os.path.splitext(fn)[1].lower()
             if ext in EXCLUDE_EXT:
                 continue
+            if fn.lower() in RUNTIME_BASENAMES:
+                continue
             full = os.path.join(dirpath, fn)
             try:
                 st = os.stat(full)
@@ -146,13 +156,15 @@ def scan_root(root_path, root_id, category):
             size = st.st_size
             if size > MAX_FILE_SIZE:
                 continue
-            rel = os.path.relpath(full, root_path)
+            rel = os.path.relpath(full, root_path).replace('\\', '/')
+            # Extract project name (first-level directory); empty for root-level files
+            parts = rel.split('/')
+            project = parts[0] if len(parts) > 1 else ''
             files.append({
                 "name": fn,
                 "type": classify(full),
                 "size": size,
-                "path": full.replace('\\', '/'),
-                "relPath": rel.replace('\\', '/'),
+                "project": project,
                 "sizeFormatted": fmt_size(size),
             })
         if truncated:
@@ -173,7 +185,6 @@ def main():
         lib = {
             "id": root_id,
             "name": os.path.basename(root_path.rstrip('/\\')) or root_id,
-            "source": root_path,
             "category": category,
             "fileCount": len(files),
             "totalSize": total,
