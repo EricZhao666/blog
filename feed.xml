@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0">
+  <channel>
+    <title>Eric's Notebook</title>
+    <link>https://ericzhao666.github.io/blog</link>
+    <description>Eric 的个人技术随笔 — 智能制造、机器人、具身智能与生活思考</description>
+    <language>zh-CN</language>
+    <lastBuildDate>Wed, 12 Aug 2026 01:21:13 +0000</lastBuildDate>
+    <item>
+      <title>机器学习入门：从线性回归到深度学习</title>
+      <link>https://ericzhao666.github.io/blog/#/post/ml-fundamentals-overview</link>
+      <guid>https://ericzhao666.github.io/blog/#/post/ml-fundamentals-overview</guid>
+      <pubDate>Mon, 10 Aug 2026 00:00:00 +0000</pubDate>
+      <description>机器学习的概念满天飞，但底层逻辑其实很朴素。本文从一个线性回归讲起，一步步到深度学习，帮你建立完整的认知框架。</description>
+    </item>
+    <item>
+      <title>具身智能：让AI真正"住进"物理世界</title>
+      <link>https://ericzhao666.github.io/blog/#/post/embodied-ai-notes</link>
+      <guid>https://ericzhao666.github.io/blog/#/post/embodied-ai-notes</guid>
+      <pubDate>Sun, 09 Aug 2026 00:00:00 +0000</pubDate>
+      <description>当大语言模型学会了推理与对话，下一步是什么？具身智能（Embodied AI）试图回答这个问题——让AI不仅能思考，还能在物理世界中感知、交互和行动。</description>
+    </item>
+    <item>
+      <title>Sim-to-Real Gap：具身智能落地的最后一公里</title>
+      <link>https://ericzhao666.github.io/blog/#/post/sim-to-real-gap</link>
+      <guid>https://ericzhao666.github.io/blog/#/post/sim-to-real-gap</guid>
+      <pubDate>Wed, 05 Aug 2026 00:00:00 +0000</pubDate>
+      <description>仿真环境里百战百胜的机器人策略，一到真实世界就拉胯。Sim-to-Real Gap是具身智能最硬的工程骨头之一，本文梳理主流的跨越方法。</description>
+    </item>
+    <item>
+      <title>强化学习入门：从MDP到PPO</title>
+      <link>https://ericzhao666.github.io/blog/#/post/rl-from-mdp-to-ppo</link>
+      <guid>https://ericzhao666.github.io/blog/#/post/rl-from-mdp-to-ppo</guid>
+      <pubDate>Mon, 03 Aug 2026 00:00:00 +0000</pubDate>
+      <description>强化学习是让AI学会"做决策"的框架。本文从马尔可夫决策过程讲起，一步步到当前最主流的PPO算法，帮你建立完整认知。</description>
+    </item>
+    <item>
+      <title>VLA模型入门：从RT-1到OpenVLA</title>
+      <link>https://ericzhao666.github.io/blog/#/post/vla-model-intro</link>
+      <guid>https://ericzhao666.github.io/blog/#/post/vla-model-intro</guid>
+      <pubDate>Tue, 28 Jul 2026 00:00:00 +0000</pubDate>
+      <description>Vision-Language-Action模型正在重新定义机器人控制范式。本文梳理从Google RT-1到OpenVLA的技术演进路线，帮助你快速建立对这个领域的认知框架。</description>
+    </item>
+    <item>
+      <title>SLAM技术全景：从滤波到图优化</title>
+      <link>https://ericzhao666.github.io/blog/#/post/slam-overview-filtering-to-graph</link>
+      <guid>https://ericzhao666.github.io/blog/#/post/slam-overview-filtering-to-graph</guid>
+      <pubDate>Tue, 28 Jul 2026 00:00:00 +0000</pubDate>
+      <description>SLAM（同时定位与建图）是移动机器人的核心技术。本文从贝叶斯滤波讲到因子图优化，梳理SLAM的完整技术脉络。</description>
+    </item>
+    <item>
+      <title>VLA模型在工业场景的落地挑战与思考</title>
+      <link>https://ericzhao666.github.io/blog/#/post/vla-industrial-challenges</link>
+      <guid>https://ericzhao666.github.io/blog/#/post/vla-industrial-challenges</guid>
+      <pubDate>Sat, 25 Jul 2026 00:00:00 +0000</pubDate>
+      <description>VLA模型在实验室里已经能倒水、收衣服了，但放到产线上做装配、检测、上下料？还差得远。本文聊聊VLA落地工业场景的几道硬坎。</description>
+    </item>
+    <item>
+      <title>强化学习在机器人控制中的应用</title>
+      <link>https://ericzhao666.github.io/blog/#/post/rl-robot-control</link>
+      <guid>https://ericzhao666.github.io/blog/#/post/rl-robot-control</guid>
+      <pubDate>Mon, 20 Jul 2026 00:00:00 +0000</pubDate>
+      <description>强化学习让机器人不需要精确的动力学模型就能学会复杂技能。本文梳理RL在机器人控制中的应用实践，从仿真训练到真实部署。</description>
+    </item>
+    <item>
+      <title>机械臂轨迹规划简述：从多项式到优化方法</title>
+      <link>https://ericzhao666.github.io/blog/#/post/arm-trajectory-planning</link>
+      <guid>https://ericzhao666.github.io/blog/#/post/arm-trajectory-planning</guid>
+      <pubDate>Wed, 15 Jul 2026 00:00:00 +0000</pubDate>
+      <description>机械臂的运动控制中，轨迹规划是核心环节之一。本文从最基础的多项式插值讲起，到现代优化方法，梳理一条清晰的学习路径。</description>
+    </item>
+    <item>
+      <title>机械臂抓取技术：从解析法到学习方法</title>
+      <link>https://ericzhao666.github.io/blog/#/post/robot-grasping-survey</link>
+      <guid>https://ericzhao666.github.io/blog/#/post/robot-grasping-survey</guid>
+      <pubDate>Fri, 10 Jul 2026 00:00:00 +0000</pubDate>
+      <description>抓取是机械臂最基础也最难的技能之一。从经典的力闭合分析到现在的端到端学习，本文梳理抓取技术的完整演进脉络。</description>
+    </item>
+    <item>
+      <title>视觉SLAM前端：特征提取与匹配</title>
+      <link>https://ericzhao666.github.io/blog/#/post/visual-slam-frontend</link>
+      <guid>https://ericzhao666.github.io/blog/#/post/visual-slam-frontend</guid>
+      <pubDate>Sun, 05 Jul 2026 00:00:00 +0000</pubDate>
+      <description>视觉SLAM的前端决定了系统的鲁棒性。本文从ORB特征讲到SuperPoint+SuperGlue，梳理特征提取与匹配的完整技术链路。</description>
+    </item>
+    <item>
+      <title>深度学习在SLAM中的应用</title>
+      <link>https://ericzhao666.github.io/blog/#/post/deep-learning-in-slam</link>
+      <guid>https://ericzhao666.github.io/blog/#/post/deep-learning-in-slam</guid>
+      <pubDate>Thu, 25 Jun 2026 00:00:00 +0000</pubDate>
+      <description>传统SLAM的瓶颈在哪？深度学习能解决什么？本文梳理深度学习在SLAM各个环节中的应用现状与落地挑战。</description>
+    </item>
+    <item>
+      <title>从传统产线到智能产线：我做产线智能化三年的总结</title>
+      <link>https://ericzhao666.github.io/blog/#/post/smart-production-line</link>
+      <guid>https://ericzhao666.github.io/blog/#/post/smart-production-line</guid>
+      <pubDate>Sat, 20 Jun 2026 00:00:00 +0000</pubDate>
+      <description>在产线智能化这个领域摸爬滚打了三年，踩过不少坑，也有一些自己的思考。这篇文章不是技术教程，更像是一份"经验沉淀"。</description>
+    </item>
+    <item>
+      <title>工业通信协议实战笔记：OPC UA、Modbus与Profinet</title>
+      <link>https://ericzhao666.github.io/blog/#/post/industrial-protocols-notes</link>
+      <guid>https://ericzhao666.github.io/blog/#/post/industrial-protocols-notes</guid>
+      <pubDate>Mon, 15 Jun 2026 00:00:00 +0000</pubDate>
+      <description>做产线智能化，绕不开设备通信。这篇整理我在实际项目中用过的三种主流工业协议——OPC UA、Modbus、Profinet的实战经验。</description>
+    </item>
+    <item>
+      <title>深圳周末好去处：我的私藏清单</title>
+      <link>https://ericzhao666.github.io/blog/#/post/shenzhen-weekend</link>
+      <guid>https://ericzhao666.github.io/blog/#/post/shenzhen-weekend</guid>
+      <pubDate>Mon, 08 Jun 2026 00:00:00 +0000</pubDate>
+      <description>工作日在香港，周末回深圳。这半年探索了不少深圳周边的好地方，整理成一份清单，既是记录，也分享给同样在深港两地跑的朋友。</description>
+    </item>
+    <item>
+      <title>机械臂力控与柔顺控制：从阻抗控制到导纳控制</title>
+      <link>https://ericzhao666.github.io/blog/#/post/force-compliance-control</link>
+      <guid>https://ericzhao666.github.io/blog/#/post/force-compliance-control</guid>
+      <pubDate>Mon, 01 Jun 2026 00:00:00 +0000</pubDate>
+      <description>纯位置控制在接触任务中会"硬碰硬"——力控与柔顺控制让机械臂学会"温柔"。本文梳理阻抗控制、导纳控制和混合力位控制的核心原理。</description>
+    </item>
+    <item>
+      <title>读书笔记：《机器人学导论》前三章重点梳理</title>
+      <link>https://ericzhao666.github.io/blog/#/post/robotics-textbook-notes</link>
+      <guid>https://ericzhao666.github.io/blog/#/post/robotics-textbook-notes</guid>
+      <pubDate>Sat, 30 May 2026 00:00:00 +0000</pubDate>
+      <description>Craig的《Introduction to Robotics》是机器人领域的经典教材。最近重新翻了一遍前三章，把核心概念和公式整理成笔记，方便查阅。</description>
+    </item>
+    <item>
+      <title>数字孪生在产线中的应用：不只是好看的3D</title>
+      <link>https://ericzhao666.github.io/blog/#/post/digital-twin-manufacturing</link>
+      <guid>https://ericzhao666.github.io/blog/#/post/digital-twin-manufacturing</guid>
+      <pubDate>Fri, 15 May 2026 00:00:00 +0000</pubDate>
+      <description>数字孪生被炒得很热，但大部分项目最后只做出了一个"好看的3D看板"。本文聊聊数字孪生在产线中真正有价值的几个应用场景。</description>
+    </item>
+  </channel>
+</rss>

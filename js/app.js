@@ -37,6 +37,42 @@ let paperTab = 'papers';
 let paperSearchQuery = '';
 let activePaperCategory = null;
 
+// Giscus 评论配置（基于 GitHub Discussions，免费）
+// 启用步骤：1) 在 https://giscus.app 用 GitHub 登录并配置本仓库
+//          2) 在仓库 Settings 开启 Discussions 功能
+//          3) 把下面 repoId / categoryId 填上，enabled 改为 true
+const GISCUS_CONFIG = {
+  enabled: false,
+  repo: 'EricZhao666/blog',
+  repoId: '',          // 从 giscus.app 获取
+  category: 'Announcements',
+  categoryId: ''       // 从 giscus.app 获取
+};
+
+function loadGiscus(term) {
+  if (!GISCUS_CONFIG.enabled) return;
+  const container = document.getElementById('giscus-container');
+  if (!container) return;
+  container.innerHTML = '';
+  const s = document.createElement('script');
+  s.src = 'https://giscus.app/client.js';
+  s.async = true;
+  s.crossOrigin = 'anonymous';
+  s.setAttribute('data-repo', GISCUS_CONFIG.repo);
+  s.setAttribute('data-repo-id', GISCUS_CONFIG.repoId);
+  s.setAttribute('data-category', GISCUS_CONFIG.category);
+  s.setAttribute('data-category-id', GISCUS_CONFIG.categoryId);
+  s.setAttribute('data-mapping', 'specific');
+  s.setAttribute('data-term', term);
+  s.setAttribute('data-reactions-enabled', '1');
+  s.setAttribute('data-emit-metadata', '0');
+  s.setAttribute('data-input-position', 'bottom');
+  s.setAttribute('data-theme', document.documentElement.getAttribute('data-theme') === 'dark' ? 'dark' : 'light');
+  s.setAttribute('data-lang', 'zh-CN');
+  s.setAttribute('data-loading', 'lazy');
+  container.appendChild(s);
+}
+
 // File path cache — paths stored in JS, NOT in HTML attributes
 // This prevents browsers from trying to resolve/load file URLs during rendering
 var _filePathCache = [];
@@ -163,7 +199,10 @@ function escapeHtml(text) {
 // ============================================
 
 function renderHome() {
-  const filtered = filterPosts(getAllPosts(), searchQuery, null);
+  if (searchQuery.trim()) {
+    return renderGlobalSearch(searchQuery.trim());
+  }
+  const filtered = filterPosts(getAllPosts(), '', null);
 
   if (filtered.length === 0) {
     return `
@@ -201,6 +240,86 @@ function renderHome() {
   `).join('');
 
   return `<div class="article-list">${cards}</div>`;
+}
+
+function renderGlobalSearch(query) {
+  const q = query.toLowerCase();
+  const posts = getAllPosts().filter(p =>
+    p.title.toLowerCase().includes(q) ||
+    (p.excerpt || '').toLowerCase().includes(q) ||
+    p.tags.some(t => t.toLowerCase().includes(q)) ||
+    p.content.toLowerCase().includes(q)
+  );
+  const courses = (typeof COURSES !== 'undefined') ? COURSES.filter(c =>
+    c.name.toLowerCase().includes(q) ||
+    (c.category || '').toLowerCase().includes(q) ||
+    (c.description || '').toLowerCase().includes(q)
+  ) : [];
+  const papers = (typeof PAPERS !== 'undefined') ? PAPERS.filter(p =>
+    p.title.toLowerCase().includes(q) ||
+    (p.authors || '').toLowerCase().includes(q) ||
+    (p.abstract || '').toLowerCase().includes(q)
+  ) : [];
+  const materials = (typeof LEARNING_MATERIALS !== 'undefined') ? LEARNING_MATERIALS.filter(m =>
+    (m.name || '').toLowerCase().includes(q) ||
+    (m.subcategory || '').toLowerCase().includes(q)
+  ) : [];
+
+  const total = posts.length + courses.length + papers.length + materials.length;
+  let html = `<div class="search-results-count">找到 ${total} 条与 “${escapeHtml(query)}” 相关的结果</div>`;
+
+  if (posts.length) {
+    html += `<div class="search-section-title">📝 文章 (${posts.length})</div>`;
+    html += `<div class="article-list">` + posts.map(post => `
+      <article class="article-card" onclick="location.hash = '#/post/${post.id}'">
+        <h2 class="article-card-title"><a href="#/post/${post.id}">${escapeHtml(post.title)}</a></h2>
+        <p class="article-card-excerpt">${escapeHtml(getExcerpt(post))}</p>
+        <div class="article-card-meta">
+          <span class="meta-item">${formatDate(post.date)}</span>
+          <div class="article-card-tags">${post.tags.map(t => `<span class="tag">${escapeHtml(t)}</span>`).join('')}</div>
+        </div>
+      </article>`).join('') + `</div>`;
+  }
+  if (courses.length) {
+    html += `<div class="search-section-title">📚 课程 (${courses.length})</div>`;
+    html += courses.map(c => `
+      <div class="search-course-item" onclick="location.hash='#/course/${encodeURIComponent(c.id)}'">
+        <span class="search-item-icon">📚</span>
+        <div class="search-item-main">
+          <div class="search-item-title">${escapeHtml(c.name)}</div>
+          <div class="search-item-sub">${escapeHtml(c.category)} · ${c.fileCount} 个文件</div>
+        </div>
+        <span class="search-item-meta">查看 →</span>
+      </div>`).join('');
+  }
+  if (papers.length) {
+    html += `<div class="search-section-title">📄 论文 (${papers.length})</div>`;
+    html += papers.map(p => `
+      <div class="search-paper-item" onclick="location.hash='#/papers'">
+        <span class="search-item-icon">📄</span>
+        <div class="search-item-main">
+          <div class="search-item-title">${escapeHtml(p.title)}</div>
+          <div class="search-item-sub">${escapeHtml(p.authors || '')}</div>
+        </div>
+        <span class="search-item-meta">查看 →</span>
+      </div>`).join('');
+  }
+  if (materials.length) {
+    html += `<div class="search-section-title">📎 学习资料 (${materials.length})</div>`;
+    html += materials.map(m => `
+      <div class="search-paper-item" onclick="location.hash='#/papers'">
+        <span class="search-item-icon">📎</span>
+        <div class="search-item-main">
+          <div class="search-item-title">${escapeHtml(m.name || '')}</div>
+          <div class="search-item-sub">${escapeHtml(m.subcategory || '')}</div>
+        </div>
+        <span class="search-item-meta">查看 →</span>
+      </div>`).join('');
+  }
+  if (total === 0) {
+    html += `<div class="empty-state"><div class="empty-state-icon">🔍</div><p>没有找到相关内容，换个关键词试试</p></div>`;
+  }
+  return html;
 }
 
 function renderPost(id) {
@@ -249,7 +368,39 @@ function renderPost(id) {
         ${html}
       </div>
     </article>
+    ${renderSeriesNav(post)}
+    <div class="giscus-wrap">
+      <h3 class="giscus-wrap-title">💬 评论与讨论</h3>
+      <div id="giscus-container"></div>
+      ${GISCUS_CONFIG.enabled ? '' : '<div class="giscus-hint">评论基于 GitHub Discussions（免费）。启用方法：在 <code>js/app.js</code> 顶部的 <code>GISCUS_CONFIG</code> 中填入 <code>repoId</code> 和 <code>categoryId</code>（在 <a href="https://giscus.app" target="_blank" rel="noopener">giscus.app</a> 配置后获取），并把 <code>enabled</code> 改为 <code>true</code>。详见「关于」页说明。</div>'}
+    </div>
   `;
+}
+
+function renderSeriesNav(post) {
+  if (!post.series) return '';
+  const series = getAllPosts().filter(p => p.series === post.series)
+    .sort((a, b) => (a.seriesOrder || 0) - (b.seriesOrder || 0));
+  if (series.length < 2) return '';
+  const idx = series.findIndex(p => p.id === post.id);
+  const prev = idx > 0 ? series[idx - 1] : null;
+  const next = idx < series.length - 1 ? series[idx + 1] : null;
+  const dots = series.map((p, i) => `<div class="series-dot ${i < idx ? 'done' : ''} ${i === idx ? 'current' : ''}"></div>`).join('');
+  const list = series.map((p, i) => {
+    const cls = `${i < idx ? 'done' : ''} ${i === idx ? 'current' : ''}`.trim();
+    const inner = i === idx ? escapeHtml(p.title) : `<a href="#/post/${p.id}">${escapeHtml(p.title)}</a>`;
+    return `<li class="${cls}">${inner}</li>`;
+  }).join('');
+  return `
+    <div class="series-nav">
+      <span class="series-nav-badge">📚 系列 · ${escapeHtml(post.series)}</span>
+      <div class="series-progress">${dots}</div>
+      <ol class="series-list">${list}</ol>
+      <div class="series-prev-next">
+        <span>${prev ? `<a href="#/post/${prev.id}">← ${escapeHtml(prev.title)}</a>` : '<span class="disabled">已是第一篇</span>'}</span>
+        <span>${next ? `<a href="#/post/${next.id}">${escapeHtml(next.title)} →</a>` : '<span class="disabled">已是最后一篇</span>'}</span>
+      </div>
+    </div>`;
 }
 
 function renderTags(tag) {
@@ -782,6 +933,9 @@ function renderAbout() {
           <a href="#/courses" class="about-link">📚 课程资料库</a>
           <a href="#/papers" class="about-link">📄 论文与资料</a>
           <a href="#/tags" class="about-link">🏷️ 按标签浏览</a>
+          <a href="#/projects" class="about-link">🛠️ 项目作品</a>
+          <a href="#/archive" class="about-link">🗓️ 文章归档</a>
+          <a href="#/links" class="about-link">🔗 友情链接</a>
         </div>
       </div>
 
@@ -791,6 +945,83 @@ function renderAbout() {
         <p>博客文章存储在 data.js，课程资料索引存储在 courses.js，部署简单到只需一个静态服务器。</p>
         <p>📚 <a href="#/courses">课程资料库</a> 收录了本科到研究生阶段的全部课程资料，共 45 门课程、2483 个文件，按 8 个学科方向分类整理。</p>
       </div>
+    </div>
+  `;
+}
+
+function renderProjects() {
+  const grid = PROJECTS.map(p => `
+    <article class="project-card">
+      <div class="project-card-head">
+        <span class="project-card-icon">${p.icon || '📦'}</span>
+        <span class="project-card-name">${escapeHtml(p.name)}</span>
+        <span class="project-card-status ${p.status === '已完成' ? 'done' : 'doing'}">${escapeHtml(p.status)}</span>
+      </div>
+      <p class="project-card-desc">${escapeHtml(p.description)}</p>
+      ${p.highlights && p.highlights.length ? `
+        <ul class="project-card-highlights">
+          ${p.highlights.map(h => `<li>${escapeHtml(h)}</li>`).join('')}
+        </ul>` : ''}
+      <div class="project-card-tech">
+        ${p.tech.map(t => `<span class="tag">${escapeHtml(t)}</span>`).join('')}
+      </div>
+      <div class="project-card-year">${escapeHtml(p.year || '')} · ${p.tags.map(t => escapeHtml(t)).join(' / ')}</div>
+    </article>
+  `).join('');
+
+  return `
+    <div class="fade-in">
+      <h1 class="page-title">项目作品集</h1>
+      <p class="page-intro">这里记录我做过的工程实践与项目。部分项目因保密要求未公开细节，仅作能力展示。</p>
+      <div class="projects-grid">${grid}</div>
+    </div>
+  `;
+}
+
+function renderArchive() {
+  const posts = getAllPosts().slice().sort((a, b) => b.date.localeCompare(a.date));
+  const byYear = {};
+  posts.forEach(p => {
+    const y = p.date.slice(0, 4);
+    if (!byYear[y]) byYear[y] = [];
+    byYear[y].push(p);
+  });
+  const years = Object.keys(byYear).sort((a, b) => b - a);
+  let html = `<h1 class="page-title">文章归档</h1><p class="page-desc">共 ${posts.length} 篇文章</p>`;
+  years.forEach(y => {
+    html += `<div class="archive-year">${y} 年 (${byYear[y].length})</div>`;
+    byYear[y].forEach(p => {
+      const mm = p.date.slice(5, 7);
+      const dd = p.date.slice(8, 10);
+      html += `
+        <div class="archive-item">
+          <span class="archive-date">${mm}-${dd}</span>
+          <a href="#/post/${p.id}" class="archive-title">${escapeHtml(p.title)}</a>
+        </div>`;
+    });
+  });
+  return html;
+}
+
+function renderLinks() {
+  const links = [
+    { name: 'WorkBuddy', desc: '我使用的 AI 工作助手', url: 'https://workbuddy.cn', icon: '🤖' },
+    { name: 'GitHub', desc: '我的代码与博客源码', url: 'https://github.com/EricZhao666', icon: '🐙' },
+    { name: '交换友链', desc: '想要互换链接？在「关于」页联系我', url: '#/about', icon: '🔗' }
+  ];
+  const cards = links.map(l => `
+    <a class="link-card" href="${l.url}" ${l.url.startsWith('http') ? 'target="_blank" rel="noopener"' : ''}>
+      <span class="link-card-avatar">${l.icon}</span>
+      <span>
+        <div class="link-card-name">${escapeHtml(l.name)}</div>
+        <div class="link-card-desc">${escapeHtml(l.desc)}</div>
+      </span>
+    </a>`).join('');
+  return `
+    <div class="fade-in">
+      <h1 class="page-title">友情链接</h1>
+      <p class="page-intro">志同道合的技术博客与工具。欢迎交换友链。</p>
+      <div class="links-grid">${cards}</div>
     </div>
   `;
 }
@@ -1082,6 +1313,12 @@ function router() {
     if (route === '/editor' && hash.startsWith('/editor')) {
       link.classList.add('active');
     }
+    if (route === '/projects' && hash.startsWith('/projects')) {
+      link.classList.add('active');
+    }
+    if (route === '/archive' && hash.startsWith('/archive')) {
+      link.classList.add('active');
+    }
   });
 
   // Parse route
@@ -1091,6 +1328,7 @@ function router() {
     } else if (hash.startsWith('/post/')) {
       const id = hash.slice('/post/'.length);
       app.innerHTML = renderPost(id);
+      loadGiscus(id);
     } else if (hash.startsWith('/tags')) {
       const parts = hash.split('/');
       const tag = parts.length > 2 ? decodeURIComponent(parts[2]) : null;
@@ -1130,6 +1368,12 @@ function router() {
       }
     } else if (hash === '/about') {
       app.innerHTML = renderAbout();
+    } else if (hash === '/projects') {
+      app.innerHTML = renderProjects();
+    } else if (hash === '/archive') {
+      app.innerHTML = renderArchive();
+    } else if (hash === '/links') {
+      app.innerHTML = renderLinks();
     } else if (hash === '/editor') {
       app.innerHTML = renderEditor();
       setupEditorListeners();
@@ -1287,6 +1531,45 @@ backToTopBtn.addEventListener('click', () => {
 
 // Hash change
 window.addEventListener('hashchange', router);
+
+// ============================================
+// Theme (dark mode)
+// ============================================
+function applyTheme(theme) {
+  document.documentElement.setAttribute('data-theme', theme);
+  const btn = document.getElementById('themeToggle');
+  if (btn) btn.textContent = theme === 'dark' ? '☀️' : '🌙';
+}
+
+(function initTheme() {
+  let theme = localStorage.getItem('theme');
+  if (!theme && window.matchMedia) {
+    theme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+  }
+  applyTheme(theme || 'light');
+  const btn = document.getElementById('themeToggle');
+  if (btn) {
+    btn.addEventListener('click', function () {
+      const cur = document.documentElement.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+      localStorage.setItem('theme', cur);
+      applyTheme(cur);
+      if (GISCUS_CONFIG.enabled && location.hash.indexOf('/post/') === 0) {
+        loadGiscus(location.hash.slice('/post/'.length));
+      }
+    });
+  }
+})();
+
+// ============================================
+// PWA: register service worker for offline
+// ============================================
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', function () {
+    navigator.serviceWorker.register('sw.js').catch(function (err) {
+      console.warn('SW register failed:', err);
+    });
+  });
+}
 
 // Initial render
 router();

@@ -1629,6 +1629,8 @@ GAN（对抗生成）、VAE（变分自编码器）、Diffusion（扩散模型�
     title: '强化学习入门：从MDP到PPO',
     date: '2026-08-03',
     tags: ['强化学习', '机器学习', '技术笔记'],
+    series: '强化学习系列',
+    seriesOrder: 1,
     excerpt: '强化学习是让AI学会"做决策"的框架。本文从马尔可夫决策过程讲起，一步步到当前最主流的PPO算法，帮你建立完整认知。',
     content: `# 强化学习入门：从MDP到PPO
 
@@ -1873,6 +1875,8 @@ model.learn(total_timesteps=1_000_000)
     title: 'SLAM技术全景：从滤波到图优化',
     date: '2026-07-28',
     tags: ['SLAM', '机器人', '技术笔记'],
+    series: 'SLAM 技术系列',
+    seriesOrder: 1,
     excerpt: 'SLAM（同时定位与建图）是移动机器人的核心技术。本文从贝叶斯滤波讲到因子图优化，梳理SLAM的完整技术脉络。',
     content: `# SLAM技术全景：从滤波到图优化
 
@@ -2170,6 +2174,8 @@ SLAM 技术从滤波到图优化，从手工特征到深度学习，一直在演
     title: '强化学习在机器人控制中的应用',
     date: '2026-07-20',
     tags: ['强化学习', '机器人', '技术笔记'],
+    series: '强化学习系列',
+    seriesOrder: 2,
     excerpt: '强化学习让机器人不需要精确的动力学模型就能学会复杂技能。本文梳理RL在机器人控制中的应用实践，从仿真训练到真实部署。',
     content: `# 强化学习在机器人控制中的应用
 
@@ -2469,6 +2475,8 @@ RL 在机器人控制中的价值不在于替代传统控制，而在于**解决
     title: '视觉SLAM前端：特征提取与匹配',
     date: '2026-07-05',
     tags: ['SLAM', '深度学习', '技术笔记'],
+    series: 'SLAM 技术系列',
+    seriesOrder: 2,
     excerpt: '视觉SLAM的前端决定了系统的鲁棒性。本文从ORB特征讲到SuperPoint+SuperGlue，梳理特征提取与匹配的完整技术链路。',
     content: `# 视觉SLAM前端：特征提取与匹配
 
@@ -2775,6 +2783,8 @@ def need_new_keyframe(current_frame, last_keyframe):
     title: '深度学习在SLAM中的应用',
     date: '2026-06-25',
     tags: ['SLAM', '深度学习', '机器学习'],
+    series: 'SLAM 技术系列',
+    seriesOrder: 3,
     excerpt: '传统SLAM的瓶颈在哪？深度学习能解决什么？本文梳理深度学习在SLAM各个环节中的应用现状与落地挑战。',
     content: `# 深度学习在SLAM中的应用
 
