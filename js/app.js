@@ -37,7 +37,8 @@ let paperTab = 'papers';
 let paperSearchQuery = '';
 let activePaperCategory = null;
 let codeLibSearchQuery = '';
-let codeLibFileLimit = 50;
+const CODE_PROJECT_FILE_CAP = 300;
+let currentCodeProjects = [];
 
 // Giscus 评论配置（基于 GitHub Discussions，免费）
 // 启用步骤：1) 在 https://giscus.app 用 GitHub 登录并配置本仓库
@@ -795,42 +796,41 @@ function renderCodeDetail(libId) {
         ${lib.description ? `<div class="course-description">${escapeHtml(lib.description)}</div>` : ''}
         ${lib.guide ? `<div class="code-lib-guide"><div class="code-lib-guide-title">📖 代码库导读</div>${marked.parse(lib.guide)}</div>` : ''}
       </div>
-      <div class="file-list">
-        <div class="file-list-header">文件列表 (${lib.files.length})</div>
-        <div id="course-file-container">
   `;
 
-  const visibleFiles = lib.files.slice(0, codeLibFileLimit);
-  for (let i = 0; i < visibleFiles.length; i++) {
-    const file = visibleFiles[i];
-    const typeClass = getFileTypeClass(file.type);
-    const filePath = (file.path || '').replace(/\\/g, '/');
-    const relPath = file.relPath || file.path || '';
-    _filePathCache.push(filePath);
-    html += `
-      <div class="file-item file-item-link" data-fidx="${_filePathCache.length - 1}">
-        <span class="file-type-badge ${typeClass}">${escapeHtml(file.type)}</span>
-        <span class="file-name">${escapeHtml(file.name)}</span>
-        <span class="file-path">${escapeHtml(relPath)}</span>
-        <span class="file-size">${file.sizeFormatted}</span>
-        <span class="file-open-icon">🔗</span>
-      </div>
-    `;
+  // 按项目(第一级目录)分组；默认折叠，点击项目名展开
+  const _groups = {};
+  const _root = [];
+  for (const f of lib.files) {
+    const rp = f.relPath || f.path || '';
+    const parts = rp.split('/');
+    if (parts.length > 1) {
+      const key = parts[0];
+      (_groups[key] = _groups[key] || []).push(f);
+    } else {
+      _root.push(f);
+    }
   }
-
-  html += `</div>`;
-
-  if (lib.files.length > codeLibFileLimit) {
-    html += `
-      <div id="course-load-more" style="text-align: center; padding: 16px;">
-        <button class="load-more-btn" onclick="loadMoreCodeFiles('${escapeHtml(libId)}')">
-          加载更多（剩余 ${lib.files.length - codeLibFileLimit} 个文件）
-        </button>
-      </div>
-    `;
-  }
+  currentCodeProjects = Object.keys(_groups)
+    .sort((a, b) => _groups[b].length - _groups[a].length)
+    .map(k => ({ name: k, files: _groups[k] }));
+  const _rootHtml = _root.map(f => renderCodeFileItem(f)).join('');
 
   html += `
+      <div class="file-list">
+        <div class="file-list-header">按项目分类（${currentCodeProjects.length} 个项目${_root.length ? '，另有 ' + _root.length + ' 个根目录文件' : ''}）— 点击项目名展开</div>
+        <div id="code-project-container">
+          ${currentCodeProjects.map((proj, pi) => `
+            <div class="code-project">
+              <div class="code-project-header" id="code-proj-hdr-${pi}" onclick="toggleCodeProject(${pi})">
+                <span class="code-project-name">📁 ${escapeHtml(proj.name)}</span>
+                <span class="code-project-count">${proj.files.length} 个文件 ▾</span>
+              </div>
+              <div class="code-project-body" id="code-proj-body-${pi}" style="display:none"></div>
+            </div>
+          `).join('')}
+          ${_rootHtml}
+        </div>
       </div>
       <div style="margin-top: 20px; padding: 12px 16px; background: var(--color-bg); border-radius: var(--radius-sm); font-size: 0.82rem; color: var(--color-text-muted);">
         ${_isLocal ? '💡 点击任意文件可在本地打开，文件保留在原始目录，未做任何复制' : '💡 在线版仅可浏览文件列表。如需打开文件，请在本地运行博客（<code>python -m http.server</code>），或点击文件复制路径到资源管理器打开。'}
@@ -841,24 +841,12 @@ function renderCodeDetail(libId) {
   return html;
 }
 
-window.loadMoreCodeFiles = function(libId) {
-  const lib = CODE_LIBS.find(l => l.id === libId);
-  if (!lib) return;
-  const container = document.getElementById('course-file-container');
-  if (!container) return;
-
-  const prevLimit = codeLibFileLimit;
-  codeLibFileLimit += 50;
-  const nextBatch = lib.files.slice(prevLimit, codeLibFileLimit);
-
-  let html = '';
-  for (let i = 0; i < nextBatch.length; i++) {
-    const file = nextBatch[i];
-    const typeClass = getFileTypeClass(file.type);
-    const filePath = (file.path || '').replace(/\\/g, '/');
-    const relPath = file.relPath || file.path || '';
-    _filePathCache.push(filePath);
-    html += `
+function renderCodeFileItem(file) {
+  const typeClass = getFileTypeClass(file.type);
+  const filePath = (file.path || '').replace(/\\/g, '/');
+  const relPath = file.relPath || file.path || '';
+  _filePathCache.push(filePath);
+  return `
       <div class="file-item file-item-link" data-fidx="${_filePathCache.length - 1}">
         <span class="file-type-badge ${typeClass}">${escapeHtml(file.type)}</span>
         <span class="file-name">${escapeHtml(file.name)}</span>
@@ -866,22 +854,50 @@ window.loadMoreCodeFiles = function(libId) {
         <span class="file-size">${file.sizeFormatted}</span>
         <span class="file-open-icon">🔗</span>
       </div>
-    `;
-  }
-  container.insertAdjacentHTML('beforeend', html);
+  `;
+}
 
-  const loadMoreDiv = document.getElementById('course-load-more');
-  if (codeLibFileLimit >= lib.files.length) {
-    if (loadMoreDiv) loadMoreDiv.remove();
-  } else {
-    if (loadMoreDiv) {
-      loadMoreDiv.innerHTML = `
-        <button class="load-more-btn" onclick="loadMoreCodeFiles('${escapeHtml(libId)}')">
-          加载更多（剩余 ${lib.files.length - codeLibFileLimit} 个文件）
-        </button>
-      `;
-    }
+window.toggleCodeProject = function(pi) {
+  const proj = currentCodeProjects[pi];
+  if (!proj) return;
+  const body = document.getElementById('code-proj-body-' + pi);
+  if (!body) return;
+  const hidden = body.style.display === 'none' || body.style.display === '';
+  if (body.dataset.loaded === '1') {
+    body.style.display = hidden ? 'block' : 'none';
+    const hdr = document.getElementById('code-proj-hdr-' + pi);
+    if (hdr) hdr.querySelector('.code-project-count').textContent = proj.files.length + ' 个文件 ' + (hidden ? '▴' : '▾');
+    return;
   }
+  let html = '';
+  const files = proj.files;
+  const limit = Math.min(files.length, CODE_PROJECT_FILE_CAP);
+  for (let i = 0; i < limit; i++) html += renderCodeFileItem(files[i]);
+  if (files.length > limit) {
+    html += `<div class="code-more" onclick="loadMoreProjFiles(${pi}, ${limit})">展开剩余 ${files.length - limit} 个文件</div>`;
+  }
+  body.innerHTML = html;
+  body.dataset.loaded = '1';
+  body.style.display = 'block';
+  const hdr = document.getElementById('code-proj-hdr-' + pi);
+  if (hdr) hdr.querySelector('.code-project-count').textContent = proj.files.length + ' 个文件 ▴';
+};
+
+window.loadMoreProjFiles = function(pi, from) {
+  const proj = currentCodeProjects[pi];
+  if (!proj) return;
+  const body = document.getElementById('code-proj-body-' + pi);
+  if (!body) return;
+  let html = '';
+  const files = proj.files;
+  const limit = Math.min(files.length, from + CODE_PROJECT_FILE_CAP);
+  for (let i = from; i < limit; i++) html += renderCodeFileItem(files[i]);
+  const more = body.querySelector('.code-more');
+  if (more) more.remove();
+  if (files.length > limit) {
+    html += `<div class="code-more" onclick="loadMoreProjFiles(${pi}, ${limit})">展开剩余 ${files.length - limit} 个文件</div>`;
+  }
+  body.insertAdjacentHTML('beforeend', html);
 };
 
 // ============================================
