@@ -13,7 +13,7 @@ const CODE_LIBS = [
     "fileCount": 827,
     "totalSize": 51837846,
     "totalSizeFormatted": "49.4 MB",
-    "description": "",
+    "description": "MATLAB 课程作业与项目备份：含信号处理（EE311）、机器人正运动学仿真（PUMA / SCARA 六轴机械臂的 D-H 建模与动画）、基于 IMU + 位置观测的误差卡尔曼滤波（EKF）融合、魔方求解器等。是《机器人学导论》《SLAM 技术全景》等文章里数学公式的代码落地。",
     "files": [
       {
         "name": "assignment2_calculation.m",
@@ -6641,7 +6641,7 @@ const CODE_LIBS = [
     "fileCount": 162,
     "totalSize": 23690431,
     "totalSizeFormatted": "22.6 MB",
-    "description": "",
+    "description": "Python 机器学习与具身智能实践：包含按 OpenVLA 思路手写的「迷你 VLA」（看图 + 读指令 → 出机械臂动作）、MindSpore 版 ResNet50 图像分类、轻量 MobileNetV2 分类模型，以及评论 / 微信等小项目。对应《VLA 模型入门》《机器学习入门》等文章。",
     "files": [
       {
         "name": "Dockerfile",
@@ -7949,7 +7949,7 @@ const CODE_LIBS = [
     "fileCount": 5490,
     "totalSize": 1610366738,
     "totalSizeFormatted": "1.50 GB",
-    "description": "",
+    "description": "历年学习资料与课程项目大杂烩：覆盖机器学习（含魔方颜色识别等 CV 小项目）、MindSpore、人工智能、后端开发（Spring Boot / Django / MyBatis）、MATLAB 与数据库等，文件量大（1.5 GB / 5490 个），偏课程作业与练手代码。",
     "files": [
       {
         "name": "manage.py",
@@ -51881,7 +51881,7 @@ const CODE_LIBS = [
     "fileCount": 34,
     "totalSize": 187419,
     "totalSizeFormatted": "183.0 KB",
-    "description": "",
+    "description": "强化学习练手代码：纯 NumPy 实现的 Q-Learning，以及基于 PyTorch 的 PPO（离散动作 PPO-PyTorch/PPO.py 与连续动作 PPO_continuous.py），在 LunarLander 等 Gym 环境上训练。是《强化学习入门：从 MDP 到 PPO》一文的配套代码。",
     "files": [
       {
         "name": "README.md",
@@ -52165,7 +52165,7 @@ const CODE_LIBS = [
     "fileCount": 1,
     "totalSize": 1896989,
     "totalSizeFormatted": "1.8 MB",
-    "description": "",
+    "description": "数学建模参赛材料：2021 年深圳杯 / 国赛论文《C2021_赵睿_刘博_王唯勤》及支撑材料，记录一次完整建模参赛过程。",
     "files": [
       {
         "name": "C2021_赵睿_刘博_王唯勤.pdf",
@@ -52185,7 +52185,7 @@ const CODE_LIBS = [
     "fileCount": 1285,
     "totalSize": 225921731,
     "totalSizeFormatted": "215.5 MB",
-    "description": "",
+    "description": "综合代码仓库（Java / Web 为主）：包含银行秒杀、聊天室、小说网站、外卖系统、中文 OCR（chineseocr_lite）等 Spring Boot / Web 项目，以及数据结构课程作业（AVL 自平衡树、哈希、哲学家就餐等并发同步）。",
     "files": [
       {
         "name": "CallFrame.py",

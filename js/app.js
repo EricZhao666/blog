@@ -756,6 +756,7 @@ function renderCode() {
             <span class="meta-item">📁 ${lib.fileCount} 个文件</span>
             <span class="meta-item">💾 ${lib.totalSizeFormatted}</span>
           </div>
+          ${lib.description ? `<div class="course-card-desc">${escapeHtml(lib.description)}</div>` : ''}
         </div>
       `;
     }
@@ -790,6 +791,7 @@ function renderCodeDetail(libId) {
           <span class="meta-item">📁 ${lib.fileCount} 个文件</span>
           <span class="meta-item">💾 ${lib.totalSizeFormatted}</span>
         </div>
+        ${lib.description ? `<div class="course-description">${escapeHtml(lib.description)}</div>` : ''}
       </div>
       <div class="file-list">
         <div class="file-list-header">文件列表 (${lib.files.length})</div>

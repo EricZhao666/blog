@@ -152,7 +152,50 @@ OpenVLA 是开源VLA的里程碑：
 
 VLA模型正在快速演进。从RT-1的可行性验证，到RT-2的推理能力突破，再到OpenVLA的开源 democratization——这个领域每隔几个月就有新进展。
 
-对于做产线智能化的同学来说，值得关注的是：**如何把VLA的通用能力适配到工业场景的精度和可靠性要求**。这中间的gap，就是我们的机会。`
+对于做产线智能化的同学来说，值得关注的是：**如何把VLA的通用能力适配到工业场景的精度和可靠性要求**。这中间的gap，就是我们的机会。
+
+## 我的相关实战代码
+
+> 我根据 OpenVLA 的思路手写过一份“迷你 VLA”，把“图像 + 指令 → 动作”端到端跑通。完整代码见 [代码库：pythoncodeplace](#/codelib/pythoncodeplace)。
+
+### 1. 视觉 - 语言 - 动作 token 拼接（核心）
+
+\`openvla/models/openvla.py\` 里的 \`OpenVLAMiniLite\`，把视觉特征投影成 token，和语言 token、动作 token 拼到一起喂给 Transformer：
+
+\`\`\`python
+# 1. 视觉编码 -> 投影到 token 空间
+v = self.vision_proj(self.vision(image))        # (B, 1, 768)
+# 2. 三类 token 拼接（OpenVLA 的核心思想）
+tokens = torch.cat([v, lang_embeds, action_embeds], dim=1)
+# 3. Transformer 融合
+h = self.transformer(tokens, attn_mask)
+# 4. 取最后一个 token 预测动作
+action = self.action_head(h[:, -1, :])
+\`\`\`
+
+**含义**：这正是 RT-2 / OpenVLA“动作即 token”的思路——图像、语言、动作都被当作同一序列里的 token，让一个 Transformer 统一处理。和文章里“把三个模态端到端连起来”完全对应。
+
+### 2. 动作头（Action Head）
+
+\`openvla/models/action_head.py\` 是一个极简 MLP，把融合后的 768 维特征映射到 7 维机械臂动作：
+
+\`\`\`python
+class ActionHead(nn.Module):
+    def __init__(self, d_model=768, d_action=7):
+        self.mlp = nn.Sequential(
+            nn.Linear(d_model, 256), nn.GELU(),
+            nn.Linear(256, d_action))
+    def forward(self, h):
+        return self.mlp(h)
+\`\`\`
+
+### 3. 从零训练一个迷你 VLA
+
+\`openvla/full_openvla.py\` 在 CartPole 环境上完整演示了：用 Gym 自动采集（图像, 指令, 动作）数据 → 字符级文本编码 → CNN + GRU 融合 → CrossEntropy 训练。是理解 VLA 数据流最好的最小可运行样例。
+
+完整源码 → [代码库：pythoncodeplace](#/codelib/pythoncodeplace)
+
+`
   },
 
   {
@@ -598,7 +641,35 @@ def check_singularity(J, threshold=1e-6):
 2. **正运动学**：关节角 → 末端位姿
 3. **雅可比**：关节速度 → 末端速度
 
-这些是后面动力学、控制和规划的基础。建议配合代码实现来理解——光看公式很容易忘，自己写一遍正运动学和雅可比计算，理解会深很多。`
+这些是后面动力学、控制和规划的基础。建议配合代码实现来理解——光看公式很容易忘，自己写一遍正运动学和雅可比计算，理解会深很多。
+
+## 我的相关实战代码
+
+> 文章前三章的变换矩阵、D-H 参数、正运动学，我在 PUMA 260 六轴机械臂仿真里把它们变成了会动的代码。完整代码见 [代码库：matlab备份](#/codelib/matlab_backup)。
+
+### 1. 用 D-H 参数连乘得到机械臂位姿
+
+\`robot_lab2_20123540/puma_robot_20123540.m\` 用 6 个 D-H 变换矩阵 \`A1..A6\` 连乘，得到从基座到末端每根坐标系原点的位置，再用 \`plot3\` 画出机械臂并动画：
+
+\`\`\`matlab
+A1 = dh_20123540(0, 90, a, theta1);
+A2 = dh_20123540(c, 0, -b, theta2);
+% ... A3..A6 同理
+o1 = A1 * o;
+o2 = A1 * A2 * o;
+o6 = A1 * A2 * A3 * A4 * A5 * A6 * o;   % 末端执行器原点
+points_to_plot = [o0 o1 o2 o3 o4 o5 o6];
+\`\`\`
+
+**含义**：这就是文章里正运动学方程 \`^0_6 T = ^0_1 T · ^1_2 T · ... · ^5_6 T\` 的代码版——\`dh_*\` 函数按 (a, alpha, d, theta) 四个参数构造单关节齐次变换矩阵，\`o6\` 就是末端在基座坐标系下的位置。把 \`theta1..6\` 随时间变化，机械臂就动起来了。
+
+### 2. 单关节 D-H 矩阵
+
+\`dh_20123540.m\` 实现了那个经典的四参数齐次变换矩阵构造，是正运动学的最小积木。
+
+完整源码 → [代码库：matlab备份](#/codelib/matlab_backup)
+
+`
   },
 
   {
@@ -1621,7 +1692,48 @@ GAN（对抗生成）、VAE（变分自编码器）、Diffusion（扩散模型�
 应用: Kaggle 比赛 → 自己的项目
 \`\`\`
 
-机器学习的核心不是调包，而是理解"数据→特征→模型→评估"这条链路。工具会变，但这条链路不会变。`
+机器学习的核心不是调包，而是理解"数据→特征→模型→评估"这条链路。工具会变，但这条链路不会变。
+
+## 我的相关实战代码
+
+> 这些是我在课程 / 项目中真实写过的机器学习代码：一个轻量图像分类模型，和一个用聚类做魔方颜色识别的 CV 小项目。
+
+### 1. MobileNetV2（轻量图像分类）
+
+\`predict/predict/model_v2.py\` 实现了 MobileNetV2 的核心——**倒置残差块（Inverted Residual）**，用“逐通道卷积 + 1×1 升维 / 降维”把计算量压到极低，适合边缘部署：
+
+\`\`\`python
+class InvertedResidual(nn.Module):
+    def __init__(self, in_channel, out_channel, stride, expand_ratio):
+        hidden = in_channel * expand_ratio
+        layers = []
+        if expand_ratio != 1:
+            layers.append(ConvBNReLU(in_channel, hidden, 1))              # 1x1 升维
+        layers.append(ConvBNReLU(hidden, hidden, stride, groups=hidden))  # 3x3 逐通道
+        layers.append(nn.Conv2d(hidden, out_channel, 1, bias=False))      # 1x1 降维
+        self.conv = nn.Sequential(*layers)
+    def forward(self, x):
+        return x + self.conv(x) if self.use_shortcut else self.conv(x)
+\`\`\`
+
+**含义**：和普通残差块相反，它先“膨胀”通道再做深度可分离卷积，最后“压缩”回去——这正是 MobileNet 能在手机上实时推理的关键，也呼应文章里“边缘端用蒸馏 / 量化后的轻量模型”。
+
+### 2. K-Means 做魔方颜色识别（无监督）
+
+\`学习/机器学习/代码/cube_robot/kmeans.py\` 用 K-Means 把魔方某个小面的像素聚成 3 类，输出颜色占比直方图，从而判断每个块是什么颜色：
+
+\`\`\`python
+image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB).reshape(-1, 3)
+clt = KMeans(n_clusters=3); clt.fit(image)
+hist, _ = np.histogram(clt.labels_, bins=len(np.unique(clt.labels_)) + 1)
+hist = hist.astype("float") / hist.sum()   # 每类颜色占比
+\`\`\`
+
+**含义**：完全没用标签，仅靠“颜色相近的像素聚在一起”就把魔方色块分出来了——这就是文章里“无监督学习：发现数据结构”的活例子。
+
+完整源码 → [代码库：pythoncodeplace](#/codelib/pythoncodeplace) · [代码库：学习](#/codelib/study)
+
+`
   },
 
   {
@@ -1867,7 +1979,37 @@ model.learn(total_timesteps=1_000_000)
 论文: PPO → SAC → Dreamer 系列
 \`\`\`
 
-强化学习的学习曲线很陡，但一旦理解了"智能体通过试错优化策略"这个框架，后面的算法都是在这个框架上的改进。`
+强化学习的学习曲线很陡，但一旦理解了"智能体通过试错优化策略"这个框架，后面的算法都是在这个框架上的改进。
+
+## 我的相关实战代码
+
+> 下面是我早年练手强化学习时真实写过的代码，和上文的算法一一对应。完整文件可在 [代码库：强化学习](#/codelib/reinforce_learning) 浏览。
+
+### 1. PPO 的 Clipped Surrogate Loss（PyTorch）
+
+文件 \`PPO-PyTorch/PPO.py\` 里，最关键的不是网络结构，而是这段“裁剪损失”——它正是文章里讲的 PPO 核心：
+
+\`\`\`python
+# 重要性采样比率：新策略 / 旧策略
+ratios = torch.exp(logprobs - old_logprobs.detach())
+# 优势函数
+advantages = rewards - state_values.detach()
+surr1 = ratios * advantages
+# 裁剪：把更新幅度限制在 [1-eps, 1+eps]
+surr2 = torch.clamp(ratios, 1 - self.eps_clip, 1 + self.eps_clip) * advantages
+# 取较小值 = 悲观更新，防止一步更新太激进
+loss = -torch.min(surr1, surr2) + 0.5 * self.MseLoss(state_values, rewards) - 0.01 * dist_entropy
+\`\`\`
+
+**含义**：\`ratios\` 衡量新策略相对旧策略偏离了多少；\`clamp\` 把它“削”在 0.8~1.2 之间，避免一次更新把策略带崩。\`-0.01 * dist_entropy\` 是熵正则，鼓励策略保持探索。整个 \`ActorCritic\` 是一个共享 backbone 的双头网络：actor 输出动作概率，critic 输出状态价值。
+
+### 2. 连续动作版本
+
+同目录的 \`PPO_continuous.py\` 把离散 \`Softmax\` 换成高斯分布（输出动作均值 + 对数标准差），用 \`Normal\` 分布采样，适配机械臂这类连续控制任务。训练循环跑在 \`LunarLander-v2\` 等 Gym 环境上。
+
+想直接看源码？→ [代码库：强化学习](#/codelib/reinforce_learning)
+
+`
   },
 
   {
@@ -2166,7 +2308,34 @@ class PoseNet(nn.Module):
 
 ## 总结
 
-SLAM 技术从滤波到图优化，从手工特征到深度学习，一直在演进。但核心问题没变——**在不确定性中做最优估计**。理解贝叶斯估计和图优化这两个基础，就能快速上手各种SLAM系统。`
+SLAM 技术从滤波到图优化，从手工特征到深度学习，一直在演进。但核心问题没变——**在不确定性中做最优估计**。理解贝叶斯估计和图优化这两个基础，就能快速上手各种SLAM系统。
+
+## 我的相关实战代码
+
+> 文章里那套 EKF-SLAM 数学，我在 MATLAB 课程作业里手写过一遍可运行的 EKF 融合。完整代码见 [代码库：matlab备份](#/codelib/matlab_backup)。
+
+### 1. 误差卡尔曼滤波（EKF）更新步
+
+\`EKF_project_Finish/ekf.m\` 维护一个 15 维状态 \`[位置, 速度, 欧拉角, 陀螺零偏, 加速度零偏]\`，融合 IMU 与位置观测。更新步就是文章里那两行卡尔曼公式的代码版：
+
+\`\`\`matlab
+% 卡尔曼增益
+K = P * H' * (H * P * H' + R)^(-1);
+% 状态更新
+x = x + K * (z - H * x);
+% 协方差更新
+P = (eye(size(K, 1)) - K * H) * P;
+\`\`\`
+
+**含义**：\`H\` 把 15 维状态投影到 3 维位置观测；\`K\` 权衡“模型预测”和“传感器测量”的信任度；\`P\` 是状态不确定性，每步都被更新。预测步则是 \`P = Fx * P * Fx' + Fw * Q * Fw'\`（雅可比线性化）。这和文章里 \`EKF-SLAM\` 的 \`predict / update\` 完全同构，只是把“路标”换成了“IMU 零偏”。
+
+### 2. IMU 运动模型
+
+同目录 \`propagation.m\` 负责预测步的状态递推（IMU 积分），两个文件配合就是一套完整的“预测 - 更新”循环。
+
+完整源码 → [代码库：matlab备份](#/codelib/matlab_backup)
+
+`
   },
 
   {
