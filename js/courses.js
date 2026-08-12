@@ -20455,3 +20455,12 @@ const COURSES = [
     "description": "港大铁路工程课程（MECH7014），涵盖铁路系统设计、轨道结构、列车动力学及铁路运营管理，含 12 个模块完整讲义与历年试卷。"
   }
 ];
+
+// Compute COURSE_CATEGORIES from COURSES array
+const COURSE_CATEGORIES = {};
+COURSES.forEach(function(c) {
+  if (!COURSE_CATEGORIES[c.category]) {
+    COURSE_CATEGORIES[c.category] = { count: 0 };
+  }
+  COURSE_CATEGORIES[c.category].count++;
+});

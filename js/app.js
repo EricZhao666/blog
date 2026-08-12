@@ -5,18 +5,25 @@
 // ============================================
 // Config
 // ============================================
-marked.setOptions({
-  breaks: true,
-  gfm: true,
-  highlight: function (code, lang) {
-    if (lang && hljs.getLanguage(lang)) {
-      try {
-        return hljs.highlight(code, { language: lang }).value;
-      } catch (e) {}
+try {
+  marked.setOptions({
+    breaks: true,
+    gfm: true,
+    highlight: function (code, lang) {
+      if (typeof hljs !== 'undefined' && lang && hljs.getLanguage(lang)) {
+        try {
+          return hljs.highlight(code, { language: lang }).value;
+        } catch (e) {}
+      }
+      if (typeof hljs !== 'undefined') {
+        try { return hljs.highlightAuto(code).value; } catch (e) {}
+      }
+      return code;
     }
-    return hljs.highlightAuto(code).value;
-  }
-});
+  });
+} catch (e) {
+  console.warn('marked/hljs init failed:', e);
+}
 
 // ============================================
 // State
@@ -30,9 +37,61 @@ let paperTab = 'papers';
 let paperSearchQuery = '';
 let activePaperCategory = null;
 
+// File path cache — paths stored in JS, NOT in HTML attributes
+// This prevents browsers from trying to resolve/load file URLs during rendering
+var _filePathCache = [];
+
+// Detect if running locally (file:// open only works on localhost)
+var _isLocal = location.hostname === 'localhost' || location.hostname === '127.0.0.1' || location.protocol === 'file:';
+
+// Event delegation: single click listener on document for all [data-fidx] elements
+document.addEventListener('click', function(e) {
+  var item = e.target.closest('[data-fidx]');
+  if (item) {
+    e.preventDefault();
+    e.stopPropagation();
+    var idx = parseInt(item.getAttribute('data-fidx'), 10);
+    var fp = _filePathCache[idx];
+    if (!fp) return;
+    if (_isLocal) {
+      window.open('file:///' + encodeURI(fp), '_blank');
+    } else {
+      // Online: show path in a modal so user can find the file locally
+      showFilePathModal(fp);
+    }
+  }
+});
+
+// Modal for online users: shows file path, explains local-only access
+function showFilePathModal(filePath) {
+  var existing = document.getElementById('file-path-modal');
+  if (existing) existing.remove();
+  var modal = document.createElement('div');
+  modal.id = 'file-path-modal';
+  modal.style.cssText = 'position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.5);z-index:9999;display:flex;align-items:center;justify-content:center;padding:20px;';
+  modal.innerHTML =
+    '<div style="background:#fff;border-radius:12px;padding:28px;max-width:520px;width:100%;box-shadow:0 8px 32px rgba(0,0,0,0.2);">' +
+    '<h3 style="margin:0 0 12px;font-size:1.1rem;">📂 文件路径</h3>' +
+    '<p style="color:#666;font-size:0.85rem;margin:0 0 16px;">在线版无法直接打开本地文件。请在本地运行博客后点击打开，或复制路径到文件资源管理器：</p>' +
+    '<div style="background:#f5f5f5;border-radius:8px;padding:12px;font-family:monospace;font-size:0.8rem;word-break:break-all;margin:0 0 16px;user-select:all;cursor:pointer;" onclick="this.select();document.execCommand(\'copy\');" title="点击复制">' +
+    escapeHtml(filePath) +
+    '</div>' +
+    '<div style="display:flex;gap:8px;justify-content:flex-end;">' +
+    '<button onclick="document.getElementById(\'file-path-modal\').remove();" style="padding:8px 20px;border:1px solid #ddd;background:#fff;border-radius:6px;cursor:pointer;font-size:0.9rem;">关闭</button>' +
+    '</div></div>';
+  modal.addEventListener('click', function(e) { if (e.target === modal) modal.remove(); });
+  document.body.appendChild(modal);
+}
+
 // ============================================
 // Utilities
 // ============================================
+
+// Merge built-in posts with user-published posts
+function getAllPosts() {
+  return (typeof USER_POSTS !== 'undefined' ? POSTS.concat(USER_POSTS) : POSTS);
+}
+
 function formatDate(dateStr) {
   const d = new Date(dateStr);
   const months = ['一月', '二月', '三月', '四月', '五月', '六月',
@@ -54,7 +113,7 @@ function getExcerpt(post) {
 
 function getAllTags() {
   const tagMap = {};
-  POSTS.forEach(post => {
+  getAllPosts().forEach(post => {
     post.tags.forEach(tag => {
       tagMap[tag] = (tagMap[tag] || 0) + 1;
     });
@@ -104,7 +163,7 @@ function escapeHtml(text) {
 // ============================================
 
 function renderHome() {
-  const filtered = filterPosts(POSTS, searchQuery, null);
+  const filtered = filterPosts(getAllPosts(), searchQuery, null);
 
   if (filtered.length === 0) {
     return `
@@ -145,7 +204,7 @@ function renderHome() {
 }
 
 function renderPost(id) {
-  const post = POSTS.find(p => p.id === id);
+  const post = getAllPosts().find(p => p.id === id);
   if (!post) {
     return `
       <div class="empty-state">
@@ -207,7 +266,7 @@ function renderTags(tag) {
   let content = '';
 
   if (tag) {
-    const filtered = filterPosts(POSTS, null, tag);
+    const filtered = filterPosts(getAllPosts(), null, tag);
     content = `
       <h1 class="page-title">标签: ${escapeHtml(tag)}</h1>
       <p class="page-desc">共 ${filtered.length} 篇文章</p>
@@ -418,6 +477,9 @@ function renderCourseDetail(courseId) {
     `;
   }
 
+  // Reset file path cache for this page
+  _filePathCache = [];
+
   let html = `
     <a href="#/courses" class="article-back">
       <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -443,17 +505,20 @@ function renderCourseDetail(courseId) {
   `;
 
   const visibleFiles = course.files.slice(0, courseFileLimit);
-  for (const file of visibleFiles) {
+  for (let i = 0; i < visibleFiles.length; i++) {
+    const file = visibleFiles[i];
     const typeClass = getFileTypeClass(file.type);
     const filePath = (file.path || '').replace(/\\/g, '/');
     const relPath = file.relPath || file.path || '';
+    // Store path in JS array, use index in HTML
+    _filePathCache.push(filePath);
     html += `
-      <div class="file-item file-item-link" data-filepath="${escapeHtml(filePath)}" title="点击打开: ${escapeHtml(file.path || '')}">
+      <div class="file-item file-item-link" data-fidx="${_filePathCache.length - 1}">
         <span class="file-type-badge ${typeClass}">${escapeHtml(file.type)}</span>
         <span class="file-name">${escapeHtml(file.name)}</span>
         <span class="file-path">${escapeHtml(relPath)}</span>
         <span class="file-size">${file.sizeFormatted}</span>
-        <span class="file-open-icon" title="本地打开">🔗</span>
+        <span class="file-open-icon">🔗</span>
       </div>
     `;
   }
@@ -473,7 +538,7 @@ function renderCourseDetail(courseId) {
   html += `
       </div>
       <div style="margin-top: 20px; padding: 12px 16px; background: var(--color-bg); border-radius: var(--radius-sm); font-size: 0.82rem; color: var(--color-text-muted);">
-        💡 点击任意文件可在本地打开，文件保留在原始目录，未做任何复制
+        ${_isLocal ? '💡 点击任意文件可在本地打开，文件保留在原始目录，未做任何复制' : '💡 在线版仅可浏览文件列表。如需打开文件，请在本地运行博客（<code>python -m http.server</code>），或点击文件复制路径到资源管理器打开。'}
       </div>
     </div>
   `;
@@ -501,6 +566,7 @@ function getPaperCategoryIcon(cat) {
 }
 
 function renderPapers() {
+  _filePathCache = [];
   let html = `
     <div class="papers-page">
       <h1 class="page-title">📄 论文与学习资料</h1>
@@ -583,9 +649,11 @@ function renderPapersTab() {
       `;
       for (const paper of grouped[cat]) {
         const typeClass = paper.type || 'other';
-        const pdfLink = paper.pdfPath
-          ? `<span class="paper-pdf-link" data-filepath="${escapeHtml(paper.pdfPath.replace(/\\/g, '/'))}" onclick="event.stopPropagation(); window.open('file:///' + encodeURI(this.getAttribute('data-filepath')), '_blank');">🔗 PDF</span>`
-          : '';
+        let pdfLink = '';
+        if (paper.pdfPath) {
+          _filePathCache.push(paper.pdfPath.replace(/\\/g, '/'));
+          pdfLink = `<span class="paper-pdf-link" data-fidx="${_filePathCache.length - 1}">🔗 PDF</span>`;
+        }
         const venue = paper.venue ? `<span class="meta-item">📰 ${escapeHtml(paper.venue)}</span>` : '';
         const date = paper.date ? `<span class="meta-item">📅 ${escapeHtml(paper.date)}</span>` : '';
 
@@ -654,8 +722,9 @@ function renderMaterialsTab() {
       for (const m of materials) {
         const typeClass = getFileTypeClass(m.type);
         const filePath = (m.path || '').replace(/\\/g, '/');
+        _filePathCache.push(filePath);
         html += `
-          <div class="file-item file-item-link" data-filepath="${escapeHtml(filePath)}" title="${escapeHtml(m.path || '')}">
+          <div class="file-item file-item-link" data-fidx="${_filePathCache.length - 1}">
             <span class="file-type-badge ${typeClass}">${escapeHtml(m.type)}</span>
             <span class="file-name">${escapeHtml(m.name)}</span>
             ${m.subcategory ? `<span class="file-path">${escapeHtml(m.subcategory)}</span>` : ''}
@@ -727,6 +796,255 @@ function renderAbout() {
 }
 
 // ============================================
+// Editor
+// ============================================
+
+function renderEditor() {
+  var draft = {};
+  try { draft = JSON.parse(localStorage.getItem('blog_draft') || '{}'); } catch (e) {}
+  var token = localStorage.getItem('gh_token') || '';
+  var owner = localStorage.getItem('gh_owner') || 'EricZhao666';
+  var repo = localStorage.getItem('gh_repo') || 'blog';
+
+  return '' +
+    '<div class="editor-page">' +
+    '  <h1 class="page-title">\u270F\uFE0F \u65B0\u5EFA\u6587\u7AE0</h1>' +
+    '  <p class="page-desc">\u5728\u6D4F\u89C8\u5668\u4E2D\u7F16\u5199 Markdown\uFF0C\u4E00\u952E\u53D1\u5E03\u5230 GitHub\uFF0CGitHub Pages \u81EA\u52A8\u66F4\u65B0</p>' +
+    '  <div class="editor-form">' +
+    '    <input type="text" id="editorTitle" class="editor-input editor-input-title" placeholder="\u6587\u7AE0\u6807\u9898" value="' + escapeHtml(draft.title || '') + '">' +
+    '    <input type="text" id="editorTags" class="editor-input editor-input-tags" placeholder="\u6807\u7B7E\uFF08\u9017\u53F7\u5206\u9694\uFF09\uFF0C\u5982\uFF1A\u673A\u68B0\u81C2, VLA, \u6280\u672F\u7B14\u8BB0" value="' + escapeHtml(draft.tags || '') + '">' +
+    '    <textarea id="editorExcerpt" class="editor-input editor-textarea-excerpt" placeholder="\u6458\u8981\uFF08\u53EF\u9009\uFF0C\u7559\u7A7A\u81EA\u52A8\u751F\u6210\uFF09" rows="2">' + escapeHtml(draft.excerpt || '') + '</textarea>' +
+    '    <div class="editor-split">' +
+    '      <div class="editor-pane">' +
+    '        <div class="editor-pane-label">Markdown \u7F16\u8F91</div>' +
+    '        <textarea id="editorContent" class="editor-textarea-content" placeholder="\u5728\u8FD9\u91CC\u8F93\u5165 Markdown \u5185\u5BB9...\n\n# \u6807\u9898\n\n\u6B63\u6587...\n\n```python\nprint(\"hello\")\n```">' + escapeHtml(draft.content || '') + '</textarea>' +
+    '      </div>' +
+    '      <div class="editor-pane">' +
+    '        <div class="editor-pane-label">\u5B9E\u65F6\u9884\u89C8</div>' +
+    '        <div id="editorPreview" class="editor-preview markdown-body"></div>' +
+    '      </div>' +
+    '    </div>' +
+    '    <div class="editor-actions">' +
+    '      <button class="editor-btn editor-btn-secondary" onclick="saveDraft()">\u{1F4BE} \u4FDD\u5B58\u8349\u7A3F</button>' +
+    '      <button class="editor-btn editor-btn-primary" onclick="publishPost()">\u{1F680} \u53D1\u5E03\u5230 GitHub</button>' +
+    '      <button class="editor-btn editor-btn-ghost" onclick="toggleEditorSettings()">\u2699\uFE0F \u8BBE\u7F6E</button>' +
+    '    </div>' +
+    '    <div id="editorStatus" class="editor-status"></div>' +
+    '    <div id="editorSettings" class="editor-settings" style="display:none;">' +
+    '      <h3>GitHub \u53D1\u5E03\u8BBE\u7F6E</h3>' +
+    '      <div class="editor-settings-hint">' +
+    '        <p>\u9700\u8981\u5728 GitHub \u521B\u5EFA Personal Access Token\uFF1A</p>' +
+    '        <p>1. \u8FDB\u5165 GitHub \u2192 Settings \u2192 Developer settings \u2192 Personal access tokens \u2192 Fine-grained tokens</p>' +
+    '        <p>2. \u65B0\u5EFA token\uFF0C\u9009\u62E9\u4ED3\u5E93 blog\uFF0C\u6743\u9650\u9009 Contents: Read and Write</p>' +
+    '        <p>3. \u590D\u5236 token \u7C98\u8D34\u5230\u4E0B\u65B9\u8F93\u5165\u6846\uFF08\u4EC5\u5B58\u5728\u6D4F\u89C8\u5668 localStorage\uFF0C\u4E0D\u4F1A\u4E0A\u4F20\u670D\u52A1\u5668\uFF09</p>' +
+    '      </div>' +
+    '      <label class="editor-label">GitHub Token</label>' +
+    '      <input type="password" id="ghToken" class="editor-input" placeholder="github_pat_..." value="' + escapeHtml(token) + '">' +
+    '      <label class="editor-label">\u4ED3\u5E93\u6240\u6709\u8005</label>' +
+    '      <input type="text" id="ghOwner" class="editor-input" value="' + escapeHtml(owner) + '">' +
+    '      <label class="editor-label">\u4ED3\u5E93\u540D\u79F0</label>' +
+    '      <input type="text" id="ghRepo" class="editor-input" value="' + escapeHtml(repo) + '">' +
+    '      <button class="editor-btn editor-btn-primary" onclick="saveEditorSettings()">\u4FDD\u5B58\u8BBE\u7F6E</button>' +
+    '    </div>' +
+    '  </div>' +
+    '</div>';
+}
+
+// --- Base64 helpers (UTF-8 safe) ---
+function utf8ToBase64(str) {
+  var bytes = new TextEncoder().encode(str);
+  var binary = '';
+  for (var i = 0; i < bytes.length; i++) binary += String.fromCharCode(bytes[i]);
+  return btoa(binary);
+}
+
+function base64ToUtf8(b64) {
+  var binary = atob(b64.replace(/\s/g, ''));
+  var bytes = new Uint8Array(binary.length);
+  for (var i = 0; i < binary.length; i++) bytes[i] = binary.charCodeAt(i);
+  return new TextDecoder().decode(bytes);
+}
+
+function generatePostId(title) {
+  var slug = title.toLowerCase()
+    .replace(/[^\w\s-]/g, '')
+    .replace(/[\s_]+/g, '-')
+    .replace(/^-+|-+$/g, '')
+    .substring(0, 40);
+  var base = slug.length > 3 ? slug : 'post';
+  return base + '-' + Date.now().toString(36);
+}
+
+// --- Draft management ---
+window.saveDraft = function() {
+  var draft = {
+    title: document.getElementById('editorTitle').value,
+    tags: document.getElementById('editorTags').value,
+    excerpt: document.getElementById('editorExcerpt').value,
+    content: document.getElementById('editorContent').value,
+    savedAt: new Date().toISOString()
+  };
+  localStorage.setItem('blog_draft', JSON.stringify(draft));
+  showEditorStatus('\u{1F4BE} \u8349\u7A3F\u5DF2\u4FDD\u5B58', 'success');
+};
+
+function clearDraft() {
+  localStorage.removeItem('blog_draft');
+}
+
+function showEditorStatus(msg, type) {
+  var el = document.getElementById('editorStatus');
+  if (el) {
+    el.className = 'editor-status editor-status-' + type;
+    el.innerHTML = msg;
+  }
+}
+
+window.toggleEditorSettings = function() {
+  var el = document.getElementById('editorSettings');
+  if (el) el.style.display = el.style.display === 'none' ? 'block' : 'none';
+};
+
+window.saveEditorSettings = function() {
+  localStorage.setItem('gh_token', document.getElementById('ghToken').value.trim());
+  localStorage.setItem('gh_owner', document.getElementById('ghOwner').value.trim());
+  localStorage.setItem('gh_repo', document.getElementById('ghRepo').value.trim());
+  showEditorStatus('\u2705 \u8BBE\u7F6E\u5DF2\u4FDD\u5B58', 'success');
+};
+
+function updateEditorPreview() {
+  var content = document.getElementById('editorContent');
+  var preview = document.getElementById('editorPreview');
+  if (!content || !preview) return;
+  var text = content.value || '';
+  try {
+    preview.innerHTML = marked.parse(text);
+  } catch (e) {
+    preview.innerHTML = '<p style="color:#e53e3e">\u9884\u89C8\u9519\u8BEF</p>';
+  }
+}
+
+// --- Auto-save draft on input ---
+var _draftTimer = null;
+function setupEditorListeners() {
+  var contentEl = document.getElementById('editorContent');
+  if (contentEl) {
+    contentEl.addEventListener('input', function() {
+      updateEditorPreview();
+      // Debounced auto-save
+      if (_draftTimer) clearTimeout(_draftTimer);
+      _draftTimer = setTimeout(function() {
+        saveDraft();
+      }, 2000);
+    });
+  }
+  // Initial preview
+  updateEditorPreview();
+}
+
+// --- Publish to GitHub via Contents API ---
+window.publishPost = async function() {
+  var title = document.getElementById('editorTitle').value.trim();
+  var tagsStr = document.getElementById('editorTags').value.trim();
+  var excerpt = document.getElementById('editorExcerpt').value.trim();
+  var content = document.getElementById('editorContent').value.trim();
+
+  if (!title) { showEditorStatus('\u274C \u6807\u9898\u4E0D\u80FD\u4E3A\u7A7A', 'error'); return; }
+  if (!content) { showEditorStatus('\u274C \u5185\u5BB9\u4E0D\u80FD\u4E3A\u7A7A', 'error'); return; }
+
+  var token = localStorage.getItem('gh_token');
+  if (!token) {
+    showEditorStatus('\u274C \u8BF7\u5148\u70B9\u51FB\u201C\u8BBE\u7F6E\u201D\u914D\u7F6E GitHub Token', 'error');
+    toggleEditorSettings();
+    return;
+  }
+
+  var owner = localStorage.getItem('gh_owner') || 'EricZhao666';
+  var repo = localStorage.getItem('gh_repo') || 'blog';
+  var filePath = 'js/user-posts.js';
+  var apiUrl = 'https://api.github.com/repos/' + owner + '/' + repo + '/contents/' + filePath;
+
+  showEditorStatus('\u23F3 \u6B63\u5728\u53D1\u5E03...', 'loading');
+
+  try {
+    // 1. Fetch current file (get sha + existing posts)
+    var sha = null;
+    var currentPosts = [];
+
+    var getResp = await fetch(apiUrl, {
+      headers: { 'Authorization': 'Bearer ' + token, 'Accept': 'application/vnd.github+json' }
+    });
+
+    if (getResp.status === 200) {
+      var data = await getResp.json();
+      sha = data.sha;
+      var decoded = base64ToUtf8(data.content || '');
+      var match = decoded.match(/const USER_POSTS = (\[[\s\S]*\]);/);
+      if (match) {
+        try { currentPosts = JSON.parse(match[1]); } catch (e) { currentPosts = []; }
+      }
+    } else if (getResp.status !== 404) {
+      var errBody = await getResp.json().catch(function() { return {}; });
+      throw new Error('GitHub API: ' + (errBody.message || 'HTTP ' + getResp.status));
+    }
+
+    // 2. Build new post object
+    var tags = tagsStr.split(/[,，]/).map(function(t) { return t.trim(); }).filter(function(t) { return t; });
+    var newPost = {
+      id: generatePostId(title),
+      title: title,
+      date: new Date().toISOString().slice(0, 10),
+      tags: tags.length ? tags : ['未分类'],
+      excerpt: excerpt || content.replace(/[#*`>\-\[\]]/g, '').slice(0, 120) + '...',
+      content: content
+    };
+
+    // Prepend (newest first)
+    currentPosts.unshift(newPost);
+
+    // 3. Generate new file content
+    var newFileContent = 'const USER_POSTS = ' + JSON.stringify(currentPosts, null, 2) + ';\n';
+    var base64Content = utf8ToBase64(newFileContent);
+
+    // 4. Commit via PUT
+    var putResp = await fetch(apiUrl, {
+      method: 'PUT',
+      headers: {
+        'Authorization': 'Bearer ' + token,
+        'Accept': 'application/vnd.github+json',
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        message: 'Add post: ' + title,
+        content: base64Content,
+        sha: sha
+      })
+    });
+
+    if (!putResp.ok) {
+      var putErr = await putResp.json().catch(function() { return {}; });
+      throw new Error(putErr.message || 'HTTP ' + putResp.status);
+    }
+
+    // 5. Update in-memory array
+    if (typeof USER_POSTS !== 'undefined') {
+      USER_POSTS.unshift(newPost);
+    }
+
+    // 6. Clear draft
+    clearDraft();
+
+    showEditorStatus('\u2705 \u53D1\u5E03\u6210\u529F\uFF01GitHub Pages \u5C06\u5728 1-2 \u5206\u949F\u5185\u66F4\u65B0\uFF0C\u5373\u5C06\u8DF3\u8F6C\u5230\u9996\u9875...', 'success');
+
+    // Redirect to home after 2 seconds
+    setTimeout(function() { location.hash = '#/'; }, 2000);
+
+  } catch (err) {
+    showEditorStatus('\u274C \u53D1\u5E03\u5931\u8D25: ' + escapeHtml(err.message), 'error');
+  }
+};
+
+// ============================================
 // Router
 // ============================================
 function router() {
@@ -761,61 +1079,75 @@ function router() {
     if (route === '/papers' && hash.startsWith('/papers')) {
       link.classList.add('active');
     }
+    if (route === '/editor' && hash.startsWith('/editor')) {
+      link.classList.add('active');
+    }
   });
 
   // Parse route
-  if (hash === '/' || hash === '') {
-    app.innerHTML = renderHome();
-  } else if (hash.startsWith('/post/')) {
-    const id = hash.slice('/post/'.length);
-    app.innerHTML = renderPost(id);
-  } else if (hash.startsWith('/tags')) {
-    const parts = hash.split('/');
-    const tag = parts.length > 2 ? decodeURIComponent(parts[2]) : null;
-    app.innerHTML = renderTags(tag);
-  } else if (hash === '/courses') {
-    app.innerHTML = renderCourses();
-    // Attach course search listener
-    const courseSearchInput = document.getElementById('courseSearchInput');
-    if (courseSearchInput) {
-      courseSearchInput.addEventListener('input', (e) => {
-        courseSearchQuery = e.target.value;
-        app.innerHTML = renderCourses();
-        const newInput = document.getElementById('courseSearchInput');
-        if (newInput) {
-          newInput.focus();
-          newInput.setSelectionRange(newInput.value.length, newInput.value.length);
-        }
-      });
+  try {
+    if (hash === '/' || hash === '') {
+      app.innerHTML = renderHome();
+    } else if (hash.startsWith('/post/')) {
+      const id = hash.slice('/post/'.length);
+      app.innerHTML = renderPost(id);
+    } else if (hash.startsWith('/tags')) {
+      const parts = hash.split('/');
+      const tag = parts.length > 2 ? decodeURIComponent(parts[2]) : null;
+      app.innerHTML = renderTags(tag);
+    } else if (hash === '/courses') {
+      app.innerHTML = renderCourses();
+      // Attach course search listener
+      const courseSearchInput = document.getElementById('courseSearchInput');
+      if (courseSearchInput) {
+        courseSearchInput.addEventListener('input', (e) => {
+          courseSearchQuery = e.target.value;
+          app.innerHTML = renderCourses();
+          const newInput = document.getElementById('courseSearchInput');
+          if (newInput) {
+            newInput.focus();
+            newInput.setSelectionRange(newInput.value.length, newInput.value.length);
+          }
+        });
+      }
+    } else if (hash.startsWith('/course/')) {
+      courseFileLimit = 50;
+      const id = decodeURIComponent(hash.slice('/course/'.length));
+      app.innerHTML = renderCourseDetail(id);
+    } else if (hash === '/papers') {
+      app.innerHTML = renderPapers();
+      const paperSearchInput = document.getElementById('paperSearchInput');
+      if (paperSearchInput) {
+        paperSearchInput.addEventListener('input', (e) => {
+          paperSearchQuery = e.target.value;
+          app.innerHTML = renderPapers();
+          const newInput = document.getElementById('paperSearchInput');
+          if (newInput) {
+            newInput.focus();
+            newInput.setSelectionRange(newInput.value.length, newInput.value.length);
+          }
+        });
+      }
+    } else if (hash === '/about') {
+      app.innerHTML = renderAbout();
+    } else if (hash === '/editor') {
+      app.innerHTML = renderEditor();
+      setupEditorListeners();
+    } else {
+      app.innerHTML = `
+        <div class="empty-state">
+          <div class="empty-state-icon">🤔</div>
+          <p>页面不存在</p>
+          <p><a href="#/">返回首页</a></p>
+        </div>
+      `;
     }
-  } else if (hash.startsWith('/course/')) {
-    courseFileLimit = 50;
-    const id = decodeURIComponent(hash.slice('/course/'.length));
-    app.innerHTML = renderCourseDetail(id);
-    attachFileOpenHandlers();
-  } else if (hash === '/papers') {
-    app.innerHTML = renderPapers();
-    attachFileOpenHandlers();
-    const paperSearchInput = document.getElementById('paperSearchInput');
-    if (paperSearchInput) {
-      paperSearchInput.addEventListener('input', (e) => {
-        paperSearchQuery = e.target.value;
-        app.innerHTML = renderPapers();
-        attachFileOpenHandlers();
-        const newInput = document.getElementById('paperSearchInput');
-        if (newInput) {
-          newInput.focus();
-          newInput.setSelectionRange(newInput.value.length, newInput.value.length);
-        }
-      });
-    }
-  } else if (hash === '/about') {
-    app.innerHTML = renderAbout();
-  } else {
+  } catch (err) {
+    console.error('Router error:', err);
     app.innerHTML = `
       <div class="empty-state">
-        <div class="empty-state-icon">🤔</div>
-        <p>页面不存在</p>
+        <div class="empty-state-icon">⚠️</div>
+        <p>页面渲染出错: ${escapeHtml(err.message)}</p>
         <p><a href="#/">返回首页</a></p>
       </div>
     `;
@@ -849,19 +1181,6 @@ window.setCategory = function(cat) {
   }
 };
 
-window.attachFileOpenHandlers = function() {
-  document.querySelectorAll('.file-item-link[data-filepath]').forEach(el => {
-    if (el._fileHandlerAttached) return;
-    el._fileHandlerAttached = true;
-    el.addEventListener('click', function() {
-      const fp = this.getAttribute('data-filepath');
-      if (fp) {
-        window.open('file:///' + encodeURI(fp), '_blank');
-      }
-    });
-  });
-};
-
 window.loadMoreCourseFiles = function(courseId) {
   const course = COURSES.find(c => c.id === courseId);
   if (!course) return;
@@ -877,18 +1196,18 @@ window.loadMoreCourseFiles = function(courseId) {
     const typeClass = getFileTypeClass(file.type);
     const filePath = (file.path || '').replace(/\\/g, '/');
     const relPath = file.relPath || file.path || '';
+    _filePathCache.push(filePath);
     html += `
-      <div class="file-item file-item-link" data-filepath="${escapeHtml(filePath)}" title="点击打开: ${escapeHtml(file.path || '')}">
+      <div class="file-item file-item-link" data-fidx="${_filePathCache.length - 1}">
         <span class="file-type-badge ${typeClass}">${escapeHtml(file.type)}</span>
         <span class="file-name">${escapeHtml(file.name)}</span>
         <span class="file-path">${escapeHtml(relPath)}</span>
         <span class="file-size">${file.sizeFormatted}</span>
-        <span class="file-open-icon" title="本地打开">🔗</span>
+        <span class="file-open-icon">🔗</span>
       </div>
     `;
   }
   container.insertAdjacentHTML('beforeend', html);
-  attachFileOpenHandlers();
 
   const loadMoreDiv = document.getElementById('course-load-more');
   if (courseFileLimit >= course.files.length) {
