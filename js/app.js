@@ -563,6 +563,7 @@ function renderCourses() {
           <div class="course-card" onclick="location.hash='#/course/${encodeURIComponent(course.id)}'">
             <div class="course-card-header">
               <div class="course-card-title">${escapeHtml(course.name)}</div>
+              ${typeof COURSE_NOTES !== 'undefined' && COURSE_NOTES[course.id] ? '<span class="note-badge">📝笔记</span>' : ''}
             </div>
             ${course.description ? `<div class="course-card-desc">${escapeHtml(course.description)}</div>` : ''}
             <div class="course-card-meta">
@@ -614,6 +615,7 @@ function renderCourseDetail(courseId) {
         </div>
       </div>
       ${course.description ? `<div class="course-description">${escapeHtml(course.description)}</div>` : ''}
+      ${renderCourseNotes(course.id)}
       <div class="file-list">
         <div class="file-list-header">文件列表 (${course.files.length})</div>
         <div id="course-file-container">
@@ -653,6 +655,22 @@ function renderCourseDetail(courseId) {
   `;
 
   return html;
+}
+
+// Render course notes (Markdown) from course-notes.js, keyed by course id.
+// Returns '' when no notes exist for this course, so the page is untouched.
+function renderCourseNotes(courseId) {
+  if (typeof COURSE_NOTES === 'undefined' || !COURSE_NOTES[courseId]) return '';
+  const entry = COURSE_NOTES[courseId];
+  const summary = entry.summary ? `<p class="course-notes-summary">${escapeHtml(entry.summary)}</p>` : '';
+  const body = entry.notes ? `<div class="markdown-body">${marked.parse(entry.notes)}</div>` : '';
+  return `
+    <section class="course-notes">
+      <div class="course-notes-head">📝 课程笔记</div>
+      ${summary}
+      ${body}
+    </section>
+  `;
 }
 
 // ============================================
