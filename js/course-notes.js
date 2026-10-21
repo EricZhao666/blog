@@ -712,4 +712,231 @@ const COURSE_NOTES = {
   - 缺点：透水蒸气（样品失水）、疏水（不利于细胞培养）、不耐有机溶剂。
 - **关键部件**：微通道/微腔（nm~mm 截面，永久或可逆键合；埋藏通道可用激光熔融+氧化密封）、**微阀**（低泄漏、可靠简单、易造）、**微泵**（含三相蠕动泵）；尺寸排阻分离：微柱阵列（bump array，Science 2004）按粒径连续分选。`
   },
+  "香港大学|机器人学-(国立交通大学·杨谷洋)": {
+    summary: "NCTU 楊谷洋机器人学：D-H 运动学、雅可比与奇异性、三次多项式/势场运动规划、拉格朗日与牛顿-欧拉动力学、柔顺/混合力位/阻抗控制、网络化VR遥操作。",
+    notes: `# 机器人学 (国立交通大学·杨谷洋) 核心笔记
+
+> 内容据课程 8 份讲义（robot051_L1~L8）整理。国立交通大学（NCTU）电机工程学系 **楊谷洋** 老师讲授（Human and Machine Lab）。经典机器人学主线：**绪论 → 空间表示与变换 → 正/逆运动学 → 微分关系（雅可比） → 运动规划 → 动力学 → 控制与柔顺 → 网络遥操作**。
+
+## 1. 绪论（Chapter 1）
+- **什么是机器人**：具备**移动性（Mobility）与自主性（Autonomy）**的系统。
+- **为什么用机器人**：降低成本、提高生产率与质量、进入恶劣环境作业、与 CAD 集成（标定与任务可行性分析）。
+- **应用场景**：搬运、喷涂、转移、压铸、焊接、装配、测量、抓持；机器人**擅长时间/位置控制，弱于视觉与力控制**。
+- **机器人系统组成**：控制器 + 机械臂 + 示教盒 + 传感器系统（位置/速度/视觉/力）+ 机器人语言 + CAD/Robot 集成。
+- **硬件要素**：臂（3/4/5/6 自由度 + 冗余 + 夹持器）、关节（转动 Revolute / 移动 Prismatic）、执行器（电机/液压/气压）、传动（直驱 / 齿轮皮带）、内传感器（编码器测位、测速计测速）。
+- **仿真器闭环**：任务 (qd, q̇d) → 轨迹规划 → 控制（反馈+前馈）→ 动力学方程 \`τ = H(q)q̈ + h(q,q̇) + G(q)\` → 运动积分。
+
+## 2. 空间表示与变换（Chapter 2）
+- **位置向量与姿态矩阵**：姿态阵 R 的元素为方向余弦；\`R_BA = R_AB^T\`（正交阵）。
+- **坐标系映射**：平移 \`P_A = P_B + P_origin\`；旋转 \`P_A = R_AB · P_B\`；一般情形用 **4×4 齐次变换**统一表达。
+- **等效角轴表示**（Equivalent Angle-Axis）：任意旋转可用单位轴 + 角度描述。
+- **三参数姿态**：欧拉角（Euler angles）与 RPY 角（Roll-Pitch-Yaw）。
+
+## 3. 正/逆运动学（Chapter 3）
+- **运动学定义**：只研究运动本身（位置/速度/加速度），不考虑力。
+- **连杆连接**：末端位姿 \`T_N = A1·A2·...·AN\`；**D-H 模型**用 4 参数 (α, θ, d, a)：a 连杆长度、d 两轴线间距离、θ 两轴线夹角、α 扭转角；坐标系建立规则：Z 轴沿关节轴、X 轴沿公垂线（X × Z → Y）。
+- **PUMA 560** 经典六轴工业臂算例；**重复精度 vs 绝对精度**（Repeatability & Accuracy）概念。
+
+## 4. 微分关系与雅可比（Chapter 4）
+- 线速度/角速度的参考系依赖：\`V_QA = R_BA·V_QB\`；B 系原点运动 \`V_QA = V_orgA + R_BA·V_QB\`；刚体系固定向量在旋转系中的速度 \`V = Ω × Q\`。
+- **机械臂雅可比**：\`ẋd = J·qḋ\`，逆解 \`qḋ = J⁻¹·xḋ\`；ΔT 微分变换。
+- **奇异性（Singularity）**：J 退化时笛卡尔速度不可达/要求无穷关节速度——逆雅可比失效。
+
+## 5. 运动规划（Chapter 5）
+- **考虑因素**：易指定、平滑性、构型空间、奇异性、关节空间 vs 笛卡尔空间运动；路径描述含初始/终止/途经点（位置+姿态）。
+- **多项式轨迹**：三次多项式连接两点并满足首末速度为零（4 个边界条件对应 4 个系数）。
+- **构型空间法（C-Space）**与**势场法（Potential Field）**：目标吸引 + 障碍排斥，可陷入局部极小。
+
+## 6. 动力学（Chapter 6）
+- **两类问题**：① 给定 θ, θ̇, θ̈ 求所需关节力矩（控制用）② 给定力矩求运动（仿真用）。
+- **两大方法**：
+  - **拉格朗日法**：L = K − P（动能减势能），由拉格朗日方程 d/dt(∂L/∂θ̇) − ∂L/∂θ = τ 导出动力学；二连杆算例推导；
+  - **牛顿-欧拉法**：递归牛顿-欧拉算法（外推内收），计算效率高，适合实时控制；
+  - **动力学仿真器**与实际控制回路对接。
+
+## 7. 机器人控制与柔顺（Chapter 7）
+- **结构**：前馈（动力学逆）+ 反馈（PD）：\`τ = J^T(Kd·ẋd − Kp·x − Kv·ẋ)\` 类笛卡尔空间控制；\`Kd = J⁻¹\` 速度前馈。
+- **柔顺（Compliance）**：与环境接触必需——刚性位置控制会顶坏工件/机器人。
+- **位置/力混合控制（Hybrid Position/Force Control）**：按任务坐标系分解为位置控制子空间与力控制子空间。
+- **阻抗控制（Impedance Control）**：不控位置或力本身，而控制力与运动之间的动态关系（弹簧-阻尼-质量模型）。
+
+## 8. 专题：网络化 VR 遥操作机器人（L8）
+- **引子问题**：福岛核事故初期日本为何没派机器人？机器人"居家助手/哆啦A梦"离现实还有多远？
+- 火星车 Sojourner 开创全球互联网遥操作（internet teleoperation）；应用：教育、医疗、工业、娱乐、培训、VR 动态仿真。
+- **典型网络化 VR 遥操作系统的挑战**：
+  - 远程环境的**临场感**（视觉/听觉/触觉）；VR I/O 设备设计（HMD、3D 眼镜、力反馈手柄、数据手套）；
+  - 操纵设备与远端机械臂的不兼容；**网络传输时延**（大障碍）；
+  - 辅助操作工具、远端智能控制器处理机械臂与环境交互、人与远程智能控制器的协作。`
+  },
+  "香港大学|IDAT-7212": {
+    summary: "IDAT7212 机电一体化：开环/闭环控制、机械系统三要素、微控制器与Arduino、PWM调速与电机驱动、运放信号调理、鲁棒控制（模型不确定性+裕量）、一阶系统时域分析。",
+    notes: `# IDAT7212 机电一体化系统工程 核心笔记
+
+> 内容据课程 9 份课件整理。课程全名 *Mechatronics System Engineering (IDAT7212)*，香港大学 Dr. Zulfiqar Ali 讲授（13 周，Tuesday 晚）。实践平台：**Arduino / mBlock / TinkerCad**。考核：CA 50%（Midterm+作业 10% + 小组项目 40%：报告 10% + 汇报 10% + 演示 20%）+ 期末 50%。主线：**机电系统概论 → 电子学与微控制器 → Arduino 与传感器 → 执行器与换能器 → 运放与信号调理 → 鲁棒控制 → 时域分析 → 材料选择**。
+
+## 0. 机电系统概论（Week 1）
+- **系统与控制工程**：系统 = 输入到输出的功能体；机械系统（平移/旋转）、电气系统、计算机系统经控制系统组织起来。
+- **开环 vs 闭环**：
+  - 开环：\`ud = f⁻¹(yd)\` 逆模型定输入——简单、经济、易构建；但系统摄动或环境变化时不可靠；
+  - 闭环（反馈）：补偿扰动与不确定性；但更复杂昂贵，**稳定性成为主要问题**。
+- **平移机械系统三要素**：弹簧（F = k(x1−x2)）、阻尼器（F = b(ẋ1−ẋ2)）、质量块（F = m·ẍ）——机电建模的原子单元；旋转系统对应扭转弹簧/阻尼/惯量。
+- **机电一体化设计流程**：需求建模 → 传感器/执行器/控制器协同设计 → 仿真 → 原型（嵌入式实现）。
+
+## 1. 电子学基础与微控制器（Week 2）
+- **基本量**：电压（单位电荷的电位差，V）、电流 I = Q/T（1 A = 6.24×10¹⁸ 电子/秒）、电路（回路 vs 开路 I=0）；电子流（−→+）与惯例电流（+→−）方向相反；DC（单向）vs AC。
+- **微控制器 vs 微处理器**：MCU = CPU + RAM/ROM + I/O + 定时器/ADC 集成于单芯片，面向控制任务；MPU 需外挂存储与外设，面向计算。
+- **MCU 分类**：按位数（8/16/32）、存储（片内/外）、指令集（CISC/RISC）、应用（通用/专用）；商业板：Arduino、Raspberry Pi 等嵌入式开发板。
+
+## 2. Arduino 与传感器（Week 3）
+- **Arduino 平台**：开源硬件（AVR/ARM MCU）+ IDE；数字/模拟引脚（ADC）、PWM 输出、串口通信；图形化 mBlock 与 TinkerCad 在线仿真（免硬件搭建电路验证程序）。
+- **常用传感器**：超声波测距（HC-SR04）、温度湿度（DHT）、红外、光敏电阻、电位器、舵机/电机编码器反馈——数字 vs 模拟信号的处理差异（阈值、量化、去抖）。
+
+## 3. 执行器与换能器（Week 4）
+- **执行器功能图**：控制信号 → 功率放大与调制 → 能量转换 → 输出（位置或速度，微米到米量级）；输入多为低/高功率电信号、气、液压。
+- **分类**：直线执行器（电磁螺线管、液压/气动缸）、旋转执行器（电机、液压/气动马达）。
+- **直流电机**：Kv 值 = 每 1V 的转速（100Kv @12V = 1200 rpm）；**PWM 调速**（改变占空比）+ 电机驱动器（H 桥）——MCU 电压低于电机必需，不能直驱；编码器反馈实现位置控制。
+
+## 4. 运算放大器与信号调理（Week 6）
+- **运放**：高增益差分放大器，理想模型虚短虚断；同相/反相放大、加法、差分、电压跟随等基本组态。
+- **仪表放大器**：高共模抑制比，配合传感器微弱信号调理；**无源/有源滤波器**（低通/高通/带通）抑制噪声——传感器输出到 ADC 之间的信号调理链。
+
+## 5. 鲁棒控制（Week 10）
+- **鲁棒系统**：在模型和/或扰动不确定性存在时仍满足稳定性或性能指标的系统；**鲁棒控制**：面向不确定性的设计方法。
+- **为什么模型总是错的**：复杂动态、驱动力不确定、有意简化（牺牲真实性换取简洁）——因此设计目标是在模型不准确时仍保证性能。
+- **设计策略**：留裕量（margin）——不仅要满足稳定性还要超出一定量；裕量大小取决于不确定度：太少或加错位置 = 指标失败，太多 = 控制系统更昂贵。
+- **闭环结构**：参考值 → 误差 → 控制器（PID 或全状态反馈）→ 执行器 → Plant → 传感器（含噪声/扰动）→ 反馈。
+
+## 6. 时域分析（Week 11）
+- 一阶系统的时间响应（时间常数 τ、63.2% 上升）、一阶系统对斜坡输入的稳态误差、**部分分式展开**求拉普拉斯逆变换（考试配套讲义 para_response_1st_order / ramp_response_1st_order）；二阶系统超调、调节时间等性能指标（呼应 6010 的"稳准快"）。
+
+## 7. 材料选择（Week 11 专题）
+- 材料与工程实践的关系：按宏观（强度/密度/成本）与微观（晶体结构/相）物理性质为机电系统选材（Ashby 选材思路，呼应 MECH6010）。`
+  },
+  "香港大学|机器人大使-(Robotic-Ambassador)": {
+    summary: "HKU 服务机器人项目：GB1 机器人 UDP 控屏与 Django IoRT 集成、DWA/APF 避障与 ORB-SLAM3/FAST-LIO 建图、GR-ConvNet 视觉抓取与 MoveIt 机械臂控制。",
+    notes: `# 机器人大使 (Robotic Ambassador) 核心笔记
+
+> 内容据 HKU 机械工程系 **Engineering Robotic Ambassador** 项目 2023-24 / 2024-25 两届 MSc 毕业论文及配套论文（动态窗口法 DWA、STOMP 轨迹优化）整理。项目形态：以 Novelte **GB1 服务机器人**为平台，在大学校园场景做服务机器人应用研发（导师 Dr. M.W.L. Ko）。
+
+## 1. 项目背景：服务机器人与 HRI
+- **定位**：机器人作为人机交互（HRI）载体，承担校园导览/接待职能，并促进 STEM 教育；结合 NLP 让机器人与用户自然对话、与其他设备互联。
+- **文献综述脉络**：机器人接待员（robot receptionist）的定义与分类 → 现有技术水平 → 后疫情时代服务机器人（医疗、酒店餐厅接待、**IoT 与服务机器人结合**、教育应用）→ 服务机器人的问题（交互设计、社会与伦理）→ 研究焦点：**用户接受度与服务机器人设计、HRI 与机器人互联、物联网机器人 IoRT（Internet of Robotic Things）**。
+
+## 2. 2023-24 届：导览机器人智能化（UDP 控屏 + IoT + 外观定制）
+- **UDP 控制大屏**：通过 UDP 协议让 GB1 机器人控制大屏幕显示，增强 Tour Guide 功能——实验验证 PC 与智能中控系统、中控与机器人之间 UDP 信号传输的可行性与稳定性（ping 定位大屏 IP → UDP 发送指令 → USR-TCP232-TEST 工具抓取验证）。
+- **Django 物联网集成**：本地 Django 框架接入温湿度监测系统（TH40W 智能湿度计），通过 Serveo 内网穿透暴露 API（Postman 验证），机器人端调用展示——服务机器人 + IoRT 的最小闭环。
+- **外观本地化定制**：CREO 展开机器人曲面（Flatten Quilt）→ Illustrator 平面设计 → 贴纸打印裁剪，输出贴合机器人外观的校园主题贴纸。
+
+## 3. 2024-25 届：运动控制 + 避障 + 机械臂视觉抓取
+### 3.1 运动控制与避障
+- **多传感器融合环境感知**（激光雷达等），实时决策，在结构化/半结构化环境中保持稳定高效轨迹。
+- **算法组合**：
+  - **DWA（动态窗口法）**：在速度空间采样、按轨迹评估（朝向目标 + 离障碍距离）选择最优控制——经典避障（Fox et al.）；
+  - **APF（人工势场）**：目标吸引 + 障碍排斥，叠加进 ROS 导航的代价地图；
+  - **全局规划**：A*/RRT 类全局路径 + 局部规划器分层导航；
+  - **建图定位**：**ORB-SLAM3**（视觉 SLAM：特征法 + 多地图系统）、**FAST-LIO**（激光雷达-惯性紧耦合里程计）→ 点云地图与 **Octree 八叉树地图**；
+  - 前沿扩展：双足步行 MPC 控制。
+### 3.2 机械臂视觉抓取
+- **系统链路**：相机图像处理识别定位目标 → 坐标转换 → 机械臂规划与高精度抓取（SolidWorks 设计臂身/相机座/夹爪，D-H 建模，ROS/MoveIt 控制规划，RViz 可视化）。
+- **抓取检测模型**：**GR-ConvNet（GRCNN）**生成抓取矩形（从 RGB-D 图预测抓取质量与位姿）；讨论了具身智能（Embodied Intelligence）与 **RT-X / RFM-1** 等机器人基础模型的预测范式。
+- 在不同形状/尺寸/纹理物体上测试，取得可靠抓取成功率。
+
+## 4. 配套经典论文
+- **The Dynamic Window Approach to Collision Avoidance**（Fox, Burgard, Thrun, IEEE RAM 1997）：把避障化为速度空间 (v, ω) 搜索——轨迹前向仿真 + 碰撞检查 + 目标朝向/速度/间隙多目标打分。
+- **STOMP: Stochastic Trajectory Optimization for Motion Planning**（Kalakrishnan et al., ICRA 2011）：基于随机噪声滚动的轨迹优化，不需要梯度，适合复杂代价函数（与 CHOMP/RRT* 同类的运动规划器）。
+
+## 5. 项目启示
+- 服务机器人落地 = **本体 + 交互（NLP/HRI）+ 联网（IoRT）+ 外观/接受度**的系统能力整合；
+- 校园场景是低成本高显示度的验证场（导览、控屏、环境监测、抓取演示）；
+- 技术栈覆盖：ROS/MoveIt、SLAM（ORB-SLAM3/FAST-LIO）、导航避障（A*/DWA/APF）、深度学习抓取（GR-ConvNet）、Web 框架（Django/Serveo）与 CAD（CREO/SolidWorks）。`
+  },
+  "香港大学|GRCNN-抓取检测": {
+    summary: "GR-ConvNet (IROS 2020)：对向抓取矩形表示、RGB-D 端到端生成式残差网络（cos2θ/sin2θ 角度通道）、Cornell/Jacquard 数据集与 IoU 评估、训练推理流程与 UR/Baxter 真机部署。",
+    notes: `# GRCNN 抓取检测 核心笔记
+
+> 内容据 GR-ConvNet 官方论文（Kumra, Joshi, Sahin, *Antipodal Robotic Grasping using Generative Residual Convolutional Neural Network*, IROS 2020）与官方开源仓库 \`skumra/robotic-grasping\`（本地代码库对应：grconvnet.py / cornell_data.py / jacquard_data.py / grasp_generator.py / run_realtime.py / UR_Robot.py / realsense 相机脚本）整理。
+
+## 1. 问题定义：对向抓取（Antipodal Grasping）
+- **对向抓取**：两个指尖沿一条直线相对夹持物体，抓取配置用**抓取矩形**表示（中心点 x,y、旋转角 θ、开口宽度 w、高度 h）——把抓取检测转化为从图像直接回归"在哪里、什么角度、开多大"。
+- 输入为 **RGB-D 图像**（颜色 + 深度对齐），输出逐像素的抓取预测图。
+
+## 2. GR-ConvNet 网络架构
+- **端到端生成式残差卷积网络**：
+  - 编码器：RGB（3 通道）+ 深度（1 通道）→ 卷积 + BatchNorm 下采样；
+  - 中段堆叠 **GR-ConvNet 残差模块**（Generative Residual block：两条并行支路——普通 3×3 卷积 + 5×5 大核卷积分支拼接，保留精细局部信息）；
+  - 解码器：转置卷积上采样恢复分辨率；
+  - **四路输出头**（逐像素）：cos(2θ) 图、sin(2θ) 图、抓取宽度图、抓取质量/置信度图——角度用 cos2θ/sin2θ 表示以规避角度回归的不连续性。
+- 与检测式方法（两阶段：先定位物体再生成抓取）不同，生成式方法**单次前向直接输出全图抓取分布**，速度快、适合实时闭环抓取。
+
+## 3. 数据集与评估
+- **Cornell Grasping Dataset**：889 张图像 + 8019 个标注抓取矩形；PCD 点云需先转深度图（\`utils.dataset_processing.generate_cornell_depth\`）。
+- **Jacquard Dataset**：54k 图像 / 110 万抓取标注（仿真生成），规模大得多。
+- **评估协议**：
+  - 图像级（image-wise）：预测矩形与任一真值矩形角度差 <30°、Jaccard 距离 >0.25 即正确；
+  - 物体级（object-wise）：跨物体划分训练/测试，更贴近真实泛化；
+  - 论文结果：Cornell 图像级约 97.7%、物体级约 94.6%，Jacquard 上同样领先当时方法（GG-CNN、Generative Grasping CNN 等）。
+
+## 4. 训练与推理流程（对应本地代码库）
+- **环境**：numpy / opencv / scikit-image / imageio / matplotlib + torch / torchvision / tensorboardX + pyrealsense2（RealSense 深度相机）。
+- **数据准备**：Cornell 需 PCD→深度转换；Jacquard 解压即用。
+- **训练**：\`python train_network.py --dataset cornell --dataset-path <path> --description <名字>\`；Jacquard 常配 \`--use-dropout 0 --input-size 300\`。
+- **评估**：\`python evaluate.py --network <模型> --iou-eval\`（IoU 协议）。
+- **推理**：\`run_grasp_generator.py\`（抓取生成）、\`run_realtime.py\`（相机实时）、\`run_offline.py\`（离线批量）；从质量图中取最大置信点 → 反解 (x, y, θ, w) 抓取矩形。
+
+## 5. 机器人部署
+- **原论文平台**：Baxter 机械臂 + RealSense（官方 baxter-pnp ROS 集成）；
+- **本代码库扩展**：UR 机械臂（UR_Robot.py）+ RealSense D435 的实时抓取（grasp_generator / run_realtime / realsenseD435.py），抓取位姿经手眼标定（run_calibration.py）从相机坐标系映射到机器人基座坐标系。
+- **典型闭环**：相机取 RGB-D → GR-ConvNet 推理（毫秒级）→ 选最优抓取 → 坐标变换 → 规划执行 → 抓取验证。
+
+## 6. 要点小结
+- 生成式逐像素回归 + 残差多尺度特征是实时抓取检测的主流范式；
+- 角度通道化（cos2θ/sin2θ）是回归周期量的通用技巧；
+- Cornell 数据集小，物体级评估易过拟合；Jacquard 更能反映泛化；
+- 从模型到真机要跨过：手眼标定、深度对齐、抓取矩形→末端位姿转换、力控/夹爪宽度映射四道坎。`
+  },
+  "香港大学|ROS机械臂开发视频教程": {
+    summary: "ROS+MoveIt 机械臂开发：URDF/SRDF 建模、move_group 架构与 Planning Scene、Setup Assistant 配置、OMPL/CHOMP/STOMP/Pilz 规划器、FK/IK/笛卡尔路径/碰撞物演示与真机部署。",
+    notes: `# ROS 机械臂开发 核心笔记
+
+> 内容据本地课程工程文件（MoveIt Setup Assistant 配置、URDF、CHOMP 配置、moveit_fk_demo / moveit_ik_demo / moveit_cartesian_demo / attach_object / gripper 等演示脚本）与 MoveIt 官方公开文档（moveit.picknik.ai）整理。技术栈：**ROS 1 + MoveIt + URDF/SRDF + RViz/Gazebo**。
+
+## 1. ROS 基础回顾
+- **通信机制**：节点（node）+ 话题（topic，异步发布/订阅）+ 服务（service，同步请求/响应）+ 参数服务器；catkin 工作空间与 package 组织。
+- **机器人建模**：**URDF**（link + joint 树，含 \`<mesh>\` 引用 STL 网格文件）→ xacro 宏简化；SRDF 由 MoveIt Setup Assistant 生成（补充规划组 planning group、虚拟关节、自碰撞矩阵）。
+- **控制器**：ros_control 体系（JointTrajectoryController 驱动真实关节接口），Gazebo 仿真与真机共用同一套 MoveIt 上层接口。
+
+## 2. MoveIt 架构核心（move_group 节点）
+- **move_group** 是 MoveIt 的中枢节点：汇聚机器人状态（关节状态）、传感器数据（3D 感知）、参数配置（运动学插件、规划器插件），对外提供两种接口——**ROS 封装（MoveGroupInterface）**与直接 C++/Python API。
+- **Planning Scene Monitor**：维护世界模型——机器人状态、环境碰撞物体（CollisionObject）、AttachedObject（把物体附着到末端链接，模拟夹持）；
+- **运动学求解器（Kinematics）**：插件式 IK（默认 KDL 数值法，可换 TRAC-IK / 解析法）、Jacobian 计算；
+- **碰撞检测**：FCL + 自碰撞矩阵（ACM）实现毫秒级碰撞查询。
+
+## 3. MoveIt Setup Assistant 配置流程
+1. 加载 URDF → 生成 SRDF；
+2. 定义 **Planning Group**（如 arm、gripper，指定关节集合与运动链）；
+3. 设置**虚拟关节**（base→world）、自碰撞矩阵、姿态（pose）库、末端执行器；
+4. 生成配置包（config/kinematics.yaml、joint_limits.yaml、ompl_planning.yaml、chomp_planning.yaml 等）。
+
+## 4. 运动规划与规划器
+- **OMPL**（默认）：RRT、RRT-Connect、PRM、KPIECE 等基于采样的规划插件，适合高自由度；
+- **CHOMP / STOMP**：基于优化的规划器——CHOMP 用协变梯度下降平滑轨迹（对初始化敏感），STOMP 用随机噪声滚动无需梯度；
+- **Pilz**：梯形速度的工业规划器（PTP/LIN/CIRC，可重复性强）；
+- **轨迹处理**：时间参数化（TTB/IPTP）、加减速限制、重试规划。
+
+## 5. MoveGroupInterface 编程（对应本地演示脚本）
+- **FK 正运动学演示（moveit_fk_demo.py）**：给关节角 → \`get_current_pose / set_joint_value_target\` 查询末端位姿；
+- **IK 逆运动学演示（moveit_ik_demo.py）**：给目标位姿 → \`set_pose_target\` + \`plan()\` + \`execute()\` 让 move_group 反解关节轨迹；
+- **笛卡尔路径（moveit_cartesian_demo.py）**：\`computeCartesianPath\` 让末端沿直线路径走，获得 waypoints 分数（fraction）判断可达性；
+- **碰撞物体操作（moveit_attached_object_demo）**：向 Planning Scene 添加 CollisionObject（盒/圆柱/网格），\`attach_object\` 把物体附着到末端链接，规划时自动避让；
+- **夹爪控制**：gripper 单独规划组，关节空间目标 + 同步或串行执行；
+- **常用接口链**：\`set_start_state → set_pose_target → plan → execute\`，RViz（MotionPlanning 插件）可视化目标位姿、规划轨迹（RQTTreeView）。
+
+## 6. 仿真与真机部署
+- **Gazebo 仿真**：URDF + transmission/gazebo 标签接入 ros_control，验证规划轨迹（呼应 MECH7010/Gazebo 的插件体系）；
+- **真机**：MoveIt 规划输出 JointTrajectory → 关节控制器（如 UR 驱动接口）执行；上位机/下位机分工与实时性约束；
+- **手眼集成**：RGB-D 相机感知 + Planning Scene 更新（octomap）实现动态避障与抓取（与 GRCNN 课程闭环衔接）。
+
+## 7. 学习路径小结
+ROS 建模（URDF）→ Setup Assistant 出配置 → RViz 调试 → MoveGroupInterface 写 FK/IK/笛卡尔/碰撞演示 → 规划器对比（OMPL/CHOMP/STOMP/Pilz）→ Gazebo 仿真 → 真机 + 相机感知闭环。`
+  },
 };
