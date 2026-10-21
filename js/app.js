@@ -295,6 +295,141 @@ function refreshNoteBadges() {
 }
 
 // ============================================
+// 阅读工具：目录 TOC + 阅读进度 + 代码块复制
+// ============================================
+function removeReadingTools() {
+  const toc = document.getElementById('tocPanel');
+  if (toc) toc.remove();
+  const bar = document.getElementById('readingProgress');
+  if (bar) bar.remove();
+}
+
+function findArticleBody() {
+  return document.querySelector('.article-detail-body, .course-notes .markdown-body');
+}
+
+// 从正文的 h2/h3 生成目录（宽屏侧边栏 + 顶部进度条）
+function buildReadingTools() {
+  const body = findArticleBody();
+  if (!body) { removeReadingTools(); return; }
+  const heads = Array.prototype.slice.call(body.querySelectorAll('h2, h3'));
+  if (heads.length < 3) { removeReadingTools(); return; }
+
+  // 清掉旧目录，避免重复
+  removeReadingTools();
+
+  let tocLinks = '';
+  heads.forEach(function (h, i) {
+    h.id = 'heading-' + i;
+    tocLinks += '<a class="toc-link ' + (h.tagName === 'H3' ? 'toc-h3' : '') + '" data-target="heading-' + i + '" tabindex="0">' + escapeHtml(h.textContent) + '</a>';
+  });
+
+  document.body.insertAdjacentHTML('beforeend',
+    '<div class="toc-panel" id="tocPanel"><div class="toc-title">目录</div><nav class="toc-nav">' + tocLinks + '</nav></div>' +
+    '<div class="reading-progress" id="readingProgress"><i></i></div>'
+  );
+  bindScrollSpy();
+}
+
+let _scrollSpyBound = false;
+function bindScrollSpy() {
+  if (_scrollSpyBound) return;
+  _scrollSpyBound = true;
+  window.addEventListener('scroll', function () {
+    const bar = document.querySelector('#readingProgress i');
+    if (bar) {
+      const doc = document.documentElement;
+      const total = doc.scrollHeight - window.innerHeight;
+      const pct = total > 0 ? Math.min(100, Math.max(0, window.scrollY / total * 100)) : 0;
+      bar.style.width = pct + '%';
+    }
+    const links = document.querySelectorAll('#tocPanel .toc-link');
+    if (links.length) {
+      const heads = Array.prototype.slice.call(findArticleBody() ? findArticleBody().querySelectorAll('h2, h3') : []);
+      let active = 0;
+      for (let i = 0; i < heads.length; i++) {
+        if (heads[i].getBoundingClientRect().top <= 90) active = i;
+      }
+      links.forEach(function (a, i) { a.classList.toggle('active', i === active); });
+    }
+  }, { passive: true });
+}
+
+function scrollToHeading(id) {
+  const el = document.getElementById(id);
+  if (el && typeof el.scrollIntoView === 'function') {
+    el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
+}
+
+// 目录点击/回车滚动到标题（hash 路由下不能用锚点，会触发整页跳转）
+document.addEventListener('click', function (e) {
+  const t = e.target.closest ? e.target.closest('[data-target]') : null;
+  if (!t) return;
+  scrollToHeading(t.getAttribute('data-target'));
+});
+
+// 键盘无障碍：Enter/Space 触发 data-href（卡片类可点击元素）与 data-target（目录）
+document.addEventListener('keydown', function (e) {
+  if (e.key !== 'Enter' && e.key !== ' ') return;
+  const t = e.target.closest ? e.target.closest('[data-href],[data-target]') : null;
+  if (!t) return;
+  const tag = t.tagName;
+  // 无 href 的 <a>（目录项）需要由这里接管回车；有 href 的原生跳转即可
+  if ((tag === 'A' && t.hasAttribute('href')) || tag === 'BUTTON' || tag === 'INPUT' || tag === 'TEXTAREA') return;
+  e.preventDefault();
+  if (t.hasAttribute('data-target')) {
+    scrollToHeading(t.getAttribute('data-target'));
+  } else {
+    location.hash = t.getAttribute('data-href');
+  }
+});
+
+function fallbackCopy(text, done) {
+  const ta = document.createElement('textarea');
+  ta.value = text;
+  ta.style.position = 'fixed';
+  ta.style.opacity = '0';
+  document.body.appendChild(ta);
+  ta.select();
+  try { document.execCommand('copy'); done(); } catch (e) {}
+  document.body.removeChild(ta);
+}
+
+function copyText(text, btn) {
+  const done = function () {
+    btn.textContent = '已复制 ✓';
+    setTimeout(function () { btn.textContent = '复制'; }, 1600);
+  };
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    navigator.clipboard.writeText(text).then(done).catch(function () { fallbackCopy(text, done); });
+  } else {
+    fallbackCopy(text, done);
+  }
+}
+
+// 给代码块加「语言标签 + 复制按钮」悬浮工具条
+function enhanceCodeBlocks(root) {
+  if (!root) return;
+  root.querySelectorAll('pre').forEach(function (pre) {
+    if (pre.dataset.enhanced === '1') return;
+    const code = pre.querySelector('code');
+    if (!code) return;
+    pre.dataset.enhanced = '1';
+    const m = (code.className || '').match(/language-([\w+#-]+)/);
+    const bar = document.createElement('div');
+    bar.className = 'code-toolbar';
+    bar.innerHTML =
+      (m ? '<span class="code-lang">' + escapeHtml(m[1]) + '</span>' : '') +
+      '<button class="copy-btn" type="button">复制</button>';
+    pre.appendChild(bar);
+    bar.querySelector('.copy-btn').addEventListener('click', function () {
+      copyText(code.innerText || code.textContent || '', this);
+    });
+  });
+}
+
+// ============================================
 // Page Renderers
 // ============================================
 
@@ -314,7 +449,7 @@ function renderHome() {
   }
 
   const cards = filtered.map(post => `
-    <article class="article-card" onclick="location.hash = '#/post/${post.id}'">
+    <article class="article-card" data-href="#/post/${post.id}" tabindex="0" role="link" onclick="location.hash = '#/post/${post.id}'">
       <h2 class="article-card-title">
         <a href="#/post/${post.id}">${escapeHtml(post.title)}</a>
       </h2>
@@ -383,7 +518,7 @@ function renderGlobalSearch(query) {
   if (courses.length) {
     html += `<div class="search-section-title">📚 课程 (${courses.length})</div>`;
     html += courses.map(c => `
-      <div class="search-course-item" onclick="location.hash='#/course/${encodeURIComponent(c.id)}'">
+      <div class="search-course-item" data-href="#/course/${encodeURIComponent(c.id)}" tabindex="0" role="link" onclick="location.hash='#/course/${encodeURIComponent(c.id)}'">
         <span class="search-item-icon">📚</span>
         <div class="search-item-main">
           <div class="search-item-title">${escapeHtml(c.name)}</div>
@@ -395,7 +530,7 @@ function renderGlobalSearch(query) {
   if (papers.length) {
     html += `<div class="search-section-title">📄 论文 (${papers.length})</div>`;
     html += papers.map(p => `
-      <div class="search-paper-item" onclick="location.hash='#/papers'">
+      <div class="search-paper-item" data-href="#/papers" tabindex="0" role="link" onclick="location.hash='#/papers'">
         <span class="search-item-icon">📄</span>
         <div class="search-item-main">
           <div class="search-item-title">${escapeHtml(p.title)}</div>
@@ -407,7 +542,7 @@ function renderGlobalSearch(query) {
   if (materials.length) {
     html += `<div class="search-section-title">📎 学习资料 (${materials.length})</div>`;
     html += materials.map(m => `
-      <div class="search-paper-item" onclick="location.hash='#/papers'">
+      <div class="search-paper-item" data-href="#/papers" tabindex="0" role="link" onclick="location.hash='#/papers'">
         <span class="search-item-icon">📎</span>
         <div class="search-item-main">
           <div class="search-item-title">${escapeHtml(m.name || '')}</div>
@@ -694,7 +829,7 @@ function renderCourses() {
       for (const course of courses) {
         const yearBadge = course.year ? `<span class="course-card-year">${course.year}</span>` : '';
         html += `
-          <div class="course-card" data-course-id="${escapeHtml(course.id)}" onclick="location.hash='#/course/${encodeURIComponent(course.id)}'">
+          <div class="course-card" data-course-id="${escapeHtml(course.id)}" data-href="#/course/${encodeURIComponent(course.id)}" tabindex="0" role="link" onclick="location.hash='#/course/${encodeURIComponent(course.id)}'">
             <div class="course-card-header">
               <div class="course-card-title">${escapeHtml(course.name)}</div>
               ${typeof COURSE_NOTES !== 'undefined' && COURSE_NOTES[course.id] ? '<span class="note-badge">📝笔记</span>' : ''}
@@ -852,7 +987,7 @@ function renderCode() {
     html += '<div class="course-grid">';
     for (const lib of filtered) {
       html += `
-        <div class="course-card" onclick="location.hash='#/codelib/${encodeURIComponent(lib.id)}'">
+        <div class="course-card" data-href="#/codelib/${encodeURIComponent(lib.id)}" tabindex="0" role="link" onclick="location.hash='#/codelib/${encodeURIComponent(lib.id)}'">
           <div class="course-card-header">
             <div class="course-card-title">${escapeHtml(lib.name)}</div>
             <span class="course-card-source">${escapeHtml(lib.category)}</span>
@@ -1446,6 +1581,7 @@ function updateEditorPreview() {
   var text = content.value || '';
   try {
     preview.innerHTML = marked.parse(text);
+    enhanceCodeBlocks(preview);
     highlightIn(preview);
   } catch (e) {
     preview.innerHTML = '<p style="color:#e53e3e">\u9884\u89C8\u9519\u8BEF</p>';
@@ -1581,6 +1717,9 @@ async function router() {
   const app = document.getElementById('app');
   const searchBar = document.getElementById('searchBar');
 
+  // 上一个页面遗留的目录/进度条
+  removeReadingTools();
+
   // Close mobile menu
   document.querySelector('.nav').classList.remove('open');
   document.getElementById('menuToggle').classList.remove('active');
@@ -1661,7 +1800,9 @@ async function router() {
         loadData('notes').then(function () {
           if (token === _routeToken) {
             app.innerHTML = renderCourseDetail(id);
+            enhanceCodeBlocks(app);
             highlightIn(app);
+            buildReadingTools();
           }
         });
       }
@@ -1727,7 +1868,9 @@ async function router() {
     `;
   }
 
-  // 有代码块时才按需加载高亮库
+  // 代码工具条（复制/语言标签）、阅读目录与进度、按需高亮
+  enhanceCodeBlocks(app);
+  buildReadingTools();
   highlightIn(app);
 
   // Scroll to top on navigation
@@ -1885,6 +2028,22 @@ if ('serviceWorker' in navigator) {
     });
   });
 }
+
+// Skip link：跳到主内容（不能用 #app 锚点，会被 hash 路由当成页面路由）
+(function initSkipLink() {
+  const skip = document.getElementById('skipLink');
+  if (!skip) return;
+  skip.addEventListener('click', function (e) {
+    e.preventDefault();
+    const app = document.getElementById('app');
+    if (!app) return;
+    app.setAttribute('tabindex', '-1');
+    try { app.focus({ preventScroll: true }); } catch (err) { app.focus(); }
+    if (typeof app.scrollIntoView === 'function') {
+      app.scrollIntoView();
+    }
+  });
+})();
 
 // Initial render
 router();

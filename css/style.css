@@ -2193,3 +2193,229 @@ main {
   white-space: nowrap;
   flex-shrink: 0;
 }
+
+/* ============================================
+   Accessibility
+   ============================================ */
+:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 2px;
+  border-radius: 2px;
+}
+
+.skip-link {
+  position: absolute;
+  left: -9999px;
+  top: 0;
+  z-index: 999;
+  background: var(--color-primary);
+  color: #fff;
+  padding: 8px 16px;
+  border-radius: 0 0 var(--radius-sm) 0;
+  font-size: 0.85rem;
+}
+
+.skip-link:focus {
+  left: 0;
+}
+
+/* ============================================
+   Reading Progress & TOC
+   ============================================ */
+.reading-progress {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  z-index: 300;
+  pointer-events: none;
+}
+
+.reading-progress i {
+  display: block;
+  height: 100%;
+  width: 0;
+  background: var(--color-primary);
+  transition: width 0.1s linear;
+}
+
+.toc-panel {
+  display: none;
+  position: fixed;
+  top: calc(var(--header-height) + 28px);
+  right: 20px;
+  width: 224px;
+  max-height: calc(100vh - var(--header-height) - 60px);
+  overflow: hidden;
+  z-index: 90;
+}
+
+.toc-title {
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: var(--color-text-muted);
+  margin-bottom: 8px;
+  letter-spacing: 0.06em;
+}
+
+.toc-nav {
+  display: flex;
+  flex-direction: column;
+  border-left: 2px solid var(--color-border);
+  max-height: calc(100vh - var(--header-height) - 96px);
+  overflow-y: auto;
+}
+
+.toc-link {
+  font-size: 0.8rem;
+  line-height: 1.5;
+  color: var(--color-text-secondary);
+  padding: 3px 10px;
+  margin-left: -2px;
+  border-left: 2px solid transparent;
+  cursor: pointer;
+  transition: color var(--transition), border-color var(--transition);
+}
+
+.toc-link:hover,
+.toc-link.active {
+  color: var(--color-primary);
+  border-left-color: var(--color-primary);
+}
+
+.toc-link.toc-h3 {
+  padding-left: 24px;
+  font-size: 0.76rem;
+}
+
+@media (min-width: 1280px) {
+  .toc-panel {
+    display: block;
+  }
+}
+
+/* ============================================
+   Code Toolbar (copy button + language tag)
+   ============================================ */
+.markdown-body pre {
+  position: relative;
+}
+
+.code-toolbar {
+  position: absolute;
+  top: 8px;
+  right: 10px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  opacity: 0.6;
+  transition: opacity var(--transition);
+}
+
+.markdown-body pre:hover .code-toolbar,
+.markdown-body pre:focus-within .code-toolbar {
+  opacity: 1;
+}
+
+@media (hover: none) {
+  .code-toolbar {
+    opacity: 1;
+  }
+}
+
+.code-lang {
+  font-size: 0.68rem;
+  color: var(--color-text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  user-select: none;
+}
+
+.copy-btn {
+  font-size: 0.72rem;
+  padding: 2px 10px;
+  border-radius: 6px;
+  border: 1px solid var(--color-border);
+  background: var(--color-surface);
+  color: var(--color-text-secondary);
+  cursor: pointer;
+  transition: color var(--transition), border-color var(--transition);
+}
+
+.copy-btn:hover {
+  color: var(--color-primary);
+  border-color: var(--color-primary);
+}
+
+/* ============================================
+   Small Screens & Motion Preferences
+   ============================================ */
+@media (max-width: 480px) {
+  html {
+    font-size: 15px;
+  }
+
+  .article-detail-title,
+  .course-detail-title {
+    font-size: 1.4rem;
+  }
+
+  .page-title {
+    font-size: 1.3rem;
+  }
+
+  .courses-stats {
+    gap: 10px;
+    margin-bottom: 20px;
+  }
+
+  .stat-card {
+    flex: 1 1 40%;
+    padding: 10px;
+  }
+
+  .file-item {
+    flex-wrap: wrap;
+    row-gap: 2px;
+  }
+
+  .file-name {
+    word-break: break-all;
+  }
+
+  .course-card-meta {
+    flex-wrap: wrap;
+  }
+
+  .article-card-meta {
+    flex-wrap: wrap;
+  }
+
+  .header-inner {
+    padding: 0 12px;
+  }
+
+  .logo-text {
+    font-size: 1rem;
+  }
+
+  .search-results-count {
+    font-size: 0.85rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+
+  html {
+    scroll-behavior: auto;
+  }
+}
+
