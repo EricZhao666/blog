@@ -4,7 +4,7 @@
 //   - vendor / 静态资源：stale-while-revalidate（先快后新）
 //   - 第三方（giscus 等）：不拦截
 // 每次发布请递增 CACHE_VERSION。
-const CACHE_VERSION = '2026-10-21-1';
+const CACHE_VERSION = '2026-10-21-2';
 const CACHE = 'blog-' + CACHE_VERSION;
 
 // 预缓存核心资源（逐个缓存，单个失败不影响整体安装）
@@ -13,19 +13,19 @@ const CORE_ASSETS = [
   './index.html',
   './css/style.css',
   './vendor/marked.min.js',
-  './vendor/highlight.min.js',
   './vendor/atom-one-light.min.css',
   './js/data.js',
   './js/user-posts.js',
+  './js/projects.js',
   './js/app.js'
 ];
 
-// 按需缓存的资源（体积大，首次访问对应页面时再缓存）
+// 按需缓存的资源（体积大，首屏不需要；后台预缓存以便离线可用）
 const OPTIONAL_ASSETS = [
+  './vendor/highlight.min.js',
   './js/courses.js',
   './js/course-notes.js',
   './js/papers.js',
-  './js/projects.js',
   './js/codefiles.js'
 ];
 

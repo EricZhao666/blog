@@ -5,24 +5,16 @@
 // ============================================
 // Config
 // ============================================
+// 代码高亮改为渲染后按需处理（highlight.js 懒加载，见 ensureHighlight / highlightIn）：
+// 无代码块的页面（首页/课程列表/论文…）不再下载 55KB 的高亮库，
+// 且不再对无语言标记的代码块做 highlightAuto（长代码块下很慢）。
 try {
   marked.setOptions({
     breaks: true,
-    gfm: true,
-    highlight: function (code, lang) {
-      if (typeof hljs !== 'undefined' && lang && hljs.getLanguage(lang)) {
-        try {
-          return hljs.highlight(code, { language: lang }).value;
-        } catch (e) {}
-      }
-      if (typeof hljs !== 'undefined') {
-        try { return hljs.highlightAuto(code).value; } catch (e) {}
-      }
-      return code;
-    }
+    gfm: true
   });
 } catch (e) {
-  console.warn('marked/hljs init failed:', e);
+  console.warn('marked init failed:', e);
 }
 
 // ============================================
@@ -203,6 +195,101 @@ function bindLiveSearch(inputId, applyValue, delay) {
     if (ev.key === 'Enter') {
       clearTimeout(timer);
       commit();
+    }
+  });
+}
+
+// ============================================
+// 按需加载：数据脚本 + 代码高亮
+// ============================================
+// 数据脚本体积较大（课程 382KB / 代码库 380KB / 笔记 101KB / 论文 41KB），
+// 只在访问对应路由时加载；首页只需要 data.js。
+const DATA_FILES = {
+  courses: 'js/courses.js',
+  notes: 'js/course-notes.js',
+  papers: 'js/papers.js',
+  codefiles: 'js/codefiles.js'
+};
+const DATA_GLOBALS = {
+  courses: 'COURSES',
+  notes: 'COURSE_NOTES',
+  papers: 'PAPERS',
+  codefiles: 'CODE_LIBS'
+};
+const _dataPromises = {};
+let _routeToken = 0;
+
+// 顶层 const 不会挂到 window 上，用 eval 检测同名全局绑定是否存在
+function dataReady(key) {
+  try {
+    return eval('typeof ' + DATA_GLOBALS[key]) !== 'undefined';
+  } catch (e) {
+    return false;
+  }
+}
+
+function loadScriptOnce(src) {
+  return new Promise(function (resolve, reject) {
+    const s = document.createElement('script');
+    s.src = src;
+    s.async = false;
+    s.onload = function () { resolve(); };
+    s.onerror = function () { reject(new Error('加载失败: ' + src)); };
+    document.head.appendChild(s);
+  });
+}
+
+function loadData(key) {
+  if (dataReady(key)) return Promise.resolve();
+  if (_dataPromises[key]) return _dataPromises[key];
+  _dataPromises[key] = loadScriptOnce(DATA_FILES[key]).catch(function (err) {
+    console.warn(err.message);
+    delete _dataPromises[key];
+  });
+  return _dataPromises[key];
+}
+
+function renderLoading(label) {
+  return '<div class="empty-state"><div class="empty-state-icon">⏳</div><p>正在加载' + label + '…</p></div>';
+}
+
+// ---- 代码高亮（懒加载，只在出现代码块时下载 55KB 精简包）----
+let _hljsPromise = null;
+function ensureHighlight() {
+  if (typeof hljs !== 'undefined') return Promise.resolve();
+  if (!_hljsPromise) {
+    _hljsPromise = loadScriptOnce('vendor/highlight.min.js').catch(function (err) {
+      console.warn('高亮库加载失败:', err.message);
+    });
+  }
+  return _hljsPromise;
+}
+
+function highlightIn(root) {
+  if (!root) return;
+  const blocks = root.querySelectorAll('pre code');
+  if (!blocks.length) return;
+  ensureHighlight().then(function () {
+    if (typeof hljs === 'undefined') return;
+    blocks.forEach(function (el) {
+      if (el.dataset.highlighted === 'yes') return;
+      const m = (el.className || '').match(/language-([\w+#-]+)/);
+      if (m && !hljs.getLanguage(m[1])) {
+        el.className = el.className.replace(/language-[\w+#-]+/, '').trim();
+      }
+      try { hljs.highlightElement(el); } catch (e) {}
+    });
+  });
+}
+
+// 笔记数据后到：只给卡片补 📝 徽标，不重绘整页
+function refreshNoteBadges() {
+  if (!dataReady('notes')) return;
+  document.querySelectorAll('[data-course-id]').forEach(function (card) {
+    const id = card.getAttribute('data-course-id');
+    if (COURSE_NOTES[id] && !card.querySelector('.note-badge')) {
+      const head = card.querySelector('.course-card-header');
+      if (head) head.insertAdjacentHTML('beforeend', '<span class="note-badge">📝笔记</span>');
     }
   });
 }
@@ -607,7 +694,7 @@ function renderCourses() {
       for (const course of courses) {
         const yearBadge = course.year ? `<span class="course-card-year">${course.year}</span>` : '';
         html += `
-          <div class="course-card" onclick="location.hash='#/course/${encodeURIComponent(course.id)}'">
+          <div class="course-card" data-course-id="${escapeHtml(course.id)}" onclick="location.hash='#/course/${encodeURIComponent(course.id)}'">
             <div class="course-card-header">
               <div class="course-card-title">${escapeHtml(course.name)}</div>
               ${typeof COURSE_NOTES !== 'undefined' && COURSE_NOTES[course.id] ? '<span class="note-badge">📝笔记</span>' : ''}
@@ -1359,6 +1446,7 @@ function updateEditorPreview() {
   var text = content.value || '';
   try {
     preview.innerHTML = marked.parse(text);
+    highlightIn(preview);
   } catch (e) {
     preview.innerHTML = '<p style="color:#e53e3e">\u9884\u89C8\u9519\u8BEF</p>';
   }
@@ -1487,7 +1575,8 @@ window.publishPost = async function() {
 // ============================================
 // Router
 // ============================================
-function router() {
+async function router() {
+  const token = ++_routeToken;
   const hash = location.hash.slice(1) || '/';
   const app = document.getElementById('app');
   const searchBar = document.getElementById('searchBar');
@@ -1546,16 +1635,42 @@ function router() {
       const tag = parts.length > 2 ? decodeURIComponent(parts[2]) : null;
       app.innerHTML = renderTags(tag);
     } else if (hash === '/courses') {
+      if (!dataReady('courses')) {
+        app.innerHTML = renderLoading('课程资料');
+        await loadData('courses');
+        if (token !== _routeToken) return;
+      }
       app.innerHTML = renderCourses();
       bindLiveSearch('courseSearchInput', (val) => {
         courseSearchQuery = val;
         app.innerHTML = renderCourses();
       });
+      // 笔记徽标依赖 course-notes.js，后台补加载，不阻塞列表渲染
+      loadData('notes').then(refreshNoteBadges);
     } else if (hash.startsWith('/course/')) {
       courseFileLimit = 50;
       const id = decodeURIComponent(hash.slice('/course/'.length));
+      if (!dataReady('courses')) {
+        app.innerHTML = renderLoading('课程资料');
+        await loadData('courses');
+        if (token !== _routeToken) return;
+      }
+      const notesReady = dataReady('notes');
       app.innerHTML = renderCourseDetail(id);
+      if (!notesReady) {
+        loadData('notes').then(function () {
+          if (token === _routeToken) {
+            app.innerHTML = renderCourseDetail(id);
+            highlightIn(app);
+          }
+        });
+      }
     } else if (hash === '/papers') {
+      if (!dataReady('papers')) {
+        app.innerHTML = renderLoading('论文与学习资料');
+        await loadData('papers');
+        if (token !== _routeToken) return;
+      }
       app.innerHTML = renderPapers();
       bindLiveSearch('paperSearchInput', (val) => {
         paperSearchQuery = val;
@@ -1568,6 +1683,11 @@ function router() {
     } else if (hash === '/archive') {
       app.innerHTML = renderArchive();
     } else if (hash === '/code') {
+      if (!dataReady('codefiles')) {
+        app.innerHTML = renderLoading('代码与文件库');
+        await loadData('codefiles');
+        if (token !== _routeToken) return;
+      }
       app.innerHTML = renderCode();
       bindLiveSearch('codeLibSearchInput', (val) => {
         codeLibSearchQuery = val;
@@ -1576,6 +1696,11 @@ function router() {
     } else if (hash.startsWith('/codelib/')) {
       codeLibFileLimit = 50;
       const id = decodeURIComponent(hash.slice('/codelib/'.length));
+      if (!dataReady('codefiles')) {
+        app.innerHTML = renderLoading('代码与文件库');
+        await loadData('codefiles');
+        if (token !== _routeToken) return;
+      }
       app.innerHTML = renderCodeDetail(id);
     } else if (hash === '/links') {
       app.innerHTML = renderLinks();
@@ -1601,6 +1726,9 @@ function router() {
       </div>
     `;
   }
+
+  // 有代码块时才按需加载高亮库
+  highlightIn(app);
 
   // Scroll to top on navigation
   window.scrollTo(0, 0);
@@ -1682,9 +1810,19 @@ window.setPaperCategory = function(cat) {
 };
 
 // Search
+// 全局搜索会跨文章/课程/论文，后两者数据按需加载：
+// 首次输入关键词时并行拉取，到齐后补一次结果重绘。
 bindLiveSearch('searchInput', (val) => {
   searchQuery = val;
   document.getElementById('app').innerHTML = renderHome();
+  if (val.trim() && (!dataReady('courses') || !dataReady('papers'))) {
+    const target = val.trim();
+    Promise.all([loadData('courses'), loadData('papers')]).then(function () {
+      if (searchQuery.trim() === target) {
+        document.getElementById('app').innerHTML = renderHome();
+      }
+    });
+  }
 });
 
 // Mobile menu toggle
