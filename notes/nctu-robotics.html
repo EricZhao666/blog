@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="NCTU 楊谷洋机器人学：D-H 运动学、雅可比与奇异性、三次多项式/势场运动规划、拉格朗日与牛顿-欧拉动力学、柔顺/混合力位/阻抗控制、网络化VR遥操作。">
+  <title>机器人学 (国立交通大学·杨谷洋) 课程笔记 · Eric's Notebook</title>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🦐</text></svg>">
+  <link rel="apple-touch-icon" href="../icons/apple-touch-icon.png">
+  <link rel="canonical" href="https://ericzhao666.github.io/blog/notes/nctu-robotics.html">
+  <link rel="alternate" type="application/rss+xml" title="Eric's Notebook RSS" href="../feed.xml">
+  <link rel="stylesheet" href="../css/style.css">
+  <link rel="stylesheet" href="../vendor/atom-one-light.min.css">
+  <meta name="theme-color" content="#2563eb">
+  <meta property="og:type" content="article">
+  <meta property="og:site_name" content="Eric's Notebook">
+  <meta property="og:title" content="机器人学 (国立交通大学·杨谷洋) 课程笔记 · Eric's Notebook">
+  <meta property="og:description" content="NCTU 楊谷洋机器人学：D-H 运动学、雅可比与奇异性、三次多项式/势场运动规划、拉格朗日与牛顿-欧拉动力学、柔顺/混合力位/阻抗控制、网络化VR遥操作。">
+  <meta property="og:url" content="https://ericzhao666.github.io/blog/notes/nctu-robotics.html">
+  <meta property="og:image" content="https://ericzhao666.github.io/blog/icons/icon-512.png">
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:title" content="机器人学 (国立交通大学·杨谷洋) 课程笔记 · Eric's Notebook">
+  <meta name="twitter:description" content="NCTU 楊谷洋机器人学：D-H 运动学、雅可比与奇异性、三次多项式/势场运动规划、拉格朗日与牛顿-欧拉动力学、柔顺/混合力位/阻抗控制、网络化VR遥操作。">
+  <meta name="twitter:image" content="https://ericzhao666.github.io/blog/icons/icon-512.png">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"机器人学 (国立交通大学·杨谷洋) 课程笔记","description":"NCTU 楊谷洋机器人学：D-H 运动学、雅可比与奇异性、三次多项式/势场运动规划、拉格朗日与牛顿-欧拉动力学、柔顺/混合力位/阻抗控制、网络化VR遥操作。","inLanguage":"zh-CN","dateModified":"2026-10-21","author":{"@type":"Person","name":"Eric Zhao"},"mainEntityOfPage":"https://ericzhao666.github.io/blog/notes/nctu-robotics.html"}</script>
+</head>
+<body>
+  <header class="site-header">
+    <div class="container header-inner">
+      <a href="../#/" class="logo"><span class="logo-icon">🦐</span><span class="logo-text">Eric's Notebook</span></a>
+      <nav class="nav">
+        <a class="nav-link" href="../#/">首页</a>
+        <a class="nav-link" href="../#/courses">课程</a>
+        <a class="nav-link" href="../#/papers">论文</a>
+        <a class="nav-link" href="../#/code">代码</a>
+      </nav>
+    </div>
+  </header>
+  <main class="container" id="app">
+    <a class="article-back" href="../#/course/%E9%A6%99%E6%B8%AF%E5%A4%A7%E5%AD%A6%7C%E6%9C%BA%E5%99%A8%E4%BA%BA%E5%AD%A6-(%E5%9B%BD%E7%AB%8B%E4%BA%A4%E9%80%9A%E5%A4%A7%E5%AD%A6%C2%B7%E6%9D%A8%E8%B0%B7%E6%B4%8B)">← 在站点中查看（含课程文件清单）</a>
+    <article class="article-detail">
+      <div class="article-detail-header">
+        <h1 class="article-detail-title">机器人学 (国立交通大学·杨谷洋) 课程笔记</h1>
+        <div class="article-detail-meta">
+          <span class="meta-item">📂 机器人与自动化</span>
+          
+          <span class="meta-item">📝 2,493 字</span>
+        </div>
+        <p class="course-notes-summary">NCTU 楊谷洋机器人学：D-H 运动学、雅可比与奇异性、三次多项式/势场运动规划、拉格朗日与牛顿-欧拉动力学、柔顺/混合力位/阻抗控制、网络化VR遥操作。</p>
+      </div>
+      <div class="article-detail-body markdown-body">
+<h1>机器人学 (国立交通大学·杨谷洋) 核心笔记</h1>
+<blockquote>
+<p>内容据课程 8 份讲义（robot051_L1~L8）整理。国立交通大学（NCTU）电机工程学系 <strong>楊谷洋</strong> 老师讲授（Human and Machine Lab）。经典机器人学主线：<strong>绪论 → 空间表示与变换 → 正/逆运动学 → 微分关系（雅可比） → 运动规划 → 动力学 → 控制与柔顺 → 网络遥操作</strong>。</p>
+</blockquote>
+<h2>1. 绪论（Chapter 1）</h2>
+<ul>
+<li><strong>什么是机器人</strong>：具备**移动性（Mobility）与自主性（Autonomy）**的系统。</li>
+<li><strong>为什么用机器人</strong>：降低成本、提高生产率与质量、进入恶劣环境作业、与 CAD 集成（标定与任务可行性分析）。</li>
+<li><strong>应用场景</strong>：搬运、喷涂、转移、压铸、焊接、装配、测量、抓持；机器人<strong>擅长时间/位置控制，弱于视觉与力控制</strong>。</li>
+<li><strong>机器人系统组成</strong>：控制器 + 机械臂 + 示教盒 + 传感器系统（位置/速度/视觉/力）+ 机器人语言 + CAD/Robot 集成。</li>
+<li><strong>硬件要素</strong>：臂（3/4/5/6 自由度 + 冗余 + 夹持器）、关节（转动 Revolute / 移动 Prismatic）、执行器（电机/液压/气压）、传动（直驱 / 齿轮皮带）、内传感器（编码器测位、测速计测速）。</li>
+<li><strong>仿真器闭环</strong>：任务 (qd, q̇d) → 轨迹规划 → 控制（反馈+前馈）→ 动力学方程 <code>τ = H(q)q̈ + h(q,q̇) + G(q)</code> → 运动积分。</li>
+</ul>
+<h2>2. 空间表示与变换（Chapter 2）</h2>
+<ul>
+<li><strong>位置向量与姿态矩阵</strong>：姿态阵 R 的元素为方向余弦；<code>R_BA = R_AB^T</code>（正交阵）。</li>
+<li><strong>坐标系映射</strong>：平移 <code>P_A = P_B + P_origin</code>；旋转 <code>P_A = R_AB · P_B</code>；一般情形用 <strong>4×4 齐次变换</strong>统一表达。</li>
+<li><strong>等效角轴表示</strong>（Equivalent Angle-Axis）：任意旋转可用单位轴 + 角度描述。</li>
+<li><strong>三参数姿态</strong>：欧拉角（Euler angles）与 RPY 角（Roll-Pitch-Yaw）。</li>
+</ul>
+<h2>3. 正/逆运动学（Chapter 3）</h2>
+<ul>
+<li><strong>运动学定义</strong>：只研究运动本身（位置/速度/加速度），不考虑力。</li>
+<li><strong>连杆连接</strong>：末端位姿 <code>T_N = A1·A2·...·AN</code>；<strong>D-H 模型</strong>用 4 参数 (α, θ, d, a)：a 连杆长度、d 两轴线间距离、θ 两轴线夹角、α 扭转角；坐标系建立规则：Z 轴沿关节轴、X 轴沿公垂线（X × Z → Y）。</li>
+<li><strong>PUMA 560</strong> 经典六轴工业臂算例；<strong>重复精度 vs 绝对精度</strong>（Repeatability &amp; Accuracy）概念。</li>
+</ul>
+<h2>4. 微分关系与雅可比（Chapter 4）</h2>
+<ul>
+<li>线速度/角速度的参考系依赖：<code>V_QA = R_BA·V_QB</code>；B 系原点运动 <code>V_QA = V_orgA + R_BA·V_QB</code>；刚体系固定向量在旋转系中的速度 <code>V = Ω × Q</code>。</li>
+<li><strong>机械臂雅可比</strong>：<code>ẋd = J·qḋ</code>，逆解 <code>qḋ = J⁻¹·xḋ</code>；ΔT 微分变换。</li>
+<li><strong>奇异性（Singularity）</strong>：J 退化时笛卡尔速度不可达/要求无穷关节速度——逆雅可比失效。</li>
+</ul>
+<h2>5. 运动规划（Chapter 5）</h2>
+<ul>
+<li><strong>考虑因素</strong>：易指定、平滑性、构型空间、奇异性、关节空间 vs 笛卡尔空间运动；路径描述含初始/终止/途经点（位置+姿态）。</li>
+<li><strong>多项式轨迹</strong>：三次多项式连接两点并满足首末速度为零（4 个边界条件对应 4 个系数）。</li>
+<li><strong>构型空间法（C-Space）<strong>与</strong>势场法（Potential Field）</strong>：目标吸引 + 障碍排斥，可陷入局部极小。</li>
+</ul>
+<h2>6. 动力学（Chapter 6）</h2>
+<ul>
+<li><strong>两类问题</strong>：① 给定 θ, θ̇, θ̈ 求所需关节力矩（控制用）② 给定力矩求运动（仿真用）。</li>
+<li><strong>两大方法</strong>：<ul>
+<li><strong>拉格朗日法</strong>：L = K − P（动能减势能），由拉格朗日方程 d/dt(∂L/∂θ̇) − ∂L/∂θ = τ 导出动力学；二连杆算例推导；</li>
+<li><strong>牛顿-欧拉法</strong>：递归牛顿-欧拉算法（外推内收），计算效率高，适合实时控制；</li>
+<li><strong>动力学仿真器</strong>与实际控制回路对接。</li>
+</ul>
+</li>
+</ul>
+<h2>7. 机器人控制与柔顺（Chapter 7）</h2>
+<ul>
+<li><strong>结构</strong>：前馈（动力学逆）+ 反馈（PD）：<code>τ = J^T(Kd·ẋd − Kp·x − Kv·ẋ)</code> 类笛卡尔空间控制；<code>Kd = J⁻¹</code> 速度前馈。</li>
+<li><strong>柔顺（Compliance）</strong>：与环境接触必需——刚性位置控制会顶坏工件/机器人。</li>
+<li><strong>位置/力混合控制（Hybrid Position/Force Control）</strong>：按任务坐标系分解为位置控制子空间与力控制子空间。</li>
+<li><strong>阻抗控制（Impedance Control）</strong>：不控位置或力本身，而控制力与运动之间的动态关系（弹簧-阻尼-质量模型）。</li>
+</ul>
+<h2>8. 专题：网络化 VR 遥操作机器人（L8）</h2>
+<ul>
+<li><strong>引子问题</strong>：福岛核事故初期日本为何没派机器人？机器人&quot;居家助手/哆啦A梦&quot;离现实还有多远？</li>
+<li>火星车 Sojourner 开创全球互联网遥操作（internet teleoperation）；应用：教育、医疗、工业、娱乐、培训、VR 动态仿真。</li>
+<li><strong>典型网络化 VR 遥操作系统的挑战</strong>：<ul>
+<li>远程环境的<strong>临场感</strong>（视觉/听觉/触觉）；VR I/O 设备设计（HMD、3D 眼镜、力反馈手柄、数据手套）；</li>
+<li>操纵设备与远端机械臂的不兼容；<strong>网络传输时延</strong>（大障碍）；</li>
+<li>辅助操作工具、远端智能控制器处理机械臂与环境交互、人与远程智能控制器的协作。</li>
+</ul>
+</li>
+</ul>
+
+      </div>
+    </article>
+    <p class="notes-static-hint">本页为静态版本，便于搜索引擎收录与分享；
+      <a href="../#/course/%E9%A6%99%E6%B8%AF%E5%A4%A7%E5%AD%A6%7C%E6%9C%BA%E5%99%A8%E4%BA%BA%E5%AD%A6-(%E5%9B%BD%E7%AB%8B%E4%BA%A4%E9%80%9A%E5%A4%A7%E5%AD%A6%C2%B7%E6%9D%A8%E8%B0%B7%E6%B4%8B)">交互版（含文件清单与搜索）→</a> ·
+      <a href="index.html">全部课程笔记</a>
+    </p>
+  </main>
+  <footer class="site-footer">
+    <div class="container">
+      <p>&copy; 2024-2026 Eric's Notebook · 用文字记录思考</p>
+      <p class="footer-sub">Powered by vanilla JS &amp; Markdown</p>
+    </div>
+  </footer>
+  <script src="../vendor/highlight.min.js"></script>
+  <script>
+    (function () {
+      if (!window.hljs) return;
+      var blocks = document.querySelectorAll('pre code');
+      for (var i = 0; i < blocks.length; i++) {
+        var el = blocks[i];
+        var cls = el.className || '';
+        var pos = cls.indexOf('language-');
+        // 未知语言（如 language-text）先去掉 class，否则 highlightElement 会抛错
+        if (pos !== -1) {
+          var lang = cls.slice(pos + 9).split(' ')[0];
+          if (!hljs.getLanguage(lang)) {
+            el.className = cls.replace('language-' + lang, '').trim();
+          }
+        }
+        try { hljs.highlightElement(el); } catch (e) {}
+      }
+    })();
+  </script>
+</body>
+</html>

@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="ROS+MoveIt 机械臂开发：URDF/SRDF 建模、move_group 架构与 Planning Scene、Setup Assistant 配置、OMPL/CHOMP/STOMP/Pilz 规划器、FK/IK/笛卡尔路径/碰撞物演示与真机部署。">
+  <title>ROS机械臂开发视频教程 课程笔记 · Eric's Notebook</title>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🦐</text></svg>">
+  <link rel="apple-touch-icon" href="../icons/apple-touch-icon.png">
+  <link rel="canonical" href="https://ericzhao666.github.io/blog/notes/ros-moveit.html">
+  <link rel="alternate" type="application/rss+xml" title="Eric's Notebook RSS" href="../feed.xml">
+  <link rel="stylesheet" href="../css/style.css">
+  <link rel="stylesheet" href="../vendor/atom-one-light.min.css">
+  <meta name="theme-color" content="#2563eb">
+  <meta property="og:type" content="article">
+  <meta property="og:site_name" content="Eric's Notebook">
+  <meta property="og:title" content="ROS机械臂开发视频教程 课程笔记 · Eric's Notebook">
+  <meta property="og:description" content="ROS+MoveIt 机械臂开发：URDF/SRDF 建模、move_group 架构与 Planning Scene、Setup Assistant 配置、OMPL/CHOMP/STOMP/Pilz 规划器、FK/IK/笛卡尔路径/碰撞物演示与真机部署。">
+  <meta property="og:url" content="https://ericzhao666.github.io/blog/notes/ros-moveit.html">
+  <meta property="og:image" content="https://ericzhao666.github.io/blog/icons/icon-512.png">
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:title" content="ROS机械臂开发视频教程 课程笔记 · Eric's Notebook">
+  <meta name="twitter:description" content="ROS+MoveIt 机械臂开发：URDF/SRDF 建模、move_group 架构与 Planning Scene、Setup Assistant 配置、OMPL/CHOMP/STOMP/Pilz 规划器、FK/IK/笛卡尔路径/碰撞物演示与真机部署。">
+  <meta name="twitter:image" content="https://ericzhao666.github.io/blog/icons/icon-512.png">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"ROS机械臂开发视频教程 课程笔记","description":"ROS+MoveIt 机械臂开发：URDF/SRDF 建模、move_group 架构与 Planning Scene、Setup Assistant 配置、OMPL/CHOMP/STOMP/Pilz 规划器、FK/IK/笛卡尔路径/碰撞物演示与真机部署。","inLanguage":"zh-CN","dateModified":"2026-10-21","author":{"@type":"Person","name":"Eric Zhao"},"mainEntityOfPage":"https://ericzhao666.github.io/blog/notes/ros-moveit.html"}</script>
+</head>
+<body>
+  <header class="site-header">
+    <div class="container header-inner">
+      <a href="../#/" class="logo"><span class="logo-icon">🦐</span><span class="logo-text">Eric's Notebook</span></a>
+      <nav class="nav">
+        <a class="nav-link" href="../#/">首页</a>
+        <a class="nav-link" href="../#/courses">课程</a>
+        <a class="nav-link" href="../#/papers">论文</a>
+        <a class="nav-link" href="../#/code">代码</a>
+      </nav>
+    </div>
+  </header>
+  <main class="container" id="app">
+    <a class="article-back" href="../#/course/%E9%A6%99%E6%B8%AF%E5%A4%A7%E5%AD%A6%7CROS%E6%9C%BA%E6%A2%B0%E8%87%82%E5%BC%80%E5%8F%91%E8%A7%86%E9%A2%91%E6%95%99%E7%A8%8B">← 在站点中查看（含课程文件清单）</a>
+    <article class="article-detail">
+      <div class="article-detail-header">
+        <h1 class="article-detail-title">ROS机械臂开发视频教程 课程笔记</h1>
+        <div class="article-detail-meta">
+          <span class="meta-item">📂 机器人与自动化</span>
+          
+          <span class="meta-item">📝 2,490 字</span>
+        </div>
+        <p class="course-notes-summary">ROS+MoveIt 机械臂开发：URDF/SRDF 建模、move_group 架构与 Planning Scene、Setup Assistant 配置、OMPL/CHOMP/STOMP/Pilz 规划器、FK/IK/笛卡尔路径/碰撞物演示与真机部署。</p>
+      </div>
+      <div class="article-detail-body markdown-body">
+<h1>ROS 机械臂开发 核心笔记</h1>
+<blockquote>
+<p>内容据本地课程工程文件（MoveIt Setup Assistant 配置、URDF、CHOMP 配置、moveit_fk_demo / moveit_ik_demo / moveit_cartesian_demo / attach_object / gripper 等演示脚本）与 MoveIt 官方公开文档（moveit.picknik.ai）整理。技术栈：<strong>ROS 1 + MoveIt + URDF/SRDF + RViz/Gazebo</strong>。</p>
+</blockquote>
+<h2>1. ROS 基础回顾</h2>
+<ul>
+<li><strong>通信机制</strong>：节点（node）+ 话题（topic，异步发布/订阅）+ 服务（service，同步请求/响应）+ 参数服务器；catkin 工作空间与 package 组织。</li>
+<li><strong>机器人建模</strong>：<strong>URDF</strong>（link + joint 树，含 <code>&lt;mesh&gt;</code> 引用 STL 网格文件）→ xacro 宏简化；SRDF 由 MoveIt Setup Assistant 生成（补充规划组 planning group、虚拟关节、自碰撞矩阵）。</li>
+<li><strong>控制器</strong>：ros_control 体系（JointTrajectoryController 驱动真实关节接口），Gazebo 仿真与真机共用同一套 MoveIt 上层接口。</li>
+</ul>
+<h2>2. MoveIt 架构核心（move_group 节点）</h2>
+<ul>
+<li><strong>move_group</strong> 是 MoveIt 的中枢节点：汇聚机器人状态（关节状态）、传感器数据（3D 感知）、参数配置（运动学插件、规划器插件），对外提供两种接口——**ROS 封装（MoveGroupInterface）**与直接 C++/Python API。</li>
+<li><strong>Planning Scene Monitor</strong>：维护世界模型——机器人状态、环境碰撞物体（CollisionObject）、AttachedObject（把物体附着到末端链接，模拟夹持）；</li>
+<li><strong>运动学求解器（Kinematics）</strong>：插件式 IK（默认 KDL 数值法，可换 TRAC-IK / 解析法）、Jacobian 计算；</li>
+<li><strong>碰撞检测</strong>：FCL + 自碰撞矩阵（ACM）实现毫秒级碰撞查询。</li>
+</ul>
+<h2>3. MoveIt Setup Assistant 配置流程</h2>
+<ol>
+<li>加载 URDF → 生成 SRDF；</li>
+<li>定义 <strong>Planning Group</strong>（如 arm、gripper，指定关节集合与运动链）；</li>
+<li>设置<strong>虚拟关节</strong>（base→world）、自碰撞矩阵、姿态（pose）库、末端执行器；</li>
+<li>生成配置包（config/kinematics.yaml、joint_limits.yaml、ompl_planning.yaml、chomp_planning.yaml 等）。</li>
+</ol>
+<h2>4. 运动规划与规划器</h2>
+<ul>
+<li><strong>OMPL</strong>（默认）：RRT、RRT-Connect、PRM、KPIECE 等基于采样的规划插件，适合高自由度；</li>
+<li><strong>CHOMP / STOMP</strong>：基于优化的规划器——CHOMP 用协变梯度下降平滑轨迹（对初始化敏感），STOMP 用随机噪声滚动无需梯度；</li>
+<li><strong>Pilz</strong>：梯形速度的工业规划器（PTP/LIN/CIRC，可重复性强）；</li>
+<li><strong>轨迹处理</strong>：时间参数化（TTB/IPTP）、加减速限制、重试规划。</li>
+</ul>
+<h2>5. MoveGroupInterface 编程（对应本地演示脚本）</h2>
+<ul>
+<li><strong>FK 正运动学演示（moveit_fk_demo.py）</strong>：给关节角 → <code>get_current_pose / set_joint_value_target</code> 查询末端位姿；</li>
+<li><strong>IK 逆运动学演示（moveit_ik_demo.py）</strong>：给目标位姿 → <code>set_pose_target</code> + <code>plan()</code> + <code>execute()</code> 让 move_group 反解关节轨迹；</li>
+<li><strong>笛卡尔路径（moveit_cartesian_demo.py）</strong>：<code>computeCartesianPath</code> 让末端沿直线路径走，获得 waypoints 分数（fraction）判断可达性；</li>
+<li><strong>碰撞物体操作（moveit_attached_object_demo）</strong>：向 Planning Scene 添加 CollisionObject（盒/圆柱/网格），<code>attach_object</code> 把物体附着到末端链接，规划时自动避让；</li>
+<li><strong>夹爪控制</strong>：gripper 单独规划组，关节空间目标 + 同步或串行执行；</li>
+<li><strong>常用接口链</strong>：<code>set_start_state → set_pose_target → plan → execute</code>，RViz（MotionPlanning 插件）可视化目标位姿、规划轨迹（RQTTreeView）。</li>
+</ul>
+<h2>6. 仿真与真机部署</h2>
+<ul>
+<li><strong>Gazebo 仿真</strong>：URDF + transmission/gazebo 标签接入 ros_control，验证规划轨迹（呼应 MECH7010/Gazebo 的插件体系）；</li>
+<li><strong>真机</strong>：MoveIt 规划输出 JointTrajectory → 关节控制器（如 UR 驱动接口）执行；上位机/下位机分工与实时性约束；</li>
+<li><strong>手眼集成</strong>：RGB-D 相机感知 + Planning Scene 更新（octomap）实现动态避障与抓取（与 GRCNN 课程闭环衔接）。</li>
+</ul>
+<h2>7. 学习路径小结</h2>
+<p>ROS 建模（URDF）→ Setup Assistant 出配置 → RViz 调试 → MoveGroupInterface 写 FK/IK/笛卡尔/碰撞演示 → 规划器对比（OMPL/CHOMP/STOMP/Pilz）→ Gazebo 仿真 → 真机 + 相机感知闭环。</p>
+
+      </div>
+    </article>
+    <p class="notes-static-hint">本页为静态版本，便于搜索引擎收录与分享；
+      <a href="../#/course/%E9%A6%99%E6%B8%AF%E5%A4%A7%E5%AD%A6%7CROS%E6%9C%BA%E6%A2%B0%E8%87%82%E5%BC%80%E5%8F%91%E8%A7%86%E9%A2%91%E6%95%99%E7%A8%8B">交互版（含文件清单与搜索）→</a> ·
+      <a href="index.html">全部课程笔记</a>
+    </p>
+  </main>
+  <footer class="site-footer">
+    <div class="container">
+      <p>&copy; 2024-2026 Eric's Notebook · 用文字记录思考</p>
+      <p class="footer-sub">Powered by vanilla JS &amp; Markdown</p>
+    </div>
+  </footer>
+  <script src="../vendor/highlight.min.js"></script>
+  <script>
+    (function () {
+      if (!window.hljs) return;
+      var blocks = document.querySelectorAll('pre code');
+      for (var i = 0; i < blocks.length; i++) {
+        var el = blocks[i];
+        var cls = el.className || '';
+        var pos = cls.indexOf('language-');
+        // 未知语言（如 language-text）先去掉 class，否则 highlightElement 会抛错
+        if (pos !== -1) {
+          var lang = cls.slice(pos + 9).split(' ')[0];
+          if (!hljs.getLanguage(lang)) {
+            el.className = cls.replace('language-' + lang, '').trim();
+          }
+        }
+        try { hljs.highlightElement(el); } catch (e) {}
+      }
+    })();
+  </script>
+</body>
+</html>

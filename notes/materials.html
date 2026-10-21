@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="材料服役行为：理论强度与缺陷/位错、脆韧断裂、疲劳 S-N 曲线与 Paris 定律、蠕变三阶段、电化学腐蚀与防护、复合材料混合律与工程塑料。">
+  <title>材料科学 课程笔记 · Eric's Notebook</title>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🦐</text></svg>">
+  <link rel="apple-touch-icon" href="../icons/apple-touch-icon.png">
+  <link rel="canonical" href="https://ericzhao666.github.io/blog/notes/materials.html">
+  <link rel="alternate" type="application/rss+xml" title="Eric's Notebook RSS" href="../feed.xml">
+  <link rel="stylesheet" href="../css/style.css">
+  <link rel="stylesheet" href="../vendor/atom-one-light.min.css">
+  <meta name="theme-color" content="#2563eb">
+  <meta property="og:type" content="article">
+  <meta property="og:site_name" content="Eric's Notebook">
+  <meta property="og:title" content="材料科学 课程笔记 · Eric's Notebook">
+  <meta property="og:description" content="材料服役行为：理论强度与缺陷/位错、脆韧断裂、疲劳 S-N 曲线与 Paris 定律、蠕变三阶段、电化学腐蚀与防护、复合材料混合律与工程塑料。">
+  <meta property="og:url" content="https://ericzhao666.github.io/blog/notes/materials.html">
+  <meta property="og:image" content="https://ericzhao666.github.io/blog/icons/icon-512.png">
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:title" content="材料科学 课程笔记 · Eric's Notebook">
+  <meta name="twitter:description" content="材料服役行为：理论强度与缺陷/位错、脆韧断裂、疲劳 S-N 曲线与 Paris 定律、蠕变三阶段、电化学腐蚀与防护、复合材料混合律与工程塑料。">
+  <meta name="twitter:image" content="https://ericzhao666.github.io/blog/icons/icon-512.png">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"材料科学 课程笔记","description":"材料服役行为：理论强度与缺陷/位错、脆韧断裂、疲劳 S-N 曲线与 Paris 定律、蠕变三阶段、电化学腐蚀与防护、复合材料混合律与工程塑料。","inLanguage":"zh-CN","dateModified":"2026-10-21","author":{"@type":"Person","name":"Eric Zhao"},"mainEntityOfPage":"https://ericzhao666.github.io/blog/notes/materials.html"}</script>
+</head>
+<body>
+  <header class="site-header">
+    <div class="container header-inner">
+      <a href="../#/" class="logo"><span class="logo-icon">🦐</span><span class="logo-text">Eric's Notebook</span></a>
+      <nav class="nav">
+        <a class="nav-link" href="../#/">首页</a>
+        <a class="nav-link" href="../#/courses">课程</a>
+        <a class="nav-link" href="../#/papers">论文</a>
+        <a class="nav-link" href="../#/code">代码</a>
+      </nav>
+    </div>
+  </header>
+  <main class="container" id="app">
+    <a class="article-back" href="../#/course/%E9%A6%99%E6%B8%AF%E5%A4%A7%E5%AD%A6%7C%E6%9D%90%E6%96%99%E7%A7%91%E5%AD%A6">← 在站点中查看（含课程文件清单）</a>
+    <article class="article-detail">
+      <div class="article-detail-header">
+        <h1 class="article-detail-title">材料科学 课程笔记</h1>
+        <div class="article-detail-meta">
+          <span class="meta-item">📂 其他课程</span>
+          
+          <span class="meta-item">📝 3,745 字</span>
+        </div>
+        <p class="course-notes-summary">材料服役行为：理论强度与缺陷/位错、脆韧断裂、疲劳 S-N 曲线与 Paris 定律、蠕变三阶段、电化学腐蚀与防护、复合材料混合律与工程塑料。</p>
+      </div>
+      <div class="article-detail-body markdown-body">
+<h1>材料科学 核心笔记</h1>
+<blockquote>
+<p>内容据课程 10 份课件整理。课程全名 <em>Service Behaviour of Materials (MECH 6010)</em>，香港大学 Prof. Yue Chen / Prof. Yang Lu / Dr. Fanling Meng 讲授（2024 春）。教材：Callister《Materials Science and Engineering》、Ashby &amp; Jones《Engineering Materials 1》、González-Velázquez《A Practical Approach to Fracture Mechanics》。主线：<strong>断裂 → 疲劳 → 蠕变 → 腐蚀 → 复合材料 → 工程塑料</strong>。</p>
+</blockquote>
+<h2>0. 材料分类与服役行为总览</h2>
+<ul>
+<li><strong>四大类材料</strong>：金属（导电导热、强而可变形、易腐蚀）、陶瓷（绝缘、耐高温耐腐蚀、硬而脆）、聚合物（大分子、低密度、可极柔韧）、复合材料（多材料组合取长补短）。</li>
+<li><strong>失效机理图谱</strong>：弹性/塑性变形、断裂、疲劳、蠕变（力学）；腐蚀/氧化（化学）；磨损/冲蚀（物理）；相变、孪晶、晶粒长大、颗粒粗化（组织变化）。</li>
+<li><strong>工程应力/应变 vs 真应力/真应变</strong>：工程量按初始截面积定义，仅适用于百分之几的小应变；大变形（如超弹性 NiTi 丝）必须用真应力-真应变。</li>
+<li><strong>屈服强度</strong>：0.2% 残余塑性应变对应的应力（偏移法）。</li>
+</ul>
+<h2>1. 断裂（Fracture，Part 1-2）</h2>
+<h3>1.1 理论强度与缺陷</h3>
+<ul>
+<li><strong>理论内聚强度</strong>：把原子间作用力近似为正弦曲线，小位移下推出 σo ≈ E/π；Frenkel 分析理论屈服剪切强度 τm ≈ G/2π。</li>
+<li><strong>理论与实际差 2~3 个数量级</strong>（100~1000 倍）——根源是<strong>缺陷</strong>；&quot;晶须&quot;（近无缺陷纤维）最接近理论值。</li>
+<li><strong>晶体结构</strong>：FCC（Al，滑移系多、延性好、低屈服）、BCC（Fe/Ti-β，强度高、对温度应变率敏感）、HCP（Ti-α，滑移系少、延性差）；滑移系数量决定塑性变形能力。</li>
+<li><strong>缺陷分类</strong>：点缺陷（空位、自间隙原子，10⁻¹⁰ m）、线缺陷（位错，1D）、面缺陷（晶界/表面，2D）、体缺陷（孔洞、裂纹，3D）。</li>
+<li><strong>位错</strong>：刃型（多余半原子面）、螺型（纯剪切应力场）、混合型；是塑性变形的载体（&quot;毛虫爬行&quot;式逐原子滑移）。位错能量 E ≈ αGb²，柏氏矢量相反则相互吸引湮灭、同号排斥；沉淀强化（Al 合金析出相阻碍位错运动）与固溶强化是主要强化手段。</li>
+<li><strong>钢材组织</strong>：亚共析/共析/过共析（铁素体-珠光体）；钛合金靠 α/β 两相与马氏体转变调控强度。</li>
+</ul>
+<h3>1.2 脆性 vs 韧性断裂</h3>
+<ul>
+<li><strong>韧性断裂</strong>：伴随大量塑性变形；<strong>脆性断裂</strong>：几乎无塑性变形，低温下更危险（温度效应）。</li>
+</ul>
+<h2>2. 疲劳（Fatigue）</h2>
+<ul>
+<li><strong>定义</strong>：动载/波动应力下远低于静载抗拉/屈服强度的失效，需大量循环（桥梁、飞机、机械件）；金属与聚合物会发生，陶瓷罕见；疲劳断口几乎无宏观延伸。</li>
+<li><strong>循环参量</strong>：平均应力 σm、应力幅 σa、应力比 R；完全反向（R=-1）、脉动（R=0）、一般循环。</li>
+<li><strong>S-N 曲线</strong>：钢典型有<strong>疲劳极限</strong> Sfat（低于它则无限寿命）；铝合金等无疲劳极限，寿命随循环数持续下降。</li>
+<li><strong>经验定律</strong>：<ul>
+<li>高周疲劳（Basquin 定律，σm=0）：<code>σr · Nf^a = C1</code>，a ≈ 1/8~1/15；</li>
+<li>低周疲劳（Coffin-Manson 定律）：<code>Δεpl · Nf^b = C2</code>，b ≈ 0.5~0.6。</li>
+</ul>
+</li>
+<li><strong>平均应力效应</strong>：拉平均应力有害、压平均应力有利（喷丸/渗碳引入表面压应力提高疲劳寿命）。</li>
+<li><strong>疲劳三阶段</strong>：① 表面应力集中处萌生（约占寿命 5%）② 扩展（Stage I 沿晶面慢扩展 → Stage II 垂直应力轴快扩展，裂尖钝化-锐化机制）③ 最终失稳断裂。Nf = Ni + Np。</li>
+<li><strong>断口特征</strong>：<strong>海滩条纹</strong>（beachmarks，宏观、每条代表一段扩展时间）与<strong>辉纹</strong>（striations，微观、每条对应一次循环）；有它们可确认疲劳，但没有也不能排除疲劳。</li>
+<li><strong>预裂纹构件</strong>：Paris 定律 <code>da/dN = A(ΔK)^m</code>（ΔK 为应力强度因子幅）；例题：临界裂纹长度 ac = (KIC/Yσmax·√π)²，积分求疲劳寿命（例：2mm 初始裂纹钢板 Nf ≈ 5.49×10⁶ 次循环）。</li>
+<li><strong>延长疲劳寿命</strong>：抛光表面、喷丸/渗碳引入残余压应力、优化几何（避免内角/缺口等应力集中）、降低介质腐蚀性/加防护涂层。</li>
+</ul>
+<h2>3. 蠕变（Creep）</h2>
+<ul>
+<li><strong>定义</strong>：恒应力、恒温下缓慢的塑性变形（时间相关）；金属通常在 <strong>T &gt; 0.4 Tm</strong>（熔点开尔文温标）时显著，铅等室温也会慢蠕变；常是零件寿命的限制因素。</li>
+<li><strong>经典蠕变曲线三阶段</strong>：<ul>
+<li><strong>初期/瞬态蠕变</strong>：速率由快变慢——变形产生加工硬化；</li>
+<li><strong>稳态蠕变</strong>：恒定最小蠕变速率——加工硬化与回复/再结晶软化平衡；</li>
+<li><strong>三期蠕变</strong>：加速至断裂——颈缩 + 晶界空洞/微裂纹形成。</li>
+</ul>
+</li>
+<li><strong>应力影响</strong>：载荷增大 → 瞬时弹性应变增大、同时刻应变更大、断裂时间缩短；<strong>温度影响</strong>：T 升 → E 略降（ε0 略增）、应变更快、寿命更短。</li>
+<li><strong>蠕变机制</strong>：体扩散（Nabarro-Herring，晶粒越大蠕变率越低）、晶界扩散（Coble，晶粒尺寸依赖更强）、位错攀移等。</li>
+</ul>
+<h2>4. 腐蚀（Corrosion）</h2>
+<ul>
+<li><strong>本质</strong>：&quot;金属想变成氧化物&quot;——氧化物能量更低更稳定；年损失占 GNP 的 3~5%。</li>
+<li><strong>电化学机理</strong>：阳极氧化（金属失电子 M → Mⁿ⁺ + ne⁻）+ 阴极还原（酸性液中 H⁺ 还原产氢；含氧中性/碱性液中 O₂ 还原）；铁生锈两步：Fe → Fe²⁺[Fe(OH)₂] → Fe³⁺[Fe(OH)₃ 即铁锈]。</li>
+<li><strong>电极电位</strong>：不同金属氧化倾向不同——Fe-Cu 电池中铁作阳极被腐蚀；Fe-Zn 电池中锌被腐蚀而铁沉积。</li>
+<li><strong>腐蚀类型</strong>：<ul>
+<li><strong>均匀腐蚀</strong>：钢生成红棕锈、速率随时间降低（可见面锈渍不可接受）；</li>
+<li><strong>电偶腐蚀</strong>：两种金属接触，活泼者加速腐蚀（铝门框配黄铜铰链被腐蚀）；也可以是好事——<strong>阴极保护</strong>：锌保护铁（镀锌）、铁保护铜；需足够电解液（浸入式）。</li>
+</ul>
+</li>
+<li><strong>锌镀层三种工艺</strong>：热浸镀锌（60<del>120μm）、电镀（3</del>20μm，贵但光亮）、扩散镀（400℃ 渗锌，无纯锌层但有保护）；保护程度正比于锌层厚度。</li>
+<li><strong>不锈钢 + 氯离子（海水）、铜 + 氨、铅 + 酒</strong>都是典型&quot;坏组合&quot;。</li>
+</ul>
+<h2>5. 复合材料（Composites）</h2>
+<ul>
+<li><strong>定义</strong>：人工制造的多相材料 = <strong>基体</strong>（连续相，韧性/低密度，强度通常仅为纤维 1/10，多为热固性树脂）+ <strong>分散相/纤维</strong>（高强低密：玻璃、碳纤维、颗粒），靠粘接或机械锁合结合。</li>
+<li><strong>设计目标</strong>：取各组分之长（玻璃钢 = 玻璃的强度 + 聚合物的柔性）；CFRP/GFRP 用于航空航天与运动器材；混凝土、胶合板也是天然例子。</li>
+<li><strong>三类材料对比</strong>：金属强刚导电但会断裂/疲劳；聚合物廉价轻质耐蚀但强度刚度低、会蠕变；复合材料强刚轻但贵、会分层（delamination）。</li>
+<li><strong>单向复合材料力学</strong>：<ul>
+<li><strong>等应变条件（平行纤维方向）</strong>：规则混合律 <code>Ec = Ef·Vf + Em·Vm</code>，纤维承担载荷比例 P_f/P_c = Ef·Vf/(Ef·Vf+Em·Vm)；</li>
+<li><strong>等应力条件（垂直纤维方向）</strong>：1/Ec = Vf/Ef + Vm/Em（调和平均，模量低得多）；</li>
+<li>低应力区服从混合律，高应力区基体屈服后不再适用。</li>
+</ul>
+</li>
+</ul>
+<h2>6. 工程塑料（Engineering Plastics）</h2>
+<ul>
+<li><strong>聚合物基础</strong>：聚合物 = 单体连成的长链大分子（聚合度 = 重复单元数）；天然聚合物：木/橡胶/棉/毛/丝。</li>
+<li><strong>组成</strong>：多为碳氢化合物；饱和烃（单键，如乙烷）稳定，不饱和烃（双键 C₂H₄ / 三键 C₂H₂）可打开形成新键——聚合反应的基础；同分异构体（同分子式不同结构，如正辛烷 vs 2,4-二甲基己烷）性能迥异。</li>
+<li><strong>黏弹性直观例</strong>：昆士兰大学沥青滴漏实验（1927 年起，约每 9 年滴一滴）——沥青既可被锤击碎（脆），又会缓慢流动（黏性流体），说明聚合物时间尺度相关的力学行为。</li>
+<li><strong>热塑性与热固性</strong>（与 IDAT7216 呼应）：热塑性无交联可反复塑化（PE/PVC/尼龙/ABS/PC/PEEK）；热固性固化后不可再塑；另有弹性体。</li>
+</ul>
+
+      </div>
+    </article>
+    <p class="notes-static-hint">本页为静态版本，便于搜索引擎收录与分享；
+      <a href="../#/course/%E9%A6%99%E6%B8%AF%E5%A4%A7%E5%AD%A6%7C%E6%9D%90%E6%96%99%E7%A7%91%E5%AD%A6">交互版（含文件清单与搜索）→</a> ·
+      <a href="index.html">全部课程笔记</a>
+    </p>
+  </main>
+  <footer class="site-footer">
+    <div class="container">
+      <p>&copy; 2024-2026 Eric's Notebook · 用文字记录思考</p>
+      <p class="footer-sub">Powered by vanilla JS &amp; Markdown</p>
+    </div>
+  </footer>
+  <script src="../vendor/highlight.min.js"></script>
+  <script>
+    (function () {
+      if (!window.hljs) return;
+      var blocks = document.querySelectorAll('pre code');
+      for (var i = 0; i < blocks.length; i++) {
+        var el = blocks[i];
+        var cls = el.className || '';
+        var pos = cls.indexOf('language-');
+        // 未知语言（如 language-text）先去掉 class，否则 highlightElement 会抛错
+        if (pos !== -1) {
+          var lang = cls.slice(pos + 9).split(' ')[0];
+          if (!hljs.getLanguage(lang)) {
+            el.className = cls.replace('language-' + lang, '').trim();
+          }
+        }
+        try { hljs.highlightElement(el); } catch (e) {}
+      }
+    })();
+  </script>
+</body>
+</html>

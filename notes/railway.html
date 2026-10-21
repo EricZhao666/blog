@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="MECH7014 地铁与高铁：服务类型与线路能力、轮轨与牵引方程(Davis/粘着)、固定/移动闭塞与ETCS/CTCS、基础设施与车站设计、可持续牵引与铁路经济监管。">
+  <title>铁路工程 课程笔记 · Eric's Notebook</title>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🦐</text></svg>">
+  <link rel="apple-touch-icon" href="../icons/apple-touch-icon.png">
+  <link rel="canonical" href="https://ericzhao666.github.io/blog/notes/railway.html">
+  <link rel="alternate" type="application/rss+xml" title="Eric's Notebook RSS" href="../feed.xml">
+  <link rel="stylesheet" href="../css/style.css">
+  <link rel="stylesheet" href="../vendor/atom-one-light.min.css">
+  <meta name="theme-color" content="#2563eb">
+  <meta property="og:type" content="article">
+  <meta property="og:site_name" content="Eric's Notebook">
+  <meta property="og:title" content="铁路工程 课程笔记 · Eric's Notebook">
+  <meta property="og:description" content="MECH7014 地铁与高铁：服务类型与线路能力、轮轨与牵引方程(Davis/粘着)、固定/移动闭塞与ETCS/CTCS、基础设施与车站设计、可持续牵引与铁路经济监管。">
+  <meta property="og:url" content="https://ericzhao666.github.io/blog/notes/railway.html">
+  <meta property="og:image" content="https://ericzhao666.github.io/blog/icons/icon-512.png">
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:title" content="铁路工程 课程笔记 · Eric's Notebook">
+  <meta name="twitter:description" content="MECH7014 地铁与高铁：服务类型与线路能力、轮轨与牵引方程(Davis/粘着)、固定/移动闭塞与ETCS/CTCS、基础设施与车站设计、可持续牵引与铁路经济监管。">
+  <meta name="twitter:image" content="https://ericzhao666.github.io/blog/icons/icon-512.png">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"铁路工程 课程笔记","description":"MECH7014 地铁与高铁：服务类型与线路能力、轮轨与牵引方程(Davis/粘着)、固定/移动闭塞与ETCS/CTCS、基础设施与车站设计、可持续牵引与铁路经济监管。","inLanguage":"zh-CN","dateModified":"2026-10-21","author":{"@type":"Person","name":"Eric Zhao"},"mainEntityOfPage":"https://ericzhao666.github.io/blog/notes/railway.html"}</script>
+</head>
+<body>
+  <header class="site-header">
+    <div class="container header-inner">
+      <a href="../#/" class="logo"><span class="logo-icon">🦐</span><span class="logo-text">Eric's Notebook</span></a>
+      <nav class="nav">
+        <a class="nav-link" href="../#/">首页</a>
+        <a class="nav-link" href="../#/courses">课程</a>
+        <a class="nav-link" href="../#/papers">论文</a>
+        <a class="nav-link" href="../#/code">代码</a>
+      </nav>
+    </div>
+  </header>
+  <main class="container" id="app">
+    <a class="article-back" href="../#/course/%E9%A6%99%E6%B8%AF%E5%A4%A7%E5%AD%A6%7C%E9%93%81%E8%B7%AF%E5%B7%A5%E7%A8%8B">← 在站点中查看（含课程文件清单）</a>
+    <article class="article-detail">
+      <div class="article-detail-header">
+        <h1 class="article-detail-title">铁路工程 课程笔记</h1>
+        <div class="article-detail-meta">
+          <span class="meta-item">📂 其他课程</span>
+          
+          <span class="meta-item">📝 3,850 字</span>
+        </div>
+        <p class="course-notes-summary">MECH7014 地铁与高铁：服务类型与线路能力、轮轨与牵引方程(Davis/粘着)、固定/移动闭塞与ETCS/CTCS、基础设施与车站设计、可持续牵引与铁路经济监管。</p>
+      </div>
+      <div class="article-detail-body markdown-body">
+<h1>铁路工程 核心笔记</h1>
+<blockquote>
+<p>内容据课程 14 份课件整理。课程全名 <em>Railway Engineering – Metro &amp; High Speed Rail (MECH7014)</em>，香港大学机械工程系硕士课，Dr. K M Leung（前铁路行业总工级专家，FIMechE/FHKIE）讲授，12 讲 30 小时。考核：2 次作业 40% + 考试 60%。</p>
+</blockquote>
+<h2>0. 课程总览（12 讲结构）</h2>
+<ol>
+<li>铁路服务类型、线路能力、间隔时间（headway）与停站时间
+2-3. 车辆（Rolling Stock）：车体、耐撞性、转向架、悬挂、轮轨作用、信号与制动
+4-5. 牵引驱动与控制、维护、牵引供电
+6-7. 信号系统（固定/移动闭塞、ETCS/CTCS、CBTC）</li>
+<li>基础设施（接触网、轨道、道岔、隧道）</li>
+<li>线路与车站设计</li>
+<li>可持续铁路（储能、未来燃料、超级高铁）</li>
+<li>铁路商业与经济（NPV、CAPEX/OPEX、资产管理）</li>
+<li>铁路监管（法规、互操作性、安全管理 SMS）</li>
+</ol>
+<h2>1. 铁路服务与高速铁路（Lecture 1）</h2>
+<ul>
+<li><strong>铁路系统目的</strong>：安全、准时、可持续地运送人与货。香港（2018）：日均 560 万人次乘搭铁路，港铁总资产约 2890 亿港元；正线 266 km（10 条重铁线 97 站 + 轻铁 68 站）+ 高速铁路 26 km，占特许公共交通 45.3%。</li>
+<li><strong>服务类型</strong>：高铁/城际、市郊通勤/干线、地铁、轻铁、有轨电车、自动旅客输送（APM）、磁浮。</li>
+<li><strong>高速铁路定义</strong>（UIC/EC 96/58）：新线 ≥250 km/h，既有线提速线 ≥200 km/h；&gt;200 km/h 需专用列车、专用线路、车载信号（in-cab signaling）等完整体系：CWR 无缝钢轨 + 动车组 + 信号 + 车地通信 + 车站 + 维护 + 规则 + 融资 + 法律。</li>
+<li><strong>全球主力高铁动车组</strong>：法国 TGV（300/350）、AGV（碳纤维车体，360 km/h）、Avelia Horizon 双层 740 座；德国 ICE3/Velaro D（320）与 Velaro Novo（360）；日本新干线 ALFA-X（400 km/h 试验，SiC-VVVF）；中国 CRH380A/B/D（380）与复兴号 CR400AF/BF（350）——EMU 动车组编组。</li>
+</ul>
+<h2>2. 车辆与轮轨（Lecture 2-3 要点）</h2>
+<ul>
+<li>车体结构、<strong>耐撞性</strong>（crashworthiness）设计及案例；转向架（bogie）、一系/二系悬挂、轮对。</li>
+<li><strong>轮轨作用</strong>：轮缘爬升（flange climb）机理；1 cm² 接触斑可传递 5.5 kN 以上牵引/制动力，12 cm² 可承载 132 吨并传递 7 MW 装机功率；轮轨界面还兼作电路（8 轴列车在 DC 铁路导电约 1000 A，用于列车检测）。</li>
+<li><strong>制动</strong>：列车制动系统与<strong>再生制动</strong>（HST 与地铁制动特性）；地铁紧急制动率约 1.4 m/s²（英国干线 ~1.2），常用制动 ~0.9-1.0 m/s²。</li>
+<li>车辆空气动力学；车钩（couplers）；三显示/四显示信号的 headway 计算。</li>
+</ul>
+<h2>3. 牵引与供电（Lecture 4-5）</h2>
+<ul>
+<li><strong>牵引基本方程</strong>：<code>T − Fd − Fg − Cd = Meff · a</code><ul>
+<li>最大牵引力受<strong>粘着</strong>限制：<code>Tm = μr · Mp · g</code>（μr 粘着系数 0.05<del>0.35：地铁牵引 0.2、机车 0.3、常用制动 0.15</del>0.2；Mp = 动力轴承载质量；p = 动力轴比例）。10% 粘着 + 100% 动力轴 = 1 m/s²；现代列车要 1.3 m/s² 需 2/3 动力轴。</li>
+<li><strong>Davis 阻力公式</strong>：<code>R = A + BV + CV²</code>（A 滚动阻力 3000~5000 N；B 轴承摩擦——温态滚珠轴承约 20 N/t；C 气动阻力 ∝ V²）。</li>
+<li>坡道力 <code>Fg = Mg/X</code>（坡度 1 in X）；曲线阻力 <code>Cd = MK/R</code>（K ≈ 23000 m²/s²）。</li>
+<li><strong>有效质量</strong>：<code>Meff = 簧上质量(1+λ) + 载荷</code>，旋转附加系数 λ = 5<del>15%（铝车体高铁取 0.1</del>0.15，钢车体地铁取 0.05）。</li>
+<li>例：360 t 列车以 20 m/s 爬 1/100 坡，牵引力 T = Mg/100 = 35.3 kN，功率 = Tv ≈ 706 kW。</li>
+</ul>
+</li>
+<li><strong>防滑/防空转</strong>：制动需求超粘着 → 车轮滑行伤轮；牵引需求超粘着 → 空转伤轨；AC 感应电机控制可在空转时自动降矩。</li>
+<li><strong>牵引供电</strong>：1500 V DC / 25 kV AC 供电制式；接触网（OHL）/第三轨/三+四轨；走行轨回流与接地系统；AC/DC 牵引变电所；列车定位检测与导航。</li>
+<li><strong>传动控制</strong>：直流与交流牵引驱动、转矩-转速特性、晶闸管相控与 PWM 变流器。</li>
+</ul>
+<h2>4. 信号系统（Lecture 6-7）</h2>
+<ul>
+<li><strong>进路与联锁</strong>：调度员请求进路 → 联锁（Interlocking）执行六大功能——Lock（为列车设置安全进路）、Block（保持后车安全间隔）、Interlock（道岔冲突防护）、签发/收回<strong>行车许可 MA</strong>、Supervise（强制列车留在 MA 内）、Unlock（出清后释放）。进路设置条件：无冲突进路、道岔位置正确且锁闭、相关轨道电路空闲、紧急停车装置未激活。</li>
+<li><strong>闭塞制式递进</strong>：<ul>
+<li><strong>固定闭塞（Fixed Block）</strong>：一闭塞一列车，需 2 个闭塞间隔（前方空闲 + 余量）→ 间隔时间长；</li>
+<li><strong>Distance-to-go / 虚拟闭塞</strong>：以 1 个闭塞长度为安全制动余量 → 间隔更短；</li>
+<li><strong>移动闭塞（Moving Block）</strong>：实时列车定位（50 m 余量），安全距离随速度连续变化，无固定边界、多无需轨旁信号机——保护包络（protective envelope）+ LMA 概念，能力最高。</li>
+</ul>
+</li>
+<li><strong>列车检测手段</strong>：轨道电路、计轴器、信标（balise）、里程计、多普勒雷达、GPS、无线遥测。</li>
+<li><strong>自动化等级</strong>：AWS 自动警报、TPWS 列车自动保护、<strong>ATP</strong>（超速防护）、<strong>ATO</strong>（自动驾驶）、GoA（自动驾驶等级 GoA1~4，FAO 全自动运行）；SIL 安全完整性等级。</li>
+<li><strong>欧标 vs 中国标准</strong>：GSM-R 车地无线通信；<strong>ETCS 1/2/3 级</strong>与 ERTMS（欧洲）、<strong>CTCS 1/2/3 级</strong>（中国，CTCS2 用轨道电路+应答器生成 MA）；CBI 计算机联锁；CBTC 通信式列车控制；DMI 人机界面（目标速度/实际速度）。</li>
+</ul>
+<h2>5. 基础设施与线路设计（Lecture 8-9）</h2>
+<ul>
+<li><strong>轨道</strong>：OHL 接触网/刚性接触网、轨道形式（道床/板式）、轨道几何、超高（cant）、道岔与渡线（turnout/crossover）、无缝钢轨焊接（闪光焊/铝热焊）、轮轨磨耗与裂纹扩展。</li>
+<li><strong>隧道与限界</strong>：建筑限界（structure gauge）与车辆动态包络线（kinematic envelope）必须匹配。</li>
+<li><strong>车站设计</strong>：地铁与高铁车站布局、站台形式与尺寸设计、客流组织与<strong>服务水平 LOS</strong>（Level of Service）。</li>
+</ul>
+<h2>6. 可持续铁路（Lecture 10）</h2>
+<ul>
+<li><strong>牵引系统两大类</strong>：<ul>
+<li><strong>基础设施供电</strong>：1500V DC / 25kV AC——列车零排放、瞬时功率高、过载能力强、可控、运营能耗与维护低；但基建初投资大、有传输损耗/EMI/触电风险；</li>
+<li><strong>车载自主能源</strong>：化学电池、超级电容、飞轮储能、混合动力、柴油、燃气轮机、燃料电池；基建简单便宜、互操作性好，但车载能源占自重、有安全与续航/加注约束。高性能柴油机全链效率 ≈ 0.35（对比：再热蒸汽电站 47%、联合循环 CCGT 60%）。</li>
+</ul>
+</li>
+<li><strong>牵引工况匹配</strong>：高铁连续高速（只有基建供电扛得住气动阻力）、地铁起停频繁（高峰功率大、10 分钟过载——电力驱动合适）、中速连续/重货运——柴油牵引合适。</li>
+<li><strong>节能手段</strong>：改善气动、减重减摩、增加再生制动利用、限速、车站/车辆段建筑节能；储能与混合系统、智能电网；未来燃料。</li>
+<li><strong>Hyperloop 超级高铁</strong>：低压管道 + 磁浮舱体的前瞻性方案。</li>
+</ul>
+<h2>7. 商业经济与监管（Lecture 11-12）</h2>
+<ul>
+<li><strong>经济评价</strong>：NPV 净现值、折现 B/C 比；CAPEX（建设投资）vs OPEX（运营成本）；商业赢家与 KPI 基准比较；资产负债表/损益表；<strong>铁路资产管理 AMS</strong>；供需分析。</li>
+<li><strong>监管</strong>：欧洲/英国铁路法规与标准体系、互操作性（interoperability）要求、监管模式比较（香港 vs 发达国家）、服务绩效指标、风险管理、<strong>SMS 安全管理体系</strong>与人因管理（Human Factors）。</li>
+</ul>
+
+      </div>
+    </article>
+    <p class="notes-static-hint">本页为静态版本，便于搜索引擎收录与分享；
+      <a href="../#/course/%E9%A6%99%E6%B8%AF%E5%A4%A7%E5%AD%A6%7C%E9%93%81%E8%B7%AF%E5%B7%A5%E7%A8%8B">交互版（含文件清单与搜索）→</a> ·
+      <a href="index.html">全部课程笔记</a>
+    </p>
+  </main>
+  <footer class="site-footer">
+    <div class="container">
+      <p>&copy; 2024-2026 Eric's Notebook · 用文字记录思考</p>
+      <p class="footer-sub">Powered by vanilla JS &amp; Markdown</p>
+    </div>
+  </footer>
+  <script src="../vendor/highlight.min.js"></script>
+  <script>
+    (function () {
+      if (!window.hljs) return;
+      var blocks = document.querySelectorAll('pre code');
+      for (var i = 0; i < blocks.length; i++) {
+        var el = blocks[i];
+        var cls = el.className || '';
+        var pos = cls.indexOf('language-');
+        // 未知语言（如 language-text）先去掉 class，否则 highlightElement 会抛错
+        if (pos !== -1) {
+          var lang = cls.slice(pos + 9).split(' ')[0];
+          if (!hljs.getLanguage(lang)) {
+            el.className = cls.replace('language-' + lang, '').trim();
+          }
+        }
+        try { hljs.highlightElement(el); } catch (e) {}
+      }
+    })();
+  </script>
+</body>
+</html>

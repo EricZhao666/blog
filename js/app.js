@@ -267,10 +267,11 @@ function bindLiveSearch(inputId, applyValue, delay) {
 // 数据脚本体积较大（课程 382KB / 代码库 380KB / 笔记 101KB / 论文 41KB），
 // 只在访问对应路由时加载；首页只需要 data.js。
 const DATA_FILES = {
-  courses: 'js/courses.js',
-  notes: 'js/course-notes.js',
-  papers: 'js/papers.js',
-  codefiles: 'js/codefiles.js'
+  courses: ['js/courses.js'],
+  // note-slugs.js 由 gen_notes_pages.js 生成，用于跳转预渲染静态页
+  notes: ['js/course-notes.js', 'js/note-slugs.js'],
+  papers: ['js/papers.js'],
+  codefiles: ['js/codefiles.js']
 };
 const DATA_GLOBALS = {
   courses: 'COURSES',
@@ -304,7 +305,11 @@ function loadScriptOnce(src) {
 function loadData(key) {
   if (dataReady(key)) return Promise.resolve();
   if (_dataPromises[key]) return _dataPromises[key];
-  _dataPromises[key] = loadScriptOnce(DATA_FILES[key]).catch(function (err) {
+  const files = DATA_FILES[key];
+  const chain = (Array.isArray(files) ? files : [files]).reduce(function (p, src) {
+    return p.then(function () { return loadScriptOnce(src); });
+  }, Promise.resolve());
+  _dataPromises[key] = chain.catch(function (err) {
     console.warn(err.message);
     delete _dataPromises[key];
   });
@@ -844,7 +849,7 @@ function renderCourses() {
   let html = `
     <div class="courses-page">
       <h1 class="page-title">📚 课程资料库</h1>
-      <p class="page-desc">本科到研究生的全部课程资料，按学科方向分类整理</p>
+      <p class="page-desc">本科到研究生的全部课程资料，按学科方向分类整理 · <a href="notes/index.html">静态笔记合集 →</a></p>
       <div class="courses-stats">
         <div class="stat-card">
           <div class="stat-value">${COURSES.length}</div>
@@ -1037,9 +1042,13 @@ function renderCourseNotes(courseId) {
   const entry = COURSE_NOTES[courseId];
   const summary = entry.summary ? `<p class="course-notes-summary">${escapeHtml(entry.summary)}</p>` : '';
   const body = entry.notes ? `<div class="markdown-body">${marked.parse(entry.notes)}</div>` : '';
+  const staticPage = (typeof NOTE_PAGES !== 'undefined' && NOTE_PAGES[courseId]) ? NOTE_PAGES[courseId] : null;
+  const permalink = staticPage
+    ? `<a class="notes-permalink" href="${staticPage}" title="可被搜索引擎收录、便于分享的静态版本">🔗 静态页</a>`
+    : '';
   return `
     <section class="course-notes">
-      <div class="course-notes-head">📝 课程笔记</div>
+      <div class="course-notes-head">📝 课程笔记 ${permalink}</div>
       ${summary}
       ${body}
     </section>

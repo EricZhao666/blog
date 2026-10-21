@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="UAV 设计、建模、规划与控制全链路：仿生设计、四旋翼动力学、BFS/Dijkstra/A*/RRT 路径规划、微分平坦与最小 jerk 运动规划、PID 与 LQR 控制、ESEKF 惯性导航。">
+  <title>无人机系统 (UAV) 课程笔记 · Eric's Notebook</title>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🦐</text></svg>">
+  <link rel="apple-touch-icon" href="../icons/apple-touch-icon.png">
+  <link rel="canonical" href="https://ericzhao666.github.io/blog/notes/uav.html">
+  <link rel="alternate" type="application/rss+xml" title="Eric's Notebook RSS" href="../feed.xml">
+  <link rel="stylesheet" href="../css/style.css">
+  <link rel="stylesheet" href="../vendor/atom-one-light.min.css">
+  <meta name="theme-color" content="#2563eb">
+  <meta property="og:type" content="article">
+  <meta property="og:site_name" content="Eric's Notebook">
+  <meta property="og:title" content="无人机系统 (UAV) 课程笔记 · Eric's Notebook">
+  <meta property="og:description" content="UAV 设计、建模、规划与控制全链路：仿生设计、四旋翼动力学、BFS/Dijkstra/A*/RRT 路径规划、微分平坦与最小 jerk 运动规划、PID 与 LQR 控制、ESEKF 惯性导航。">
+  <meta property="og:url" content="https://ericzhao666.github.io/blog/notes/uav.html">
+  <meta property="og:image" content="https://ericzhao666.github.io/blog/icons/icon-512.png">
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:title" content="无人机系统 (UAV) 课程笔记 · Eric's Notebook">
+  <meta name="twitter:description" content="UAV 设计、建模、规划与控制全链路：仿生设计、四旋翼动力学、BFS/Dijkstra/A*/RRT 路径规划、微分平坦与最小 jerk 运动规划、PID 与 LQR 控制、ESEKF 惯性导航。">
+  <meta name="twitter:image" content="https://ericzhao666.github.io/blog/icons/icon-512.png">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"无人机系统 (UAV) 课程笔记","description":"UAV 设计、建模、规划与控制全链路：仿生设计、四旋翼动力学、BFS/Dijkstra/A*/RRT 路径规划、微分平坦与最小 jerk 运动规划、PID 与 LQR 控制、ESEKF 惯性导航。","inLanguage":"zh-CN","dateModified":"2026-10-21","author":{"@type":"Person","name":"Eric Zhao"},"mainEntityOfPage":"https://ericzhao666.github.io/blog/notes/uav.html"}</script>
+</head>
+<body>
+  <header class="site-header">
+    <div class="container header-inner">
+      <a href="../#/" class="logo"><span class="logo-icon">🦐</span><span class="logo-text">Eric's Notebook</span></a>
+      <nav class="nav">
+        <a class="nav-link" href="../#/">首页</a>
+        <a class="nav-link" href="../#/courses">课程</a>
+        <a class="nav-link" href="../#/papers">论文</a>
+        <a class="nav-link" href="../#/code">代码</a>
+      </nav>
+    </div>
+  </header>
+  <main class="container" id="app">
+    <a class="article-back" href="../#/course/%E9%A6%99%E6%B8%AF%E5%A4%A7%E5%AD%A6%7C%E6%97%A0%E4%BA%BA%E6%9C%BA%E7%B3%BB%E7%BB%9F-(UAV)">← 在站点中查看（含课程文件清单）</a>
+    <article class="article-detail">
+      <div class="article-detail-header">
+        <h1 class="article-detail-title">无人机系统 (UAV) 课程笔记</h1>
+        <div class="article-detail-meta">
+          <span class="meta-item">📂 机器人与自动化</span>
+          
+          <span class="meta-item">📝 4,189 字</span>
+        </div>
+        <p class="course-notes-summary">UAV 设计、建模、规划与控制全链路：仿生设计、四旋翼动力学、BFS/Dijkstra/A*/RRT 路径规划、微分平坦与最小 jerk 运动规划、PID 与 LQR 控制、ESEKF 惯性导航。</p>
+      </div>
+      <div class="article-detail-body markdown-body">
+<h1>无人机系统 (UAV) 核心笔记</h1>
+<blockquote>
+<p>内容据课程 10 份课件整理。课程全名 <em>UAV Design, Navigation and Control (IDAT7213)</em>，由香港大学 Dr. Peng Lu（ARCLab，设计/规划/控制，20 学时）与 Dr. Zhang Fu（估计/激光雷达里程计，10 学时）讲授。主线：<strong>设计 → 建模 → 路径规划 → 运动规划 → PID 控制 → 非线性/最优控制 → 导航与状态估计</strong>。</p>
+</blockquote>
+<h2>0. 课程概览</h2>
+<ul>
+<li><strong>目标</strong>：理解无人机系统构成与应用；掌握小型无人机的建模、运动规划与非线性控制（NDI、最优控制）；理解 GPS/IMU、视觉惯性、激光雷达导航；在真实无人机上做导航与控制实验。</li>
+<li><strong>考核</strong>：Mid-term 项目 20%（改进路径规划算法，MATLAB 代码 + 短报告）+ Final 项目 80%（二选一：Lu 的运动规划与控制 MATLAB/Simulink，或 Zhang 的 LiDAR 里程计 C/C++）。</li>
+<li><strong>应用背景</strong>：配送（抓取机构 + 抗风控制）、目标跟随（跟踪 + 规划 + 避障）、交通管理（运动规划 + 视觉里程计）、搜救（检测 + 规划）——自主性的核心是：视觉里程计、路径规划与避障、运动规划、控制。</li>
+</ul>
+<h2>1. UAV 设计（Lec 2）</h2>
+<ul>
+<li><strong>标准四旋翼组件</strong>：机架（更轻更坚固）、螺旋桨（更大升力/更小阻力噪音）、无刷电机（更大功率）。</li>
+<li><strong>农用无人机</strong>：设计重点在附加组件——喷洒农药的挑战：螺旋桨气流对药雾的影响、农药载荷、续航。XAG V 型双旋翼：倾转旋翼（tilt-rotor，伺服电机驱动）设计，减小尺寸重量与气动干扰、电机更少续航更长。</li>
+<li><strong>仿生设计</strong>：<ul>
+<li><strong>Perching（栖停）</strong>：Stanford 栖停无人机——加速度计判断时机 + 机械结构（而非控制算法）保持平衡；栖停省电但要求更灵活的着陆。</li>
+<li><strong>Perch &amp; Climb</strong>：硬件设计替代运动规划，攀爬齿轮 + 微型倒刺（micro-spines），带跌落恢复。</li>
+<li><strong>VertiGo 爬墙</strong>：双螺旋桨分工——一个压墙产生正压力，一个推墙前进。</li>
+<li><strong>飞行双足（flying biped）</strong>：双足机器人 + 四旋翼组合。</li>
+</ul>
+</li>
+<li><strong>扑翼无人机</strong>：效率可高于固定翼（小尺度）；Smartbird 450g（起飞 25W / 巡航 16-18W）、Robobee 259mg/翼展 3.5cm（每秒拍翅 120+ 次，太阳能供电，快动态控制极难）、 hummingbird 能耗高。大尺度（客机）下扑翼推进效率反低于涡扇。</li>
+<li><strong>空中机械手（aerial manipulator）</strong>：无人机 + 机械臂的组合。</li>
+</ul>
+<h2>2. UAV 建模（Lec 3）</h2>
+<ul>
+<li><strong>参考系</strong>：平动用惯性系 OXeYeZe（原点可移到地面）；转动用机体系 OBXBYBZB（+ 型或 X 型布局，ZB 向上、右手系）。</li>
+<li><strong>欧拉角</strong>：Roll φ（绕 XB，右滚为正，角速率 p）、Pitch θ（绕 YB，抬头为正，q）、Yaw ψ（绕 ZB，右偏为正，r）。</li>
+<li><strong>控制原理</strong>（把四旋翼想成跷跷板）：<ul>
+<li>Roll：改变电机 0、1 拉力差（0/1 逆时针，2/3 顺时针）；</li>
+<li>Pitch：改变电机 2、3 拉力差；Yaw：四电机差速产生反扭矩；</li>
+<li><strong>悬停</strong>：F1+F2+F3+F4 = G 且四电机拉力相等，无 roll/pitch/yaw。</li>
+</ul>
+</li>
+</ul>
+<h2>3. 路径规划（Lec 4）</h2>
+<ul>
+<li><strong>问题设定</strong>：栅格地图（graph），起点/终点节点，从起点搜索到终点；不同算法差别在搜索方式；评价指标：计算时间、路径长度。</li>
+<li><strong>图搜索算法递进</strong>：<ul>
+<li><strong>BFS（广度优先）</strong>：frontier 扩展环逐层搜索，遇障碍跳过；不考虑代价。</li>
+<li><strong>Dijkstra</strong>：考虑边代价（如爬坡耗能），找最小代价路径，但全方向搜索慢。</li>
+<li><strong>Greedy Best-First</strong>：只用启发值 cost_to_go = 几何距离 d，朝目标方向搜——快但易陷局部最小、路径更长。</li>
+<li><strong>A*</strong>：F = G + H，G（起点到当前，Dijkstra 项）+ H（当前到目标估计，Greedy 项）；通常与 Dijkstra 找到相同的最短路，但搜索更快。</li>
+</ul>
+</li>
+<li><strong>采样式规划（无栅格）</strong>：<ul>
+<li><strong>RRT</strong>：在自由空间随机撒点 → 连到最近可用节点 → 检查连线是否避开障碍 → 重复直到找到目标或超时；在障碍附近加密撒点更高效。</li>
+<li><strong>RRT-Connect</strong>：从起点和终点双向各长一棵树，减少无用分支、更快找到路径（实时性问题的重要改进）。</li>
+</ul>
+</li>
+</ul>
+<h2>4. 运动规划（Lec 6）</h2>
+<ul>
+<li><strong>为什么路径规划不够</strong>：路径不平滑、四旋翼穿窄缝需要规划姿态——无人机穿环、四足走岩石，仅规划路径几乎必然失败；运动规划要同时规划位置、速度、加速度（甚至角位置/角速度），遵守动力学。</li>
+<li><strong>微分平坦（Differential Flatness）</strong>：<ul>
+<li>若存在平坦输出 y：所有状态与输入都能用 y 及其导数表示，且 y 是状态/输入及其导数的函数，则系统平坦。</li>
+<li>线性系统中平坦性等价于<strong>能控性</strong>（能控性矩阵 R = [B AB ... Aⁿ⁻¹B] 满秩）。</li>
+<li><strong>小车例</strong>：模型 ẋ=v·cosθ, ẏ=v·sinθ, θ̇=(v/l)tanφ；取平坦输出 o=[x;y] → θ=arctan(ẏ/ẋ)，v=√(ẋ²+ẏ²)，φ=arctan(l·θ̇/v)——状态和输入全部由 o 的导数表达。</li>
+<li><strong>四旋翼</strong>：状态 x=[x,y,z,vx,vy,vz,φ,θ,ψ,p,q,r]ᵀ，输入 u=[f,τp,τq,τr]ᵀ，平坦输出 y=[x,y,z,ψ]ᵀ。</li>
+</ul>
+</li>
+<li><strong>最小加加速度（minimum jerk）规划</strong>：以 jerk（三阶导）最小为准则生成平滑轨迹，供平坦输出跟踪。</li>
+</ul>
+<h2>5. 经典 PID 控制（Lec 7）</h2>
+<ul>
+<li><strong>控制回路要素</strong>：Plant（被控对象）、Actuator、Controller、Sensor；忽略执行器/传感器动态可简化为单环方块图。</li>
+<li><strong>PID</strong>：<code>u(t) = Kp·e(t) + Ki∫e(τ)dτ + Kd·de/dt</code>；s 域 <code>U(s) = (Kp + Ki/s + Kd·s)E(s)</code>：<ul>
+<li>P：与误差成比例，误差为零则消失；I：累积误差消除稳态误差；D：预测误差趋势、增加阻尼。</li>
+<li>组合：P（仅比例）→ PI（减稳态误差）→ PID（减稳态误差 + 加阻尼）。多数商用无人机与工业系统都用 PID。</li>
+</ul>
+</li>
+<li><strong>性能指标</strong>（单位阶跃响应）：上升时间 tr（10%~90%）、调节时间 ts（误差 &lt;2% 或 5%）、峰值时间 tp、超调 Mp；概括为<strong>稳、准、快</strong>。</li>
+<li><strong>整定</strong>：Ziegler-Nichols 第二法——Ti→∞、Td→0，增大 Kp 至等幅振荡（临界增益 Ku、周期 Tu），按表取 PID 参数。</li>
+<li><strong>控制分配（control allocation）</strong>：控制器输出（总推力 + 三轴力矩）→ 四个电机的转速/拉力映射。</li>
+</ul>
+<h2>6. 最优控制与非线性控制（Lec 8）</h2>
+<ul>
+<li><strong>PID 的局限</strong>：只有三个参数，无法显式优化能耗/时间——无人机续航仅约 20 min，省电=延长飞行。</li>
+<li><strong>最优控制目标</strong>：最小时间 / 最小能量（最小化 ∫uᵀu）/ 终端误差最小 / 最小误差跟踪标称路径。</li>
+<li><strong>状态空间表示</strong>：微分方程 ↔ 传递函数 ↔ 状态空间互相转换；注意只有 y 可测时不能直接设 x1=y, x2=ẏ, x3=ÿ（y 的导数未知，需引入含输入的状态重构）。</li>
+<li><strong>LQR</strong>：系统 ẋ=Ax+Bu（设 y=x，即全部状态可测）；代价函数 J = ∫(xᵀQx + uᵀRu)dt（多目标加权）；<ul>
+<li>最优反馈 u = -Kx，K = R⁻¹BᵀP；</li>
+<li>P 由**代数 Riccati 方程（ARE）**求解，P 正定保证镇定；Q 半正定、R 正定；常取 N=0、定常 Q/R 时 Ṗ→0 简化求解。</li>
+</ul>
+</li>
+</ul>
+<h2>7. 导航与状态估计（Dr. Zhang 部分）</h2>
+<ul>
+<li><strong>导航 = 状态估计 + 建图</strong>（广义 SLAM：同时定位与建图）；自主无人机的软件栈：计算硬件（Intel NUC / Nvidia TX2/NX）→ Linux → ROS → Eigen/Ceres 库 → 感知/估计/建图/规划/控制功能模块。</li>
+<li><strong>四旋翼动力学</strong>（估计问题的对象）：<ul>
+<li>ṗ = v；v̇ = R·[0;0;−Tt]/m + g；Ṙ = R·ω̂；ω̇ = I⁻¹(τ − ω̂·Iω)；</li>
+<li>状态：位置 p、速度 v、旋转矩阵 R ∈ SO(3)、角速度 ω；ω̂ 为反对称 hat 算子。</li>
+</ul>
+</li>
+<li><strong>IMU</strong>：6 轴（陀螺 + 加速度计）/ 9 轴（+ 磁力计）；MEMS 陀螺基于<strong>科氏力</strong>检测角速度（驱动轴与检测轴耦合，传递函数含 ωz 项）；传感器模型 ωm = ω + bg + ng，陀螺零偏随机游走 ḃg = n_bg——零偏必须作为状态在线估计。</li>
+<li><strong>多速率 EKF</strong>：IMU 高频（200<del>1000Hz）做预测，外部测量 GPS/LiDAR/相机低频（10</del>100Hz）做更新——每收到一个 yk 前对每个 IMU 读数迭代预测（inertial-aided navigation 的核心结构）。</li>
+<li><strong>ESEKF（误差状态 EKF）</strong>：旋转不能用普通向量加法更新，需 <strong>Boxplus ⊞ / Boxminus ⊟</strong>（SO(3) 上的流形运算）；在误差状态（切空间）上做线性化滤波，再回流形修正名义状态，避免旋转矩阵的过参数化问题。</li>
+</ul>
+
+      </div>
+    </article>
+    <p class="notes-static-hint">本页为静态版本，便于搜索引擎收录与分享；
+      <a href="../#/course/%E9%A6%99%E6%B8%AF%E5%A4%A7%E5%AD%A6%7C%E6%97%A0%E4%BA%BA%E6%9C%BA%E7%B3%BB%E7%BB%9F-(UAV)">交互版（含文件清单与搜索）→</a> ·
+      <a href="index.html">全部课程笔记</a>
+    </p>
+  </main>
+  <footer class="site-footer">
+    <div class="container">
+      <p>&copy; 2024-2026 Eric's Notebook · 用文字记录思考</p>
+      <p class="footer-sub">Powered by vanilla JS &amp; Markdown</p>
+    </div>
+  </footer>
+  <script src="../vendor/highlight.min.js"></script>
+  <script>
+    (function () {
+      if (!window.hljs) return;
+      var blocks = document.querySelectorAll('pre code');
+      for (var i = 0; i < blocks.length; i++) {
+        var el = blocks[i];
+        var cls = el.className || '';
+        var pos = cls.indexOf('language-');
+        // 未知语言（如 language-text）先去掉 class，否则 highlightElement 会抛错
+        if (pos !== -1) {
+          var lang = cls.slice(pos + 9).split(' ')[0];
+          if (!hljs.getLanguage(lang)) {
+            el.className = cls.replace('language-' + lang, '').trim();
+          }
+        }
+        try { hljs.highlightElement(el); } catch (e) {}
+      }
+    })();
+  </script>
+</body>
+</html>

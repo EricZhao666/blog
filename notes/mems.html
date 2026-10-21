@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="MECH6046：微传感器（SAW/生物/化学/光学/压力）、静电感知与驱动、压阻与压电效应（PZT/SAW/喷墨头）、微流控与器官芯片、PDMS 工艺与雷诺数层流。">
+  <title>微系统 课程笔记 · Eric's Notebook</title>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🦐</text></svg>">
+  <link rel="apple-touch-icon" href="../icons/apple-touch-icon.png">
+  <link rel="canonical" href="https://ericzhao666.github.io/blog/notes/mems.html">
+  <link rel="alternate" type="application/rss+xml" title="Eric's Notebook RSS" href="../feed.xml">
+  <link rel="stylesheet" href="../css/style.css">
+  <link rel="stylesheet" href="../vendor/atom-one-light.min.css">
+  <meta name="theme-color" content="#2563eb">
+  <meta property="og:type" content="article">
+  <meta property="og:site_name" content="Eric's Notebook">
+  <meta property="og:title" content="微系统 课程笔记 · Eric's Notebook">
+  <meta property="og:description" content="MECH6046：微传感器（SAW/生物/化学/光学/压力）、静电感知与驱动、压阻与压电效应（PZT/SAW/喷墨头）、微流控与器官芯片、PDMS 工艺与雷诺数层流。">
+  <meta property="og:url" content="https://ericzhao666.github.io/blog/notes/mems.html">
+  <meta property="og:image" content="https://ericzhao666.github.io/blog/icons/icon-512.png">
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:title" content="微系统 课程笔记 · Eric's Notebook">
+  <meta name="twitter:description" content="MECH6046：微传感器（SAW/生物/化学/光学/压力）、静电感知与驱动、压阻与压电效应（PZT/SAW/喷墨头）、微流控与器官芯片、PDMS 工艺与雷诺数层流。">
+  <meta name="twitter:image" content="https://ericzhao666.github.io/blog/icons/icon-512.png">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"微系统 课程笔记","description":"MECH6046：微传感器（SAW/生物/化学/光学/压力）、静电感知与驱动、压阻与压电效应（PZT/SAW/喷墨头）、微流控与器官芯片、PDMS 工艺与雷诺数层流。","inLanguage":"zh-CN","dateModified":"2026-10-21","author":{"@type":"Person","name":"Eric Zhao"},"mainEntityOfPage":"https://ericzhao666.github.io/blog/notes/mems.html"}</script>
+</head>
+<body>
+  <header class="site-header">
+    <div class="container header-inner">
+      <a href="../#/" class="logo"><span class="logo-icon">🦐</span><span class="logo-text">Eric's Notebook</span></a>
+      <nav class="nav">
+        <a class="nav-link" href="../#/">首页</a>
+        <a class="nav-link" href="../#/courses">课程</a>
+        <a class="nav-link" href="../#/papers">论文</a>
+        <a class="nav-link" href="../#/code">代码</a>
+      </nav>
+    </div>
+  </header>
+  <main class="container" id="app">
+    <a class="article-back" href="../#/course/%E9%A6%99%E6%B8%AF%E5%A4%A7%E5%AD%A6%7C%E5%BE%AE%E7%B3%BB%E7%BB%9F">← 在站点中查看（含课程文件清单）</a>
+    <article class="article-detail">
+      <div class="article-detail-header">
+        <h1 class="article-detail-title">微系统 课程笔记</h1>
+        <div class="article-detail-meta">
+          <span class="meta-item">📂 电子与硬件</span>
+          
+          <span class="meta-item">📝 2,716 字</span>
+        </div>
+        <p class="course-notes-summary">MECH6046：微传感器（SAW/生物/化学/光学/压力）、静电感知与驱动、压阻与压电效应（PZT/SAW/喷墨头）、微流控与器官芯片、PDMS 工艺与雷诺数层流。</p>
+      </div>
+      <div class="article-detail-body markdown-body">
+<h1>微系统 (MEMS) 核心笔记</h1>
+<blockquote>
+<p>内容据课程 4 章课件整理。课程全名 <em>Microsystems for Energy, Biomedical and Consumer Electronics Applications (MECH6046)</em>，香港大学 Dr. Dong-Myeong Shin 讲授。考核含小组项目（40 分，微系统/微加工前沿技术选题汇报，教师 60% + 同组 20% + 他组 20%）。主线：<strong>微系统中的力学 → 静电感知与驱动 → 压阻/压电效应 → 微流控与能源</strong>。</p>
+</blockquote>
+<h2>0. 微系统概述</h2>
+<ul>
+<li><strong>微系统构成</strong>：微传感器（把能量从其他域转换到电域）+ 微执行器 + 信号处理电路。</li>
+<li><strong>传感器品质因数（Figure of Merit）</strong>：检测限、灵敏度、线性度、动态范围、鲁棒性；实现同一感知需求有多条技术路径，须权衡性能/成本/简单性。</li>
+</ul>
+<h2>1. 微传感器（Ch01）</h2>
+<ul>
+<li><strong>声表面波传感器（SAW）</strong>：两套叉指换能器 IDT + 压电层——输入 AC 信号在压电膜上激发表面形变波传播到检测端再转回电信号；传播波性质（幅值/频率/相位）随介质质量、粘弹性、湿度、化学、温度变化；应用：触摸屏、移动设备滤波器。</li>
+<li><strong>生物传感器</strong>：样品中生物分子（抗原）与敏感元件（抗体）结合改变元件性质，可用化学/光学/热/谐振/电化学/ISFET 等方式检测。</li>
+<li><strong>化学传感器四类</strong>：化学电阻式（chemiresistor）、化学电容式、化学机械式（某些聚合物遇化学品/湿气变形）、电化学式（气体在工作电极氧化/还原产生电流）。</li>
+<li><strong>光学传感器</strong>：基于光子-电子相互作用；选型依据：探测波长（半导体带隙：Si 190<del>1100nm、Ge 400</del>1700、InGaAs 800~2600、PbS 至 3500）、量子效率（GaAs 高于 Si）、响应时间、噪声、成本；四类器件含光电二极管、光电晶体管。</li>
+<li><strong>压力传感器</strong>（历史最久的 MEMS 产品）：薄膜（diaphragm）受压变形 → 转换单元变为电信号：<ul>
+<li><strong>压阻式</strong>：掺杂硅（B/As/P 注入）微电阻构成惠斯通电桥 R1-R4，输出 <code>V0 = Vin(Δ12−Δ34)/(2+Δ12+Δ34)</code>；紧凑、线性好、温敏、成本较高；</li>
+<li><strong>电容式</strong>：平板电容 <code>C = εrε0A/d</code>（ε0=8.85 pF/m），间隙 d 随膜片变形改变；体积较大、非线性，但温度不敏感。</li>
+</ul>
+</li>
+</ul>
+<h2>2. 静电感知与驱动（Ch02）</h2>
+<ul>
+<li><strong>基础公式</strong>（忽略边缘电场的一阶分析）：库仑力 F = q·q′/(4πε0r²)；平板电容 <code>C = εrε0WL/d</code>；<code>Q = CV</code>、<code>E = V/d</code>；真实器件设计需有限元仿真计及边缘场。</li>
+<li><strong>静电驱动</strong>：对极板加电压产生静电力，由储能 <code>U = −½εrε0(WL/d)V²</code> 对坐标求偏导得三方向力（间隙向 Fd = −½CdV²，力与间隙平方成反比；负号表示恢复完全重叠的倾向）。</li>
+<li><strong>电容驱动的优缺点</strong>：几乎通用的感知/驱动方式、无需特殊材料、电压驱动功耗低、响应快；但力与距离反向缩放（大力需小间距）、非线性、易被颗粒卡死、易因分子间作用力粘连（sticking）、牺牲层去除工艺难。</li>
+<li><strong>典型配置</strong>：平行板（面外运动）与<strong>梳齿驱动（comb drive / IDT，面内运动，分横向与纵向两种）</strong>。</li>
+<li><strong>应用实例</strong>：电容加速度计、密封腔压力计、差分电容流量计、电容触觉传感器、<strong>变形镜阵列</strong>（自适应光学：间谍卫星、机载激光）与<strong>数字微镜像素</strong>（DMD 投影）。</li>
+</ul>
+<h2>3. 压阻与压电效应（Ch03）</h2>
+<ul>
+<li><strong>压阻效应</strong>：固体因应变/变形电阻变化 <code>R = ρl/A</code>，两个来源：① 几何尺寸变化（金属应变计原理）② <strong>电阻率 ρ 随应变变化</strong>（半导体主导，用单晶硅压阻系数矩阵描述各向异性关系）。</li>
+<li><strong>传感器设计要点</strong>：微梁/膜片上压阻应布置在<strong>最大应力点</strong>（对比好/差设计）；膜片受均匀压力的变形与应变解析；惠斯通桥读出。</li>
+<li><strong>压电效应</strong>：晶体受应力产生极化（P、电位移 D），各向异性材料用压电系数矩阵 dij 描述；<strong>逆压电效应</strong>：加电场产生应变（驱动器基础）；发现历史与潜艇声呐军事应用驱动了早期发展。</li>
+<li><strong>材料</strong>：PZT（锆钛酸铅，压电系数大）、ZnO 等。</li>
+<li><strong>应用</strong>：压电悬臂执行器、声波传感器（SAW 的 IDT 换能器）、<strong>喷墨打印头</strong>（压电腔按所需电场设计驱动墨滴）。</li>
+</ul>
+<h2>4. 微流控与能源（Ch04）</h2>
+<ul>
+<li><strong>微流控（Microfluidics）</strong>：1980 年代兴起；含流体部件至少一维 &lt;1 mm；类比&quot;让水像电子在集成电路里一样流动&quot;。</li>
+<li><strong>芯片实验室（Lab-on-a-chip / μTAS）</strong>：单片集成电子/流体/机械/光学/磁学等多种实验室功能；动机：MEMS 的便携、批量低成本、高性能 + 纳升级样本、易操作、快速出结果、<strong>POCT 床旁/现场检测</strong>。</li>
+<li><strong>应用实例</strong>：快速 DNA 检测芯片（PCR 扩增集成）、<strong>器官芯片</strong>（Harvard 肺-on-chip、MIT 肾-on-chip 用于药物筛选）、仿生（人体血管/树木导水的天然微流道）。</li>
+<li><strong>流体力学基础</strong>：密度 ρ、黏度 μ（牛顿黏性定律 τ ∝ du/dy，水 1.7 cp）；<strong>雷诺数 Re = ρVL/μ</strong>（特征长度 L：微通道取直径）——微尺度下 Re 极小 → <strong>层流</strong>主导（无湍流混合，依赖扩散）。</li>
+<li><strong>制造</strong>：表面/体微加工、键合；材料：硅、玻璃、<strong>PDMS（聚二甲基硅氧烷）</strong>——1:10 基料/催化剂真空加热数小时固化；工艺：光刻+刻蚀做硬质模具 → 浇注 PDMS → 真空脱泡 + 加热固化 → 脱模。<ul>
+<li>PDMS 优点：微米特征复制成型、快且便宜、柔而强、透明（利于显微观察）、透气（低压即可排出网络内空气）、可做多层器件；</li>
+<li>缺点：透水蒸气（样品失水）、疏水（不利于细胞培养）、不耐有机溶剂。</li>
+</ul>
+</li>
+<li><strong>关键部件</strong>：微通道/微腔（nm~mm 截面，永久或可逆键合；埋藏通道可用激光熔融+氧化密封）、<strong>微阀</strong>（低泄漏、可靠简单、易造）、<strong>微泵</strong>（含三相蠕动泵）；尺寸排阻分离：微柱阵列（bump array，Science 2004）按粒径连续分选。</li>
+</ul>
+
+      </div>
+    </article>
+    <p class="notes-static-hint">本页为静态版本，便于搜索引擎收录与分享；
+      <a href="../#/course/%E9%A6%99%E6%B8%AF%E5%A4%A7%E5%AD%A6%7C%E5%BE%AE%E7%B3%BB%E7%BB%9F">交互版（含文件清单与搜索）→</a> ·
+      <a href="index.html">全部课程笔记</a>
+    </p>
+  </main>
+  <footer class="site-footer">
+    <div class="container">
+      <p>&copy; 2024-2026 Eric's Notebook · 用文字记录思考</p>
+      <p class="footer-sub">Powered by vanilla JS &amp; Markdown</p>
+    </div>
+  </footer>
+  <script src="../vendor/highlight.min.js"></script>
+  <script>
+    (function () {
+      if (!window.hljs) return;
+      var blocks = document.querySelectorAll('pre code');
+      for (var i = 0; i < blocks.length; i++) {
+        var el = blocks[i];
+        var cls = el.className || '';
+        var pos = cls.indexOf('language-');
+        // 未知语言（如 language-text）先去掉 class，否则 highlightElement 会抛错
+        if (pos !== -1) {
+          var lang = cls.slice(pos + 9).split(' ')[0];
+          if (!hljs.getLanguage(lang)) {
+            el.className = cls.replace('language-' + lang, '').trim();
+          }
+        }
+        try { hljs.highlightElement(el); } catch (e) {}
+      }
+    })();
+  </script>
+</body>
+</html>

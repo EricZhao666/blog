@@ -4,7 +4,7 @@
 //   - vendor / 静态资源：stale-while-revalidate（先快后新）
 //   - 第三方（giscus 等）：不拦截
 // 每次发布请递增 CACHE_VERSION。
-const CACHE_VERSION = '2026-10-21-3';
+const CACHE_VERSION = '2026-10-21-4';
 const CACHE = 'blog-' + CACHE_VERSION;
 
 // 预缓存核心资源（逐个缓存，单个失败不影响整体安装）
@@ -27,6 +27,7 @@ const OPTIONAL_ASSETS = [
   './vendor/highlight.min.js',
   './js/courses.js',
   './js/course-notes.js',
+  './js/note-slugs.js',
   './js/papers.js',
   './js/codefiles.js'
 ];

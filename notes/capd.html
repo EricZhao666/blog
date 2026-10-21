@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="MECH6034：QFD 质量屋、DFMEA 与 RPN、TRIZ 矛盾矩阵、CAD/CAM 与逆向工程、3D 打印五步流程与 FDM/SLS/SLM 工艺对比（PLA vs ABS）。">
+  <title>计算机辅助产品设计 (CAPD) 课程笔记 · Eric's Notebook</title>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🦐</text></svg>">
+  <link rel="apple-touch-icon" href="../icons/apple-touch-icon.png">
+  <link rel="canonical" href="https://ericzhao666.github.io/blog/notes/capd.html">
+  <link rel="alternate" type="application/rss+xml" title="Eric's Notebook RSS" href="../feed.xml">
+  <link rel="stylesheet" href="../css/style.css">
+  <link rel="stylesheet" href="../vendor/atom-one-light.min.css">
+  <meta name="theme-color" content="#2563eb">
+  <meta property="og:type" content="article">
+  <meta property="og:site_name" content="Eric's Notebook">
+  <meta property="og:title" content="计算机辅助产品设计 (CAPD) 课程笔记 · Eric's Notebook">
+  <meta property="og:description" content="MECH6034：QFD 质量屋、DFMEA 与 RPN、TRIZ 矛盾矩阵、CAD/CAM 与逆向工程、3D 打印五步流程与 FDM/SLS/SLM 工艺对比（PLA vs ABS）。">
+  <meta property="og:url" content="https://ericzhao666.github.io/blog/notes/capd.html">
+  <meta property="og:image" content="https://ericzhao666.github.io/blog/icons/icon-512.png">
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:title" content="计算机辅助产品设计 (CAPD) 课程笔记 · Eric's Notebook">
+  <meta name="twitter:description" content="MECH6034：QFD 质量屋、DFMEA 与 RPN、TRIZ 矛盾矩阵、CAD/CAM 与逆向工程、3D 打印五步流程与 FDM/SLS/SLM 工艺对比（PLA vs ABS）。">
+  <meta name="twitter:image" content="https://ericzhao666.github.io/blog/icons/icon-512.png">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"计算机辅助产品设计 (CAPD) 课程笔记","description":"MECH6034：QFD 质量屋、DFMEA 与 RPN、TRIZ 矛盾矩阵、CAD/CAM 与逆向工程、3D 打印五步流程与 FDM/SLS/SLM 工艺对比（PLA vs ABS）。","inLanguage":"zh-CN","dateModified":"2026-10-21","author":{"@type":"Person","name":"Eric Zhao"},"mainEntityOfPage":"https://ericzhao666.github.io/blog/notes/capd.html"}</script>
+</head>
+<body>
+  <header class="site-header">
+    <div class="container header-inner">
+      <a href="../#/" class="logo"><span class="logo-icon">🦐</span><span class="logo-text">Eric's Notebook</span></a>
+      <nav class="nav">
+        <a class="nav-link" href="../#/">首页</a>
+        <a class="nav-link" href="../#/courses">课程</a>
+        <a class="nav-link" href="../#/papers">论文</a>
+        <a class="nav-link" href="../#/code">代码</a>
+      </nav>
+    </div>
+  </header>
+  <main class="container" id="app">
+    <a class="article-back" href="../#/course/%E9%A6%99%E6%B8%AF%E5%A4%A7%E5%AD%A6%7C%E8%AE%A1%E7%AE%97%E6%9C%BA%E8%BE%85%E5%8A%A9%E4%BA%A7%E5%93%81%E8%AE%BE%E8%AE%A1-(CAPD)">← 在站点中查看（含课程文件清单）</a>
+    <article class="article-detail">
+      <div class="article-detail-header">
+        <h1 class="article-detail-title">计算机辅助产品设计 (CAPD) 课程笔记</h1>
+        <div class="article-detail-meta">
+          <span class="meta-item">📂 其他课程</span>
+          
+          <span class="meta-item">📝 3,763 字</span>
+        </div>
+        <p class="course-notes-summary">MECH6034：QFD 质量屋、DFMEA 与 RPN、TRIZ 矛盾矩阵、CAD/CAM 与逆向工程、3D 打印五步流程与 FDM/SLS/SLM 工艺对比（PLA vs ABS）。</p>
+      </div>
+      <div class="article-detail-body markdown-body">
+<h1>CAPD 计算机辅助产品设计 核心笔记</h1>
+<blockquote>
+<p>内容据课程 14 份课件整理。课程全名 <em>Computer Aided Product Development (MECH6034)</em>，香港大学 Dr. Y.H. Chen 讲授。教材主线：产品开发方法论（QFD / DFMEA / TRIZ）+ CAD/CAM/逆向工程 + 3D 打印。考核：Assignment 20%（3D 打印）+ 考试 80%（5 题选 4）。</p>
+</blockquote>
+<h2>0. 课程总览：计算机能做什么、不能做什么</h2>
+<ul>
+<li><strong>CAPD ≠ 自动化产品开发</strong>：计算机能辅助&quot;草绘 → 建模 → 渲染 → 原型 → 设计分析 → 详细设计 → 验证&quot;的大量迭代；但<strong>概念设计（创意）无法自动化</strong>——Creativity &amp; Innovation can not be automated，这正是结构化方法论（TRIZ/QFD）存在的意义。</li>
+<li><strong>生成式设计（Generative Design）</strong>：AI 算法按性能要求/工艺/材料生成并评估多个设计替代方案；目前主要支持几何设计与优化。</li>
+<li><strong>并行工程（Concurrent Engineering）</strong>：市场调研、预算、工程研究、设计（DFX）、制造、服务、销售、供应商早期并行介入——设计决策越晚改，代价越高（成本影响随开发阶段指数上升）；反例：Airbus A380 好设计但无市场。</li>
+<li><strong>DFX（Design For X）</strong>：DFM 可制造性、DFA 装配、DFS 维修性、DFR 可靠性/回收、DFE 环境、DFC 成本……</li>
+<li><strong>产品开发</strong>：愿景使命 → 商业分析（可行性/盈利能力）→ 工程设计 → 设计验证 → 制造计划 → 营销计划 → 生命周期末端服务；产品开发范围 &gt; 产品设计。</li>
+</ul>
+<h2>1. 结构化方法论工具箱（按阶段）</h2>
+<ul>
+<li><strong>Phase 1 产品研究</strong>：QFD（质量功能展开）、设计评审、风险-机会分析（机会/风险比 ≥ 1）、SWOT 分析。</li>
+<li><strong>Phase 2 概念生成</strong>：虚拟原型、触觉建模、决策矩阵、对标（Benchmarking）、头脑风暴（TRIZ）、逆向工程。</li>
+<li><strong>Phase 3 设计与工程分析</strong>：CAD/CAM、原型、3D 打印、DFMEA。</li>
+<li><strong>Phase 4 产品实现</strong>：过程规划、过程控制计划、PFMEA（过程失效模式分析）。</li>
+</ul>
+<h3>1.1 QFD 质量功能展开</h3>
+<ul>
+<li><strong>作用</strong>：把&quot;客户行话&quot;转成技术指标；建立客户需求与产品设计的理性映射；需要跨部门团队输入。</li>
+<li><strong>历史</strong>：1972 三菱重工神户造船厂起源 → 1976 丰田引入汽车业 → 1984 后进入美国 → 1990 年代服务业跟进。</li>
+<li><strong>四级展开</strong>：QFD1 产品规划（设计要求）→ QFD2 零件展开（零件特征）→ QFD3 过程规划（工序操作）→ QFD4 生产规划。</li>
+<li><strong>质量屋（House of Quality）8 个房间</strong>（常用 1-5）：<ul>
+<li>Room 1 客户之声（访谈+相对重要性，改写模糊表述）；</li>
+<li>Room 2 工程/技术要求（精确表述：功能/重量尺寸/功率效率/成本/安装服务/报废/外观舒适/运输存储）；</li>
+<li>Room 3 客户需求与技术要求相关性矩阵；</li>
+<li>Room 4 客户对现有品牌（取前三）感知排名；Room 5 技术属性竞品排名；</li>
+<li>其余：技术相关性屋顶、目标值等。</li>
+</ul>
+</li>
+</ul>
+<h3>1.2 DFMEA 设计失效模式与影响分析</h3>
+<ul>
+<li><strong>目的</strong>：识别并评估潜在失效模式与原因 → 找出消除/降低措施 → 文档化；<strong>重在预防而非检测</strong>；详细设计之后、量产之前使用。</li>
+<li><strong>要素</strong>：失效模式（如车门密封不足导致噪音）→ 失效影响（司机不满、分心、销量下降）→ 失效原因（密封件不足/材料错误）。</li>
+<li><strong>RPN 风险优先数 = Sev × Occ × Det</strong>（1~1000，越高越优先整改）：<ul>
+<li>Sev 严重度：仅看对客户的影响（1 无感 → 9-10 安全/法规不符）；<strong>只能靠改产品设计降低</strong>；</li>
+<li>Occ 发生度：寿命期内失效概率（1 → 1/1,500,000；9-10 → 1/2~1/3）；</li>
+<li>Det 探测度：现行验证流程在设计放行前发现弱点的能力（1-2 几乎必能发现 → 10 无法发现）；<strong>只能靠改验证流程降低</strong>。</li>
+</ul>
+</li>
+<li>案例：高田（Takata）安全气囊充气力过大——潜在失效可能终身不发生但仍须管控。</li>
+<li>FMEA 分型：系统（概念）/ 设计（零件）/ 过程 / 供应商。</li>
+</ul>
+<h3>1.3 TRIZ 发明问题解决理论</h3>
+<ul>
+<li><strong>起源</strong>：Altshuller 1946 年起分析全球专利中的发明模式；本质是&quot;引导式横向思维&quot;。</li>
+<li><strong>两大基本原理</strong>：① 你的问题（或相似问题）早已有人解决过——创造力是找到该解法原理并适配当前问题；② <strong>解决问题 = 解决矛盾</strong>。</li>
+<li><strong>三大基本认识</strong>：问题与解法跨行业重复出现（按矛盾分类可预测创造性解法）；技术进化模式跨行业重复；创新常借用本领域之外的科学效应。</li>
+<li><strong>矛盾示例</strong>：安全气囊展开越快保护越好，但越快越易伤及离位乘员；垃圾邮件过滤越彻底，越可能误杀想要的邮件。</li>
+<li><strong>解题流程</strong>：具体问题 → 用 <strong>39 个工程参数</strong>表述（重量/长度/面积/体积/速度/力/应力/形状/稳定性/强度/温度/功率/能量损失/物质损失/信息损失/时间损失/可靠性/测量精度/制造精度/有害因素/可制造性等，区分运动物体与静止物体两套）→ 查<strong>矛盾矩阵</strong> → 得 <strong>40 条发明原理</strong>（分割、抽取、非对称、合并、嵌套、预操作、变害为利……）→ 从一般解到具体解。</li>
+</ul>
+<h2>2. CAD/CAM 与逆向工程</h2>
+<ul>
+<li><strong>模型类型演进</strong>：线框（wireframe，只有顶点+边，有歧义）→ 表面模型 → 实体（volume）模型；波音 777 模型数万零件、3.5 亿三角形可视化。</li>
+<li><strong>知名软件</strong>：AutoCAD、SolidWorks、UG、Pro/E、CATIA、ANSYS、Delcam、Mastercam（及电气/建筑/医疗牙科专用 CAD）。</li>
+<li><strong>设计表示链</strong>：规格说明 → 功能模型（图/流程）→ 轴测与正交草图 → CAD 模型（零件/装配/动画/FEA/BOM）→ 技术模型（尺寸公差/材料/约束/制造数据，用于生产）。</li>
+<li><strong>CAD 模型应用</strong>：装配仿真、质量评估、BOM、运动动画、转动惯量、变形与应力（多物理场：气动/水动力/热）等下游评估。</li>
+<li><strong>逆向工程</strong>：扫描/数字化已有实物反求 CAD 模型（配合数字化仪、MRI/CT 医学影像建模）。</li>
+</ul>
+<h2>3. 3D 打印 / 增材制造</h2>
+<ul>
+<li><strong>本质</strong>：AM = Layered Manufacturing 分层制造。</li>
+<li><strong>五步流程</strong>：① 获取几何数据（CAD 建模或扫描/MRI/CT）② 转 STL（表面三角化，每个三角形带外指单位法向量，便于切片）③ 切片成层（层厚决定精度/打印时间/表面质量；层内再离散为像素级路径）④ 选择工艺逐层堆积 ⑤ 后处理（去支撑、打磨抛光）。</li>
+<li><strong>STL 细节</strong>：三角形按右手系逆时针（从外看）列出顶点；弦差（chordal error）衡量近似误差；三角化应最大化最小角（避免瘦长三角形，利于数值稳定与 FEA）；n 边形可拆 n-2 个三角形——三角形是 2D 最简形态（类比数字图像的像素）。</li>
+<li><strong>四大要素</strong>：输入（STL/IGES/CLI、多材料/梯度/颜色数据）、材料（粉末/液体/薄片/颗粒/丝材；尼龙/ABS/蜡/陶瓷/金属）、成形方法（光固化、切割粘接、熔化凝固、烧结、粘结）、应用（设计/制造/工装、生物医疗、食品、建筑）。</li>
+<li><strong>主要工艺</strong>：<ul>
+<li><strong>FDM 熔融沉积</strong>（Stratasys 1988，专利 2009 到期引爆桌面机）：XY 机械臂挤出热塑丝材，Z 向逐层；双喷嘴（成型材 + 支撑材）；<ul>
+<li><strong>PLA vs ABS</strong>：PLA 玉米/甘蔗基可降解、打印 190-220℃ 无需热床、无味无毒、硬而脆（适合外观原型）；ABS 石油基、打印 230-250℃ 需热床、延性好耐用（适合最终用途件）；</li>
+</ul>
+</li>
+<li><strong>SLS 选区激光烧结</strong>（DTM 1990）：CO₂ 激光 30-70W 将粉末（<del>10μm，尼龙/PC/陶瓷）加热至熔点下方烧结；<strong>未烧结粉末即天然支撑</strong>——无需预设支撑、可做活动装配件；多孔（密度 98%</del>99% 计量）、有收缩翘曲；粉料可回收但粉尘大；</li>
+<li><strong>SLM/DMLS 激光熔化</strong>：更高功率 200-400W 完全熔化金属粉（如 316L 不锈钢，粒径 17μm），致密度高于 SLS；慢且贵、公差与表面有限，但可制造高密度标准金属件。</li>
+</ul>
+</li>
+<li><strong>应用领域</strong>：快速原型、直接终端件制造、工装夹具、生物医疗（CT/MRI 个性化建模）等。</li>
+</ul>
+
+      </div>
+    </article>
+    <p class="notes-static-hint">本页为静态版本，便于搜索引擎收录与分享；
+      <a href="../#/course/%E9%A6%99%E6%B8%AF%E5%A4%A7%E5%AD%A6%7C%E8%AE%A1%E7%AE%97%E6%9C%BA%E8%BE%85%E5%8A%A9%E4%BA%A7%E5%93%81%E8%AE%BE%E8%AE%A1-(CAPD)">交互版（含文件清单与搜索）→</a> ·
+      <a href="index.html">全部课程笔记</a>
+    </p>
+  </main>
+  <footer class="site-footer">
+    <div class="container">
+      <p>&copy; 2024-2026 Eric's Notebook · 用文字记录思考</p>
+      <p class="footer-sub">Powered by vanilla JS &amp; Markdown</p>
+    </div>
+  </footer>
+  <script src="../vendor/highlight.min.js"></script>
+  <script>
+    (function () {
+      if (!window.hljs) return;
+      var blocks = document.querySelectorAll('pre code');
+      for (var i = 0; i < blocks.length; i++) {
+        var el = blocks[i];
+        var cls = el.className || '';
+        var pos = cls.indexOf('language-');
+        // 未知语言（如 language-text）先去掉 class，否则 highlightElement 会抛错
+        if (pos !== -1) {
+          var lang = cls.slice(pos + 9).split(' ')[0];
+          if (!hljs.getLanguage(lang)) {
+            el.className = cls.replace('language-' + lang, '').trim();
+          }
+        }
+        try { hljs.highlightElement(el); } catch (e) {}
+      }
+    })();
+  </script>
+</body>
+</html>

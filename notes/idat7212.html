@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="IDAT7212 机电一体化：开环/闭环控制、机械系统三要素、微控制器与Arduino、PWM调速与电机驱动、运放信号调理、鲁棒控制（模型不确定性+裕量）、一阶系统时域分析。">
+  <title>IDAT 7212 课程笔记 · Eric's Notebook</title>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🦐</text></svg>">
+  <link rel="apple-touch-icon" href="../icons/apple-touch-icon.png">
+  <link rel="canonical" href="https://ericzhao666.github.io/blog/notes/idat7212.html">
+  <link rel="alternate" type="application/rss+xml" title="Eric's Notebook RSS" href="../feed.xml">
+  <link rel="stylesheet" href="../css/style.css">
+  <link rel="stylesheet" href="../vendor/atom-one-light.min.css">
+  <meta name="theme-color" content="#2563eb">
+  <meta property="og:type" content="article">
+  <meta property="og:site_name" content="Eric's Notebook">
+  <meta property="og:title" content="IDAT 7212 课程笔记 · Eric's Notebook">
+  <meta property="og:description" content="IDAT7212 机电一体化：开环/闭环控制、机械系统三要素、微控制器与Arduino、PWM调速与电机驱动、运放信号调理、鲁棒控制（模型不确定性+裕量）、一阶系统时域分析。">
+  <meta property="og:url" content="https://ericzhao666.github.io/blog/notes/idat7212.html">
+  <meta property="og:image" content="https://ericzhao666.github.io/blog/icons/icon-512.png">
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:title" content="IDAT 7212 课程笔记 · Eric's Notebook">
+  <meta name="twitter:description" content="IDAT7212 机电一体化：开环/闭环控制、机械系统三要素、微控制器与Arduino、PWM调速与电机驱动、运放信号调理、鲁棒控制（模型不确定性+裕量）、一阶系统时域分析。">
+  <meta name="twitter:image" content="https://ericzhao666.github.io/blog/icons/icon-512.png">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"IDAT 7212 课程笔记","description":"IDAT7212 机电一体化：开环/闭环控制、机械系统三要素、微控制器与Arduino、PWM调速与电机驱动、运放信号调理、鲁棒控制（模型不确定性+裕量）、一阶系统时域分析。","inLanguage":"zh-CN","dateModified":"2026-10-21","author":{"@type":"Person","name":"Eric Zhao"},"mainEntityOfPage":"https://ericzhao666.github.io/blog/notes/idat7212.html"}</script>
+</head>
+<body>
+  <header class="site-header">
+    <div class="container header-inner">
+      <a href="../#/" class="logo"><span class="logo-icon">🦐</span><span class="logo-text">Eric's Notebook</span></a>
+      <nav class="nav">
+        <a class="nav-link" href="../#/">首页</a>
+        <a class="nav-link" href="../#/courses">课程</a>
+        <a class="nav-link" href="../#/papers">论文</a>
+        <a class="nav-link" href="../#/code">代码</a>
+      </nav>
+    </div>
+  </header>
+  <main class="container" id="app">
+    <a class="article-back" href="../#/course/%E9%A6%99%E6%B8%AF%E5%A4%A7%E5%AD%A6%7CIDAT-7212">← 在站点中查看（含课程文件清单）</a>
+    <article class="article-detail">
+      <div class="article-detail-header">
+        <h1 class="article-detail-title">IDAT 7212 课程笔记</h1>
+        <div class="article-detail-meta">
+          <span class="meta-item">📂 其他课程</span>
+          
+          <span class="meta-item">📝 2,203 字</span>
+        </div>
+        <p class="course-notes-summary">IDAT7212 机电一体化：开环/闭环控制、机械系统三要素、微控制器与Arduino、PWM调速与电机驱动、运放信号调理、鲁棒控制（模型不确定性+裕量）、一阶系统时域分析。</p>
+      </div>
+      <div class="article-detail-body markdown-body">
+<h1>IDAT7212 机电一体化系统工程 核心笔记</h1>
+<blockquote>
+<p>内容据课程 9 份课件整理。课程全名 <em>Mechatronics System Engineering (IDAT7212)</em>，香港大学 Dr. Zulfiqar Ali 讲授（13 周，Tuesday 晚）。实践平台：<strong>Arduino / mBlock / TinkerCad</strong>。考核：CA 50%（Midterm+作业 10% + 小组项目 40%：报告 10% + 汇报 10% + 演示 20%）+ 期末 50%。主线：<strong>机电系统概论 → 电子学与微控制器 → Arduino 与传感器 → 执行器与换能器 → 运放与信号调理 → 鲁棒控制 → 时域分析 → 材料选择</strong>。</p>
+</blockquote>
+<h2>0. 机电系统概论（Week 1）</h2>
+<ul>
+<li><strong>系统与控制工程</strong>：系统 = 输入到输出的功能体；机械系统（平移/旋转）、电气系统、计算机系统经控制系统组织起来。</li>
+<li><strong>开环 vs 闭环</strong>：<ul>
+<li>开环：<code>ud = f⁻¹(yd)</code> 逆模型定输入——简单、经济、易构建；但系统摄动或环境变化时不可靠；</li>
+<li>闭环（反馈）：补偿扰动与不确定性；但更复杂昂贵，<strong>稳定性成为主要问题</strong>。</li>
+</ul>
+</li>
+<li><strong>平移机械系统三要素</strong>：弹簧（F = k(x1−x2)）、阻尼器（F = b(ẋ1−ẋ2)）、质量块（F = m·ẍ）——机电建模的原子单元；旋转系统对应扭转弹簧/阻尼/惯量。</li>
+<li><strong>机电一体化设计流程</strong>：需求建模 → 传感器/执行器/控制器协同设计 → 仿真 → 原型（嵌入式实现）。</li>
+</ul>
+<h2>1. 电子学基础与微控制器（Week 2）</h2>
+<ul>
+<li><strong>基本量</strong>：电压（单位电荷的电位差，V）、电流 I = Q/T（1 A = 6.24×10¹⁸ 电子/秒）、电路（回路 vs 开路 I=0）；电子流（−→+）与惯例电流（+→−）方向相反；DC（单向）vs AC。</li>
+<li><strong>微控制器 vs 微处理器</strong>：MCU = CPU + RAM/ROM + I/O + 定时器/ADC 集成于单芯片，面向控制任务；MPU 需外挂存储与外设，面向计算。</li>
+<li><strong>MCU 分类</strong>：按位数（8/16/32）、存储（片内/外）、指令集（CISC/RISC）、应用（通用/专用）；商业板：Arduino、Raspberry Pi 等嵌入式开发板。</li>
+</ul>
+<h2>2. Arduino 与传感器（Week 3）</h2>
+<ul>
+<li><strong>Arduino 平台</strong>：开源硬件（AVR/ARM MCU）+ IDE；数字/模拟引脚（ADC）、PWM 输出、串口通信；图形化 mBlock 与 TinkerCad 在线仿真（免硬件搭建电路验证程序）。</li>
+<li><strong>常用传感器</strong>：超声波测距（HC-SR04）、温度湿度（DHT）、红外、光敏电阻、电位器、舵机/电机编码器反馈——数字 vs 模拟信号的处理差异（阈值、量化、去抖）。</li>
+</ul>
+<h2>3. 执行器与换能器（Week 4）</h2>
+<ul>
+<li><strong>执行器功能图</strong>：控制信号 → 功率放大与调制 → 能量转换 → 输出（位置或速度，微米到米量级）；输入多为低/高功率电信号、气、液压。</li>
+<li><strong>分类</strong>：直线执行器（电磁螺线管、液压/气动缸）、旋转执行器（电机、液压/气动马达）。</li>
+<li><strong>直流电机</strong>：Kv 值 = 每 1V 的转速（100Kv @12V = 1200 rpm）；<strong>PWM 调速</strong>（改变占空比）+ 电机驱动器（H 桥）——MCU 电压低于电机必需，不能直驱；编码器反馈实现位置控制。</li>
+</ul>
+<h2>4. 运算放大器与信号调理（Week 6）</h2>
+<ul>
+<li><strong>运放</strong>：高增益差分放大器，理想模型虚短虚断；同相/反相放大、加法、差分、电压跟随等基本组态。</li>
+<li><strong>仪表放大器</strong>：高共模抑制比，配合传感器微弱信号调理；<strong>无源/有源滤波器</strong>（低通/高通/带通）抑制噪声——传感器输出到 ADC 之间的信号调理链。</li>
+</ul>
+<h2>5. 鲁棒控制（Week 10）</h2>
+<ul>
+<li><strong>鲁棒系统</strong>：在模型和/或扰动不确定性存在时仍满足稳定性或性能指标的系统；<strong>鲁棒控制</strong>：面向不确定性的设计方法。</li>
+<li><strong>为什么模型总是错的</strong>：复杂动态、驱动力不确定、有意简化（牺牲真实性换取简洁）——因此设计目标是在模型不准确时仍保证性能。</li>
+<li><strong>设计策略</strong>：留裕量（margin）——不仅要满足稳定性还要超出一定量；裕量大小取决于不确定度：太少或加错位置 = 指标失败，太多 = 控制系统更昂贵。</li>
+<li><strong>闭环结构</strong>：参考值 → 误差 → 控制器（PID 或全状态反馈）→ 执行器 → Plant → 传感器（含噪声/扰动）→ 反馈。</li>
+</ul>
+<h2>6. 时域分析（Week 11）</h2>
+<ul>
+<li>一阶系统的时间响应（时间常数 τ、63.2% 上升）、一阶系统对斜坡输入的稳态误差、<strong>部分分式展开</strong>求拉普拉斯逆变换（考试配套讲义 para_response_1st_order / ramp_response_1st_order）；二阶系统超调、调节时间等性能指标（呼应 6010 的&quot;稳准快&quot;）。</li>
+</ul>
+<h2>7. 材料选择（Week 11 专题）</h2>
+<ul>
+<li>材料与工程实践的关系：按宏观（强度/密度/成本）与微观（晶体结构/相）物理性质为机电系统选材（Ashby 选材思路，呼应 MECH6010）。</li>
+</ul>
+
+      </div>
+    </article>
+    <p class="notes-static-hint">本页为静态版本，便于搜索引擎收录与分享；
+      <a href="../#/course/%E9%A6%99%E6%B8%AF%E5%A4%A7%E5%AD%A6%7CIDAT-7212">交互版（含文件清单与搜索）→</a> ·
+      <a href="index.html">全部课程笔记</a>
+    </p>
+  </main>
+  <footer class="site-footer">
+    <div class="container">
+      <p>&copy; 2024-2026 Eric's Notebook · 用文字记录思考</p>
+      <p class="footer-sub">Powered by vanilla JS &amp; Markdown</p>
+    </div>
+  </footer>
+  <script src="../vendor/highlight.min.js"></script>
+  <script>
+    (function () {
+      if (!window.hljs) return;
+      var blocks = document.querySelectorAll('pre code');
+      for (var i = 0; i < blocks.length; i++) {
+        var el = blocks[i];
+        var cls = el.className || '';
+        var pos = cls.indexOf('language-');
+        // 未知语言（如 language-text）先去掉 class，否则 highlightElement 会抛错
+        if (pos !== -1) {
+          var lang = cls.slice(pos + 9).split(' ')[0];
+          if (!hljs.getLanguage(lang)) {
+            el.className = cls.replace('language-' + lang, '').trim();
+          }
+        }
+        try { hljs.highlightElement(el); } catch (e) {}
+      }
+    })();
+  </script>
+</body>
+</html>

@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="HKU 服务机器人项目：GB1 机器人 UDP 控屏与 Django IoRT 集成、DWA/APF 避障与 ORB-SLAM3/FAST-LIO 建图、GR-ConvNet 视觉抓取与 MoveIt 机械臂控制。">
+  <title>机器人大使 (Robotic Ambassador) 课程笔记 · Eric's Notebook</title>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🦐</text></svg>">
+  <link rel="apple-touch-icon" href="../icons/apple-touch-icon.png">
+  <link rel="canonical" href="https://ericzhao666.github.io/blog/notes/robotic-ambassador.html">
+  <link rel="alternate" type="application/rss+xml" title="Eric's Notebook RSS" href="../feed.xml">
+  <link rel="stylesheet" href="../css/style.css">
+  <link rel="stylesheet" href="../vendor/atom-one-light.min.css">
+  <meta name="theme-color" content="#2563eb">
+  <meta property="og:type" content="article">
+  <meta property="og:site_name" content="Eric's Notebook">
+  <meta property="og:title" content="机器人大使 (Robotic Ambassador) 课程笔记 · Eric's Notebook">
+  <meta property="og:description" content="HKU 服务机器人项目：GB1 机器人 UDP 控屏与 Django IoRT 集成、DWA/APF 避障与 ORB-SLAM3/FAST-LIO 建图、GR-ConvNet 视觉抓取与 MoveIt 机械臂控制。">
+  <meta property="og:url" content="https://ericzhao666.github.io/blog/notes/robotic-ambassador.html">
+  <meta property="og:image" content="https://ericzhao666.github.io/blog/icons/icon-512.png">
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:title" content="机器人大使 (Robotic Ambassador) 课程笔记 · Eric's Notebook">
+  <meta name="twitter:description" content="HKU 服务机器人项目：GB1 机器人 UDP 控屏与 Django IoRT 集成、DWA/APF 避障与 ORB-SLAM3/FAST-LIO 建图、GR-ConvNet 视觉抓取与 MoveIt 机械臂控制。">
+  <meta name="twitter:image" content="https://ericzhao666.github.io/blog/icons/icon-512.png">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"机器人大使 (Robotic Ambassador) 课程笔记","description":"HKU 服务机器人项目：GB1 机器人 UDP 控屏与 Django IoRT 集成、DWA/APF 避障与 ORB-SLAM3/FAST-LIO 建图、GR-ConvNet 视觉抓取与 MoveIt 机械臂控制。","inLanguage":"zh-CN","dateModified":"2026-10-21","author":{"@type":"Person","name":"Eric Zhao"},"mainEntityOfPage":"https://ericzhao666.github.io/blog/notes/robotic-ambassador.html"}</script>
+</head>
+<body>
+  <header class="site-header">
+    <div class="container header-inner">
+      <a href="../#/" class="logo"><span class="logo-icon">🦐</span><span class="logo-text">Eric's Notebook</span></a>
+      <nav class="nav">
+        <a class="nav-link" href="../#/">首页</a>
+        <a class="nav-link" href="../#/courses">课程</a>
+        <a class="nav-link" href="../#/papers">论文</a>
+        <a class="nav-link" href="../#/code">代码</a>
+      </nav>
+    </div>
+  </header>
+  <main class="container" id="app">
+    <a class="article-back" href="../#/course/%E9%A6%99%E6%B8%AF%E5%A4%A7%E5%AD%A6%7C%E6%9C%BA%E5%99%A8%E4%BA%BA%E5%A4%A7%E4%BD%BF-(Robotic-Ambassador)">← 在站点中查看（含课程文件清单）</a>
+    <article class="article-detail">
+      <div class="article-detail-header">
+        <h1 class="article-detail-title">机器人大使 (Robotic Ambassador) 课程笔记</h1>
+        <div class="article-detail-meta">
+          <span class="meta-item">📂 机器人与自动化</span>
+          
+          <span class="meta-item">📝 2,136 字</span>
+        </div>
+        <p class="course-notes-summary">HKU 服务机器人项目：GB1 机器人 UDP 控屏与 Django IoRT 集成、DWA/APF 避障与 ORB-SLAM3/FAST-LIO 建图、GR-ConvNet 视觉抓取与 MoveIt 机械臂控制。</p>
+      </div>
+      <div class="article-detail-body markdown-body">
+<h1>机器人大使 (Robotic Ambassador) 核心笔记</h1>
+<blockquote>
+<p>内容据 HKU 机械工程系 <strong>Engineering Robotic Ambassador</strong> 项目 2023-24 / 2024-25 两届 MSc 毕业论文及配套论文（动态窗口法 DWA、STOMP 轨迹优化）整理。项目形态：以 Novelte <strong>GB1 服务机器人</strong>为平台，在大学校园场景做服务机器人应用研发（导师 Dr. M.W.L. Ko）。</p>
+</blockquote>
+<h2>1. 项目背景：服务机器人与 HRI</h2>
+<ul>
+<li><strong>定位</strong>：机器人作为人机交互（HRI）载体，承担校园导览/接待职能，并促进 STEM 教育；结合 NLP 让机器人与用户自然对话、与其他设备互联。</li>
+<li><strong>文献综述脉络</strong>：机器人接待员（robot receptionist）的定义与分类 → 现有技术水平 → 后疫情时代服务机器人（医疗、酒店餐厅接待、<strong>IoT 与服务机器人结合</strong>、教育应用）→ 服务机器人的问题（交互设计、社会与伦理）→ 研究焦点：<strong>用户接受度与服务机器人设计、HRI 与机器人互联、物联网机器人 IoRT（Internet of Robotic Things）</strong>。</li>
+</ul>
+<h2>2. 2023-24 届：导览机器人智能化（UDP 控屏 + IoT + 外观定制）</h2>
+<ul>
+<li><strong>UDP 控制大屏</strong>：通过 UDP 协议让 GB1 机器人控制大屏幕显示，增强 Tour Guide 功能——实验验证 PC 与智能中控系统、中控与机器人之间 UDP 信号传输的可行性与稳定性（ping 定位大屏 IP → UDP 发送指令 → USR-TCP232-TEST 工具抓取验证）。</li>
+<li><strong>Django 物联网集成</strong>：本地 Django 框架接入温湿度监测系统（TH40W 智能湿度计），通过 Serveo 内网穿透暴露 API（Postman 验证），机器人端调用展示——服务机器人 + IoRT 的最小闭环。</li>
+<li><strong>外观本地化定制</strong>：CREO 展开机器人曲面（Flatten Quilt）→ Illustrator 平面设计 → 贴纸打印裁剪，输出贴合机器人外观的校园主题贴纸。</li>
+</ul>
+<h2>3. 2024-25 届：运动控制 + 避障 + 机械臂视觉抓取</h2>
+<h3>3.1 运动控制与避障</h3>
+<ul>
+<li><strong>多传感器融合环境感知</strong>（激光雷达等），实时决策，在结构化/半结构化环境中保持稳定高效轨迹。</li>
+<li><strong>算法组合</strong>：<ul>
+<li><strong>DWA（动态窗口法）</strong>：在速度空间采样、按轨迹评估（朝向目标 + 离障碍距离）选择最优控制——经典避障（Fox et al.）；</li>
+<li><strong>APF（人工势场）</strong>：目标吸引 + 障碍排斥，叠加进 ROS 导航的代价地图；</li>
+<li><strong>全局规划</strong>：A*/RRT 类全局路径 + 局部规划器分层导航；</li>
+<li><strong>建图定位</strong>：<strong>ORB-SLAM3</strong>（视觉 SLAM：特征法 + 多地图系统）、<strong>FAST-LIO</strong>（激光雷达-惯性紧耦合里程计）→ 点云地图与 <strong>Octree 八叉树地图</strong>；</li>
+<li>前沿扩展：双足步行 MPC 控制。</li>
+</ul>
+</li>
+</ul>
+<h3>3.2 机械臂视觉抓取</h3>
+<ul>
+<li><strong>系统链路</strong>：相机图像处理识别定位目标 → 坐标转换 → 机械臂规划与高精度抓取（SolidWorks 设计臂身/相机座/夹爪，D-H 建模，ROS/MoveIt 控制规划，RViz 可视化）。</li>
+<li><strong>抓取检测模型</strong>：**GR-ConvNet（GRCNN）**生成抓取矩形（从 RGB-D 图预测抓取质量与位姿）；讨论了具身智能（Embodied Intelligence）与 <strong>RT-X / RFM-1</strong> 等机器人基础模型的预测范式。</li>
+<li>在不同形状/尺寸/纹理物体上测试，取得可靠抓取成功率。</li>
+</ul>
+<h2>4. 配套经典论文</h2>
+<ul>
+<li><strong>The Dynamic Window Approach to Collision Avoidance</strong>（Fox, Burgard, Thrun, IEEE RAM 1997）：把避障化为速度空间 (v, ω) 搜索——轨迹前向仿真 + 碰撞检查 + 目标朝向/速度/间隙多目标打分。</li>
+<li><strong>STOMP: Stochastic Trajectory Optimization for Motion Planning</strong>（Kalakrishnan et al., ICRA 2011）：基于随机噪声滚动的轨迹优化，不需要梯度，适合复杂代价函数（与 CHOMP/RRT* 同类的运动规划器）。</li>
+</ul>
+<h2>5. 项目启示</h2>
+<ul>
+<li>服务机器人落地 = <strong>本体 + 交互（NLP/HRI）+ 联网（IoRT）+ 外观/接受度</strong>的系统能力整合；</li>
+<li>校园场景是低成本高显示度的验证场（导览、控屏、环境监测、抓取演示）；</li>
+<li>技术栈覆盖：ROS/MoveIt、SLAM（ORB-SLAM3/FAST-LIO）、导航避障（A*/DWA/APF）、深度学习抓取（GR-ConvNet）、Web 框架（Django/Serveo）与 CAD（CREO/SolidWorks）。</li>
+</ul>
+
+      </div>
+    </article>
+    <p class="notes-static-hint">本页为静态版本，便于搜索引擎收录与分享；
+      <a href="../#/course/%E9%A6%99%E6%B8%AF%E5%A4%A7%E5%AD%A6%7C%E6%9C%BA%E5%99%A8%E4%BA%BA%E5%A4%A7%E4%BD%BF-(Robotic-Ambassador)">交互版（含文件清单与搜索）→</a> ·
+      <a href="index.html">全部课程笔记</a>
+    </p>
+  </main>
+  <footer class="site-footer">
+    <div class="container">
+      <p>&copy; 2024-2026 Eric's Notebook · 用文字记录思考</p>
+      <p class="footer-sub">Powered by vanilla JS &amp; Markdown</p>
+    </div>
+  </footer>
+  <script src="../vendor/highlight.min.js"></script>
+  <script>
+    (function () {
+      if (!window.hljs) return;
+      var blocks = document.querySelectorAll('pre code');
+      for (var i = 0; i < blocks.length; i++) {
+        var el = blocks[i];
+        var cls = el.className || '';
+        var pos = cls.indexOf('language-');
+        // 未知语言（如 language-text）先去掉 class，否则 highlightElement 会抛错
+        if (pos !== -1) {
+          var lang = cls.slice(pos + 9).split(' ')[0];
+          if (!hljs.getLanguage(lang)) {
+            el.className = cls.replace('language-' + lang, '').trim();
+          }
+        }
+        try { hljs.highlightElement(el); } catch (e) {}
+      }
+    })();
+  </script>
+</body>
+</html>

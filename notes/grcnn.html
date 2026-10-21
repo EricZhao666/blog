@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="GR-ConvNet (IROS 2020)：对向抓取矩形表示、RGB-D 端到端生成式残差网络（cos2θ/sin2θ 角度通道）、Cornell/Jacquard 数据集与 IoU 评估、训练推理流程与 UR/Baxter 真机部署。">
+  <title>GRCNN 抓取检测 课程笔记 · Eric's Notebook</title>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🦐</text></svg>">
+  <link rel="apple-touch-icon" href="../icons/apple-touch-icon.png">
+  <link rel="canonical" href="https://ericzhao666.github.io/blog/notes/grcnn.html">
+  <link rel="alternate" type="application/rss+xml" title="Eric's Notebook RSS" href="../feed.xml">
+  <link rel="stylesheet" href="../css/style.css">
+  <link rel="stylesheet" href="../vendor/atom-one-light.min.css">
+  <meta name="theme-color" content="#2563eb">
+  <meta property="og:type" content="article">
+  <meta property="og:site_name" content="Eric's Notebook">
+  <meta property="og:title" content="GRCNN 抓取检测 课程笔记 · Eric's Notebook">
+  <meta property="og:description" content="GR-ConvNet (IROS 2020)：对向抓取矩形表示、RGB-D 端到端生成式残差网络（cos2θ/sin2θ 角度通道）、Cornell/Jacquard 数据集与 IoU 评估、训练推理流程与 UR/Baxter 真机部署。">
+  <meta property="og:url" content="https://ericzhao666.github.io/blog/notes/grcnn.html">
+  <meta property="og:image" content="https://ericzhao666.github.io/blog/icons/icon-512.png">
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:title" content="GRCNN 抓取检测 课程笔记 · Eric's Notebook">
+  <meta name="twitter:description" content="GR-ConvNet (IROS 2020)：对向抓取矩形表示、RGB-D 端到端生成式残差网络（cos2θ/sin2θ 角度通道）、Cornell/Jacquard 数据集与 IoU 评估、训练推理流程与 UR/Baxter 真机部署。">
+  <meta name="twitter:image" content="https://ericzhao666.github.io/blog/icons/icon-512.png">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"GRCNN 抓取检测 课程笔记","description":"GR-ConvNet (IROS 2020)：对向抓取矩形表示、RGB-D 端到端生成式残差网络（cos2θ/sin2θ 角度通道）、Cornell/Jacquard 数据集与 IoU 评估、训练推理流程与 UR/Baxter 真机部署。","inLanguage":"zh-CN","dateModified":"2026-10-21","author":{"@type":"Person","name":"Eric Zhao"},"mainEntityOfPage":"https://ericzhao666.github.io/blog/notes/grcnn.html"}</script>
+</head>
+<body>
+  <header class="site-header">
+    <div class="container header-inner">
+      <a href="../#/" class="logo"><span class="logo-icon">🦐</span><span class="logo-text">Eric's Notebook</span></a>
+      <nav class="nav">
+        <a class="nav-link" href="../#/">首页</a>
+        <a class="nav-link" href="../#/courses">课程</a>
+        <a class="nav-link" href="../#/papers">论文</a>
+        <a class="nav-link" href="../#/code">代码</a>
+      </nav>
+    </div>
+  </header>
+  <main class="container" id="app">
+    <a class="article-back" href="../#/course/%E9%A6%99%E6%B8%AF%E5%A4%A7%E5%AD%A6%7CGRCNN-%E6%8A%93%E5%8F%96%E6%A3%80%E6%B5%8B">← 在站点中查看（含课程文件清单）</a>
+    <article class="article-detail">
+      <div class="article-detail-header">
+        <h1 class="article-detail-title">GRCNN 抓取检测 课程笔记</h1>
+        <div class="article-detail-meta">
+          <span class="meta-item">📂 机器人与自动化</span>
+          
+          <span class="meta-item">📝 2,261 字</span>
+        </div>
+        <p class="course-notes-summary">GR-ConvNet (IROS 2020)：对向抓取矩形表示、RGB-D 端到端生成式残差网络（cos2θ/sin2θ 角度通道）、Cornell/Jacquard 数据集与 IoU 评估、训练推理流程与 UR/Baxter 真机部署。</p>
+      </div>
+      <div class="article-detail-body markdown-body">
+<h1>GRCNN 抓取检测 核心笔记</h1>
+<blockquote>
+<p>内容据 GR-ConvNet 官方论文（Kumra, Joshi, Sahin, <em>Antipodal Robotic Grasping using Generative Residual Convolutional Neural Network</em>, IROS 2020）与官方开源仓库 <code>skumra/robotic-grasping</code>（本地代码库对应：grconvnet.py / cornell_data.py / jacquard_data.py / grasp_generator.py / run_realtime.py / UR_Robot.py / realsense 相机脚本）整理。</p>
+</blockquote>
+<h2>1. 问题定义：对向抓取（Antipodal Grasping）</h2>
+<ul>
+<li><strong>对向抓取</strong>：两个指尖沿一条直线相对夹持物体，抓取配置用<strong>抓取矩形</strong>表示（中心点 x,y、旋转角 θ、开口宽度 w、高度 h）——把抓取检测转化为从图像直接回归&quot;在哪里、什么角度、开多大&quot;。</li>
+<li>输入为 <strong>RGB-D 图像</strong>（颜色 + 深度对齐），输出逐像素的抓取预测图。</li>
+</ul>
+<h2>2. GR-ConvNet 网络架构</h2>
+<ul>
+<li><strong>端到端生成式残差卷积网络</strong>：<ul>
+<li>编码器：RGB（3 通道）+ 深度（1 通道）→ 卷积 + BatchNorm 下采样；</li>
+<li>中段堆叠 <strong>GR-ConvNet 残差模块</strong>（Generative Residual block：两条并行支路——普通 3×3 卷积 + 5×5 大核卷积分支拼接，保留精细局部信息）；</li>
+<li>解码器：转置卷积上采样恢复分辨率；</li>
+<li><strong>四路输出头</strong>（逐像素）：cos(2θ) 图、sin(2θ) 图、抓取宽度图、抓取质量/置信度图——角度用 cos2θ/sin2θ 表示以规避角度回归的不连续性。</li>
+</ul>
+</li>
+<li>与检测式方法（两阶段：先定位物体再生成抓取）不同，生成式方法<strong>单次前向直接输出全图抓取分布</strong>，速度快、适合实时闭环抓取。</li>
+</ul>
+<h2>3. 数据集与评估</h2>
+<ul>
+<li><strong>Cornell Grasping Dataset</strong>：889 张图像 + 8019 个标注抓取矩形；PCD 点云需先转深度图（<code>utils.dataset_processing.generate_cornell_depth</code>）。</li>
+<li><strong>Jacquard Dataset</strong>：54k 图像 / 110 万抓取标注（仿真生成），规模大得多。</li>
+<li><strong>评估协议</strong>：<ul>
+<li>图像级（image-wise）：预测矩形与任一真值矩形角度差 &lt;30°、Jaccard 距离 &gt;0.25 即正确；</li>
+<li>物体级（object-wise）：跨物体划分训练/测试，更贴近真实泛化；</li>
+<li>论文结果：Cornell 图像级约 97.7%、物体级约 94.6%，Jacquard 上同样领先当时方法（GG-CNN、Generative Grasping CNN 等）。</li>
+</ul>
+</li>
+</ul>
+<h2>4. 训练与推理流程（对应本地代码库）</h2>
+<ul>
+<li><strong>环境</strong>：numpy / opencv / scikit-image / imageio / matplotlib + torch / torchvision / tensorboardX + pyrealsense2（RealSense 深度相机）。</li>
+<li><strong>数据准备</strong>：Cornell 需 PCD→深度转换；Jacquard 解压即用。</li>
+<li><strong>训练</strong>：<code>python train_network.py --dataset cornell --dataset-path &lt;path&gt; --description &lt;名字&gt;</code>；Jacquard 常配 <code>--use-dropout 0 --input-size 300</code>。</li>
+<li><strong>评估</strong>：<code>python evaluate.py --network &lt;模型&gt; --iou-eval</code>（IoU 协议）。</li>
+<li><strong>推理</strong>：<code>run_grasp_generator.py</code>（抓取生成）、<code>run_realtime.py</code>（相机实时）、<code>run_offline.py</code>（离线批量）；从质量图中取最大置信点 → 反解 (x, y, θ, w) 抓取矩形。</li>
+</ul>
+<h2>5. 机器人部署</h2>
+<ul>
+<li><strong>原论文平台</strong>：Baxter 机械臂 + RealSense（官方 baxter-pnp ROS 集成）；</li>
+<li><strong>本代码库扩展</strong>：UR 机械臂（UR_Robot.py）+ RealSense D435 的实时抓取（grasp_generator / run_realtime / realsenseD435.py），抓取位姿经手眼标定（run_calibration.py）从相机坐标系映射到机器人基座坐标系。</li>
+<li><strong>典型闭环</strong>：相机取 RGB-D → GR-ConvNet 推理（毫秒级）→ 选最优抓取 → 坐标变换 → 规划执行 → 抓取验证。</li>
+</ul>
+<h2>6. 要点小结</h2>
+<ul>
+<li>生成式逐像素回归 + 残差多尺度特征是实时抓取检测的主流范式；</li>
+<li>角度通道化（cos2θ/sin2θ）是回归周期量的通用技巧；</li>
+<li>Cornell 数据集小，物体级评估易过拟合；Jacquard 更能反映泛化；</li>
+<li>从模型到真机要跨过：手眼标定、深度对齐、抓取矩形→末端位姿转换、力控/夹爪宽度映射四道坎。</li>
+</ul>
+
+      </div>
+    </article>
+    <p class="notes-static-hint">本页为静态版本，便于搜索引擎收录与分享；
+      <a href="../#/course/%E9%A6%99%E6%B8%AF%E5%A4%A7%E5%AD%A6%7CGRCNN-%E6%8A%93%E5%8F%96%E6%A3%80%E6%B5%8B">交互版（含文件清单与搜索）→</a> ·
+      <a href="index.html">全部课程笔记</a>
+    </p>
+  </main>
+  <footer class="site-footer">
+    <div class="container">
+      <p>&copy; 2024-2026 Eric's Notebook · 用文字记录思考</p>
+      <p class="footer-sub">Powered by vanilla JS &amp; Markdown</p>
+    </div>
+  </footer>
+  <script src="../vendor/highlight.min.js"></script>
+  <script>
+    (function () {
+      if (!window.hljs) return;
+      var blocks = document.querySelectorAll('pre code');
+      for (var i = 0; i < blocks.length; i++) {
+        var el = blocks[i];
+        var cls = el.className || '';
+        var pos = cls.indexOf('language-');
+        // 未知语言（如 language-text）先去掉 class，否则 highlightElement 会抛错
+        if (pos !== -1) {
+          var lang = cls.slice(pos + 9).split(' ')[0];
+          if (!hljs.getLanguage(lang)) {
+            el.className = cls.replace('language-' + lang, '').trim();
+          }
+        }
+        try { hljs.highlightElement(el); } catch (e) {}
+      }
+    })();
+  </script>
+</body>
+</html>
