@@ -2419,3 +2419,119 @@ main {
   }
 }
 
+/* ============================================
+   Post Navigation & Related Posts
+   ============================================ */
+.post-nav {
+  display: flex;
+  gap: 12px;
+  margin-top: 36px;
+}
+
+.post-nav-item {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 12px 14px;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  background: var(--color-surface);
+  transition: border-color var(--transition);
+  min-width: 0;
+}
+
+.post-nav-item:hover {
+  border-color: var(--color-primary);
+}
+
+.post-nav-empty {
+  border: none;
+  background: none;
+  padding: 0;
+}
+
+.post-nav-next {
+  text-align: right;
+  align-items: flex-end;
+}
+
+.post-nav-label {
+  font-size: 0.74rem;
+  color: var(--color-text-muted);
+}
+
+.post-nav-title {
+  font-size: 0.88rem;
+  color: var(--color-text);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  max-width: 100%;
+}
+
+.related-posts {
+  margin-top: 34px;
+  padding-top: 20px;
+  border-top: 1px solid var(--color-border);
+}
+
+.related-title {
+  font-size: 0.95rem;
+  font-weight: 700;
+  margin-bottom: 10px;
+}
+
+.related-item {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 14px;
+  padding: 8px 0;
+  border-bottom: 1px dashed var(--color-border);
+}
+
+.related-item:last-child {
+  border-bottom: none;
+}
+
+.related-item-title {
+  font-size: 0.88rem;
+  color: var(--color-text);
+}
+
+.related-item:hover .related-item-title {
+  color: var(--color-primary);
+}
+
+.related-item-meta {
+  font-size: 0.76rem;
+  color: var(--color-text-muted);
+  white-space: nowrap;
+}
+
+/* 搜索关键词高亮 */
+mark.search-hit {
+  background: #fde68a;
+  color: inherit;
+  padding: 0 2px;
+  border-radius: 3px;
+}
+
+[data-theme="dark"] mark.search-hit {
+  background: #6b4f0e;
+  color: #ffe9a8;
+}
+
+@media (max-width: 480px) {
+  .post-nav {
+    flex-direction: column;
+  }
+
+  .post-nav-next {
+    text-align: left;
+    align-items: flex-start;
+  }
+}
+
+

@@ -152,6 +152,68 @@ function escapeHtml(text) {
     .replace(/'/g, '&#39;');
 }
 
+// ---- 标题与描述（浏览器标签、历史记录、分享）----
+const SITE_NAME = "Eric's Notebook";
+const SITE_DESC = 'Eric 的个人技术随笔 — 智能制造、机器人、具身智能与生活思考';
+
+function setMeta(title, desc) {
+  const fullTitle = title ? title + ' · ' + SITE_NAME : SITE_NAME;
+  document.title = fullTitle;
+  const d = desc || SITE_DESC;
+  [['meta[name="description"]', d],
+   ['meta[property="og:title"]', fullTitle],
+   ['meta[property="og:description"]', d],
+   ['meta[name="twitter:title"]', fullTitle],
+   ['meta[name="twitter:description"]', d]].forEach(function (pair) {
+    const el = document.querySelector(pair[0]);
+    if (el) el.setAttribute('content', pair[1]);
+  });
+}
+
+const STATIC_META = {
+  '/courses': ['课程资料库', '香港大学与本科阶段全部课程资料清单与核心笔记'],
+  '/papers': ['论文与学习资料', '机器人、具身智能、控制与制造方向的论文与课件收藏'],
+  '/code': ['代码与文件库', '项目代码、部署脚本与工程文件的整理'],
+  '/tags': ['标签', '按主题浏览所有文章'],
+  '/archive': ['归档', '按年份浏览全部文章'],
+  '/projects': ['项目', '正在进行与已完成的项目'],
+  '/about': ['关于', '关于 Eric 与这个博客'],
+  '/editor': ['编辑器', '在线撰写并发布文章']
+};
+
+function updateMetaForRoute(hash) {
+  if (hash.indexOf('/post/') === 0) {
+    const id = hash.slice(6);
+    const post = getAllPosts().find(p => p.id === id);
+    if (post) { setMeta(post.title, getExcerpt(post)); return; }
+  }
+  if (hash.indexOf('/course/') === 0 && dataReady('courses')) {
+    const id = decodeURIComponent(hash.slice(8));
+    const course = COURSES.find(c => c.id === id);
+    if (course) {
+      setMeta(course.name + ' 课程笔记', course.description || (course.name + ' 课程资料与核心笔记'));
+      return;
+    }
+  }
+  const m = STATIC_META[hash];
+  if (m) setMeta(m[0], m[1]);
+  else setMeta('', '');
+}
+
+// 搜索关键词高亮：先转义再包裹 <mark>，避免 XSS
+function highlightMatch(text, query) {
+  const safe = escapeHtml(text || '');
+  if (!query) return safe;
+  const eq = escapeHtml(query).replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+  try {
+    return safe.replace(new RegExp(eq, 'gi'), function (m) {
+      return '<mark class="search-hit">' + m + '</mark>';
+    });
+  } catch (e) {
+    return safe;
+  }
+}
+
 // 通用实时搜索绑定：
 //   1) 防抖，避免每次敲键就重建整页 DOM
 //   2) 中文输入法组合期间不重绘（否则候选框会被打断）
@@ -506,9 +568,9 @@ function renderGlobalSearch(query) {
   if (posts.length) {
     html += `<div class="search-section-title">📝 文章 (${posts.length})</div>`;
     html += `<div class="article-list">` + posts.map(post => `
-      <article class="article-card" onclick="location.hash = '#/post/${post.id}'">
-        <h2 class="article-card-title"><a href="#/post/${post.id}">${escapeHtml(post.title)}</a></h2>
-        <p class="article-card-excerpt">${escapeHtml(getExcerpt(post))}</p>
+      <article class="article-card" data-href="#/post/${post.id}" tabindex="0" role="link" onclick="location.hash = '#/post/${post.id}'">
+        <h2 class="article-card-title"><a href="#/post/${post.id}">${highlightMatch(post.title, query)}</a></h2>
+        <p class="article-card-excerpt">${highlightMatch(getExcerpt(post), query)}</p>
         <div class="article-card-meta">
           <span class="meta-item">${formatDate(post.date)}</span>
           <div class="article-card-tags">${post.tags.map(t => `<span class="tag">${escapeHtml(t)}</span>`).join('')}</div>
@@ -521,7 +583,7 @@ function renderGlobalSearch(query) {
       <div class="search-course-item" data-href="#/course/${encodeURIComponent(c.id)}" tabindex="0" role="link" onclick="location.hash='#/course/${encodeURIComponent(c.id)}'">
         <span class="search-item-icon">📚</span>
         <div class="search-item-main">
-          <div class="search-item-title">${escapeHtml(c.name)}</div>
+          <div class="search-item-title">${highlightMatch(c.name, query)}</div>
           <div class="search-item-sub">${escapeHtml(c.category)} · ${c.fileCount} 个文件</div>
         </div>
         <span class="search-item-meta">查看 →</span>
@@ -533,7 +595,7 @@ function renderGlobalSearch(query) {
       <div class="search-paper-item" data-href="#/papers" tabindex="0" role="link" onclick="location.hash='#/papers'">
         <span class="search-item-icon">📄</span>
         <div class="search-item-main">
-          <div class="search-item-title">${escapeHtml(p.title)}</div>
+          <div class="search-item-title">${highlightMatch(p.title, query)}</div>
           <div class="search-item-sub">${escapeHtml(p.authors || '')}</div>
         </div>
         <span class="search-item-meta">查看 →</span>
@@ -604,12 +666,54 @@ function renderPost(id) {
       </div>
     </article>
     ${renderSeriesNav(post)}
+    ${renderPostNav(post)}
     <div class="giscus-wrap">
       <h3 class="giscus-wrap-title">💬 评论与讨论</h3>
       <div id="giscus-container"></div>
       ${GISCUS_CONFIG.enabled ? '' : '<div class="giscus-hint">评论基于 GitHub Discussions（免费）。启用方法：在 <code>js/app.js</code> 顶部的 <code>GISCUS_CONFIG</code> 中填入 <code>repoId</code> 和 <code>categoryId</code>（在 <a href="https://giscus.app" target="_blank" rel="noopener">giscus.app</a> 配置后获取），并把 <code>enabled</code> 改为 <code>true</code>。详见「关于」页说明。</div>'}
     </div>
   `;
+}
+
+// 上一篇/下一篇（按日期）+ 基于标签重叠的相关推荐
+function renderPostNav(post) {
+  const posts = getAllPosts().slice().sort((a, b) => b.date.localeCompare(a.date));
+  const idx = posts.findIndex(p => p.id === post.id);
+  const newer = idx > 0 ? posts[idx - 1] : null;
+  const older = idx >= 0 && idx < posts.length - 1 ? posts[idx + 1] : null;
+
+  let html = '';
+  if (newer || older) {
+    html += '<nav class="post-nav">';
+    html += newer
+      ? `<a class="post-nav-item" href="#/post/${newer.id}"><span class="post-nav-label">← 上一篇</span><span class="post-nav-title">${escapeHtml(newer.title)}</span></a>`
+      : '<span class="post-nav-item post-nav-empty"></span>';
+    html += older
+      ? `<a class="post-nav-item post-nav-next" href="#/post/${older.id}"><span class="post-nav-label">下一篇 →</span><span class="post-nav-title">${escapeHtml(older.title)}</span></a>`
+      : '<span class="post-nav-item post-nav-empty"></span>';
+    html += '</nav>';
+  }
+
+  // 相关文章：共享标签越多越相关
+  const tags = post.tags || [];
+  const related = getAllPosts()
+    .filter(p => p.id !== post.id)
+    .map(p => ({ post: p, score: (p.tags || []).filter(t => tags.indexOf(t) !== -1).length }))
+    .filter(x => x.score > 0)
+    .sort((a, b) => b.score - a.score || b.post.date.localeCompare(a.post.date))
+    .slice(0, 3);
+
+  if (related.length) {
+    html += '<section class="related-posts"><h3 class="related-title">相关文章</h3>';
+    related.forEach(x => {
+      html += `<a class="related-item" href="#/post/${x.post.id}">
+        <span class="related-item-title">${escapeHtml(x.post.title)}</span>
+        <span class="related-item-meta">${formatDate(x.post.date)}</span>
+      </a>`;
+    });
+    html += '</section>';
+  }
+  return html;
 }
 
 function renderSeriesNav(post) {
@@ -1868,7 +1972,8 @@ async function router() {
     `;
   }
 
-  // 代码工具条（复制/语言标签）、阅读目录与进度、按需高亮
+  // 标题/描述、代码工具条（复制/语言标签）、阅读目录与进度、按需高亮
+  updateMetaForRoute(hash);
   enhanceCodeBlocks(app);
   buildReadingTools();
   highlightIn(app);

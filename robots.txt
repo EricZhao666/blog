@@ -1,0 +1,5 @@
+User-agent: *
+Allow: /
+
+# 单页应用使用 hash 路由，页面内容由 JS 渲染
+Sitemap: https://ericzhao666.github.io/blog/sitemap.xml
