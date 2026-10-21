@@ -6,7 +6,7 @@
   --color-surface: #ffffff;
   --color-text: #1a1a2e;
   --color-text-secondary: #5c6370;
-  --color-text-muted: #8892a0;
+  --color-text-muted: #6b7280;
   --color-border: #e8eaed;
   --color-primary: #2563eb;
   --color-primary-light: #dbeafe;
@@ -1608,6 +1608,7 @@ main {
   .editor-input-title {
     font-size: 1.1rem;
   }
+}
 
 /* ============================================
    Dark Theme
@@ -1634,6 +1635,83 @@ main {
 [data-theme="dark"] .hljs {
   background: #16181d !important;
   color: #e6e8eb;
+}
+
+/* 深色模式代码高亮配色（One Dark 风格，覆盖 atom-one-light 的浅色 token） */
+[data-theme="dark"] .hljs-comment,
+[data-theme="dark"] .hljs-quote {
+  color: #6b7383;
+  font-style: italic;
+}
+
+[data-theme="dark"] .hljs-keyword,
+[data-theme="dark"] .hljs-selector-tag,
+[data-theme="dark"] .hljs-literal,
+[data-theme="dark"] .hljs-doctag,
+[data-theme="dark"] .hljs-formula {
+  color: #c678dd;
+}
+
+[data-theme="dark"] .hljs-string,
+[data-theme="dark"] .hljs-regexp,
+[data-theme="dark"] .hljs-addition,
+[data-theme="dark"] .hljs-attribute,
+[data-theme="dark"] .hljs-meta .hljs-string {
+  color: #98c379;
+}
+
+[data-theme="dark"] .hljs-number,
+[data-theme="dark"] .hljs-symbol,
+[data-theme="dark"] .hljs-bullet,
+[data-theme="dark"] .hljs-link,
+[data-theme="dark"] .hljs-selector-attr,
+[data-theme="dark"] .hljs-selector-pseudo,
+[data-theme="dark"] .hljs-template-variable,
+[data-theme="dark"] .hljs-variable {
+  color: #d19a66;
+}
+
+[data-theme="dark"] .hljs-title,
+[data-theme="dark"] .hljs-section,
+[data-theme="dark"] .hljs-name,
+[data-theme="dark"] .hljs-selector-id,
+[data-theme="dark"] .hljs-selector-class {
+  color: #61afef;
+}
+
+[data-theme="dark"] .hljs-params,
+[data-theme="dark"] .hljs-property,
+[data-theme="dark"] .hljs-attr {
+  color: #e6e8eb;
+}
+
+[data-theme="dark"] .hljs-type,
+[data-theme="dark"] .hljs-class .hljs-title,
+[data-theme="dark"] .hljs-built_in,
+[data-theme="dark"] .hljs-title.class_ {
+  color: #e5c07b;
+}
+
+[data-theme="dark"] .hljs-meta,
+[data-theme="dark"] .hljs-tag {
+  color: #56b6c2;
+}
+
+[data-theme="dark"] .hljs-deletion {
+  color: #e06c75;
+}
+
+[data-theme="dark"] .hljs-emphasis {
+  font-style: italic;
+}
+
+[data-theme="dark"] .hljs-strong {
+  font-weight: 700;
+}
+
+[data-theme="dark"] .markdown-body code:not(pre code) {
+  background: #24272e;
+  color: #e5c07b;
 }
 
 [data-theme="dark"] .site-header {
@@ -2070,7 +2148,6 @@ main {
   border-radius: var(--radius-sm);
   border: 1px dashed var(--color-border);
   line-height: 1.7;
-}
 }
 
 /* ============================================

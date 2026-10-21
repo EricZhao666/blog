@@ -160,6 +160,53 @@ function escapeHtml(text) {
     .replace(/'/g, '&#39;');
 }
 
+// 通用实时搜索绑定：
+//   1) 防抖，避免每次敲键就重建整页 DOM
+//   2) 中文输入法组合期间不重绘（否则候选框会被打断）
+//   3) 重绘后自动恢复焦点与光标位置
+function bindLiveSearch(inputId, applyValue, delay) {
+  const input = document.getElementById(inputId);
+  if (!input || input.dataset.liveSearch === '1') return;
+  input.dataset.liveSearch = '1';
+
+  let composing = false;
+  let timer = null;
+
+  function commit() {
+    if (document.getElementById(inputId) !== input) return;
+    const val = input.value;
+    const selStart = input.selectionStart;
+    const selEnd = input.selectionEnd;
+    applyValue(val);
+    const next = document.getElementById(inputId);
+    if (next && next !== input) {
+      next.focus();
+      try { next.setSelectionRange(selStart, selEnd); } catch (e) {}
+    }
+  }
+
+  function schedule() {
+    clearTimeout(timer);
+    timer = setTimeout(commit, delay || 180);
+  }
+
+  input.addEventListener('compositionstart', function () { composing = true; });
+  input.addEventListener('compositionend', function () {
+    composing = false;
+    schedule();
+  });
+  input.addEventListener('input', function () {
+    if (composing) return;
+    schedule();
+  });
+  input.addEventListener('keydown', function (ev) {
+    if (ev.key === 'Enter') {
+      clearTimeout(timer);
+      commit();
+    }
+  });
+}
+
 // ============================================
 // Page Renderers
 // ============================================
@@ -524,10 +571,10 @@ function renderCourses() {
   if (courseSearchQuery) {
     const q = courseSearchQuery.toLowerCase();
     filtered = filtered.filter(c =>
-      c.name.toLowerCase().includes(q) ||
-      c.category.toLowerCase().includes(q) ||
-      c.source.toLowerCase().includes(q) ||
-      c.files.some(f => f.name.toLowerCase().includes(q))
+      (c.name || '').toLowerCase().includes(q) ||
+      (c.category || '').toLowerCase().includes(q) ||
+      (c.source || '').toLowerCase().includes(q) ||
+      c.files.some(f => (f.name || '').toLowerCase().includes(q))
     );
   }
 
@@ -705,10 +752,10 @@ function renderCode() {
   if (codeLibSearchQuery) {
     const q = codeLibSearchQuery.toLowerCase();
     filtered = filtered.filter(l =>
-      l.name.toLowerCase().includes(q) ||
-      l.category.toLowerCase().includes(q) ||
-      l.source.toLowerCase().includes(q) ||
-      l.files.some(f => f.name.toLowerCase().includes(q))
+      (l.name || '').toLowerCase().includes(q) ||
+      (l.category || '').toLowerCase().includes(q) ||
+      (l.source || '').toLowerCase().includes(q) ||
+      l.files.some(f => (f.name || '').toLowerCase().includes(q))
     );
   }
 
@@ -724,9 +771,7 @@ function renderCode() {
             <span class="course-card-source">${escapeHtml(lib.category)}</span>
           </div>
           <div class="course-card-meta">
-            <span class="meta-item">📂 ${escapeHtml(lib.source)}</span>
-          </div>
-          <div class="course-card-meta">
+            ${lib.source ? `<span class="meta-item">📂 ${escapeHtml(lib.source)}</span>` : ''}
             <span class="meta-item">📁 ${lib.fileCount} 个文件</span>
             <span class="meta-item">💾 ${lib.totalSizeFormatted}</span>
           </div>
@@ -762,7 +807,7 @@ function renderCodeDetail(libId) {
         <h1 class="course-detail-title">${escapeHtml(lib.name)}</h1>
         <div class="course-detail-meta">
           <span class="meta-item">📂 ${escapeHtml(lib.category)}</span>
-          <span class="meta-item">📍 ${escapeHtml(lib.source)}</span>
+          ${lib.source ? `<span class="meta-item">📍 ${escapeHtml(lib.source)}</span>` : ''}
           <span class="meta-item">📁 ${lib.fileCount} 个文件</span>
           <span class="meta-item">💾 ${lib.totalSizeFormatted}</span>
         </div>
@@ -1502,37 +1547,20 @@ function router() {
       app.innerHTML = renderTags(tag);
     } else if (hash === '/courses') {
       app.innerHTML = renderCourses();
-      // Attach course search listener
-      const courseSearchInput = document.getElementById('courseSearchInput');
-      if (courseSearchInput) {
-        courseSearchInput.addEventListener('input', (e) => {
-          courseSearchQuery = e.target.value;
-          app.innerHTML = renderCourses();
-          const newInput = document.getElementById('courseSearchInput');
-          if (newInput) {
-            newInput.focus();
-            newInput.setSelectionRange(newInput.value.length, newInput.value.length);
-          }
-        });
-      }
+      bindLiveSearch('courseSearchInput', (val) => {
+        courseSearchQuery = val;
+        app.innerHTML = renderCourses();
+      });
     } else if (hash.startsWith('/course/')) {
       courseFileLimit = 50;
       const id = decodeURIComponent(hash.slice('/course/'.length));
       app.innerHTML = renderCourseDetail(id);
     } else if (hash === '/papers') {
       app.innerHTML = renderPapers();
-      const paperSearchInput = document.getElementById('paperSearchInput');
-      if (paperSearchInput) {
-        paperSearchInput.addEventListener('input', (e) => {
-          paperSearchQuery = e.target.value;
-          app.innerHTML = renderPapers();
-          const newInput = document.getElementById('paperSearchInput');
-          if (newInput) {
-            newInput.focus();
-            newInput.setSelectionRange(newInput.value.length, newInput.value.length);
-          }
-        });
-      }
+      bindLiveSearch('paperSearchInput', (val) => {
+        paperSearchQuery = val;
+        app.innerHTML = renderPapers();
+      });
     } else if (hash === '/about') {
       app.innerHTML = renderAbout();
     } else if (hash === '/projects') {
@@ -1541,18 +1569,10 @@ function router() {
       app.innerHTML = renderArchive();
     } else if (hash === '/code') {
       app.innerHTML = renderCode();
-      const codeLibSearchInput = document.getElementById('codeLibSearchInput');
-      if (codeLibSearchInput) {
-        codeLibSearchInput.addEventListener('input', (e) => {
-          codeLibSearchQuery = e.target.value;
-          app.innerHTML = renderCode();
-          const newInput = document.getElementById('codeLibSearchInput');
-          if (newInput) {
-            newInput.focus();
-            newInput.setSelectionRange(newInput.value.length, newInput.value.length);
-          }
-        });
-      }
+      bindLiveSearch('codeLibSearchInput', (val) => {
+        codeLibSearchQuery = val;
+        app.innerHTML = renderCode();
+      });
     } else if (hash.startsWith('/codelib/')) {
       codeLibFileLimit = 50;
       const id = decodeURIComponent(hash.slice('/codelib/'.length));
@@ -1596,18 +1616,10 @@ window.setCategory = function(cat) {
   courseFileLimit = 50;
   const app = document.getElementById('app');
   app.innerHTML = renderCourses();
-  const courseSearchInput = document.getElementById('courseSearchInput');
-  if (courseSearchInput) {
-    courseSearchInput.addEventListener('input', (e) => {
-      courseSearchQuery = e.target.value;
-      app.innerHTML = renderCourses();
-      const newInput = document.getElementById('courseSearchInput');
-      if (newInput) {
-        newInput.focus();
-        newInput.setSelectionRange(newInput.value.length, newInput.value.length);
-      }
-    });
-  }
+  bindLiveSearch('courseSearchInput', (val) => {
+    courseSearchQuery = val;
+    app.innerHTML = renderCourses();
+  });
 };
 
 window.loadMoreCourseFiles = function(courseId) {
@@ -1651,43 +1663,28 @@ window.setPaperTab = function(tab) {
   paperTab = tab;
   paperSearchQuery = '';
   activePaperCategory = null;
-  document.getElementById('app').innerHTML = renderPapers();
-  const input = document.getElementById('paperSearchInput');
-  if (input) {
-    input.addEventListener('input', (e) => {
-      paperSearchQuery = e.target.value;
-      document.getElementById('app').innerHTML = renderPapers();
-      const newInput = document.getElementById('paperSearchInput');
-      if (newInput) {
-        newInput.focus();
-        newInput.setSelectionRange(newInput.value.length, newInput.value.length);
-      }
-    });
-  }
+  const app = document.getElementById('app');
+  app.innerHTML = renderPapers();
+  bindLiveSearch('paperSearchInput', (val) => {
+    paperSearchQuery = val;
+    app.innerHTML = renderPapers();
+  });
 };
 
 window.setPaperCategory = function(cat) {
   activePaperCategory = cat;
-  document.getElementById('app').innerHTML = renderPapers();
-  const input = document.getElementById('paperSearchInput');
-  if (input) {
-    input.addEventListener('input', (e) => {
-      paperSearchQuery = e.target.value;
-      document.getElementById('app').innerHTML = renderPapers();
-      const newInput = document.getElementById('paperSearchInput');
-      if (newInput) {
-        newInput.focus();
-        newInput.setSelectionRange(newInput.value.length, newInput.value.length);
-      }
-    });
-  }
+  const app = document.getElementById('app');
+  app.innerHTML = renderPapers();
+  bindLiveSearch('paperSearchInput', (val) => {
+    paperSearchQuery = val;
+    app.innerHTML = renderPapers();
+  });
 };
 
 // Search
-document.getElementById('searchInput').addEventListener('input', (e) => {
-  searchQuery = e.target.value;
-  const app = document.getElementById('app');
-  app.innerHTML = renderHome();
+bindLiveSearch('searchInput', (val) => {
+  searchQuery = val;
+  document.getElementById('app').innerHTML = renderHome();
 });
 
 // Mobile menu toggle
