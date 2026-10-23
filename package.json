@@ -1,0 +1,16 @@
+{
+  "name": "ericzhao-blog",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Eric's Notebook —— 纯静态个人博客（hash 路由 SPA + 预渲染笔记静态页）",
+  "scripts": {
+    "test": "python scripts/run_tests.py",
+    "test:js": "node tests/audit.js && node tests/test6.js && node tests/test7.js && node tests/test8.js && node tests/test9.js && node tests/test10.js && node tests/test11.js && node tests/test14.js",
+    "gen:feed": "python gen_feed.py",
+    "gen:notes": "node gen_notes_pages.js",
+    "gen:codefiles": "python scan_codefiles.py"
+  },
+  "devDependencies": {
+    "jsdom": "^30.1.3"
+  }
+}
