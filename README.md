@@ -59,7 +59,8 @@ blog/
 | Python | ≥ 3.10（实测 3.12.7） | 生成器、测试入口 |
 
 ```bash
-npm install          # 只装 devDependency: jsdom（跑测试用）
+npm ci               # 严格按 package-lock.json 安装（推荐；CI 用同一条命令）
+# 或：npm install     # 首次开发 / 需要更新锁文件时
 ```
 
 > 仓库不含 `node_modules/`（已 gitignore）。没装 jsdom 时 `run_tests.py` 会明确报 `BLOCKED`，不会假装通过。
@@ -147,7 +148,13 @@ python gen_feed.py --out /tmp/feed.xml --now 2026-10-23T00:00:00Z   # 可重复�
 node gen_notes_pages.js
 ```
 
-会在 `notes/*.html` 的 JSON-LD 里写入当天日期（`dateModified`）与 `sitemap.xml` 的 `lastmod`，因此**跨天重跑一定会产生 diff**，属预期行为。
+会在 `notes/*.html` 的 JSON-LD 里写入日期（`dateModified`）与 `sitemap.xml` 的 `lastmod`，默认取当天，**跨天重跑会产生 diff**；需要可重复构建时固定时间并指到临时目录：
+
+```bash
+node gen_notes_pages.js --now 2026-10-22 --out-dir /tmp/notes-out
+```
+
+`--now` 必须是合法的 `YYYY-MM-DD`（非法值直接失败）。产物均为「先写 `.tmp` 再改名」的原子写入，中途失败不会写坏已发布文件。
 
 ---
 
@@ -239,6 +246,17 @@ git push origin main          # GitHub Pages 自动构建，约 30 秒 ~ 2 分�
 
 ---
 
+### 7.1 持续集成（GitHub Actions）
+
+`.github/workflows/tests.yml`：`push` / `pull_request` / 手动触发，`ubuntu-latest` + Node 22 + Python 3.12，`npm ci` 装依赖后跑 `python scripts/run_tests.py`，报告作为 Artifact 上传，失败即 job 失败。权限仅 `contents: read`，不需要任何 Secrets。
+
+> **注意**：CI 只是“事后检查”，不能阻止直接推 `main` 触发 Pages 发布。若要真正拦截，需要：
+> 1. 仓库 Settings → Branches 给 `main` 加保护：Require a pull request before merging + Require status checks to pass（勾选 `tests`）；
+> 2. 日常改动走 `feature/*` 分支 → PR → 绿了再合并；
+> 3. 如仍要允许直推，可加一条 pre-push hook 或本地 `python scripts/run_tests.py` 习惯。
+>
+> 这些属于仓库设置，代码侧不做改动。
+
 ## 8. 会覆盖产物的脚本
 
 | 脚本 | 覆盖的文件 | 失败时 |
@@ -277,7 +295,8 @@ git push origin main          # GitHub Pages 自动构建，约 30 秒 ~ 2 分�
 
 ## 11. 已知限制
 
-- `gen_notes_pages.js` 的 `dateModified` / `sitemap lastmod` 取“当天”，跨天重跑必然产生 diff，暂无 `--now` 参数。
+- `gen_notes_pages.js` 默认时间仍是“当天”，跨天重跑会产生 diff；需要可重复构建时用 `--now` + `--out-dir`（见 4.5）。
+- 未在真实 Linux 上本地跑过完整套件：CI 首次运行结果才是 Linux 环境的最终验证（见 7.1）。
 - 生成器的**真实端到端扫描**需要本机存在私人源目录，仓库内只保证合成 fixture 可跑（`test15.py`）。
 - 测试基于 jsdom，不覆盖真实浏览器的 Service Worker 生命周期与跨域行为。
 - `tests/` 与 `scripts/` 之外，根目录仍保留 `scan_codefiles.py`、`gen_feed.py`、`gen_notes_pages.js`（保持既有调用路径不变）。

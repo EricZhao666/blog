@@ -13,7 +13,29 @@ const crypto = require('crypto');
 
 const ROOT = __dirname;
 const SITE = 'https://ericzhao666.github.io/blog';
-const TODAY = new Date().toISOString().slice(0, 10);
+
+// ---- 命令行参数：便于测试与可重复构建 ----
+function argValue(name, def) {
+  const i = process.argv.indexOf(name);
+  return i >= 0 && process.argv[i + 1] ? process.argv[i + 1] : def;
+}
+const OUT_DIR = path.resolve(argValue('--out-dir', ROOT));
+const TODAY = argValue('--now', new Date().toISOString().slice(0, 10));
+const _todayDate = new Date(TODAY + 'T00:00:00Z');
+if (!/^\d{4}-\d{2}-\d{2}$/.test(TODAY) ||
+    isNaN(_todayDate.getTime()) ||
+    _todayDate.toISOString().slice(0, 10) !== TODAY) {
+  console.error('[ABORT] --now 需要合法的 YYYY-MM-DD 日期，收到: ' + TODAY);
+  process.exit(1);
+}
+
+// 先写临时文件再改名，避免中途失败把已有产物写坏
+function writeFileAtomic(file, content) {
+  fs.mkdirSync(path.dirname(file), { recursive: true });
+  const tmp = file + '.tmp';
+  fs.writeFileSync(tmp, content, 'utf8');
+  fs.renameSync(tmp, file);
+}
 
 // 纯中文名的课程给出可读 slug（其余自动从 ASCII 片段推导）
 const SLUG_OVERRIDES = {
@@ -174,7 +196,7 @@ function main() {
   const parse = typeof marked === 'function' ? marked : (marked.parse || marked.marked.parse);
 
   const { notes, courses } = loadGlobals();
-  const notesDir = path.join(ROOT, 'notes');
+  const notesDir = path.join(OUT_DIR, 'notes');
   fs.mkdirSync(notesDir, { recursive: true });
 
   const used = {};
@@ -255,9 +277,8 @@ ${nav}
       <a href="index.html">全部课程笔记</a>
     </p>`;
 
-    fs.writeFileSync(path.join(notesDir, p.slug + '.html'),
-      pageShell({ title, description: desc, canonical: SITE + '/' + p.rel, body, extraHead: ld }),
-      'utf8');
+    writeFileAtomic(path.join(notesDir, p.slug + '.html'),
+      pageShell({ title, description: desc, canonical: SITE + '/' + p.rel, body, extraHead: ld }));
   });
 
   // 笔记索引页：按学科方向分组
@@ -298,17 +319,17 @@ ${nav}
       </div>
 ${listHtml}    </article>`;
 
-  fs.writeFileSync(path.join(notesDir, 'index.html'), pageShell({
+  writeFileAtomic(path.join(notesDir, 'index.html'), pageShell({
     title: "课程笔记合集 · Eric's Notebook",
     description: '香港大学与本科阶段 ' + pages.length + ' 门课程的核心笔记合集：机器人学、机器学习、材料、铁路、MEMS、产品设计等。',
     canonical: SITE + '/notes/',
     body: indexBody
-  }), 'utf8');
+  }));
 
   // 供单页应用跳转的映射表（与笔记数据同时加载）
   const mapLines = pages.map(p => `  ${JSON.stringify(p.id)}: ${JSON.stringify(p.rel)}`).join(',\n');
-  fs.writeFileSync(path.join(ROOT, 'js/note-slugs.js'),
-    '// 自动生成：node gen_notes_pages.js\nconst NOTE_PAGES = {\n' + mapLines + '\n};\n', 'utf8');
+  writeFileAtomic(path.join(OUT_DIR, 'js/note-slugs.js'),
+    '// 自动生成：node gen_notes_pages.js\nconst NOTE_PAGES = {\n' + mapLines + '\n};\n');
 
   // sitemap
   const urls = [
@@ -321,7 +342,7 @@ ${listHtml}    </article>`;
     '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n' +
     urls.map(u => `  <url>\n    <loc>${u.loc}</loc>\n    <lastmod>${TODAY}</lastmod>\n    <changefreq>${u.freq}</changefreq>\n    <priority>${u.priority}</priority>\n  </url>`).join('\n') +
     '\n</urlset>\n';
-  fs.writeFileSync(path.join(ROOT, 'sitemap.xml'), sitemap, 'utf8');
+  writeFileAtomic(path.join(OUT_DIR, 'sitemap.xml'), sitemap);
 
   console.log('生成静态页: ' + pages.length + ' 个');
   pages.forEach(p => console.log('  ' + p.rel + '  ← ' + p.id));

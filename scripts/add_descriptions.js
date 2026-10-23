@@ -81,6 +81,14 @@ if (orphan.length) {
   orphan.forEach(n => console.warn('  - ' + n));
 }
 
+if (!Object.keys(descriptions).length) {
+  console.error('[ABORT] 描述表为空，已中止（不覆盖 ' + DESC_FILE + '）');
+  process.exit(1);
+}
+
+// 先写临时文件再改名：中途失败不会把有效的描述文件写坏
 fs.mkdirSync(path.dirname(DESC_FILE), { recursive: true });
-fs.writeFileSync(DESC_FILE, JSON.stringify(descriptions, null, 2) + '\n', 'utf8');
+const tmpFile = DESC_FILE + '.tmp';
+fs.writeFileSync(tmpFile, JSON.stringify(descriptions, null, 2) + '\n', 'utf8');
+fs.renameSync(tmpFile, DESC_FILE);
 console.log('Wrote ' + Object.keys(descriptions).length + ' descriptions -> ' + DESC_FILE);

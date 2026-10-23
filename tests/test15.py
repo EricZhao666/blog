@@ -232,6 +232,60 @@ else:
         orphan = [k for k in data if k not in names]
         check('D4 描述与课程名一一对应', orphan == [], orphan)
 
+# ============================================== gen_notes_pages.js（固定时间）
+print('\n== gen_notes_pages.js ==')
+
+
+def tree_hashes(root):
+    out = {}
+    for base, _, files in os.walk(root):
+        for f in files:
+            p = os.path.join(base, f)
+            out[os.path.relpath(p, root).replace('\\', '/')] = sha(p)
+    return out
+
+
+if not node:
+    skip('N1 笔记静态页固定时间生成', '未找到 node')
+else:
+    gen = os.path.join(ROOT, 'gen_notes_pages.js')
+    watch = {}
+    for rel in ['sitemap.xml', 'js/note-slugs.js']:
+        watch[rel] = sha(os.path.join(ROOT, rel))
+    watch_notes = tree_hashes(os.path.join(ROOT, 'notes'))
+
+    out1 = os.path.join(TMP, 'notes_run1')
+    out2 = os.path.join(TMP, 'notes_run2')
+    out3 = os.path.join(TMP, 'notes_run3')
+    r1 = run([node, gen, '--out-dir', out1, '--now', '2026-10-22'])
+    check('N1 固定时间可生成到临时目录',
+          r1.returncode == 0 and os.path.isfile(os.path.join(out1, 'notes', 'cs422.html')),
+          (r1.stderr or '').strip()[-100:])
+
+    run([node, gen, '--out-dir', out2, '--now', '2026-10-22'])
+    check('N2 相同输入+固定时间产物逐字节一致',
+          tree_hashes(out1) == tree_hashes(out2), len(tree_hashes(out1)))
+
+    repo_notes = sorted(os.listdir(os.path.join(ROOT, 'notes')))
+    gen_notes = sorted(os.listdir(os.path.join(out1, 'notes')))
+    check('N3 生成的文件集合与仓库一致', repo_notes == gen_notes, (len(gen_notes), len(repo_notes)))
+    check('N3b note-slugs.js 与仓库一致（与时间无关）',
+          sha(os.path.join(out1, 'js', 'note-slugs.js')) == watch['js/note-slugs.js'])
+
+    run([node, gen, '--out-dir', out3, '--now', '2026-01-01'])
+    a = io.open(os.path.join(out1, 'notes', 'cs422.html'), encoding='utf-8').read()
+    b = io.open(os.path.join(out3, 'notes', 'cs422.html'), encoding='utf-8').read()
+    check('N4 换时间只改日期字段',
+          a.replace('2026-10-22', 'X') == b.replace('2026-01-01', 'X'))
+
+    check('N5 临时目录运行不改动仓库产物',
+          tree_hashes(os.path.join(ROOT, 'notes')) == watch_notes and
+          sha(os.path.join(ROOT, 'sitemap.xml')) == watch['sitemap.xml'] and
+          sha(os.path.join(ROOT, 'js', 'note-slugs.js')) == watch['js/note-slugs.js'])
+
+    check('N6 非法 --now 直接失败',
+          run([node, gen, '--out-dir', os.path.join(TMP, 'notes_bad'), '--now', '2026-13-99']).returncode != 0)
+
 shutil.rmtree(TMP, ignore_errors=True)
 print('\n共 %d 项，PASS %d，FAIL %d，SKIP %d'
       % (passed[0] + failed[0] + skipped[0], passed[0], failed[0], skipped[0]))
