@@ -6,8 +6,11 @@ Only metadata (name, type, size, path, relPath) is stored — the actual files
 stay on disk (zero duplication). Filtering drops dependency/cache/binary junk
 so the generated JS stays sane in size.
 """
-import os
+import argparse
 import json
+import os
+import re
+import sys
 
 BLOG_DIR = os.path.dirname(os.path.abspath(__file__))
 OUT_FILE = os.path.join(BLOG_DIR, 'js', 'codefiles.js')
@@ -171,27 +174,84 @@ def scan_root(root_path, root_id, category):
             break
     return files, truncated, scanned_dirs
 
-def main():
+def load_previous_meta(path):
+    """读取既有产物中的人工字段（description / guide），供重扫时保留。
+
+    文件不存在 -> 返回空映射（等价于首次生成）。
+    文件存在但读不懂 -> 直接中止：宁可报错，也不要把人工描述清空。
+    """
+    if not os.path.isfile(path):
+        return {}
+    try:
+        with open(path, encoding='utf-8') as f:
+            text = f.read()
+    except OSError as e:
+        raise SystemExit(f"[ABORT] 既有产物无法读取，可能丢失人工描述: {path} ({e})")
+    m = re.search(r'const\s+CODE_LIBS\s*=\s*(\[[\s\S]*?\]);', text)
+    if not m:
+        raise SystemExit(f"[ABORT] 既有产物中没有 CODE_LIBS，无法确认人工描述: {path}")
+    try:
+        libs = json.loads(m.group(1))
+    except ValueError as e:
+        raise SystemExit(f"[ABORT] 既有产物解析失败，已中止以免覆盖人工描述: {e}")
+    meta = {}
+    for lib in libs:
+        if not isinstance(lib, dict):
+            continue
+        lid = lib.get('id')
+        if not lid:
+            continue
+        meta[lid] = {
+            'description': lib.get('description') or '',
+            'guide': lib.get('guide') or '',
+        }
+    return meta
+
+
+def build_lib(root_path, root_id, category, previous_meta):
+    """扫描单个根目录并合并人工字段（description / guide）。"""
+    files, truncated, ndirs = scan_root(root_path, root_id, category)
+    total = sum(f['size'] for f in files)
+    prev = previous_meta.get(root_id) or {}
+    lib = {
+        "id": root_id,
+        "name": os.path.basename(root_path.rstrip('/\\')) or root_id,
+        "category": category,
+        "fileCount": len(files),
+        "totalSize": total,
+        "totalSizeFormatted": fmt_size(total),
+        # 人工撰写的描述：重扫时保留，新库默认为空
+        "description": prev.get('description', ''),
+    }
+    if prev.get('guide'):
+        lib["guide"] = prev['guide']
+    lib["files"] = files
+    return lib, truncated, ndirs
+
+
+def parse_args(argv=None):
+    parser = argparse.ArgumentParser(description='扫描代码库目录并生成 codefiles.js')
+    parser.add_argument('--out', help='输出文件路径（默认 js/codefiles.js）')
+    parser.add_argument('--roots', help='JSON 文件，自定义扫描根（[{path,id,category}]），供测试使用')
+    return parser.parse_args(argv)
+
+
+def main(roots=None, out_path=None):
+    roots = list(ROOTS if roots is None else roots)
+    out_file = out_path or OUT_FILE
+    previous_meta = load_previous_meta(out_file)
+
     libs = []
     total_files = 0
     total_size = 0
     print("Scanning code/file directories...\n")
-    for root_path, root_id, category in ROOTS:
+    for root_path, root_id, category in roots:
         if not os.path.isdir(root_path):
             print(f"  [SKIP] not found: {root_path}")
             continue
-        files, truncated, ndirs = scan_root(root_path, root_id, category)
-        total = sum(f['size'] for f in files)
-        lib = {
-            "id": root_id,
-            "name": os.path.basename(root_path.rstrip('/\\')) or root_id,
-            "category": category,
-            "fileCount": len(files),
-            "totalSize": total,
-            "totalSizeFormatted": fmt_size(total),
-            "description": "",
-            "files": files,
-        }
+        lib, truncated, ndirs = build_lib(root_path, root_id, category, previous_meta)
+        files = lib['files']
+        total = lib['totalSize']
         libs.append(lib)
         total_files += len(files)
         total_size += total
@@ -220,15 +280,32 @@ def main():
     out.append("  CODE_CATEGORIES[l.category].count++;")
     out.append("});")
 
-    with open(OUT_FILE, 'w', encoding='utf-8') as f:
+    out_dir = os.path.dirname(os.path.abspath(out_file))
+    if out_dir and not os.path.isdir(out_dir):
+        os.makedirs(out_dir, exist_ok=True)
+
+    with open(out_file, 'w', encoding='utf-8') as f:
         f.write('\n'.join(out) + '\n')
 
-    size_kb = os.path.getsize(OUT_FILE) / 1024
-    print(f"\nGenerated: {OUT_FILE}")
+    size_kb = os.path.getsize(out_file) / 1024
+    kept_desc = sum(1 for l in libs if l.get('description'))
+    kept_guide = sum(1 for l in libs if l.get('guide'))
+    print(f"\nGenerated: {out_file}")
     print(f"  libraries: {len(libs)}")
+    print(f"  descriptions preserved: {kept_desc}/{len(libs)}")
+    print(f"  guides preserved: {kept_guide}/{len(libs)}")
     print(f"  total files (after filtering): {total_files}")
     print(f"  total size: {fmt_size(total_size)}")
     print(f"  JS file size: {size_kb:.1f} KB")
 
 if __name__ == '__main__':
-    main()
+    args = parse_args()
+    custom_roots = None
+    if args.roots:
+        try:
+            with open(args.roots, encoding='utf-8') as f:
+                raw_roots = json.load(f)
+            custom_roots = [(r['path'], r['id'], r['category']) for r in raw_roots]
+        except (OSError, ValueError, KeyError) as e:
+            sys.exit(f"[ABORT] --roots 文件无效: {e}")
+    main(roots=custom_roots, out_path=args.out)
