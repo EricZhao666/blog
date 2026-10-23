@@ -48,6 +48,8 @@ TESTS = [
     {'name': 'test13', 'file': 'tests/test13.py', 'kind': 'python', 'desc': 'Batch 3：RSS 结构化解析与产物安全'},
     {'name': 'test14', 'file': 'tests/test14.js', 'kind': 'jsdom', 'desc': 'Batch 3：排序一致性 + 日期时区'},
     {'name': 'test15', 'file': 'tests/test15.py', 'kind': 'python', 'desc': 'Batch 3.5：生成器合成 Fixture 可复现性'},
+    {'name': 'browser', 'file': 'tests/browser/sw.spec.js', 'kind': 'browser',
+     'desc': 'B4：真实 Chromium 下的 SW 安装 / 离线 / 更新 / 容量'},
 ]
 
 COUNT_RE = re.compile(r'共\s*(\d+)\s*项[，,]\s*PASS\s*(\d+)[，,]\s*FAIL\s*(\d+)')
@@ -130,14 +132,28 @@ def check_env(selected):
                 blocked.append('缺少 jsdom 依赖：请在仓库根目录执行 `npm install`')
             else:
                 notes.append('jsdom 已就绪')
+    if 'browser' in kinds:
+        if not which('node'):
+            blocked.append('未找到 node，无法运行浏览器测试')
+        else:
+            code, out, _ = run(['node', '-e', "require.resolve('playwright')"])
+            if code != 0:
+                blocked.append('缺少 playwright 依赖：请在仓库根目录执行 npm ci')
+            else:
+                notes.append('playwright 已就绪（浏览器通道: %s）'
+                             % os.environ.get('PW_CHANNEL', 'chrome'))
     return blocked, notes
 
 
 def run_test(t):
     cmd = ([sys.executable] if t['kind'] == 'python' else ['node']) + [t['file']]
     code, out, dur = run(cmd)
+    # 浏览器用例用退出码 2 表示"环境不可用"，必须显式标记为阻塞而不是失败/通过
+    blocked = (t['kind'] == 'browser' and code == 2)
     marker = t.get('pass_marker')
-    if marker:
+    if blocked:
+        ok = False
+    elif marker:
         ok = marker in out and code == 0
     else:
         ok = code == 0
@@ -148,7 +164,7 @@ def run_test(t):
     fails = [s.strip() for s in FAILED_RE.findall(out)][:5]
     return {
         'name': t['name'], 'file': t['file'], 'desc': t['desc'], 'ok': ok,
-        'exit': code, 'dur': dur, 'counts': counts, 'fails': fails,
+        'blocked': blocked, 'exit': code, 'dur': dur, 'counts': counts, 'fails': fails,
         'tail': '\n'.join(out.strip().splitlines()[-12:]),
     }
 
@@ -183,8 +199,9 @@ def write_report(path, payload):
     for r in payload['results']:
         cnt = ('%d/%d PASS, %d FAIL' % (r['counts'][1], r['counts'][0], r['counts'][2])
                if r['counts'] else '—')
+        st = 'BLOCKED' if r.get('blocked') else ('PASS' if r['ok'] else 'FAIL')
         lines.append('| `%s` | %s | %s | %s | %.1fs |'
-                     % (r['name'], r['desc'], 'PASS' if r['ok'] else 'FAIL', cnt, r['dur']))
+                     % (r['name'], r['desc'], st, cnt, r['dur']))
     lines.append('')
     bad = [r for r in payload['results'] if not r['ok']]
     if bad:
@@ -249,16 +266,18 @@ def main(argv=None):
             cnt = ''
             if r['counts']:
                 cnt = ' (%d/%d)' % (r['counts'][1], r['counts'][0])
-            print('  %-10s %-4s %5.1fs%s  %s'
-                  % (r['name'], 'PASS' if r['ok'] else 'FAIL', r['dur'], cnt, r['desc']))
+            status = 'BLOCK' if r.get('blocked') else ('PASS' if r['ok'] else 'FAIL')
+            print('  %-10s %-5s %5.1fs%s  %s'
+                  % (r['name'], status, r['dur'], cnt, r['desc']))
             if not r['ok']:
                 for f in r['fails']:
                     print('        - ' + f)
 
-    n_fail = len([r for r in results if not r['ok']])
+    n_blocked_tests = len([r for r in results if r.get('blocked')])
+    n_fail = len([r for r in results if not r['ok'] and not r.get('blocked')])
     n_pass = len([r for r in results if r['ok']])
     n_skip = len(selected) - len(results)
-    if blocked:
+    if blocked or n_blocked_tests:
         verdict = 'BLOCKED'
         exit_code = 2
     elif n_fail or (not args.skip_syntax and not all(s[1] for s in syntax)):
