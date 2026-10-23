@@ -660,6 +660,33 @@ main {
   overflow: hidden;
 }
 
+/* 课程搜索：笔记正文命中片段 */
+.course-card-hit {
+  margin-top: 6px;
+  padding: 8px 10px;
+  border-left: 3px solid var(--color-primary);
+  border-radius: 6px;
+  background: var(--color-bg);
+  font-size: 0.82rem;
+  line-height: 1.6;
+  color: var(--color-text-secondary);
+}
+
+.course-card-hit-text {
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.course-card-hit .hit-count {
+  display: inline-block;
+  margin-top: 4px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--color-primary);
+}
+
 .course-card-meta {
   display: flex;
   gap: 12px;
@@ -1589,6 +1616,21 @@ main {
   margin-top: 10px;
 }
 
+.editor-label.checkbox-label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 400;
+  cursor: pointer;
+}
+
+.editor-label.checkbox-label input[type='checkbox'] {
+  width: 16px;
+  height: 16px;
+  accent-color: var(--color-primary, #4a9eff);
+  cursor: pointer;
+}
+
 @media (max-width: 768px) {
   .editor-split {
     flex-direction: column;
@@ -1808,6 +1850,18 @@ main {
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+}
+
+/* 搜索结果里的笔记正文命中片段 */
+.search-item-snippet {
+  margin-top: 4px;
+  font-size: 0.8rem;
+  line-height: 1.6;
+  color: var(--color-text-secondary);
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
 }
 
 .search-item-meta {
@@ -2559,6 +2613,15 @@ mark.search-hit {
   font-size: 0.82rem;
   color: var(--color-text-muted);
   text-align: center;
+}
+
+/* 暂无笔记的课程卡片弱化显示 */
+.course-card-muted {
+  opacity: 0.6;
+}
+
+.course-card-muted:hover {
+  opacity: 1;
 }
 
 

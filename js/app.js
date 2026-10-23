@@ -24,7 +24,7 @@ let searchQuery = '';
 let activeTag = null;
 let activeCategory = null;
 let courseSearchQuery = '';
-let courseFileLimit = 50;
+let courseNotesOnly = true;
 let paperTab = 'papers';
 let paperSearchQuery = '';
 let activePaperCategory = null;
@@ -67,13 +67,6 @@ function loadGiscus(term) {
   s.setAttribute('data-loading', 'lazy');
   container.appendChild(s);
 }
-
-// File path cache — paths stored in JS, NOT in HTML attributes
-// This prevents browsers from trying to resolve/load file URLs during rendering
-var _filePathCache = [];
-
-// Detect if running locally (file:// open only works on localhost)
-var _isLocal = location.hostname === 'localhost' || location.hostname === '127.0.0.1' || location.protocol === 'file:';
 
 // 文件以清单形式展示，不暴露、不打开本地路径（已移除 data-fidx 点击打开逻辑与路径弹窗）
 
@@ -128,15 +121,15 @@ function getAllTags() {
 function filterPosts(posts, query, tag) {
   let result = posts;
   if (tag) {
-    result = result.filter(p => p.tags.includes(tag));
+    result = result.filter(p => (p.tags || []).includes(tag));
   }
   if (query) {
     const q = query.toLowerCase();
     result = result.filter(p =>
-      p.title.toLowerCase().includes(q) ||
-      p.excerpt.toLowerCase().includes(q) ||
-      p.tags.some(t => t.toLowerCase().includes(q)) ||
-      p.content.toLowerCase().includes(q)
+      (p.title || '').toLowerCase().includes(q) ||
+      (p.excerpt || '').toLowerCase().includes(q) ||
+      (p.tags || []).some(t => t.toLowerCase().includes(q)) ||
+      (p.content || '').toLowerCase().includes(q)
     );
   }
   return result;
@@ -171,33 +164,51 @@ function setMeta(title, desc) {
 }
 
 const STATIC_META = {
-  '/courses': ['课程资料库', '香港大学与本科阶段全部课程资料清单与核心笔记'],
+  '/courses': ['课程笔记', '香港大学与本科阶段课程的核心笔记，按学科方向整理'],
   '/papers': ['论文与学习资料', '机器人、具身智能、控制与制造方向的论文与课件收藏'],
   '/code': ['代码与文件库', '项目代码、部署脚本与工程文件的整理'],
   '/tags': ['标签', '按主题浏览所有文章'],
   '/archive': ['归档', '按年份浏览全部文章'],
   '/projects': ['项目', '正在进行与已完成的项目'],
   '/about': ['关于', '关于 Eric 与这个博客'],
+  '/links': ['友情链接', '志同道合的技术博客与工具'],
   '/editor': ['编辑器', '在线撰写并发布文章']
 };
+
+const SITE_ORIGIN = 'https://ericzhao666.github.io/blog/';
+
+// 更新 canonical / og:url：课程笔记指向可被收录的静态页，其余回到站点根
+function setCanonical(path) {
+  const href = path ? SITE_ORIGIN + path : SITE_ORIGIN;
+  const link = document.querySelector('link[rel="canonical"]');
+  if (link) link.setAttribute('href', href);
+  const og = document.querySelector('meta[property="og:url"]');
+  if (og) og.setAttribute('content', href);
+}
 
 function updateMetaForRoute(hash) {
   if (hash.indexOf('/post/') === 0) {
     const id = hash.slice(6);
     const post = getAllPosts().find(p => p.id === id);
-    if (post) { setMeta(post.title, getExcerpt(post)); return; }
+    if (post) {
+      setMeta(post.title, getExcerpt(post));
+      setCanonical(null);
+      return;
+    }
   }
   if (hash.indexOf('/course/') === 0 && dataReady('courses')) {
     const id = decodeURIComponent(hash.slice(8));
     const course = COURSES.find(c => c.id === id);
     if (course) {
       setMeta(course.name + ' 课程笔记', course.description || (course.name + ' 课程资料与核心笔记'));
+      setCanonical(typeof NOTE_PAGES !== 'undefined' && NOTE_PAGES[id] ? NOTE_PAGES[id] : null);
       return;
     }
   }
   const m = STATIC_META[hash];
   if (m) setMeta(m[0], m[1]);
   else setMeta('', '');
+  setCanonical(null);
 }
 
 // 搜索关键词高亮：先转义再包裹 <mark>，避免 XSS
@@ -234,6 +245,8 @@ function bindLiveSearch(inputId, applyValue, delay) {
     applyValue(val);
     const next = document.getElementById(inputId);
     if (next && next !== input) {
+      // 重绘会销毁旧输入框，必须给新输入框重新绑定，否则后续输入不再生效
+      bindLiveSearch(inputId, applyValue, delay);
       next.focus();
       try { next.setSelectionRange(selStart, selEnd); } catch (e) {}
     }
@@ -320,6 +333,13 @@ function renderLoading(label) {
   return '<div class="empty-state"><div class="empty-state-icon">⏳</div><p>正在加载' + label + '…</p></div>';
 }
 
+// 按需脚本加载失败时给出可重试的提示，避免继续渲染导致 ReferenceError
+function renderLoadError(label) {
+  return '<div class="empty-state"><div class="empty-state-icon">⚠️</div>' +
+    '<p>' + escapeHtml(label) + '数据加载失败，请检查网络后重试</p>' +
+    '<p><a href="#" onclick="location.reload();return false;">点击重试</a></p></div>';
+}
+
 // ---- 代码高亮（懒加载，只在出现代码块时下载 55KB 精简包）----
 let _hljsPromise = null;
 function ensureHighlight() {
@@ -346,18 +366,6 @@ function highlightIn(root) {
       }
       try { hljs.highlightElement(el); } catch (e) {}
     });
-  });
-}
-
-// 笔记数据后到：只给卡片补 📝 徽标，不重绘整页
-function refreshNoteBadges() {
-  if (!dataReady('notes')) return;
-  document.querySelectorAll('[data-course-id]').forEach(function (card) {
-    const id = card.getAttribute('data-course-id');
-    if (COURSE_NOTES[id] && !card.querySelector('.note-badge')) {
-      const head = card.querySelector('.course-card-header');
-      if (head) head.insertAdjacentHTML('beforeend', '<span class="note-badge">📝笔记</span>');
-    }
   });
 }
 
@@ -547,18 +555,25 @@ function renderHome() {
 function renderGlobalSearch(query) {
   const q = query.toLowerCase();
   const posts = getAllPosts().filter(p =>
-    p.title.toLowerCase().includes(q) ||
+    (p.title || '').toLowerCase().includes(q) ||
     (p.excerpt || '').toLowerCase().includes(q) ||
-    p.tags.some(t => t.toLowerCase().includes(q)) ||
-    p.content.toLowerCase().includes(q)
+    (p.tags || []).some(t => t.toLowerCase().includes(q)) ||
+    (p.content || '').toLowerCase().includes(q)
   );
-  const courses = (typeof COURSES !== 'undefined') ? COURSES.filter(c =>
-    c.name.toLowerCase().includes(q) ||
-    (c.category || '').toLowerCase().includes(q) ||
-    (c.description || '').toLowerCase().includes(q)
-  ) : [];
+  const notesLoaded = typeof COURSE_NOTES !== 'undefined';
+  const courses = (typeof COURSES !== 'undefined') ? COURSES.filter(c => {
+    if (c.name.toLowerCase().includes(q) ||
+        (c.category || '').toLowerCase().includes(q) ||
+        (c.description || '').toLowerCase().includes(q)) return true;
+    // 笔记正文也参与搜索（课程区现在只有笔记）
+    if (notesLoaded && COURSE_NOTES[c.id]) {
+      const entry = COURSE_NOTES[c.id];
+      return ((entry.summary || '') + (entry.notes || '')).toLowerCase().includes(q);
+    }
+    return false;
+  }) : [];
   const papers = (typeof PAPERS !== 'undefined') ? PAPERS.filter(p =>
-    p.title.toLowerCase().includes(q) ||
+    (p.title || '').toLowerCase().includes(q) ||
     (p.authors || '').toLowerCase().includes(q) ||
     (p.abstract || '').toLowerCase().includes(q)
   ) : [];
@@ -584,15 +599,20 @@ function renderGlobalSearch(query) {
   }
   if (courses.length) {
     html += `<div class="search-section-title">📚 课程 (${courses.length})</div>`;
-    html += courses.map(c => `
+    html += courses.map(c => {
+      // 命中来自笔记正文时，直接给出上下文，省去再点进去确认
+      const hit = (notesLoaded && COURSE_NOTES[c.id]) ? noteSearchHit(COURSE_NOTES[c.id], query) : null;
+      return `
       <div class="search-course-item" data-href="#/course/${encodeURIComponent(c.id)}" tabindex="0" role="link" onclick="location.hash='#/course/${encodeURIComponent(c.id)}'">
         <span class="search-item-icon">📚</span>
         <div class="search-item-main">
           <div class="search-item-title">${highlightMatch(c.name, query)}</div>
-          <div class="search-item-sub">${escapeHtml(c.category)} · ${c.fileCount} 个文件</div>
+          <div class="search-item-sub">${escapeHtml(c.category)} · ${notesLoaded && COURSE_NOTES[c.id] ? '📝 有笔记' : '暂无笔记'}${hit ? ' · 笔记命中 ' + hit.count + ' 处' : ''}</div>
+          ${hit ? `<div class="search-item-snippet">${hit.html}</div>` : ''}
         </div>
         <span class="search-item-meta">查看 →</span>
-      </div>`).join('');
+      </div>`;
+    }).join('');
   }
   if (papers.length) {
     html += `<div class="search-section-title">📄 论文 (${papers.length})</div>`;
@@ -841,27 +861,85 @@ function getCategoryIcon(cat) {
   return icons[cat] || '📖';
 }
 
+// 课程分类的展示顺序（列表与详情页导航共用）
+const COURSE_CATEGORY_ORDER = ['机器人与自动化', '人工智能与机器学习', '信号与控制', '计算机科学', '电子与硬件', '数理基础', '设计', '其他课程'];
+
+// 笔记纯文本（摘要 + 正文），用于统计与全文搜索
+function noteText(entry) {
+  if (!entry) return '';
+  return (entry.summary || '') + '\n' + (entry.notes || '');
+}
+
+// 笔记规模：字数与预计阅读时长
+function noteStats(courseId) {
+  if (typeof COURSE_NOTES === 'undefined' || !COURSE_NOTES[courseId]) return null;
+  const text = noteText(COURSE_NOTES[courseId]);
+  const chars = text.replace(/\s+/g, '').length;
+  return {
+    chars: chars,
+    charsLabel: chars >= 1000 ? (chars / 1000).toFixed(1) + ' 千字' : chars + ' 字',
+    minutes: readingTime(text)
+  };
+}
+
+// 笔记全文命中：返回高亮片段与命中次数；未命中返回 null
+function noteSearchHit(entry, query) {
+  const raw = noteText(entry);
+  const q = (query || '').toLowerCase();
+  if (!raw || !q) return null;
+  const lower = raw.toLowerCase();
+  const idx = lower.indexOf(q);
+  if (idx === -1) return null;
+  let count = 0, from = 0;
+  while (true) {
+    const at = lower.indexOf(q, from);
+    if (at === -1) break;
+    count++;
+    from = at + q.length;
+  }
+  const start = Math.max(0, idx - 36);
+  const end = Math.min(raw.length, idx + q.length + 64);
+  const snippet = raw.slice(start, end)
+    .replace(/!\[[^\]]*\]\([^)]*\)/g, ' ')
+    .replace(/\[([^\]]*)\]\([^)]*\)/g, '$1')
+    .replace(/\|/g, ' ')
+    .replace(/[#>*`_~]+/g, ' ')
+    .replace(/\s+/g, ' ')
+    .trim();
+  return {
+    count: count,
+    html: (start > 0 ? '…' : '') + highlightMatch(snippet, query) + (end < raw.length ? '…' : '')
+  };
+}
+
+// 已整理笔记的课程，按 分类顺序 + 课程名 排序
+function getNoteCourses() {
+  if (typeof COURSES === 'undefined' || typeof COURSE_NOTES === 'undefined') return [];
+  return COURSES.filter(c => COURSE_NOTES[c.id]).sort((a, b) => {
+    const ia = COURSE_CATEGORY_ORDER.indexOf(a.category);
+    const ib = COURSE_CATEGORY_ORDER.indexOf(b.category);
+    if (ia !== ib) return (ia === -1 ? 99 : ia) - (ib === -1 ? 99 : ib);
+    return a.name.localeCompare(b.name, 'zh-Hans-CN');
+  });
+}
+
 function renderCourses() {
-  const totalFiles = COURSES.reduce((sum, c) => sum + c.fileCount, 0);
-  const totalSize = COURSES.reduce((sum, c) => sum + c.totalSize, 0);
+  const notesReady = typeof COURSE_NOTES !== 'undefined';
+  const noteCount = notesReady ? Object.keys(COURSE_NOTES).length : 0;
 
   // Stats bar
   let html = `
     <div class="courses-page">
-      <h1 class="page-title">📚 课程资料库</h1>
-      <p class="page-desc">本科到研究生的全部课程资料，按学科方向分类整理 · <a href="notes/index.html">静态笔记合集 →</a></p>
+      <h1 class="page-title">📚 课程笔记</h1>
+      <p class="page-desc">本科到研究生的课程核心笔记，按学科方向分类整理 · <a href="notes/index.html">静态笔记合集 →</a></p>
       <div class="courses-stats">
+        <div class="stat-card">
+          <div class="stat-value">${noteCount}</div>
+          <div class="stat-label">篇笔记</div>
+        </div>
         <div class="stat-card">
           <div class="stat-value">${COURSES.length}</div>
           <div class="stat-label">门课程</div>
-        </div>
-        <div class="stat-card">
-          <div class="stat-value">${totalFiles}</div>
-          <div class="stat-label">个文件</div>
-        </div>
-        <div class="stat-card">
-          <div class="stat-value">${(totalSize / (1024 * 1024 * 1024)).toFixed(1)} GB</div>
-          <div class="stat-label">总大小</div>
         </div>
         <div class="stat-card">
           <div class="stat-value">${Object.keys(COURSE_CATEGORIES).length}</div>
@@ -870,15 +948,28 @@ function renderCourses() {
       </div>
   `;
 
+  // 视图切换：只看有笔记 / 全部课程
+  html += '<div class="category-filter">';
+  html += `<span class="category-chip ${courseNotesOnly ? 'active' : ''}" onclick="setNotesOnly(true)">📝 有笔记 <span class="chip-count">${noteCount}</span></span>`;
+  html += `<span class="category-chip ${!courseNotesOnly ? 'active' : ''}" onclick="setNotesOnly(false)">📚 全部课程 <span class="chip-count">${COURSES.length}</span></span>`;
+  html += '</div>';
+
+  // 基础集合：默认只保留已整理笔记的课程
+  let base = COURSES;
+  if (courseNotesOnly && notesReady) {
+    base = base.filter(c => COURSE_NOTES[c.id]);
+  }
+
   // Category filter
-  const categoryOrder = ['机器人与自动化', '人工智能与机器学习', '信号与控制', '计算机科学', '电子与硬件', '数理基础', '设计', '其他课程'];
+  const categoryOrder = COURSE_CATEGORY_ORDER;
   html += '<div class="category-filter">';
   html += `<span class="category-chip ${!activeCategory ? 'active' : ''}" onclick="setCategory(null)">全部</span>`;
   for (const cat of categoryOrder) {
-    if (COURSE_CATEGORIES[cat]) {
+    const count = base.filter(c => c.category === cat).length;
+    if (count > 0) {
       html += `<span class="category-chip ${activeCategory === cat ? 'active' : ''}" onclick="setCategory('${cat}')">
         ${getCategoryIcon(cat)} ${cat}
-        <span class="chip-count">${COURSE_CATEGORIES[cat].count}</span>
+        <span class="chip-count">${count}</span>
       </span>`;
     }
   }
@@ -895,7 +986,7 @@ function renderCourses() {
   `;
 
   // Filter courses
-  let filtered = COURSES;
+  let filtered = base;
   if (activeCategory) {
     filtered = filtered.filter(c => c.category === activeCategory);
   }
@@ -904,8 +995,10 @@ function renderCourses() {
     filtered = filtered.filter(c =>
       (c.name || '').toLowerCase().includes(q) ||
       (c.category || '').toLowerCase().includes(q) ||
-      (c.source || '').toLowerCase().includes(q) ||
-      c.files.some(f => (f.name || '').toLowerCase().includes(q))
+      (c.description || '').toLowerCase().includes(q) ||
+      (c.year || '').toLowerCase().includes(q) ||
+      // 笔记正文同样参与搜索：课程区只展示笔记，正文才是主要内容
+      (notesReady && COURSE_NOTES[c.id] && noteText(COURSE_NOTES[c.id]).toLowerCase().includes(q))
     );
   }
 
@@ -926,7 +1019,11 @@ function renderCourses() {
   } else {
     for (const cat of categoryOrder) {
       if (!grouped[cat]) continue;
-      const courses = grouped[cat];
+      const courses = grouped[cat].slice().sort((a, b) => {
+        const na = notesReady && COURSE_NOTES[a.id] ? 1 : 0;
+        const nb = notesReady && COURSE_NOTES[b.id] ? 1 : 0;
+        return nb - na || a.name.localeCompare(b.name, 'zh-Hans-CN');
+      });
       html += `
         <div class="course-section">
           <h2 class="course-section-title">
@@ -936,17 +1033,21 @@ function renderCourses() {
           <div class="course-grid">
       `;
       for (const course of courses) {
+        const hasNotes = notesReady && !!COURSE_NOTES[course.id];
+        const stats = hasNotes ? noteStats(course.id) : null;
+        const hit = (hasNotes && courseSearchQuery.trim()) ? noteSearchHit(COURSE_NOTES[course.id], courseSearchQuery.trim()) : null;
         const yearBadge = course.year ? `<span class="course-card-year">${course.year}</span>` : '';
+        const statsBadge = stats ? `<span class="meta-item">📝 ${stats.charsLabel} · 约 ${stats.minutes} 分钟</span>` : '';
         html += `
-          <div class="course-card" data-course-id="${escapeHtml(course.id)}" data-href="#/course/${encodeURIComponent(course.id)}" tabindex="0" role="link" onclick="location.hash='#/course/${encodeURIComponent(course.id)}'">
+          <div class="course-card${hasNotes ? '' : ' course-card-muted'}" data-course-id="${escapeHtml(course.id)}" data-href="#/course/${encodeURIComponent(course.id)}" tabindex="0" role="link" onclick="location.hash='#/course/${encodeURIComponent(course.id)}'">
             <div class="course-card-header">
               <div class="course-card-title">${escapeHtml(course.name)}</div>
-              ${typeof COURSE_NOTES !== 'undefined' && COURSE_NOTES[course.id] ? '<span class="note-badge">📝笔记</span>' : ''}
+              ${hasNotes ? '<span class="note-badge">📝笔记</span>' : ''}
             </div>
             ${course.description ? `<div class="course-card-desc">${escapeHtml(course.description)}</div>` : ''}
+            ${hit ? `<div class="course-card-hit"><div class="course-card-hit-text">${hit.html}</div><span class="hit-count">笔记命中 ${hit.count} 处</span></div>` : ''}
             <div class="course-card-meta">
-              <span class="meta-item">📁 ${course.fileCount} 个文件</span>
-              <span class="meta-item">💾 ${course.totalSizeFormatted}</span>
+              ${hasNotes ? statsBadge : '<span class="meta-item">暂无笔记</span>'}
               ${yearBadge}
             </div>
           </div>
@@ -972,10 +1073,10 @@ function renderCourseDetail(courseId) {
     `;
   }
 
-  // Reset file path cache for this page
-  _filePathCache = [];
+  const notesHtml = renderCourseNotes(course.id);
+  const stats = noteStats(course.id);
 
-  let html = `
+  return `
     <a href="#/courses" class="article-back">
       <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
         <polyline points="15 18 9 12 15 6"/>
@@ -988,50 +1089,54 @@ function renderCourseDetail(courseId) {
         <div class="course-detail-meta">
           <span class="meta-item">📂 ${escapeHtml(course.category)}</span>
           ${course.year ? `<span class="meta-item">📅 ${course.year}</span>` : ''}
-          <span class="meta-item">📁 ${course.fileCount} 个文件</span>
-          <span class="meta-item">💾 ${course.totalSizeFormatted}</span>
+          ${stats ? `<span class="meta-item">📝 ${stats.charsLabel} · 约 ${stats.minutes} 分钟</span>` : ''}
         </div>
       </div>
       ${course.description ? `<div class="course-description">${escapeHtml(course.description)}</div>` : ''}
-      ${renderCourseNotes(course.id)}
-      <div class="file-list">
-        <div class="file-list-header">文件列表 (${course.files.length})</div>
-        <div id="course-file-container">
-  `;
-
-  const visibleFiles = course.files.slice(0, courseFileLimit);
-  for (let i = 0; i < visibleFiles.length; i++) {
-    const file = visibleFiles[i];
-    const typeClass = getFileTypeClass(file.type);
-    html += `
-      <div class="file-item">
-        <span class="file-type-badge ${typeClass}">${escapeHtml(file.type)}</span>
-        <span class="file-name">${escapeHtml(file.name)}</span>
-        <span class="file-size">${file.sizeFormatted}</span>
-      </div>
-    `;
-  }
-
-  html += `</div>`;
-
-  if (course.files.length > courseFileLimit) {
-    html += `
-      <div id="course-load-more" style="text-align: center; padding: 16px;">
-        <button class="load-more-btn" onclick="loadMoreCourseFiles('${escapeHtml(courseId)}')">
-          加载更多（剩余 ${course.files.length - courseFileLimit} 个文件）
-        </button>
-      </div>
-    `;
-  }
-
-  html += `
-      </div>
-      <div style="margin-top: 20px; padding: 12px 16px; background: var(--color-bg); border-radius: var(--radius-sm); font-size: 0.82rem; color: var(--color-text-muted);">
-        💡 文件保留在原始磁盘，未做任何复制，此处仅展示文件清单。
-      </div>
+      ${notesHtml || `
+        <div class="empty-state">
+          <div class="empty-state-icon">📝</div>
+          <p>这门课还没有整理笔记</p>
+          <p><a href="#/courses">返回课程列表</a></p>
+        </div>
+      `}
+      ${renderCourseNoteNav(course)}
     </div>
   `;
+}
 
+// 笔记页底部：上一篇/下一篇 + 同方向的其他笔记（内链，便于连续阅读）
+function renderCourseNoteNav(course) {
+  if (typeof COURSE_NOTES === 'undefined' || !COURSE_NOTES[course.id]) return '';
+  const list = getNoteCourses();
+  const idx = list.findIndex(c => c.id === course.id);
+  const prev = idx > 0 ? list[idx - 1] : null;
+  const next = idx >= 0 && idx < list.length - 1 ? list[idx + 1] : null;
+
+  let html = '';
+  if (prev || next) {
+    html += '<nav class="post-nav note-nav">';
+    html += prev
+      ? `<a class="post-nav-item" href="#/course/${encodeURIComponent(prev.id)}"><span class="post-nav-label">← 上一篇笔记</span><span class="post-nav-title">${escapeHtml(prev.name)}</span></a>`
+      : '<span class="post-nav-item post-nav-empty"></span>';
+    html += next
+      ? `<a class="post-nav-item post-nav-next" href="#/course/${encodeURIComponent(next.id)}"><span class="post-nav-label">下一篇笔记 →</span><span class="post-nav-title">${escapeHtml(next.name)}</span></a>`
+      : '<span class="post-nav-item post-nav-empty"></span>';
+    html += '</nav>';
+  }
+
+  const related = list.filter(c => c.id !== course.id && c.category === course.category).slice(0, 4);
+  if (related.length) {
+    html += '<section class="related-posts"><h3 class="related-title">同方向的其他笔记</h3>';
+    related.forEach(c => {
+      const s = noteStats(c.id);
+      html += `<a class="related-item" href="#/course/${encodeURIComponent(c.id)}">
+        <span class="related-item-title">${escapeHtml(c.name)}</span>
+        <span class="related-item-meta">${s ? s.charsLabel : ''}</span>
+      </a>`;
+    });
+    html += '</section>';
+  }
   return html;
 }
 
@@ -1128,7 +1233,6 @@ function renderCodeDetail(libId) {
     return `<div class="empty-state"><div class="empty-state-icon">💻</div><p>代码库不存在</p><p><a href="#/code">返回代码库列表</a></p></div>`;
   }
 
-  _filePathCache = [];
 
   let html = `
     <a href="#/code" class="article-back">
@@ -1265,7 +1369,6 @@ function getPaperCategoryIcon(cat) {
 }
 
 function renderPapers() {
-  _filePathCache = [];
   let html = `
     <div class="papers-page">
       <h1 class="page-title">📄 论文与学习资料</h1>
@@ -1321,8 +1424,8 @@ function renderPapersTab() {
   if (paperSearchQuery) {
     const q = paperSearchQuery.toLowerCase();
     filtered = filtered.filter(p =>
-      p.title.toLowerCase().includes(q) ||
-      p.authors.toLowerCase().includes(q) ||
+      (p.title || '').toLowerCase().includes(q) ||
+      (p.authors || '').toLowerCase().includes(q) ||
       (p.abstract || '').toLowerCase().includes(q) ||
       (p.venue || '').toLowerCase().includes(q)
     );
@@ -1487,7 +1590,7 @@ function renderAbout() {
         <h3>💡 关于这个博客</h3>
         <p>纯前端实现，零后端依赖，Markdown 渲染。</p>
         <p>博客文章存储在 data.js，课程资料索引存储在 courses.js，部署简单到只需一个静态服务器。</p>
-        <p>📚 <a href="#/courses">课程资料库</a> 收录了本科到研究生阶段的全部课程资料，共 45 门课程、2483 个文件，按 8 个学科方向分类整理。</p>
+        <p>📚 <a href="#/courses">课程笔记</a> 整理了本科到研究生阶段的课程笔记${typeof COURSES !== 'undefined' ? `，覆盖 ${COURSES.length} 门课程中的 ${typeof COURSE_NOTES !== 'undefined' ? Object.keys(COURSE_NOTES).length : 0} 门` : ''}，按 8 个学科方向分类归档。</p>
       </div>
     </div>
   `;
@@ -1577,7 +1680,13 @@ function renderLinks() {
 function renderEditor() {
   var draft = {};
   try { draft = JSON.parse(localStorage.getItem('blog_draft') || '{}'); } catch (e) {}
-  var token = localStorage.getItem('gh_token') || '';
+  // 重新进入编辑器：恢复可自动保存状态，并以已存草稿作为内存快照起点
+  _draftSuppressed = false;
+  _draftState = (draft && (draft.title || draft.tags || draft.excerpt || draft.content))
+    ? { title: draft.title || '', tags: draft.tags || '', excerpt: draft.excerpt || '', content: draft.content || '' }
+    : null;
+  var token = getStoredToken();
+  var remember = !!localStorage.getItem('gh_token');
   var owner = localStorage.getItem('gh_owner') || 'EricZhao666';
   var repo = localStorage.getItem('gh_repo') || 'blog';
 
@@ -1611,10 +1720,15 @@ function renderEditor() {
     '        <p>\u9700\u8981\u5728 GitHub \u521B\u5EFA Personal Access Token\uFF1A</p>' +
     '        <p>1. \u8FDB\u5165 GitHub \u2192 Settings \u2192 Developer settings \u2192 Personal access tokens \u2192 Fine-grained tokens</p>' +
     '        <p>2. \u65B0\u5EFA token\uFF0C\u9009\u62E9\u4ED3\u5E93 blog\uFF0C\u6743\u9650\u9009 Contents: Read and Write</p>' +
-    '        <p>3. \u590D\u5236 token \u7C98\u8D34\u5230\u4E0B\u65B9\u8F93\u5165\u6846\uFF08\u4EC5\u5B58\u5728\u6D4F\u89C8\u5668 localStorage\uFF0C\u4E0D\u4F1A\u4E0A\u4F20\u670D\u52A1\u5668\uFF09</p>' +
+    '        <p>3. \u590D\u5236 token \u7C98\u8D34\u5230\u4E0B\u65B9\u8F93\u5165\u6846\uFF08\u9ED8\u8BA4\u4EC5\u4FDD\u7559\u5728\u5F53\u524D\u6807\u7B7E\u9875\u7684 sessionStorage\uFF0C\u5173\u95ED\u9875\u9762\u5373\u5931\u6548\uFF1B\u82E5\u52FE\u9009\u201C\u8BB0\u4F4F\u6211\u201D\u5219\u540C\u65F6\u5199\u5165 localStorage\uFF09</p>' +
     '      </div>' +
     '      <label class="editor-label">GitHub Token</label>' +
     '      <input type="password" id="ghToken" class="editor-input" placeholder="github_pat_..." value="' + escapeHtml(token) + '">' +
+    '      <label class="editor-label checkbox-label">' +
+    '        <input type="checkbox" id="ghRemember" ' + (remember ? 'checked' : '') + '> ' +
+    '        \u8BB0\u4F4F\u6211\uff08\u957F\u671F\u4FDD\u5B58\u5230\u672C\u673A localStorage\uff0C\u8BF7\u52FF\u5728\u516C\u5171\u7535\u8111\u4E0A\u52FE\u9009\uff09' +
+    '      </label>' +
+    '      <button class="editor-btn editor-btn-ghost" onclick="clearEditorToken()">\u{1F512} \u6E05\u9664 Token</button>' +
     '      <label class="editor-label">\u4ED3\u5E93\u6240\u6709\u8005</label>' +
     '      <input type="text" id="ghOwner" class="editor-input" value="' + escapeHtml(owner) + '">' +
     '      <label class="editor-label">\u4ED3\u5E93\u540D\u79F0</label>' +
@@ -1651,20 +1765,77 @@ function generatePostId(title) {
 }
 
 // --- Draft management ---
-window.saveDraft = function() {
-  var draft = {
-    title: document.getElementById('editorTitle').value,
-    tags: document.getElementById('editorTags').value,
-    excerpt: document.getElementById('editorExcerpt').value,
-    content: document.getElementById('editorContent').value,
+// 编辑器随时可能被路由重绘销毁，所以草稿维护两份状态：
+//   _draftState：最新内容的内存快照（DOM 已卸载时仍可落盘）
+//   localStorage：真正持久化的草稿
+var _draftTimer = null;
+var _draftState = null;
+var _draftSuppressed = false;   // 发布成功后抑制“离开时保存”，避免产生幽灵草稿
+var _currentRoute = null;
+
+function readEditorForm() {
+  var t = document.getElementById('editorTitle');
+  var g = document.getElementById('editorTags');
+  var e = document.getElementById('editorExcerpt');
+  var c = document.getElementById('editorContent');
+  if (!t || !g || !e || !c) return null;   // 编辑器已卸载，不能再读 DOM
+  return { title: t.value, tags: g.value, excerpt: e.value, content: c.value };
+}
+
+function hasDraftContent(state) {
+  if (!state) return false;
+  return !!(state.title || state.tags || state.excerpt || state.content);
+}
+
+function writeDraft(state, silent) {
+  if (!hasDraftContent(state)) return false;
+  var payload = {
+    title: state.title || '',
+    tags: state.tags || '',
+    excerpt: state.excerpt || '',
+    content: state.content || '',
     savedAt: new Date().toISOString()
   };
-  localStorage.setItem('blog_draft', JSON.stringify(draft));
-  showEditorStatus('\u{1F4BE} \u8349\u7A3F\u5DF2\u4FDD\u5B58', 'success');
+  try {
+    localStorage.setItem('blog_draft', JSON.stringify(payload));
+  } catch (err) {
+    return false;
+  }
+  _draftState = payload;
+  if (!silent) showEditorStatus('\u{1F4BE} \u8349\u7A3F\u5DF2\u4FDD\u5B58', 'success');
+  return true;
+}
+
+// 立即落盘：DOM 在就抓 DOM，已卸载则回退到内存快照
+function flushDraft(silent) {
+  if (_draftTimer) { clearTimeout(_draftTimer); _draftTimer = null; }
+  var state = readEditorForm() || _draftState;
+  if (!state) return false;
+  return writeDraft(state, silent);
+}
+
+// 输入时调用：先更新内存快照，再重置防抖定时器
+function scheduleDraftSave() {
+  // 刚发布成功、页面即将跳转：不再产生新草稿
+  if (_draftSuppressed) return;
+  var state = readEditorForm();
+  if (state) _draftState = state;
+  if (_draftTimer) clearTimeout(_draftTimer);
+  _draftTimer = setTimeout(function() {
+    _draftTimer = null;
+    // 定时器触发时编辑器可能已被销毁：优先内存快照，绝不读已卸载的 DOM
+    var snap = readEditorForm() || _draftState;
+    if (snap) writeDraft(snap, true);
+  }, 2000);
+}
+
+window.saveDraft = function() {
+  if (!flushDraft(false)) showEditorStatus('\u26A0\uFE0F \u6CA1\u6709\u53EF\u4FDD\u5B58\u7684\u5185\u5BB9', 'error');
 };
 
 function clearDraft() {
   localStorage.removeItem('blog_draft');
+  _draftState = null;
 }
 
 function showEditorStatus(msg, type) {
@@ -1680,11 +1851,38 @@ window.toggleEditorSettings = function() {
   if (el) el.style.display = el.style.display === 'none' ? 'block' : 'none';
 };
 
+// --- GitHub Token 存储策略 ---
+// 默认只存在 sessionStorage（关闭标签页即失效），避免长期驻留在磁盘；
+// 显式勾选「记住我」才落到 localStorage。
+function getStoredToken() {
+  return sessionStorage.getItem('gh_token') || localStorage.getItem('gh_token') || '';
+}
+function storeToken(token, remember) {
+  sessionStorage.setItem('gh_token', token);
+  if (remember) localStorage.setItem('gh_token', token);
+  else localStorage.removeItem('gh_token');
+}
+window.getStoredToken = getStoredToken;
+
 window.saveEditorSettings = function() {
-  localStorage.setItem('gh_token', document.getElementById('ghToken').value.trim());
+  var token = document.getElementById('ghToken').value.trim();
+  var remember = document.getElementById('ghRemember') && document.getElementById('ghRemember').checked;
+  storeToken(token, remember);
   localStorage.setItem('gh_owner', document.getElementById('ghOwner').value.trim());
   localStorage.setItem('gh_repo', document.getElementById('ghRepo').value.trim());
-  showEditorStatus('\u2705 \u8BBE\u7F6E\u5DF2\u4FDD\u5B58', 'success');
+  showEditorStatus(remember
+    ? '✅ 设置已保存（Token 已记住到本机）'
+    : '✅ 设置已保存（Token 仅保留到关闭本标签页）', 'success');
+};
+
+window.clearEditorToken = function() {
+  sessionStorage.removeItem('gh_token');
+  localStorage.removeItem('gh_token');
+  var input = document.getElementById('ghToken');
+  if (input) input.value = '';
+  var remember = document.getElementById('ghRemember');
+  if (remember) remember.checked = false;
+  showEditorStatus('🔒 Token 已从浏览器中清除', 'success');
 };
 
 function updateEditorPreview() {
@@ -1702,24 +1900,46 @@ function updateEditorPreview() {
 }
 
 // --- Auto-save draft on input ---
-var _draftTimer = null;
+// 标题/标签/摘要/正文共用同一套防抖保存策略，避免只改标题时草稿不更新
 function setupEditorListeners() {
-  var contentEl = document.getElementById('editorContent');
-  if (contentEl) {
-    contentEl.addEventListener('input', function() {
-      updateEditorPreview();
-      // Debounced auto-save
-      if (_draftTimer) clearTimeout(_draftTimer);
-      _draftTimer = setTimeout(function() {
-        saveDraft();
-      }, 2000);
+  ['editorTitle', 'editorTags', 'editorExcerpt', 'editorContent'].forEach(function(id) {
+    var el = document.getElementById(id);
+    if (!el || el.dataset.draftBound === '1') return;
+    el.dataset.draftBound = '1';
+    el.addEventListener('input', function() {
+      if (id === 'editorContent') updateEditorPreview();
+      scheduleDraftSave();
     });
-  }
+  });
   // Initial preview
   updateEditorPreview();
 }
 
 // --- Publish to GitHub via Contents API ---
+// 解析远端 user-posts.js：任何“读不懂”的情况都必须失败。
+// 绝不能退化成空数组，否则一次发布会把历史文章整体覆盖。
+function parseUserPostsText(text) {
+  if (typeof text !== 'string') return { ok: false, reason: '文件内容无法读取' };
+  var trimmed = text.replace(/^\uFEFF/, '').trim();
+  if (!trimmed) return { ok: true, posts: [] };
+  var match = trimmed.match(/(?:const|let|var)\s+USER_POSTS\s*=\s*(\[[\s\S]*\])\s*;?/);
+  if (!match) return { ok: false, reason: '未找到 USER_POSTS 数据段，文件格式可能已变更' };
+  var posts;
+  try {
+    posts = JSON.parse(match[1]);
+  } catch (e) {
+    return { ok: false, reason: 'USER_POSTS 不是合法 JSON' };
+  }
+  if (!Array.isArray(posts)) return { ok: false, reason: 'USER_POSTS 不是数组' };
+  for (var i = 0; i < posts.length; i++) {
+    var p = posts[i];
+    if (!p || typeof p !== 'object' || Array.isArray(p) || typeof p.id !== 'string' || !p.id) {
+      return { ok: false, reason: '第 ' + (i + 1) + ' 篇文章缺少有效 id' };
+    }
+  }
+  return { ok: true, posts: posts };
+}
+
 window.publishPost = async function() {
   var title = document.getElementById('editorTitle').value.trim();
   var tagsStr = document.getElementById('editorTags').value.trim();
@@ -1729,7 +1949,7 @@ window.publishPost = async function() {
   if (!title) { showEditorStatus('\u274C \u6807\u9898\u4E0D\u80FD\u4E3A\u7A7A', 'error'); return; }
   if (!content) { showEditorStatus('\u274C \u5185\u5BB9\u4E0D\u80FD\u4E3A\u7A7A', 'error'); return; }
 
-  var token = localStorage.getItem('gh_token');
+  var token = getStoredToken();
   if (!token) {
     showEditorStatus('\u274C \u8BF7\u5148\u70B9\u51FB\u201C\u8BBE\u7F6E\u201D\u914D\u7F6E GitHub Token', 'error');
     toggleEditorSettings();
@@ -1744,7 +1964,7 @@ window.publishPost = async function() {
   showEditorStatus('\u23F3 \u6B63\u5728\u53D1\u5E03...', 'loading');
 
   try {
-    // 1. Fetch current file (get sha + existing posts)
+    // 1. 读取远端文件：必须能完整还原历史文章，否则一律中止（避免覆盖）
     var sha = null;
     var currentPosts = [];
 
@@ -1753,16 +1973,33 @@ window.publishPost = async function() {
     });
 
     if (getResp.status === 200) {
-      var data = await getResp.json();
+      var data = await getResp.json().catch(function() { return null; });
+      if (!data || typeof data !== 'object') throw new Error('无法解析 GitHub 返回的文件信息，已中止发布');
+      if (!data.sha) throw new Error('GitHub 未返回文件版本号（sha），已中止发布');
       sha = data.sha;
-      var decoded = base64ToUtf8(data.content || '');
-      var match = decoded.match(/const USER_POSTS = (\[[\s\S]*\]);/);
-      if (match) {
-        try { currentPosts = JSON.parse(match[1]); } catch (e) { currentPosts = []; }
+      // Contents API 对 >1MB 文件返回 encoding=none / content 为空，此时无法确认历史内容
+      if (data.encoding === 'none' || typeof data.content !== 'string' ||
+          (data.content === '' && Number(data.size) > 0)) {
+        throw new Error('现有文章文件无法完整读取（可能超过 Contents API 1MB 限制），已中止发布以免覆盖历史文章');
       }
-    } else if (getResp.status !== 404) {
+      var decoded;
+      try {
+        decoded = base64ToUtf8(data.content);
+      } catch (e) {
+        throw new Error('现有文章文件 Base64 解码失败，已中止发布以免覆盖历史文章');
+      }
+      var parsed = parseUserPostsText(decoded);
+      if (!parsed.ok) {
+        throw new Error('现有文章文件解析失败（' + parsed.reason + '），已中止发布以免覆盖历史文章');
+      }
+      currentPosts = parsed.posts;
+    } else if (getResp.status === 404) {
+      // 只有明确 404 才允许按“新建文件”处理
+      sha = null;
+      currentPosts = [];
+    } else {
       var errBody = await getResp.json().catch(function() { return {}; });
-      throw new Error('GitHub API: ' + (errBody.message || 'HTTP ' + getResp.status));
+      throw new Error('GitHub API: ' + ((errBody && errBody.message) || 'HTTP ' + getResp.status));
     }
 
     // 2. Build new post object
@@ -1783,7 +2020,9 @@ window.publishPost = async function() {
     var newFileContent = 'const USER_POSTS = ' + JSON.stringify(currentPosts, null, 2) + ';\n';
     var base64Content = utf8ToBase64(newFileContent);
 
-    // 4. Commit via PUT
+    // 4. Commit via PUT（保留 sha 版本校验；新建文件不发送 sha）
+    var payload = { message: 'Add post: ' + title, content: base64Content };
+    if (sha) payload.sha = sha;
     var putResp = await fetch(apiUrl, {
       method: 'PUT',
       headers: {
@@ -1791,16 +2030,15 @@ window.publishPost = async function() {
         'Accept': 'application/vnd.github+json',
         'Content-Type': 'application/json'
       },
-      body: JSON.stringify({
-        message: 'Add post: ' + title,
-        content: base64Content,
-        sha: sha
-      })
+      body: JSON.stringify(payload)
     });
 
     if (!putResp.ok) {
       var putErr = await putResp.json().catch(function() { return {}; });
-      throw new Error(putErr.message || 'HTTP ' + putResp.status);
+      if (putResp.status === 409) {
+        throw new Error('文件已被其他人修改（版本冲突），请刷新后重试；历史文章未被改动');
+      }
+      throw new Error((putErr && putErr.message) || ('HTTP ' + putResp.status));
     }
 
     // 5. Update in-memory array
@@ -1808,8 +2046,10 @@ window.publishPost = async function() {
       USER_POSTS.unshift(newPost);
     }
 
-    // 6. Clear draft
+    // 6. 清空草稿：同时清掉待触发的自动保存，避免旧内容被写回
     clearDraft();
+    if (_draftTimer) { clearTimeout(_draftTimer); _draftTimer = null; }
+    _draftSuppressed = true;
 
     showEditorStatus('\u2705 \u53D1\u5E03\u6210\u529F\uFF01GitHub Pages \u5C06\u5728 1-2 \u5206\u949F\u5185\u66F4\u65B0\uFF0C\u5373\u5C06\u8DF3\u8F6C\u5230\u9996\u9875...', 'success');
 
@@ -1817,7 +2057,13 @@ window.publishPost = async function() {
     setTimeout(function() { location.hash = '#/'; }, 2000);
 
   } catch (err) {
-    showEditorStatus('\u274C \u53D1\u5E03\u5931\u8D25: ' + escapeHtml(err.message), 'error');
+    var failMsg = (err && err.message) || String(err);
+    if (/failed to fetch|networkerror|load failed|network request failed|fetch failed/i.test(failMsg)) {
+      failMsg = '网络请求失败，请检查网络后重试（历史文章未被改动）';
+    }
+    showEditorStatus('\u274C \u53D1\u5E03\u5931\u8D25: ' + escapeHtml(failMsg), 'error');
+    // 失败时把当前编辑内容落盘，刷新或离开后仍可恢复
+    flushDraft(true);
   }
 };
 
@@ -1829,6 +2075,12 @@ async function router() {
   const hash = location.hash.slice(1) || '/';
   const app = document.getElementById('app');
   const searchBar = document.getElementById('searchBar');
+
+  // 离开编辑器：把待保存内容立即落盘（只 clearTimeout 会丢内容）
+  if (_currentRoute === '/editor' && hash !== '/editor' && !_draftSuppressed) {
+    flushDraft(true);
+  }
+  _currentRoute = hash;
 
   // 上一个页面遗留的目录/进度条
   removeReadingTools();
@@ -1844,10 +2096,18 @@ async function router() {
     searchBar.classList.add('hidden');
   }
 
+  // 输入框与状态保持同步：从文章返回首页时回填上次的关键词
+  const globalSearch = document.getElementById('searchInput');
+  if (globalSearch) {
+    const want = hash === '/' ? searchQuery : '';
+    if (globalSearch.value !== want) globalSearch.value = want;
+  }
+
   // Update active nav link
   document.querySelectorAll('.nav-link').forEach(link => {
     const route = link.getAttribute('data-route');
     link.classList.remove('active');
+    link.removeAttribute('aria-current');
     if (hash === route || (route === '/' && hash.startsWith('/post'))) {
       link.classList.add('active');
     }
@@ -1872,6 +2132,7 @@ async function router() {
     if (route === '/archive' && hash.startsWith('/archive')) {
       link.classList.add('active');
     }
+    if (link.classList.contains('active')) link.setAttribute('aria-current', 'page');
   });
 
   // Parse route
@@ -1887,25 +2148,31 @@ async function router() {
       const tag = parts.length > 2 ? decodeURIComponent(parts[2]) : null;
       app.innerHTML = renderTags(tag);
     } else if (hash === '/courses') {
-      if (!dataReady('courses')) {
-        app.innerHTML = renderLoading('课程资料');
-        await loadData('courses');
+      // 默认只展示已整理笔记的课程，因此笔记数据也需就绪
+      if (!dataReady('courses') || !dataReady('notes')) {
+        app.innerHTML = renderLoading('课程笔记');
+        await Promise.all([loadData('courses'), loadData('notes')]);
         if (token !== _routeToken) return;
+        if (!dataReady('courses') || !dataReady('notes')) {
+          app.innerHTML = renderLoadError('课程笔记');
+          return;
+        }
       }
       app.innerHTML = renderCourses();
       bindLiveSearch('courseSearchInput', (val) => {
         courseSearchQuery = val;
         app.innerHTML = renderCourses();
       });
-      // 笔记徽标依赖 course-notes.js，后台补加载，不阻塞列表渲染
-      loadData('notes').then(refreshNoteBadges);
     } else if (hash.startsWith('/course/')) {
-      courseFileLimit = 50;
       const id = decodeURIComponent(hash.slice('/course/'.length));
       if (!dataReady('courses')) {
         app.innerHTML = renderLoading('课程资料');
         await loadData('courses');
         if (token !== _routeToken) return;
+        if (!dataReady('courses')) {
+          app.innerHTML = renderLoadError('课程资料');
+          return;
+        }
       }
       const notesReady = dataReady('notes');
       app.innerHTML = renderCourseDetail(id);
@@ -1924,6 +2191,10 @@ async function router() {
         app.innerHTML = renderLoading('论文与学习资料');
         await loadData('papers');
         if (token !== _routeToken) return;
+        if (!dataReady('papers')) {
+          app.innerHTML = renderLoadError('论文与学习资料');
+          return;
+        }
       }
       app.innerHTML = renderPapers();
       bindLiveSearch('paperSearchInput', (val) => {
@@ -1941,6 +2212,10 @@ async function router() {
         app.innerHTML = renderLoading('代码与文件库');
         await loadData('codefiles');
         if (token !== _routeToken) return;
+        if (!dataReady('codefiles')) {
+          app.innerHTML = renderLoadError('代码与文件库');
+          return;
+        }
       }
       app.innerHTML = renderCode();
       bindLiveSearch('codeLibSearchInput', (val) => {
@@ -1948,12 +2223,15 @@ async function router() {
         app.innerHTML = renderCode();
       });
     } else if (hash.startsWith('/codelib/')) {
-      codeLibFileLimit = 50;
       const id = decodeURIComponent(hash.slice('/codelib/'.length));
       if (!dataReady('codefiles')) {
         app.innerHTML = renderLoading('代码与文件库');
         await loadData('codefiles');
         if (token !== _routeToken) return;
+        if (!dataReady('codefiles')) {
+          app.innerHTML = renderLoadError('代码与文件库');
+          return;
+        }
       }
       app.innerHTML = renderCodeDetail(id);
     } else if (hash === '/links') {
@@ -1998,7 +2276,6 @@ async function router() {
 // Category filter for courses
 window.setCategory = function(cat) {
   activeCategory = cat;
-  courseFileLimit = 50;
   const app = document.getElementById('app');
   app.innerHTML = renderCourses();
   bindLiveSearch('courseSearchInput', (val) => {
@@ -2007,41 +2284,16 @@ window.setCategory = function(cat) {
   });
 };
 
-window.loadMoreCourseFiles = function(courseId) {
-  const course = COURSES.find(c => c.id === courseId);
-  if (!course) return;
-  const container = document.getElementById('course-file-container');
-  if (!container) return;
-
-  const prevLimit = courseFileLimit;
-  courseFileLimit += 50;
-  const nextBatch = course.files.slice(prevLimit, courseFileLimit);
-
-  let html = '';
-  for (const file of nextBatch) {
-    const typeClass = getFileTypeClass(file.type);
-    html += `
-      <div class="file-item">
-        <span class="file-type-badge ${typeClass}">${escapeHtml(file.type)}</span>
-        <span class="file-name">${escapeHtml(file.name)}</span>
-        <span class="file-size">${file.sizeFormatted}</span>
-      </div>
-    `;
-  }
-  container.insertAdjacentHTML('beforeend', html);
-
-  const loadMoreDiv = document.getElementById('course-load-more');
-  if (courseFileLimit >= course.files.length) {
-    if (loadMoreDiv) loadMoreDiv.remove();
-  } else {
-    if (loadMoreDiv) {
-      loadMoreDiv.innerHTML = `
-        <button class="load-more-btn" onclick="loadMoreCourseFiles('${escapeHtml(courseId)}')">
-          加载更多（剩余 ${course.files.length - courseFileLimit} 个文件）
-        </button>
-      `;
-    }
-  }
+// 课程视图切换：只看有笔记 / 全部课程
+window.setNotesOnly = function(only) {
+  courseNotesOnly = !!only;
+  activeCategory = null;
+  const app = document.getElementById('app');
+  app.innerHTML = renderCourses();
+  bindLiveSearch('courseSearchInput', (val) => {
+    courseSearchQuery = val;
+    app.innerHTML = renderCourses();
+  });
 };
 
 window.setPaperTab = function(tab) {
@@ -2069,12 +2321,20 @@ window.setPaperCategory = function(cat) {
 // Search
 // 全局搜索会跨文章/课程/论文，后两者数据按需加载：
 // 首次输入关键词时并行拉取，到齐后补一次结果重绘。
+// 搜索框只属于首页：离开首页后，防抖/异步回调不得再重绘 app
+function isHomeRoute() {
+  const h = location.hash;
+  return h === '' || h === '#' || h === '#/';
+}
+
 bindLiveSearch('searchInput', (val) => {
   searchQuery = val;
+  if (!isHomeRoute()) return;
   document.getElementById('app').innerHTML = renderHome();
-  if (val.trim() && (!dataReady('courses') || !dataReady('papers'))) {
+  if (val.trim() && (!dataReady('courses') || !dataReady('papers') || !dataReady('notes'))) {
     const target = val.trim();
-    Promise.all([loadData('courses'), loadData('papers')]).then(function () {
+    Promise.all([loadData('courses'), loadData('papers'), loadData('notes')]).then(function () {
+      if (!isHomeRoute()) return;
       if (searchQuery.trim() === target) {
         document.getElementById('app').innerHTML = renderHome();
       }
@@ -2104,32 +2364,105 @@ backToTopBtn.addEventListener('click', () => {
 // Hash change
 window.addEventListener('hashchange', router);
 
+// 关闭/刷新页面前把编辑器内容落盘
+window.addEventListener('beforeunload', function () {
+  if (_currentRoute === '/editor' && !_draftSuppressed) flushDraft(true);
+});
+
 // ============================================
 // Theme (dark mode)
 // ============================================
 function applyTheme(theme) {
   document.documentElement.setAttribute('data-theme', theme);
-  const btn = document.getElementById('themeToggle');
-  if (btn) btn.textContent = theme === 'dark' ? '☀️' : '🌙';
-}
-
-(function initTheme() {
-  let theme = localStorage.getItem('theme');
-  if (!theme && window.matchMedia) {
-    theme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
-  }
-  applyTheme(theme || 'light');
+  // 同步浏览器地址栏/系统主题色，避免深色模式下仍显示亮蓝
+  const meta = document.querySelector('meta[name="theme-color"]');
+  if (meta) meta.setAttribute('content', theme === 'dark' ? '#0f172a' : '#2563eb');
   const btn = document.getElementById('themeToggle');
   if (btn) {
-    btn.addEventListener('click', function () {
-      const cur = document.documentElement.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
-      localStorage.setItem('theme', cur);
-      applyTheme(cur);
-      if (GISCUS_CONFIG.enabled && location.hash.indexOf('/post/') === 0) {
-        loadGiscus(location.hash.slice('/post/'.length));
-      }
+    btn.textContent = theme === 'dark' ? '☀️' : '🌙';
+    btn.setAttribute('aria-label', theme === 'dark' ? '切换到浅色模式' : '切换到深色模式');
+    btn.setAttribute('aria-pressed', theme === 'dark' ? 'true' : 'false');
+  }
+}
+
+function toggleTheme() {
+  const cur = document.documentElement.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+  localStorage.setItem('theme', cur);
+  applyTheme(cur);
+  if (GISCUS_CONFIG.enabled && location.hash.indexOf('/post/') === 0) {
+    loadGiscus(location.hash.slice('/post/'.length));
+  }
+}
+window.toggleTheme = toggleTheme;
+
+// 未手动切换过主题时，跟随系统深浅色变化
+(function initTheme() {
+  let theme = localStorage.getItem('theme');
+  const mq = window.matchMedia ? window.matchMedia('(prefers-color-scheme: dark)') : null;
+  if (!theme && mq) theme = mq.matches ? 'dark' : 'light';
+  applyTheme(theme || 'light');
+  if (mq && mq.addEventListener) {
+    mq.addEventListener('change', function (e) {
+      if (!localStorage.getItem('theme')) applyTheme(e.matches ? 'dark' : 'light');
     });
   }
+  const btn = document.getElementById('themeToggle');
+  if (btn) btn.addEventListener('click', toggleTheme);
+})();
+
+// ============================================
+// 键盘快捷键：/ 或 Ctrl(⌘)+K 聚焦搜索，Esc 清空，t 切换主题
+// ============================================
+(function initShortcuts() {
+  function focusSearch() {
+    if (location.hash && location.hash !== '#/' && location.hash !== '#') {
+      location.hash = '#/';
+      setTimeout(focusSearch, 150);
+      return;
+    }
+    const input = document.getElementById('searchInput');
+    if (input) {
+      input.focus();
+      try { input.select(); } catch (e) {}
+    }
+  }
+
+  document.addEventListener('keydown', function (e) {
+    const el = e.target || {};
+    const tag = (el.tagName || '').toLowerCase();
+    const typing = tag === 'input' || tag === 'textarea' || tag === 'select' || el.isContentEditable;
+
+    if (typing) {
+      if (e.key === 'Escape' && el.id === 'searchInput') {
+        el.value = '';
+        searchQuery = '';
+        document.getElementById('app').innerHTML = renderHome();
+        el.blur();
+      }
+      return;
+    }
+
+    if ((e.ctrlKey || e.metaKey) && (e.key === 'k' || e.key === 'K')) {
+      e.preventDefault();
+      focusSearch();
+      return;
+    }
+    if (e.key === '/' && !e.ctrlKey && !e.metaKey && !e.altKey) {
+      e.preventDefault();
+      focusSearch();
+      return;
+    }
+    if (e.key === 'Escape' && searchQuery) {
+      searchQuery = '';
+      const input = document.getElementById('searchInput');
+      if (input) input.value = '';
+      if (location.hash === '#/' || !location.hash) document.getElementById('app').innerHTML = renderHome();
+      return;
+    }
+    if ((e.key === 't' || e.key === 'T') && !e.ctrlKey && !e.metaKey && !e.altKey) {
+      toggleTheme();
+    }
+  });
 })();
 
 // ============================================

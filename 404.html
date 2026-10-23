@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="robots" content="noindex">
+  <title>页面不存在 · Eric's Notebook</title>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🦐</text></svg>">
+  <script>
+    // GitHub Pages 托管在子路径 /blog/ 下，hash 路由的地址形如 /blog/#/course/xxx。
+    // 若用户直接输入旧链接或不存在的路径，跳回应用入口（保留 hash 便于恢复深链）。
+    (function () {
+      try {
+        var seg = location.pathname.split('/').filter(Boolean);
+        // 取部署子路径：/blog/... -> /blog/
+        var base = seg.length > 1 ? '/' + seg[0] + '/' : '/';
+        var hash = location.hash || '';
+        location.replace(base + hash);
+      } catch (e) {
+        location.replace('./');
+      }
+    })();
+  </script>
+  <style>
+    body {
+      margin: 0;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: system-ui, -apple-system, "Segoe UI", "Microsoft YaHei", sans-serif;
+      background: #f8f9fb;
+      color: #1e293b;
+      text-align: center;
+    }
+    .box { padding: 24px; }
+    h1 { font-size: 3rem; margin: 0 0 8px; }
+    p { margin: 4px 0; color: #64748b; }
+    a { color: #2563eb; text-decoration: none; font-weight: 500; }
+    a:hover { text-decoration: underline; }
+  </style>
+</head>
+<body>
+  <div class="box">
+    <h1>404</h1>
+    <p>页面不存在，正在返回首页…</p>
+    <p><a href="./">如果未自动跳转，点击这里</a></p>
+  </div>
+</body>
+</html>
