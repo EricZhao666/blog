@@ -96,7 +96,10 @@ async function main() {
   console.log('浏览器: ' + CHANNEL + ' ' + browser.version());
 
   // 重置注入状态
-  const reset = () => { state.faults = {}; state.delays = {}; state.hits = {}; state.version = 1; };
+  const reset = () => {
+    state.faults = {}; state.delays = {}; state.hits = {};
+    state.version = 1; state.swBump = false;
+  };
 
   try {
     // ---------------------------------------------------------------- S1 首次安装
@@ -284,6 +287,85 @@ async function main() {
       check('S10 运行期缓存不超过上限 120', r10.total <= 120, r10.total);
       check('S10 超限后淘汰最旧、保留最新', !r10.hasFirst && r10.hasLast,
         JSON.stringify({ first: r10.hasFirst, last: r10.hasLast }));
+      await ctx.close();
+    }
+    // ------------------------------------------------- S11 新版本安装失败 → 旧版本继续服务
+    {
+      reset();
+      const ctx = await newContext(browser);
+      const page = await ctx.newPage();
+      await gotoApp(page, base);
+      await waitController(page);
+      const before = Object.keys(await cacheKeys(page));
+
+      // 发布新 SW，但新版本必需资源（css）下载失败
+      state.swBump = true;
+      state.faults['/css/style.css'] = 500;
+      await page.reload({ waitUntil: 'load' });
+      await sleep(3000);
+
+      const reg = await page.evaluate(async () => {
+        const r = await navigator.serviceWorker.getRegistration();
+        return r ? { active: !!r.active, waiting: !!r.waiting, installing: !!r.installing } : null;
+      });
+      const after = await cacheKeys(page);
+      const names = Object.keys(after);
+
+      check('S11 新版本安装失败时旧 SW 仍在服务', !!reg && reg.active && !reg.waiting,
+        JSON.stringify(reg));
+      check('S11 旧版本缓存未被删除', before.every(n => names.includes(n)), names.join(','));
+      check('S11 安装失败的新版本缓存已清理', !names.some(n => n.endsWith('-t2')), names.join(','));
+
+      // 恢复网络后，旧版本在离线时仍可完整提供首页
+      state.faults = {};
+      await ctx.setOffline(true);
+      let status = 0, title = '';
+      try {
+        const r = await page.reload({ waitUntil: 'load', timeout: 8000 });
+        status = r.status();
+        title = await page.title();
+      } catch (e) { title = e.message.split('\n')[0]; }
+      await page.screenshot({ path: path.join(SHOTS, 'S11-old-version-survives.png') });
+      check('S11 回退旧版本后离线首页仍可用', status === 200 && title.length > 0, status + ' / ' + title);
+      await ctx.close();
+    }
+
+    // ------------------------------------------------- S12 多标签页版本切换
+    {
+      reset();
+      const ctx = await newContext(browser);
+      const t1 = await ctx.newPage();
+      await gotoApp(t1, base);
+      await waitController(t1);
+      const oldNames = Object.keys(await cacheKeys(t1));
+      const oldCache = oldNames.find(n => n.indexOf('blog-rt-') !== 0);
+
+      state.swBump = true;                    // 发布新版本
+      const t2 = await ctx.newPage();
+      await gotoApp(t2, base);
+      const ok2 = await waitController(t2);
+      await sleep(2500);                      // 等 activate + clients.claim
+
+      let names = Object.keys(await cacheKeys(t1));
+      const newCache = names.find(n => n.indexOf('blog-rt-') !== 0 && n.endsWith('-t2'));
+      check('S12 新版本在第二个标签页安装并生效', ok2 && !!newCache, names.join(','));
+
+      // activate 的清理是异步的，给它几秒钟收敛
+      for (let i = 0; i < 20 && oldCache && names.includes(oldCache); i++) {
+        await sleep(250);
+        names = Object.keys(await cacheKeys(t1));
+      }
+      check('S12 旧版本缓存被清理', !!oldCache && !names.includes(oldCache), names.join(','));
+
+      const t1State = await t1.evaluate(async () => {
+        const app = document.getElementById('app');
+        return {
+          controlled: !!navigator.serviceWorker.controller,
+          rendered: !!app && app.children.length > 0
+        };
+      });
+      check('S12 旧标签页被新 SW 接管且页面未崩溃',
+        t1State.controlled && t1State.rendered, JSON.stringify(t1State));
       await ctx.close();
     }
   } finally {

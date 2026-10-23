@@ -23,8 +23,9 @@ function createServer(rootDir, prefix) {
   prefix = prefix || '/blog';
   const state = {
     version: 1,          // v2 时给 app.js 追加标记，模拟发布更新
-    faults: {},          // '/blog/js/app.js': 500 | 'abort'
-    delays: {},          // '/blog/index.html': 1500
+    swBump: false,       // true 时给 sw.js 换一个 CACHE_VERSION，模拟发布新 SW
+    faults: {},          // '/js/app.js': 500 | 'abort'
+    delays: {},          // '/index.html': 1500
     hits: {}             // 每个路径被请求次数（含 SW 发起的）
   };
 
@@ -67,6 +68,11 @@ function createServer(rootDir, prefix) {
     // 模拟发布：只改 app.js 的内容，用于验证 network-first 能拿到新版本
     if (rel === '/js/app.js' && state.version >= 2) {
       body = Buffer.concat([body, Buffer.from('\n// build:v' + state.version + '\n')]);
+    }
+    // 模拟发布新 SW：改写 CACHE_VERSION，触发浏览器更新流程与缓存换代
+    if (rel === '/sw.js' && state.swBump) {
+      body = Buffer.from(body.toString('utf8')
+        .replace(/CACHE_VERSION = '([^']+)'/, "CACHE_VERSION = '$1-t2'"));
     }
 
     const delay = state.delays[key] || 0;
