@@ -197,6 +197,7 @@ python scripts/run_tests.py --report /tmp/r.md --json /tmp/r.json
 | `test13.py` | `gen_feed.py` 解析、失败策略、路径（合成 fixture） |
 | `test14.js` | 排序一致性 + 日期时区（Asia/Shanghai、America/New_York、Europe/London） |
 | `test15.py` | 生成器可复现性（合成 fixture：课程 / 论文 / 描述） |
+| `browser/sw.spec.js` | **真实 Chromium**：SW 安装容错、离线导航、版本更新、预取去重、缓存淘汰（14 项） |
 
 单独运行：
 
@@ -207,7 +208,17 @@ python tests/test13.py
 
 > `test9.js` 的懒加载失败分支需要环境变量：`BLOCK=js/courses.js node tests/test9.js`。
 
-### 5.3 用 Fixtures 验证扫描器（不碰私人目录）
+### 5.3 真实浏览器测试（Playwright + Chromium）
+
+```bash
+npm i -D playwright@1.64.1 && npx playwright install chromium   # 首次
+node tests/browser/sw.spec.js            # 本地默认用系统 Chrome（channel: chrome）
+PW_CHANNEL=chromium node tests/browser/sw.spec.js   # 用 Playwright 自带 Chromium（CI 同款）
+```
+
+覆盖：安装容错（必需/可选资源）、在线刷新取新版、离线首页与已缓存笔记、**未缓存笔记返回 503 离线页而不是首页**、在线 404 原样返回、预取去重、运行期缓存上限 120 与 FIFO 淘汰。失败截图落在 `tests/browser/artifacts/`（已 gitignore）。
+
+### 5.4 用 Fixtures 验证扫描器（不碰私人目录）
 
 `test15.py` 会自建临时目录与一个合成 `zotero.sqlite`，覆盖：分类规则、人工描述保留、重复生成字节一致、0 结果不覆盖产物、缺库中止。直接跑：
 
@@ -227,6 +238,17 @@ const CACHE_VERSION = '2026-10-23-3';   // 改成新日期-序号
 ```
 
 `activate` 会删除所有不等于当前版本的 `blog-*` 缓存。`test14.js` 的 `S1` 会校验版本号不低于 `2026-10-23-3`（随每次发布上调即可）。
+
+**缓存策略要点（B4 后）**
+
+| 行为 | 说明 |
+| --- | --- |
+| 安装 | `index.html`/`css`/`app.js`/`data.js` 为**必需**，任一失败则 install 失败 → 浏览器继续用旧 SW；图标/manifest/vendor 为**可选**，失败只降级 |
+| `skipWaiting()` + `clients.claim()` | 新 SW 装好即刻接管，已打开页面会在下一次请求切到新版本；因为资源 URL 不带哈希，极端情况下老页面可能加载到新 JS。这是现有取巧点，若要完全避免需改为「提示用户刷新」（未在本轮实施） |
+| 缓存查找 | 先查运行期缓存（较新），再查安装期缓存，避免 CORE 里的旧副本长期命中 |
+| 离线导航 | 首页回退 `index.html`；**未缓存的其它页面返回 503 离线提示页**，不会拿首页冒充 |
+| 预取 | `activate` 与首次导航触发，已缓存则跳过；全部用 `waitUntil` 跟踪，SW 回收不会半途而废 |
+| 运行期上限 | 120 条，串行写入 + FIFO 淘汰，只删自己 `blog-rt-*` 缓存里的条目 |
 
 ---
 

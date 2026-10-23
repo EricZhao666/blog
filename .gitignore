@@ -16,6 +16,7 @@ desktop.ini
 
 # 测试报告（本地生成，不入库）
 tests/reports/
+tests/browser/artifacts/
 
 # Python cache
 __pycache__/

@@ -40,6 +40,12 @@ jobs:
       - name: 安装依赖
         run: npm ci
 
+      # 真实浏览器测试用 Playwright 自带 Chromium（版本随依赖锁定）
+      - name: 安装 Chromium
+        run: npx playwright install --with-deps chromium
+        env:
+          PW_CHANNEL: chromium
+
       - name: 运行时版本
         run: |
           node --version
@@ -50,6 +56,8 @@ jobs:
       # 统一入口：环境检查 → 语法检查 → audit + test6~test15
       # 退出码 0=通过 1=失败 2=环境阻塞，非 0 都会让 job 失败
       - name: 运行测试
+        env:
+          PW_CHANNEL: chromium
         run: python scripts/run_tests.py --report tests/reports/last-run.md --json tests/reports/last-run.json
 
       - name: 上传测试报告
@@ -57,6 +65,8 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: test-report
-          path: tests/reports/
+          path: |
+            tests/reports/
+            tests/browser/artifacts/
           retention-days: 14
           if-no-files-found: warn
