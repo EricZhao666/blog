@@ -1,0 +1,16 @@
+# 统一换行符：仓库与工作区都用 LF，保证 Windows 与 Linux 检出一致，
+# 生成器写出的产物才能和仓库文件逐字节比对。
+* text=auto eol=lf
+
+# Windows 批处理需要 CRLF（当前仓库暂无 .bat，保留规则以便将来加入）
+*.bat text eol=crlf
+*.cmd text eol=crlf
+
+# 二进制文件不做换行转换
+*.png binary
+*.ico binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.woff binary
+*.woff2 binary
