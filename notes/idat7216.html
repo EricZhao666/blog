@@ -9,6 +9,16 @@
   <link rel="apple-touch-icon" href="../icons/apple-touch-icon.png">
   <link rel="canonical" href="https://ericzhao666.github.io/blog/notes/idat7216.html">
   <link rel="alternate" type="application/rss+xml" title="Eric's Notebook RSS" href="../feed.xml">
+  <script>
+    // 尽早套用主题，避免深色模式下白屏闪烁（与主站一致）
+    (function () {
+      try {
+        var t = localStorage.getItem('theme');
+        if (!t && window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) t = 'dark';
+        if (t) document.documentElement.setAttribute('data-theme', t);
+      } catch (e) {}
+    })();
+  </script>
   <link rel="stylesheet" href="../css/style.css">
   <link rel="stylesheet" href="../vendor/atom-one-light.min.css">
   <meta name="theme-color" content="#2563eb">
@@ -22,9 +32,10 @@
   <meta name="twitter:title" content="IDAT 7216 课程笔记 · Eric's Notebook">
   <meta name="twitter:description" content="产品设计全流程：Stage-Gate 与螺旋开发流程、机会识别、客户需求与规格、概念生成/选择/测试、DFM/DFE/美学设计、五大模塑工艺与知识产权四大类。">
   <meta name="twitter:image" content="https://ericzhao666.github.io/blog/icons/icon-512.png">
-<script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"IDAT 7216 课程笔记","description":"产品设计全流程：Stage-Gate 与螺旋开发流程、机会识别、客户需求与规格、概念生成/选择/测试、DFM/DFE/美学设计、五大模塑工艺与知识产权四大类。","inLanguage":"zh-CN","dateModified":"2026-10-21","author":{"@type":"Person","name":"Eric Zhao"},"mainEntityOfPage":"https://ericzhao666.github.io/blog/notes/idat7216.html"}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"IDAT 7216 课程笔记","description":"产品设计全流程：Stage-Gate 与螺旋开发流程、机会识别、客户需求与规格、概念生成/选择/测试、DFM/DFE/美学设计、五大模塑工艺与知识产权四大类。","inLanguage":"zh-CN","dateModified":"2026-10-22","author":{"@type":"Person","name":"Eric Zhao"},"mainEntityOfPage":"https://ericzhao666.github.io/blog/notes/idat7216.html"}</script>
 </head>
 <body>
+  <a class="skip-link" href="#app">跳到主要内容</a>
   <header class="site-header">
     <div class="container header-inner">
       <a href="../#/" class="logo"><span class="logo-icon">🦐</span><span class="logo-text">Eric's Notebook</span></a>
@@ -34,10 +45,11 @@
         <a class="nav-link" href="../#/papers">论文</a>
         <a class="nav-link" href="../#/code">代码</a>
       </nav>
+      <button class="theme-toggle" id="themeToggle" type="button" aria-label="切换深色模式">🌙</button>
     </div>
   </header>
   <main class="container" id="app">
-    <a class="article-back" href="../#/course/%E9%A6%99%E6%B8%AF%E5%A4%A7%E5%AD%A6%7CIDAT-7216">← 在站点中查看（含课程文件清单）</a>
+    <a class="article-back" href="../#/course/%E9%A6%99%E6%B8%AF%E5%A4%A7%E5%AD%A6%7CIDAT-7216">← 在站点中查看交互版</a>
     <article class="article-detail">
       <div class="article-detail-header">
         <h1 class="article-detail-title">IDAT 7216 课程笔记</h1>
@@ -140,8 +152,13 @@
 
       </div>
     </article>
+
+    <nav class="post-nav note-nav">
+      <a class="post-nav-item" href="idat7215.html"><span class="post-nav-label">← 上一篇</span><span class="post-nav-title">IDAT 7215 Python与机器学习</span></a>
+      <a class="post-nav-item post-nav-next" href="mems.html"><span class="post-nav-label">下一篇 →</span><span class="post-nav-title">微系统</span></a>
+    </nav>
     <p class="notes-static-hint">本页为静态版本，便于搜索引擎收录与分享；
-      <a href="../#/course/%E9%A6%99%E6%B8%AF%E5%A4%A7%E5%AD%A6%7CIDAT-7216">交互版（含文件清单与搜索）→</a> ·
+      <a href="../#/course/%E9%A6%99%E6%B8%AF%E5%A4%A7%E5%AD%A6%7CIDAT-7216">交互版（支持全文搜索）→</a> ·
       <a href="index.html">全部课程笔记</a>
     </p>
   </main>
@@ -151,6 +168,27 @@
       <p class="footer-sub">Powered by vanilla JS &amp; Markdown</p>
     </div>
   </footer>
+  <script>
+    // 静态页主题切换（与主站共用 localStorage 的 theme 键）
+    (function () {
+      var btn = document.getElementById('themeToggle');
+      function sync() {
+        var dark = document.documentElement.getAttribute('data-theme') === 'dark';
+        if (btn) {
+          btn.textContent = dark ? '☀️' : '🌙';
+          btn.setAttribute('aria-label', dark ? '切换到浅色模式' : '切换到深色模式');
+          btn.setAttribute('aria-pressed', dark ? 'true' : 'false');
+        }
+      }
+      sync();
+      if (btn) btn.addEventListener('click', function () {
+        var next = document.documentElement.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+        document.documentElement.setAttribute('data-theme', next);
+        try { localStorage.setItem('theme', next); } catch (e) {}
+        sync();
+      });
+    })();
+  </script>
   <script src="../vendor/highlight.min.js"></script>
   <script>
     (function () {
