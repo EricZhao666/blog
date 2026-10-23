@@ -313,6 +313,13 @@ git push origin main          # GitHub Pages 自动构建，约 30 秒 ~ 2 分�
 
 `scan_courses.py` / `scan_papers.py` / `scan_codefiles.py` 里的绝对路径只是**本机默认值**，目录不存在会自动跳过；换机器请用 `--roots` / `--zotero-db` / `--learn-dir` 指定，测试则完全走合成 fixture。
 
+### 10.1 编辑器 Token 的边界（不要误解）
+
+- 默认只写 `sessionStorage`，关标签页即失效；勾选「记住我」才写 `localStorage`，并有「🔒 清除 Token」按钮。
+- **这不等于 XSS 防护**：同源脚本可以读 `sessionStorage` 和 `localStorage`，只要能执行脚本就能拿到 Token。真正的边界是「别让不可信内容变成脚本」——Markdown 输出统一过 DOMPurify、动态内容不拼内联事件，都是为了这个目标。
+- 建议使用 **fine-grained PAT**，只授权 `repo` → `Contents: Read and write` 这一个仓库、这一项权限，并设置较短有效期；泄露后损失可控。
+- Token 只存在浏览器本地，不写日志、不进页面 HTML、不随请求外发（除 `Authorization` 头调用 GitHub API 外）。
+
 ---
 
 ## 11. 已知限制

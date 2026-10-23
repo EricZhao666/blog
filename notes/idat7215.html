@@ -135,13 +135,13 @@
 <li><strong>回归指标</strong>：MAE、MSE、RMSE（0.2~0.5 视为合理，越小越好）。</li>
 <li><strong>逻辑回归</strong>：分类算法，sigmoid S 曲线把输出压到 [0,1]，以 0.5 为阈值判定类别。</li>
 <li><strong>混淆矩阵与指标</strong>：<ul>
-<li>Accuracy = (TP+TN)/(P+N)——不平衡数据下会失真（例：90 健康/10 患病全预测为健康的&quot;90% 准确率&quot;模型毫无价值）；</li>
+<li>Accuracy = (TP+TN)/(P+N)——不平衡数据下会失真（例：90 健康/10 患病全预测为健康的"90% 准确率"模型毫无价值）；</li>
 <li>Precision = TP/(TP+FP)；Recall = TP/(TP+FN)；<strong>F1 = 2PR/(P+R)</strong>（调和平均，优于单看 accuracy）。</li>
 </ul>
 </li>
 <li><strong>决策树</strong>：按条件的树状决策，可解释性强；单棵大树易过拟合。</li>
 <li><strong>随机森林</strong>：多棵树 + bagging 集成，纠正决策树过拟合，更准更稳（课件实验：Kyphosis 数据集上决策树 0.60 → 随机森林 0.76）。</li>
-<li><strong>朴素贝叶斯</strong>：基于贝叶斯定理 <code>P(H|E) = P(E|H)·P(H)/P(E)</code>，&quot;朴素&quot;假设特征条件独立；三型：Gaussian（连续正态特征）/ Multinomial（离散计数）/ Bernoulli（0-1 特征）；应用：垃圾邮件过滤、新闻分类、人脸识别。</li>
+<li><strong>朴素贝叶斯</strong>：基于贝叶斯定理 <code>P(H|E) = P(E|H)·P(H)/P(E)</code>，"朴素"假设特征条件独立；三型：Gaussian（连续正态特征）/ Multinomial（离散计数）/ Bernoulli（0-1 特征）；应用：垃圾邮件过滤、新闻分类、人脸识别。</li>
 <li><strong>KNN</strong>：存全部样本，按最近 K 个邻居投票分类；K 取值影响结果（K=3 归 Cat、K=7 归 Dog 的直观例子）。</li>
 <li><strong>SVM</strong>：找最大间隔超平面分类；非线性数据用<strong>核函数</strong>（Linear / Polynomial / RBF / Sigmoid）映射到高维再分；应用：人脸检测、文本分类、生物信息学。</li>
 </ul>
