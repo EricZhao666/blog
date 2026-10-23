@@ -76,14 +76,25 @@ function loadGiscus(term) {
 
 // Merge built-in posts with user-published posts
 function getAllPosts() {
-  return (typeof USER_POSTS !== 'undefined' ? POSTS.concat(USER_POSTS) : POSTS);
+  // 统一按日期倒序（稳定排序：同日保持数据源原顺序），
+  // 使首页 / 标签页 / 搜索结果与归档、上下篇、RSS 使用同一套顺序
+  const all = (typeof USER_POSTS !== 'undefined') ? POSTS.concat(USER_POSTS) : POSTS.slice();
+  return all.slice().sort((a, b) => (b.date || '').localeCompare(a.date || ''));
 }
 
+const MONTH_NAMES = ['一月', '二月', '三月', '四月', '五月', '六月',
+  '七月', '八月', '九月', '十月', '十一月', '十二月'];
+
 function formatDate(dateStr) {
+  // `YYYY-MM-DD` 表示“日历日期”而非时间点：直接取年月日字段，
+  // 避免 new Date('2026-08-09') 按 UTC 解析后再用本地 getDate() 造成跨时区偏移
+  const m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(String(dateStr || '').trim());
+  if (m && +m[2] >= 1 && +m[2] <= 12 && +m[3] >= 1 && +m[3] <= 31) {
+    return `${+m[1]}年${MONTH_NAMES[+m[2] - 1]}${+m[3]}日`;
+  }
+  // 其它（完整时间戳等）保持原有语义：按本地时区换算
   const d = new Date(dateStr);
-  const months = ['一月', '二月', '三月', '四月', '五月', '六月',
-    '七月', '八月', '九月', '十月', '十一月', '十二月'];
-  return `${d.getFullYear()}年${months[d.getMonth()]}${d.getDate()}日`;
+  return `${d.getFullYear()}年${MONTH_NAMES[d.getMonth()]}${d.getDate()}日`;
 }
 
 function readingTime(content) {
