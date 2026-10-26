@@ -1,0 +1,6 @@
+{
+  "name": "SW fixture",
+  "short_name": "fixture",
+  "start_url": "./",
+  "display": "standalone"
+}

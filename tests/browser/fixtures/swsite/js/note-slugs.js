@@ -1,0 +1,1 @@
+window.NOTE_SLUGS = {};

@@ -52,6 +52,8 @@ TESTS = [
     {'name': 'test17', 'file': 'tests/test17.py', 'kind': 'python', 'desc': 'B5：静态笔记页 JSON-LD 与正文安全'},
     {'name': 'browser', 'file': 'tests/browser/sw.spec.js', 'kind': 'browser',
      'desc': 'B4：真实 Chromium 下的 SW 安装 / 离线 / 更新 / 容量'},
+    {'name': 'sw-consistency', 'file': 'tests/browser/sw-consistency.spec.js', 'kind': 'browser',
+     'desc': 'B6B1.1：版本一致性 / 慢网 / 离线 / HTTP 错误 / SW 重启'},
 ]
 
 COUNT_RE = re.compile(r'共\s*(\d+)\s*项[，,]\s*PASS\s*(\d+)[，,]\s*FAIL\s*(\d+)')

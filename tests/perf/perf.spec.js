@@ -862,6 +862,13 @@ async function captureNavSample(ctx) {
     const recs = deps.probe.since(ctx.probeMark);
     metrics.networkBytes = recs.reduce((s, r) => s + r.bytes, 0);
     metrics.networkRequests = recs.length;
+    // 后台校验/回填"最后一份响应结束"的时刻（相对导航开始）：用于区分"快是因为没下东西"与"快是因为并行"
+    const ends = recs.map(r => r.end).filter(v => typeof v === 'number');
+    metrics.networkLastEndMs = ends.length ? Math.max.apply(null, ends) - ctx.probeMark : null;
+    // 只看首屏相关请求（外壳 + 5 个首屏资源）：这才是"本次文档的后台校验/回填完成时间"
+    const fsRe = /(index\.html|style\.css|app\.js|data\.js|user-posts\.js|projects\.js)$/;
+    const fsEnds = recs.filter(r => fsRe.test(r.path) && typeof r.end === 'number').map(r => r.end);
+    metrics.firstScreenNetEndMs = fsEnds.length ? Math.max.apply(null, fsEnds) - ctx.probeMark : null;
   }
   if (inv) {
     metrics.swCacheEntries = Object.keys(inv).reduce((s, n) => s + inv[n].length, 0);

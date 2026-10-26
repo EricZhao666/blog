@@ -1,0 +1,11 @@
+/* 版本化样式：--ver 由 {{ver}} 替换，页面用它判断当前文档实际用到了哪个 CSS 版本 */
+#app {
+  --ver: {{ver}};
+  color: #1e293b;
+  font-family: system-ui, sans-serif;
+  padding: 12px;
+}
+#versions {
+  white-space: pre-wrap;
+  font-size: 12px;
+}

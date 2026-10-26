@@ -331,28 +331,36 @@ async function main() {
       await ctx.close();
     }
 
-    // ---------------------------------------------------------------- S14 首屏慢于阈值时回退缓存
+    // ------------------------------------------------- S14 首屏慢时不混用旧版本
+    // Batch 6B-1.1 契约变更：外壳走网络（本次文档=新版本）时，首屏子资源**不允许**单独回退到
+    // 旧缓存；宁可等慢网络，也不产生"新 HTML + 旧脚本"。原断言（慢资源必须回退缓存并在 900ms 内完成）
+    // 描述的是被取消的逐资源超时行为，这里改为验证真正要保护的东西：不混版 + 后续仍能拿到新内容。
     {
       reset();
       const ctx = await newContext(browser);
       const page = await ctx.newPage();
       await gotoApp(page, base);
       await waitController(page);
+      state.version = 2;                      // app.js 追加 // build:v2
       state.delays['/js/app.js'] = 900;       // 模拟慢链路：首屏脚本远超 150ms 阈值
-      const t0 = Date.now();
       let status = 0;
       try {
-        const r = await page.reload({ waitUntil: 'load', timeout: 15000 });
+        const r = await page.reload({ waitUntil: 'load', timeout: 20000 });
         status = r.status();
       } catch (e) { status = -1; }
-      const elapsed = Date.now() - t0;
       const rendered = await page.evaluate(() => {
         const app = document.getElementById('app');
         return !!app && app.children.length > 0;
       });
+      const fetchedV2 = await page.evaluate(async () => {
+        const r = await fetch('./js/app.js');
+        const t = await r.text();
+        return t.indexOf('build:v2') !== -1;
+      });
       state.delays = {};
-      check('S14 首屏脚本慢于阈值时用完缓存并正常渲染',
-        status === 200 && rendered && elapsed < 900, status + ' / ' + elapsed + 'ms');
+      check('S14 首屏脚本慢时页面仍正常渲染（宁可等待，不混版）',
+        status === 200 && rendered, status + ' / rendered=' + rendered);
+      check('S14 慢脚本加载后仍是新版本（没有塞回旧缓存）', fetchedV2 === true);
       await ctx.close();
     }
 

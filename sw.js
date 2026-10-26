@@ -1,13 +1,17 @@
 // Service Worker for blog offline support
 // 策略（Batch 6B 起）：
 //   - 首屏（app shell + style.css/app.js/data.js/user-posts.js/projects.js）：
-//     网络优先，但超过 NAV_TIMEOUT_MS 就用同一版本缓存，并后台回填网络结果。
-//     导航时只做一次决策，同一文档的首屏子资源沿用该决策，避免"新 HTML + 旧脚本"混版。
+//     网络优先；超过 NAV_TIMEOUT_MS 就整份文档改用「安装期快照」CACHE 里的同一版本。
+//     导航时只做一次决策，同一文档的首屏子资源沿用该决策；
+//     缓存模式只读 CACHE（整个 SW 版本一次性写入），不读逐个回填的 CACHE_RT，
+//     因此不会出现"新 HTML + 旧脚本"的混版。
+//     若这次网络请求取回的外壳与快照不同（= 服务器有新发布），
+//     本次 SW 生命周期内不再使用缓存模式（宁可慢也不给旧内容）。
 //   - 其他页面导航 / 静态笔记页：network-first（保证内容及时更新），失败回退缓存
 //   - vendor / 静态资源：stale-while-revalidate（先快后新）
 //   - 第三方（giscus 等）：不拦截
 // 每次发布请递增 CACHE_VERSION。
-const CACHE_VERSION = '2026-10-26-1';
+const CACHE_VERSION = '2026-10-26-2';
 // CACHE：安装期预缓存的核心资源（只随版本整体替换）
 // CACHE_RT：运行期按需缓存（页面/数据/静态笔记页），带条数上限防止无限增长
 const CACHE = 'blog-' + CACHE_VERSION;
@@ -160,13 +164,6 @@ function cacheUrl(key) {
   return new URL(key, self.location.href).href;
 }
 
-function matchKey(key) {
-  const u = cacheUrl(key);
-  return caches.match(u, { cacheName: CACHE_RT }).then(function (hit) {
-    return hit || caches.match(u, { cacheName: CACHE });
-  });
-}
-
 // 离线兜底页：用于"没缓存过的页面"。绝不能拿首页顶替，否则会显示成别的页面。
 function offlineResponse() {
   return new Response(
@@ -208,8 +205,17 @@ function firstScreenKey(pathname) {
 
 // ---------------------------------------------------------------- 首屏策略
 // 导航时只决策一次：网络在 NAV_TIMEOUT_MS 内给了外壳 → 本次文档全部走网络；
-// 超时 → 本次文档全部用同版本缓存（并后台回填），从而不会出现混版。
+// 超时 → 本次文档全部用「安装期快照」CACHE 里的同一版本，从而不会出现混版。
+//
+// 为什么缓存模式只读 CACHE（安装期快照）而不读 CACHE_RT：
+//   CACHE 是整个 SW 版本一次性写入的，五份首屏资源 + 外壳天然同版本；
+//   CACHE_RT 是各资源按完成先后逐个写入的，在"发版过程中"会出现
+//   「外壳已是新版、data.js 还是旧版」这种半新半旧的组合（实测可复现）。
+//
+// 过期逃生：缓存模式返回后继续等这次网络请求，如果它和快照里的外壳内容不同，
+// 说明服务器已有新发布 → 本次 SW 生命周期内不再使用缓存模式（宁可慢也不给旧内容）。
 const _navMode = new Map();
+let _snapshotStale = false;
 
 function setNavMode(clientId, mode) {
   if (!clientId) return;
@@ -220,11 +226,15 @@ function setNavMode(clientId, mode) {
   }
 }
 
-function getNavMode(req) {
-  if (!req.clientId) return null;
-  const rec = _navMode.get(req.clientId);
+// 注意：这里必须用 FetchEvent.clientId，不能用 request.clientId ——
+// 实测（Chrome 156）子资源请求的 request.clientId 恒为 undefined，
+// 而 event.clientId 正好等于这次导航的 event.resultingClientId。
+function getNavMode(clientId, fallbackClientId) {
+  const id = clientId || fallbackClientId;
+  if (!id) return null;
+  const rec = _navMode.get(id);
   if (!rec) return null;
-  if (Date.now() - rec.at > NAV_MODE_TTL) { _navMode.delete(req.clientId); return null; }
+  if (Date.now() - rec.at > NAV_MODE_TTL) { _navMode.delete(id); return null; }
   return rec.mode;
 }
 
@@ -236,79 +246,129 @@ function networkFirst(req, key) {
   });
 }
 
-// 后台回填：命中过缓存的资源才回源，避免首次访问重复下载
-function revalidateInBackground(req, key, e) {
-  const task = matchKey(key).then(function (cached) {
-    if (!cached) return null;
-    return fetch(req).then(function (resp) {
-      if (resp && resp.ok) return putRuntime(key, resp.clone());
-      return null;
-    }).catch(function () { return null; });
-  });
-  try { e.waitUntil(task); } catch (err) {}
-  return task;
+// 只查安装期快照：缓存模式的唯一数据源（原子、同版本）
+function matchCore(key) {
+  return caches.match(cacheUrl(key), { cacheName: CACHE });
 }
 
-// 单个资源：网络优先 + 超时回退缓存（用于没有导航上下文的请求）
-function timeoutFirst(req, key, e, onNetworkFail) {
-  return new Promise(function (resolve) {
-    let settled = false;
-    const finish = function (r) {
-      if (settled || !r) return;
-      settled = true;
-      resolve(r);
-    };
+// 快照是否完整（外壳 + 五份首屏资源都在 CACHE 里）。
+// 只要缺一个就整份文档放弃缓存模式 —— 否则缺失的那份会改走网络，从而混版。
+let _readyPromise = null;
+function snapshotReady() {
+  if (!_readyPromise) {
+    const keys = ['index.html'].concat(FIRST_SCREEN_ASSETS);
+    _readyPromise = Promise.all(keys.map(function (k) { return matchCore(k).then(Boolean); }))
+      .then(function (flags) {
+        return flags.every(Boolean);
+      })
+      .catch(function () { return false; });
+  }
+  return _readyPromise;
+}
 
-    const net = fetch(req).then(function (resp) {
-      if (resp && resp.ok) return putRuntime(key, resp.clone()).then(function () { return resp; });
-      return resp;
+// 网络优先，失败回退到安装期快照；用于"已确定要新内容"的路径
+function networkThenCore(req, key) {
+  return fetch(req).then(function (resp) {
+    if (resp && resp.ok) putRuntime(key, resp.clone());
+    return resp;
+  }).catch(function () {
+    return matchCore(key).then(function (cached) {
+      return cached || Response.error();
     });
-
-    const timer = setTimeout(function () {
-      matchKey(key).then(function (cached) { if (cached) finish(cached); });
-    }, NAV_TIMEOUT_MS);
-
-    net.then(function (resp) {
-      clearTimeout(timer);
-      finish(resp);
-    }).catch(function () {
-      clearTimeout(timer);
-      matchKey(key).then(function (cached) { finish(cached || onNetworkFail()); });
-    });
-
-    try { e.waitUntil(net.then(function () { return null; }).catch(function () { return null; })); } catch (err) {}
   });
 }
 
-// 应用外壳导航：先做一次版本决策，再决定本次文档的首屏子资源走网络还是缓存
+// 应用外壳导航：先做一次版本决策，再决定本次文档的首屏子资源走网络还是快照
+//
+// 决策规则：这次网络请求**到达时刻**是否 ≤ NAV_TIMEOUT_MS。
+// 不能用「定时器先触发 vs 网络先 resolve」来判 —— 实测（移动整形 150ms 链路）
+// 定时器在 153ms 触发、缓存读取要到 155~160ms 才返回，而网络首字节在 158ms 到达，
+// 两者相差 2~3ms 就会来回翻转，同一个站点会随机落到"快"或"慢"两条路径。
+// 因此：快照提前读出来（不占决策时间），网络结果回来后按到达时刻裁决。
 function shellNavigate(req, e) {
   return new Promise(function (resolve) {
+    const t0 = Date.now();
     let settled = false;
     const finish = function (resp, source) {
       if (settled) return;
       settled = true;
       // 顶层导航自身没有 clientId，e.resultingClientId 才是新文档的 client id，
-      // 也就是后续首屏子资源请求里的 request.clientId。
+      // 也就是后续首屏子资源请求里的 e.clientId。
       setNavMode(e.resultingClientId || req.clientId, source);
       resolve(resp);
     };
 
     const net = fetch(req).then(function (resp) {
-      if (resp && resp.ok) return putRuntime('./index.html', resp.clone()).then(function () { return resp; });
+      if (resp && resp.ok) putRuntime('./index.html', resp.clone());
       return resp;
     });
 
-    const timer = setTimeout(function () {
-      matchKey('./index.html').then(function (cached) { if (cached) finish(cached, 'cache'); });
-    }, NAV_TIMEOUT_MS);
+    // 已经判定服务器有新发布：不再用快照，直接网络优先（慢但新）
+    if (_snapshotStale) {
+      net.then(function (resp) { finish(resp, 'network'); })
+        .catch(function () {
+          matchCore('./index.html').then(function (cached) {
+            finish(cached || offlineResponse(), 'cache');
+          });
+        });
+      try { e.waitUntil(net.then(function () { return null; }).catch(function () { return null; })); } catch (err) {}
+      return;
+    }
+
+    // 快照提前读出（含文本，供"是否已有新发布"比对）。
+    // 文本必须在交付前取好：一旦 Response 交给页面，body 就被消费，clone() 会抛错。
+    const snapshot = snapshotReady().then(function (ready) {
+      if (!ready) return null;
+      return matchCore('./index.html').then(function (cached) {
+        if (!cached) return null;
+        return cached.clone().text().then(function (text) {
+          return { resp: cached, text: text };
+        });
+      });
+    }).catch(function () { return null; });
+
+    let delivered = false;
+    const deliverSnapshot = function () {
+      if (delivered || settled) return;
+      delivered = true;
+      snapshot.then(function (snap) {
+        if (!snap) return;
+        finish(snap.resp, 'cache');
+      });
+    };
+
+    const compareSnapshot = function (resp, snapText) {
+      if (!resp || !resp.ok) return;
+      let netCopy;
+      try { netCopy = resp.clone(); } catch (err) { return; }
+      netCopy.text().then(function (text) {
+        if (text !== snapText) _snapshotStale = true;   // 外壳变了 = 服务器有新发布
+      }).catch(function () {});
+    };
+
+    const timer = setTimeout(deliverSnapshot, NAV_TIMEOUT_MS);
 
     net.then(function (resp) {
       clearTimeout(timer);
-      finish(resp, 'network');
+      const arrivalMs = Date.now() - t0;
+      if (arrivalMs <= NAV_TIMEOUT_MS) {
+        finish(resp, 'network');                       // 网络够快：本次文档用新版本
+        return;
+      }
+      // 网络迟到了：按策略本次用快照，同时用这份响应判断快照是否过期
+      snapshot.then(function (snap) {
+        if (!snap) return finish(resp, 'network');
+        delivered = true;
+        finish(snap.resp, 'cache');
+        compareSnapshot(resp, snap.text);
+      });
     }).catch(function () {
       clearTimeout(timer);
-      matchKey('./index.html').then(function (cached) {
-        finish(cached || offlineResponse(), 'cache');
+      snapshot.then(function (snap) {
+        if (snap) return finish(snap.resp, 'cache');
+        return matchCore('./index.html').then(function (cached) {
+          finish(cached || offlineResponse(), 'cache');
+        });
       });
     });
 
@@ -317,21 +377,15 @@ function shellNavigate(req, e) {
 }
 
 function firstScreenResponse(req, key, e) {
-  const mode = getNavMode(req);
-  if (mode === 'cache') {
-    // 与本次导航的外壳同版本：立刻给缓存，后台静默更新（下次导航生效）
-    revalidateInBackground(req, key, e);
-    return matchKey(key).then(function (cached) {
-      return cached || networkFirst(req, key).catch(function () { return Response.error(); });
+  // 缓存模式：整份文档都用安装期快照，不做后台回填，也就没有"回填到一半"的混版窗口
+  if (getNavMode(e.clientId, req.clientId) === 'cache') {
+    return matchCore(key).then(function (cached) {
+      return cached || networkThenCore(req, key);
     });
   }
-  if (mode === 'network') {
-    return networkFirst(req, key).catch(function () {
-      return matchKey(key).then(function (cached) { return cached || Response.error(); });
-    });
-  }
-  // 没有导航上下文（例如直接打开子资源）：退回单资源超时策略
-  return timeoutFirst(req, key, e, function () { return Response.error(); });
+  // network 模式，以及没有导航上下文的请求（例如页面自己 fetch 首屏资源）：
+  // 一律网络优先，只有网络失败才退回快照
+  return networkThenCore(req, key);
 }
 
 self.addEventListener('fetch', function (e) {
