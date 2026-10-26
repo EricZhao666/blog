@@ -1,15 +1,24 @@
 // Service Worker for blog offline support
-// 策略：
-//   - 页面导航 / 数据脚本：network-first（保证内容及时更新），失败回退缓存
+// 策略（Batch 6B 起）：
+//   - 首屏（app shell + style.css/app.js/data.js/user-posts.js/projects.js）：
+//     网络优先，但超过 NAV_TIMEOUT_MS 就用同一版本缓存，并后台回填网络结果。
+//     导航时只做一次决策，同一文档的首屏子资源沿用该决策，避免"新 HTML + 旧脚本"混版。
+//   - 其他页面导航 / 静态笔记页：network-first（保证内容及时更新），失败回退缓存
 //   - vendor / 静态资源：stale-while-revalidate（先快后新）
 //   - 第三方（giscus 等）：不拦截
 // 每次发布请递增 CACHE_VERSION。
-const CACHE_VERSION = '2026-10-23-5';
+const CACHE_VERSION = '2026-10-26-1';
 // CACHE：安装期预缓存的核心资源（只随版本整体替换）
 // CACHE_RT：运行期按需缓存（页面/数据/静态笔记页），带条数上限防止无限增长
 const CACHE = 'blog-' + CACHE_VERSION;
 const CACHE_RT = 'blog-rt-' + CACHE_VERSION;
 const RUNTIME_CACHE_CAP = 120;
+
+// 首屏资源必须"网络优先"的超时阈值：低于它在快速网络下仍然拿到最新版本，
+// 高于它则先用缓存保证可交互（移动整形链路上，首页外壳约 170 ms、首屏脚本 300~1400 ms）。
+const NAV_TIMEOUT_MS = 150;
+// 一次导航的决策缓存时间：同一文档的子资源沿用导航时的决策
+const NAV_MODE_TTL = 15000;
 
 // 必需资源：缺任何一个都不能宣称"离线安装成功"。
 // 这些文件缺失时页面根本跑不起来，所以安装失败比"装上一个残缺版本"更安全。
@@ -23,9 +32,10 @@ const REQUIRED_ASSETS = [
 ];
 
 // 可选资源：预缓存失败只降级（在线仍可用），不阻断安装
+// 注意：不要重复列出 REQUIRED_ASSETS 里的文件 —— 早先 ./vendor/marked.min.js 同时出现在两处，
+// 导致每次安装都多下载 39 903 B（实测冷启动服务端命中数多 1）。
 const OPTIONAL_CORE = [
   './',
-  './vendor/marked.min.js',
   './vendor/atom-one-light.min.css',
   './manifest.json',
   './icons/icon-192.png',
@@ -33,15 +43,25 @@ const OPTIONAL_CORE = [
   './js/projects.js'
 ];
 
-// 体积大的按需资源（课程 382KB / 代码库 380KB / 笔记 101KB…）：
+// 体积大的按需资源（笔记 101KB / 课程 15KB / 论文 42KB…）：
 // 不进 install 阶段，避免 SW 安装被 1MB 下载拖慢；首次访问后由 warmOptionalAssets 补齐离线副本。
+// 注意：./js/codefiles.js（380KB，仅 /code 路由使用）不在预取集合里 ——
+// 它由 app.js 的路由懒加载在真正访问 /code 时拉取，随后经 network-first 分支进入运行期缓存。
 const OPTIONAL_ASSETS = [
   './vendor/highlight.min.js',
   './js/courses.js',
   './js/course-notes.js',
   './js/note-slugs.js',
-  './js/papers.js',
-  './js/codefiles.js'
+  './js/papers.js'
+];
+
+// 首屏资源（相对 scope）：首页渲染直接依赖，必须与外壳保持同一版本
+const FIRST_SCREEN_ASSETS = [
+  'css/style.css',
+  'js/app.js',
+  'js/data.js',
+  'js/user-posts.js',
+  'js/projects.js'
 ];
 
 self.addEventListener('install', function (e) {
@@ -134,6 +154,19 @@ function matchAny(req) {
   });
 }
 
+// 用缓存键（相对 URL 字符串，或静态笔记页的 Request）查缓存
+function cacheUrl(key) {
+  if (key && typeof key !== 'string' && key.url) return key.url;
+  return new URL(key, self.location.href).href;
+}
+
+function matchKey(key) {
+  const u = cacheUrl(key);
+  return caches.match(u, { cacheName: CACHE_RT }).then(function (hit) {
+    return hit || caches.match(u, { cacheName: CACHE });
+  });
+}
+
 // 离线兜底页：用于"没缓存过的页面"。绝不能拿首页顶替，否则会显示成别的页面。
 function offlineResponse() {
   return new Response(
@@ -164,6 +197,143 @@ function isAppShell(pathname) {
     pathname === scope || pathname === scope + 'index.html';
 }
 
+// 首屏资源判定：返回用于缓存读写的相对 key，非首屏返回 null
+function firstScreenKey(pathname) {
+  let scope = '/';
+  try { scope = new URL(self.registration.scope).pathname; } catch (e) {}
+  if (pathname.indexOf(scope) !== 0) return null;
+  const rel = pathname.slice(scope.length);
+  return FIRST_SCREEN_ASSETS.indexOf(rel) === -1 ? null : rel;
+}
+
+// ---------------------------------------------------------------- 首屏策略
+// 导航时只决策一次：网络在 NAV_TIMEOUT_MS 内给了外壳 → 本次文档全部走网络；
+// 超时 → 本次文档全部用同版本缓存（并后台回填），从而不会出现混版。
+const _navMode = new Map();
+
+function setNavMode(clientId, mode) {
+  if (!clientId) return;
+  _navMode.set(clientId, { mode: mode, at: Date.now() });
+  if (_navMode.size > 50) {
+    const cut = Date.now() - NAV_MODE_TTL;
+    _navMode.forEach(function (v, k) { if (v.at < cut) _navMode.delete(k); });
+  }
+}
+
+function getNavMode(req) {
+  if (!req.clientId) return null;
+  const rec = _navMode.get(req.clientId);
+  if (!rec) return null;
+  if (Date.now() - rec.at > NAV_MODE_TTL) { _navMode.delete(req.clientId); return null; }
+  return rec.mode;
+}
+
+// 网络优先（成功即回写缓存）
+function networkFirst(req, key) {
+  return fetch(req).then(function (resp) {
+    if (resp && resp.ok) putRuntime(key, resp.clone());
+    return resp;
+  });
+}
+
+// 后台回填：命中过缓存的资源才回源，避免首次访问重复下载
+function revalidateInBackground(req, key, e) {
+  const task = matchKey(key).then(function (cached) {
+    if (!cached) return null;
+    return fetch(req).then(function (resp) {
+      if (resp && resp.ok) return putRuntime(key, resp.clone());
+      return null;
+    }).catch(function () { return null; });
+  });
+  try { e.waitUntil(task); } catch (err) {}
+  return task;
+}
+
+// 单个资源：网络优先 + 超时回退缓存（用于没有导航上下文的请求）
+function timeoutFirst(req, key, e, onNetworkFail) {
+  return new Promise(function (resolve) {
+    let settled = false;
+    const finish = function (r) {
+      if (settled || !r) return;
+      settled = true;
+      resolve(r);
+    };
+
+    const net = fetch(req).then(function (resp) {
+      if (resp && resp.ok) return putRuntime(key, resp.clone()).then(function () { return resp; });
+      return resp;
+    });
+
+    const timer = setTimeout(function () {
+      matchKey(key).then(function (cached) { if (cached) finish(cached); });
+    }, NAV_TIMEOUT_MS);
+
+    net.then(function (resp) {
+      clearTimeout(timer);
+      finish(resp);
+    }).catch(function () {
+      clearTimeout(timer);
+      matchKey(key).then(function (cached) { finish(cached || onNetworkFail()); });
+    });
+
+    try { e.waitUntil(net.then(function () { return null; }).catch(function () { return null; })); } catch (err) {}
+  });
+}
+
+// 应用外壳导航：先做一次版本决策，再决定本次文档的首屏子资源走网络还是缓存
+function shellNavigate(req, e) {
+  return new Promise(function (resolve) {
+    let settled = false;
+    const finish = function (resp, source) {
+      if (settled) return;
+      settled = true;
+      // 顶层导航自身没有 clientId，e.resultingClientId 才是新文档的 client id，
+      // 也就是后续首屏子资源请求里的 request.clientId。
+      setNavMode(e.resultingClientId || req.clientId, source);
+      resolve(resp);
+    };
+
+    const net = fetch(req).then(function (resp) {
+      if (resp && resp.ok) return putRuntime('./index.html', resp.clone()).then(function () { return resp; });
+      return resp;
+    });
+
+    const timer = setTimeout(function () {
+      matchKey('./index.html').then(function (cached) { if (cached) finish(cached, 'cache'); });
+    }, NAV_TIMEOUT_MS);
+
+    net.then(function (resp) {
+      clearTimeout(timer);
+      finish(resp, 'network');
+    }).catch(function () {
+      clearTimeout(timer);
+      matchKey('./index.html').then(function (cached) {
+        finish(cached || offlineResponse(), 'cache');
+      });
+    });
+
+    try { e.waitUntil(net.then(function () { return null; }).catch(function () { return null; })); } catch (err) {}
+  });
+}
+
+function firstScreenResponse(req, key, e) {
+  const mode = getNavMode(req);
+  if (mode === 'cache') {
+    // 与本次导航的外壳同版本：立刻给缓存，后台静默更新（下次导航生效）
+    revalidateInBackground(req, key, e);
+    return matchKey(key).then(function (cached) {
+      return cached || networkFirst(req, key).catch(function () { return Response.error(); });
+    });
+  }
+  if (mode === 'network') {
+    return networkFirst(req, key).catch(function () {
+      return matchKey(key).then(function (cached) { return cached || Response.error(); });
+    });
+  }
+  // 没有导航上下文（例如直接打开子资源）：退回单资源超时策略
+  return timeoutFirst(req, key, e, function () { return Response.error(); });
+}
+
 self.addEventListener('fetch', function (e) {
   const req = e.request;
   if (req.method !== 'GET') return;
@@ -171,25 +341,25 @@ self.addEventListener('fetch', function (e) {
 
   const url = new URL(req.url);
 
-  // 1) 页面导航：network-first
-  //    只有单页应用的入口（目录根 / index.html）才回写 index.html 缓存；
-  //    静态笔记页（notes/*.html）按自身 URL 缓存，否则离线打开首页会变成笔记页。
+  // 1) 页面导航
   if (req.mode === 'navigate') {
     // 预取交给 waitUntil 跟踪：SW 被终止前浏览器会等它完成
     try { e.waitUntil(warmOptionalAssets()); } catch (err) { /* 老浏览器忽略 */ }
-    const cachedKey = isAppShell(url.pathname) ? './index.html' : req;
+    if (isAppShell(url.pathname)) {
+      e.respondWith(shellNavigate(req, e));
+      return;
+    }
+    // 静态笔记页（notes/*.html）按自身 URL 缓存，否则离线打开首页会变成笔记页
     e.respondWith(
       fetch(req).then(function (resp) {
         if (resp && resp.ok) {
           // 用 waitUntil 跟踪写缓存：否则 SW 可能在写入完成前被回收
-          try { e.waitUntil(putRuntime(cachedKey, resp.clone())); } catch (err) {}
+          try { e.waitUntil(putRuntime(req, resp.clone())); } catch (err) {}
         }
         return resp;
       }).catch(function () {
         return matchAny(req).then(function (cached) {
           if (cached) return cached;
-          // 只有 SPA 入口才回退到 index.html；其它页面给明确的离线提示
-          if (isAppShell(url.pathname)) return caches.match('./index.html');
           return offlineResponse();
         });
       })
@@ -213,7 +383,14 @@ self.addEventListener('fetch', function (e) {
     return;
   }
 
-  // 3) 其他同源资源（HTML/CSS/JS/数据）：network-first，失败回退缓存
+  // 3) 首屏资源：跟随本次导航的决策（网络优先 / 同版本缓存）
+  const key = firstScreenKey(url.pathname);
+  if (key) {
+    e.respondWith(firstScreenResponse(req, key, e));
+    return;
+  }
+
+  // 4) 其他同源资源（HTML/CSS/JS/数据）：network-first，失败回退缓存
   e.respondWith(
     fetch(req).then(function (resp) {
       if (resp && resp.ok) {

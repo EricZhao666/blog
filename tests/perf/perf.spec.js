@@ -38,6 +38,7 @@ const { execFileSync } = require('child_process');
 const { chromium, devices } = require('playwright');
 const { createServer, listen } = require('../browser/helpers/server');
 const { createShapingProxy, listen: listenProxy } = require('./net-throttle');
+const { createProbe, listen: listenProbe } = require('./http-probe');
 
 const ROOT = path.resolve(__dirname, '..', '..');
 const PREFIX = '/blog';
@@ -133,8 +134,11 @@ function parseArgs(argv) {
     channel: process.env.PW_CHANNEL || 'chrome',
     port: Number(process.env.PERF_PORT || 8137),
     proxyPort: Number(process.env.PERF_PROXY_PORT || 8138),
+    probePort: Number(process.env.PERF_PROBE_PORT || 8139),
     diagnostics: true,
-    quiet: false
+    quiet: false,
+    swConfig: null,
+    swFile: null
   };
   for (let i = 0; i < argv.length; i++) {
     const k = argv[i];
@@ -155,6 +159,8 @@ function parseArgs(argv) {
       case '--port': a.port = Number(next()); break;
       case '--proxy-port': a.proxyPort = Number(next()); break;
       case '--no-diagnostics': a.diagnostics = false; break;
+      case '--sw-config': a.swConfig = parseSwConfig(next()); break;
+      case '--sw-file': a.swFile = next(); break;
       case '--quiet': a.quiet = true; break;
       case '--help': case '-h': a.help = true; break;
       default: throw new Error('未知参数: ' + k);
@@ -171,8 +177,12 @@ const USAGE = [
   '                             [--out tests/perf/reports/baseline.json]',
   '                             [--post <id>] [--keyword SLAM] [--keyword2 学习]',
   '                             [--channel chrome] [--port 8137] [--proxy-port 8138]',
+  '                             [--sw-config \'{"hotStart":"timeout"}\'] [--sw-file <path>]',
   '                             [--no-diagnostics] [--quiet]'
 ].join('\n');
+
+// Batch 6B：候选 SW 由 sw-candidates/build.js 生成，只在测量期通过观测探针注入 /blog/sw.js
+const { buildSwCandidate, parseSwConfig } = require('./sw-candidates/build');
 
 // ---------------------------------------------------------------- 页面内观测脚本
 // 用 addInitScript 注入，保证在所有页面脚本之前注册观察者（否则早于首帧的 FCP/LCP 会丢）
@@ -848,6 +858,11 @@ async function captureNavSample(ctx) {
   const hits = diffHits(ctx.hitsBefore, snapshotHits(deps.state));
   const metrics = deriveMetrics(scenario, snap, resolved.values);
   metrics.serverRequestCount = Object.keys(hits).reduce((s, k) => s + hits[k], 0);
+  if (deps.probe && ctx.probeMark != null) {
+    const recs = deps.probe.since(ctx.probeMark);
+    metrics.networkBytes = recs.reduce((s, r) => s + r.bytes, 0);
+    metrics.networkRequests = recs.length;
+  }
   if (inv) {
     metrics.swCacheEntries = Object.keys(inv).reduce((s, n) => s + inv[n].length, 0);
   }
@@ -912,12 +927,13 @@ async function runColdHome(config, deps, opt) {
       attachDiagnostics(page, bag);
       const cdp = await attachCDP(page, config, bag);
       const hitsBefore = snapshotHits(deps.state);
+      const probeMark = deps.probe ? deps.probe.mark() : null;
       // 冷启动：全新 BrowserContext（无 HTTP 缓存、无 SW、无 CacheStorage）
       await page.goto(config.baseUrl + HOME, { waitUntil: 'load', timeout: 60000 });
       await page.waitForTimeout(SETTLE_MS);
       sample = await captureNavSample({
         page, cdp, config, deps, bag, scenario: 'cold-home', rep,
-        pre: null, hitsBefore, startedAt
+        pre: null, hitsBefore, startedAt, probeMark
       });
       sample.extra = { freshContext: true, httpCache: '空（新 BrowserContext + 服务端 Cache-Control: no-store）' };
     } catch (e) {
@@ -947,10 +963,11 @@ async function runWarmHome(config, deps, opt) {
       if (!cacheState) cacheState = warm;
       const hitsBefore = snapshotHits(deps.state);
       const pre = await cdpMetrics(cdp);
+      const probeMark = deps.probe ? deps.probe.mark() : null;
       await page.reload({ waitUntil: 'load', timeout: 60000 });
       await page.waitForTimeout(SETTLE_MS);
       sample = await captureNavSample({
-        page, cdp, config, deps, bag, scenario: 'warm-home', rep, pre, hitsBefore, startedAt
+        page, cdp, config, deps, bag, scenario: 'warm-home', rep, pre, hitsBefore, startedAt, probeMark
       });
       sample.extra = {
         warmVerified: warm.warmVerified,
@@ -1004,10 +1021,11 @@ async function runLongPost(config, deps, opt) {
       const routeSettleMs = await settleLink(page, deps, 6000);
       const hitsBefore = snapshotHits(deps.state);
       const pre = await cdpMetrics(cdp);
+      const probeMark = deps.probe ? deps.probe.mark() : null;
       await page.reload({ waitUntil: 'load', timeout: 60000 });
       await page.waitForTimeout(SETTLE_MS);
       sample = await captureNavSample({
-        page, cdp, config, deps, bag, scenario: 'long-post', rep, pre, hitsBefore, startedAt
+        page, cdp, config, deps, bag, scenario: 'long-post', rep, pre, hitsBefore, startedAt, probeMark
       });
       sample.extra = {
         postId,
@@ -1072,12 +1090,14 @@ async function runSearch(config, deps, opt) {
       if (!cacheState) cacheState = warm;
       const hitsBefore = snapshotHits(deps.state);
       const pre = await cdpMetrics(cdp);
+      const probeMark = deps.probe ? deps.probe.mark() : null;
 
       const first = await page.evaluate(searchFn, { keyword: opt.keyword, expectLazy: true });
       const mid = await cdpMetrics(cdp);
       const repeat = await page.evaluate(searchFn, { keyword: opt.keyword2, expectLazy: false });
       const post = await cdpMetrics(cdp);
       const hits = diffHits(hitsBefore, snapshotHits(deps.state));
+      const probeRecs = deps.probe && probeMark != null ? deps.probe.since(probeMark) : null;
 
       const dFirst = resolveCdp(pre, mid).values;
       const dAll = resolveCdp(pre, post).values;
@@ -1101,7 +1121,8 @@ async function runSearch(config, deps, opt) {
           searchRepeatLongTaskMs: repeat.longTaskMs,
           searchRepeatScriptMs: dAll && dFirst && dAll.ScriptDuration != null && dFirst.ScriptDuration != null
             ? r2(dAll.ScriptDuration - dFirst.ScriptDuration) : null,
-          serverRequestCount: Object.keys(hits).reduce((s, k) => s + hits[k], 0)
+          serverRequestCount: Object.keys(hits).reduce((s, k) => s + hits[k], 0),
+          networkBytes: probeRecs ? probeRecs.reduce((s, r) => s + r.bytes, 0) : null
         },
         sw: { controller: true },
         cache: null,
@@ -1178,6 +1199,8 @@ const METRIC_META = {
   transferBytes: { label: '资源传输字节（transferSize 合计）', unit: 'bytes', basis: 'measured' },
   encodedBytes: { label: '编码后体积（encodedBodySize 合计）', unit: 'bytes', basis: 'measured' },
   serverRequestCount: { label: '真实到达服务器的请求数（服务端计数）', unit: 'count', basis: 'measured' },
+  networkBytes: { label: '导航窗口内网络传输字节（HTTP 层，含 SW 后台预取/后台校验）', unit: 'bytes', basis: 'measured' },
+  networkRequests: { label: '导航窗口内到达服务器的请求数（HTTP 层）', unit: 'count', basis: 'measured' },
   swCacheEntries: { label: 'SW 缓存条目总数', unit: 'count', basis: 'measured' },
   routeRenderMs: { label: '路由切换：DOM 更新完成（首页→文章）', unit: 'ms', basis: 'measured' },
   routePaintMs: { label: '路由切换：渲染完成（首页→文章，双 rAF）', unit: 'ms', basis: 'measured' },
@@ -1290,7 +1313,7 @@ function calibration(baseline) {
 function printSummary(baseline) {
   const keysByScenario = {
     'cold-home': ['fcpMs', 'lcpMs', 'cls', 'loadMs', 'scriptMs', 'tbtMs', 'requestCount', 'encodedBytes', 'serverRequestCount'],
-    'warm-home': ['fcpMs', 'lcpMs', 'cls', 'loadMs', 'scriptMs', 'tbtMs', 'requestCount', 'encodedBytes', 'serverRequestCount', 'swCacheEntries'],
+    'warm-home': ['fcpMs', 'lcpMs', 'cls', 'loadMs', 'scriptMs', 'tbtMs', 'requestCount', 'encodedBytes', 'serverRequestCount', 'networkBytes', 'swCacheEntries'],
     'long-post': ['fcpMs', 'lcpMs', 'loadMs', 'scriptMs', 'tbtMs', 'encodedBytes', 'routeRenderMs', 'routePaintMs', 'routeBackRenderMs'],
     'search': ['searchFirstRenderMs', 'searchFirstFinalMs', 'searchLazyBytes', 'searchRepeatRenderMs', 'searchRepeatScriptMs']
   };
@@ -1341,9 +1364,30 @@ async function main() {
     return 2;
   }
 
+  // Batch 6B：可选——把 /blog/sw.js 换成交付的候选脚本，并逐请求记账
+  // 未指定时完全不启用，6A 的测量路径（直连 / 直连+整形）保持原样
+  let swCandidate = null;
+  let probe = null;
+  let probePort = null;
+  if (args.swConfig || args.swFile) {
+    swCandidate = buildSwCandidate(args.swConfig, args.swFile);
+    probe = createProbe({
+      targetPort: staticPort,
+      overrides: { [PREFIX + '/sw.js']: { body: swCandidate.source } }
+    });
+    try {
+      probePort = await listenProbe(probe.server, args.probePort);
+    } catch (e) {
+      console.error('无法在端口 ' + args.probePort + ' 启动观测探针: ' + e.message);
+      server.close();
+      return 2;
+    }
+  }
+  const upstreamPort = probePort || staticPort;
+
   // 移动端整形代理
   const shapingProxy = createShapingProxy({
-    targetPort: staticPort,
+    targetPort: upstreamPort,
     latencyMs: configs.mobile.network.latencyMs,
     downloadKbps: configs.mobile.network.downloadKbps
   });
@@ -1353,14 +1397,15 @@ async function main() {
   } catch (e) {
     console.error('无法在端口 ' + args.proxyPort + ' 启动整形代理: ' + e.message);
     server.close();
+    if (probe) probe.server.close();
     return 2;
   }
 
   for (const c of selected) {
-    c.baseUrl = 'http://127.0.0.1:' + (c.useProxy ? proxyPort : staticPort);
+    c.baseUrl = 'http://127.0.0.1:' + (c.useProxy ? proxyPort : upstreamPort);
     c.serverEndpoint = c.useProxy
-      ? { via: 'HTTP 整形代理', port: proxyPort, upstreamPort: staticPort }
-      : { via: '直连', port: staticPort };
+      ? { via: 'HTTP 整形代理', port: proxyPort, upstreamPort: upstreamPort }
+      : { via: probe ? '直连（经观测探针）' : '直连', port: upstreamPort };
   }
 
   let browser;
@@ -1393,7 +1438,7 @@ async function main() {
   console.log('  搜索关键词: 首次「' + args.keyword + '」/ 重复「' + args.keyword2 + '」');
   console.log('  重复次数: ' + args.repeat + ' / 场景 / 配置');
 
-  const deps = { browser, state, staticPort, proxyPort, proxy: shapingProxy };
+  const deps = { browser, state, staticPort, proxyPort, probePort, proxy: shapingProxy, probe };
   const baseline = {
     meta: {
       batch: '6A',
@@ -1404,6 +1449,15 @@ async function main() {
       resources: [fileMeta('index.html'), fileMeta('js/data.js'), fileMeta('js/app.js'), fileMeta('css/style.css'),
         fileMeta('vendor/marked.min.js'), fileMeta('vendor/purify.min.js'), fileMeta('sw.js')].filter(Boolean),
       sw: swMeta(),
+      swCandidate: swCandidate ? {
+        injected: true,
+        sourcePath: swCandidate.sourcePath,
+        config: swCandidate.config,
+        bytes: swCandidate.bytes,
+        sha256: swCandidate.sha256,
+        note: '仓库 sw.js 未被修改：候选脚本只在测量链路的观测探针里替换 /blog/sw.js 的响应'
+      } : { injected: false, note: '测量的是仓库当前 sw.js' },
+      networkProbe: probe ? { enabled: true, port: probePort, metrics: 'networkBytes = 导航窗口内所有 HTTP 响应体字节（含 SW 后台预取/后台校验）' } : { enabled: false },
       browser: { channel: args.channel, version: browser.version(), headless: true, args: ['--disable-background-timer-throttling', '--disable-renderer-backgrounding'] },
       host: hostInfo,
       server: {
@@ -1501,6 +1555,7 @@ async function main() {
     await browser.close();
     server.close();
     shapingProxy.server.close();
+    if (probe) probe.server.close();
   }
 
   baseline.unavailable = collectAllUnavailable(baseline);

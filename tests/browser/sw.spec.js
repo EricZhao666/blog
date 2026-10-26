@@ -8,6 +8,8 @@ const path = require('path');
 const fs = require('fs');
 const { chromium } = require('playwright');
 const { createServer, listen } = require('./helpers/server');
+const { createProbe, listen: listenProbe } = require('../perf/http-probe');
+const { buildSwCandidate, parseSwConfig } = require('../perf/sw-candidates/build');
 
 const ROOT = path.resolve(__dirname, '..', '..');
 const PREFIX = '/blog';
@@ -80,7 +82,34 @@ async function main() {
   fs.mkdirSync(SHOTS, { recursive: true });
   const { server, state } = createServer(ROOT, PREFIX);
   const port = await listen(server, 0);
-  const base = 'http://127.0.0.1:' + port;
+  let base = 'http://127.0.0.1:' + port;
+  let probe = null;
+
+  // Batch 6B：可选地用「候选 Service Worker」跑同一批用例（SW_FILE / SW_CONFIG），
+  // 用于验证候选策略是否仍然满足 Batch 4 的安装失败保护、离线、更新与容量约束。
+  const swFile = process.env.SW_FILE || null;
+  const swConfigText = process.env.SW_CONFIG || null;
+  let swUnderTest = { sourcePath: 'sw.js', config: null, sha256: null, injected: false };
+  if (swFile || swConfigText) {
+    const candidate = buildSwCandidate(swConfigText ? parseSwConfig(swConfigText) : null, swFile);
+    probe = createProbe({
+      targetPort: port,
+      overrides: {
+        // 与 helpers/server.js 的「模拟发布」保持一致：swap 版本时也要改写候选脚本的 CACHE_VERSION，
+        // 否则 S11/S12 观察不到新版本（那会变成测试工具的假象，而不是策略问题）
+        [PREFIX + '/sw.js']: {
+          bodyFn: function () {
+            return state.swBump
+              ? candidate.source.replace(/CACHE_VERSION = '([^']+)'/, "CACHE_VERSION = '$1-t2'")
+              : candidate.source;
+          }
+        }
+      }
+    });
+    const probePort = await listenProbe(probe.server, 0);
+    base = 'http://127.0.0.1:' + probePort;
+    swUnderTest = { sourcePath: candidate.sourcePath, config: candidate.config, sha256: candidate.sha256, injected: true, bytes: candidate.bytes };
+  }
 
   const launchOpts = { headless: true };
   if (CHANNEL !== 'chromium') launchOpts.channel = CHANNEL;
@@ -94,6 +123,10 @@ async function main() {
     process.exit(2);
   }
   console.log('浏览器: ' + CHANNEL + ' ' + browser.version());
+  console.log('被测 SW: ' + swUnderTest.sourcePath
+    + (swUnderTest.config ? ' ' + JSON.stringify(swUnderTest.config) : '')
+    + (swUnderTest.sha256 ? ' sha256:' + swUnderTest.sha256 : '')
+    + (swUnderTest.injected ? '（经观测探针注入，仓库 sw.js 未修改）' : '（仓库当前版本）'));
 
   // 重置注入状态
   const reset = () => {
@@ -204,6 +237,8 @@ async function main() {
       const r1 = await page.reload({ waitUntil: 'load' }).catch(() => null);
       const body1 = await page.evaluate(() => document.body.innerText.slice(0, 60));
       check('S6 已缓存的静态笔记离线可读', !!r1 && body1.indexOf('CS422') !== -1 || body1.length > 20, body1);
+      // Batch 6B 补充断言：离线笔记页不能退化成离线兜底页（原断言只要正文超过 20 字符就会通过）
+      check('S6 离线笔记不是离线兜底页', body1.indexOf('当前离线') === -1, body1.slice(0, 40).replace(/\n/g, ' '));
 
       // 未缓存过的笔记页：不得伪造成首页
       const page2 = await ctx.newPage();
@@ -255,6 +290,69 @@ async function main() {
       check('S9 可选资源已进入运行期缓存',
         rt.some(p => p.endsWith('/js/courses.js')) && rt.some(p => p.endsWith('/js/papers.js')),
         rt.length + ' 项: ' + rt.join(',') + ' | hits(courses)=' + (state.hits['/js/courses.js'] || 0));
+      await ctx.close();
+    }
+
+    // ---------------------------------------------------------------- S13 预取契约（Batch 6B 变更）
+    // 变更前：首访预取 6 个可选资源（含 380KB 的 codefiles.js）。
+    // 变更后：首访只预取首页/搜索需要的 5 个；codefiles.js 由 /code 路由按需加载后进入运行期缓存。
+    {
+      reset();
+      const ctx = await newContext(browser);
+      const page = await ctx.newPage();
+      await gotoApp(page, base);
+      await waitController(page);
+      await sleep(1500);
+      const keys1 = await cacheKeys(page);
+      const rt1 = keys1[RT_NAME] || [];
+      check('S13 首访不再预取 codefiles.js（380KB）',
+        !rt1.some(p => p.endsWith('/js/codefiles.js')), rt1.length + ' 项: ' + rt1.join(','));
+      check('S13 首访仍预取搜索与笔记所需分区数据',
+        ['courses.js', 'papers.js', 'course-notes.js', 'note-slugs.js']
+          .every(f => rt1.some(p => p.endsWith('/js/' + f))),
+        rt1.length + ' 项');
+
+      // 访问 /code 路由时才拉取（在线可用），随后进入运行期缓存
+      await page.goto(base + PREFIX + '/#/code', { waitUntil: 'load' });
+      await sleep(1500);
+      const keys2 = await cacheKeys(page);
+      const rt2 = keys2[RT_NAME] || [];
+      check('S13 访问 /code 后 codefiles.js 进入运行期缓存',
+        rt2.some(p => p.endsWith('/js/codefiles.js')), rt2.length + ' 项');
+
+      await ctx.setOffline(true);
+      const offlineCode = await page.evaluate(async () => {
+        try {
+          const r = await fetch('./js/codefiles.js');
+          return r.ok ? 'ok' : String(r.status);
+        } catch (e) { return 'error'; }
+      });
+      check('S13 访问过 /code 后离线仍可读取代码库数据', offlineCode === 'ok', offlineCode);
+      await ctx.close();
+    }
+
+    // ---------------------------------------------------------------- S14 首屏慢于阈值时回退缓存
+    {
+      reset();
+      const ctx = await newContext(browser);
+      const page = await ctx.newPage();
+      await gotoApp(page, base);
+      await waitController(page);
+      state.delays['/js/app.js'] = 900;       // 模拟慢链路：首屏脚本远超 150ms 阈值
+      const t0 = Date.now();
+      let status = 0;
+      try {
+        const r = await page.reload({ waitUntil: 'load', timeout: 15000 });
+        status = r.status();
+      } catch (e) { status = -1; }
+      const elapsed = Date.now() - t0;
+      const rendered = await page.evaluate(() => {
+        const app = document.getElementById('app');
+        return !!app && app.children.length > 0;
+      });
+      state.delays = {};
+      check('S14 首屏脚本慢于阈值时用完缓存并正常渲染',
+        status === 200 && rendered && elapsed < 900, status + ' / ' + elapsed + 'ms');
       await ctx.close();
     }
 
@@ -371,6 +469,7 @@ async function main() {
   } finally {
     await browser.close();
     server.close();
+    if (probe) probe.server.close();
   }
 
   const failed = results.filter(r => !r.ok);

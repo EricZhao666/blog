@@ -30,7 +30,13 @@ const check = (name, cond, extra) => {
 server.listen(8132, async () => {
   // ---------- 静态文件检查 ----------
   const sw = fs.readFileSync(path.join(ROOT, 'sw.js'), 'utf8');
-  check('SW 只把入口页写成 index.html 缓存', /putRuntime\(cachedKey/.test(sw) && /isAppShell\(/.test(sw));
+  // Batch 6B：入口页分支改为 shellNavigate（仍以 './index.html' 为缓存键），
+  // 静态笔记页仍按自身 URL 缓存、兜底用离线页 —— 断言意图不变，只是跟着实现改名。
+  check('SW 只把入口页写成 index.html 缓存',
+    /isAppShell\(url\.pathname\)/.test(sw) &&
+    /putRuntime\('\.\/index\.html'/.test(sw) &&
+    /putRuntime\(req, resp\.clone\(\)\)/.test(sw) &&
+    /offlineResponse\(\)/.test(sw));
   check('SW 运行期缓存有条数上限', /RUNTIME_CACHE_CAP/.test(sw) && /CACHE_RT/.test(sw));
   check('SW 安装期不预取大体积数据脚本', !/CORE_ASSETS\.concat\(OPTIONAL_ASSETS\)/.test(sw));
 
