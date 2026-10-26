@@ -295,6 +295,13 @@ OK: 元数据 / 正文 / 搜索索引 / 哈希 全部一致
 | **`browser`（含新增 S15–S17）** | **37/37** |
 | `sw-consistency` | 35/35 |
 
+**关于旧测试的调整**：只有两处数据入口变化，**没有删除或放宽任何断言**——
+`tests/audit.js` 在巡检前 `await Promise.all(POSTS.map(p => loadPostBody(p.id)))`（把"逐篇访问"等价改写成"先取齐再巡检"，断言语义不变）；
+`tests/perf/perf.spec.js` 的 `longestPostId()` 在正文被拆出后从 `data/posts/*.md` 读长度（保证新旧两版仍选同一篇文章）。
+其余用例（test6/7/9/10/11/14/16/17、sw.spec 原有 28 项）源码未改。
+
+实现提交：`705ec71`（分支 `feature/batch6b2-data-split`）。
+
 ---
 
 ## 10. 收益判断与保留决定
