@@ -67,7 +67,7 @@
 </blockquote>
 <h2>0. 课程概览</h2>
 <ul>
-<li><strong>目标</strong>：建立描述和控制机器人系统运动的数学方法（&quot;它/它在哪、怎么动、怎么稳、怎么走&quot;）。</li>
+<li><strong>目标</strong>：建立描述和控制机器人系统运动的数学方法（"它/它在哪、怎么动、怎么稳、怎么走"）。</li>
 <li><strong>结构</strong>：机器人导论 → 简单机械与自由度（Gruebler）→ 空间描述与变换 → 正/逆运动学（DH 矩阵）→ 速度运动学（雅可比）→ 轨迹与路径规划 → ROS / 传感器与执行器 / 移动机器人（后续模块）。</li>
 <li><strong>考核</strong>（以课件为准）：CA 25%（4 次作业 20% + 测验 5%）+ 考试 75%（2 小时，10 题做 8）。</li>
 </ul>
@@ -100,7 +100,7 @@
 Ry(θ), Rz(θ) 同理（循环置换）
 </code></pre>
 </li>
-<li><strong>复合旋转</strong>：绕&quot;当前坐标系&quot;用右乘 <code>R20 = R10·R21</code>；绕&quot;固定坐标系&quot;用左乘 <code>R20 = R·R10</code>。</li>
+<li><strong>复合旋转</strong>：绕"当前坐标系"用右乘 <code>R20 = R10·R21</code>；绕"固定坐标系"用左乘 <code>R20 = R·R10</code>。</li>
 <li><strong>欧拉角 / Roll-Pitch-Yaw</strong>：用 3 个角参数化任意姿态（DOF=3）。</li>
 <li><strong>齐次变换(Homogeneous Transform)</strong>：把旋转+平移统一为 4×4 矩阵，是本课贯穿始终的核心工具：<pre><code class="language-text">H = [ R   d ]      P0 = H10 · P1
     [ 0   1 ]

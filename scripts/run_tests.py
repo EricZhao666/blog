@@ -48,6 +48,8 @@ TESTS = [
     {'name': 'test13', 'file': 'tests/test13.py', 'kind': 'python', 'desc': 'Batch 3：RSS 结构化解析与产物安全'},
     {'name': 'test14', 'file': 'tests/test14.js', 'kind': 'jsdom', 'desc': 'Batch 3：排序一致性 + 日期时区'},
     {'name': 'test15', 'file': 'tests/test15.py', 'kind': 'python', 'desc': 'Batch 3.5：生成器合成 Fixture 可复现性'},
+    {'name': 'test16', 'file': 'tests/test16.js', 'kind': 'jsdom', 'desc': 'B5：Markdown 净化与动态事件编码'},
+    {'name': 'test17', 'file': 'tests/test17.py', 'kind': 'python', 'desc': 'B5：静态笔记页 JSON-LD 与正文安全'},
     {'name': 'browser', 'file': 'tests/browser/sw.spec.js', 'kind': 'browser',
      'desc': 'B4：真实 Chromium 下的 SW 安装 / 离线 / 更新 / 容量'},
 ]

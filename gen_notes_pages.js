@@ -191,9 +191,33 @@ ${body}
 `;
 }
 
+// 与主站一致的净化规则：marked 只负责转换，DOMPurify 负责信任边界
+function createSanitizer() {
+  const createDOMPurify = require('dompurify');
+  const { JSDOM } = require('jsdom');
+  const purify = createDOMPurify(new JSDOM('').window);
+  return function sanitize(html) {
+    return purify.sanitize(html, {
+      ADD_ATTR: ['target', 'rel', 'data-lang', 'id', 'class'],
+      FORBID_TAGS: ['style', 'form', 'input', 'button', 'iframe', 'object', 'embed'],
+      FORBID_ATTR: ['style', 'srcset', 'formaction']
+    });
+  };
+}
+
+// JSON 放进 <script> 里必须转义尖括号与 &，防止提前闭合标签
+function safeJsonLd(data) {
+  return JSON.stringify(data)
+    .replace(/</g, '\\u003c')
+    .replace(/>/g, '\\u003e')
+    .replace(/&/g, '\\u0026');
+}
+
 function main() {
   const marked = require('./vendor/marked.min.js');
-  const parse = typeof marked === 'function' ? marked : (marked.parse || marked.marked.parse);
+  const parseRaw = typeof marked === 'function' ? marked : (marked.parse || marked.marked.parse);
+  const sanitize = createSanitizer();
+  const parse = function (md) { return sanitize(parseRaw(md || '')); };
 
   const { notes, courses } = loadGlobals();
   const notesDir = path.join(OUT_DIR, 'notes');
@@ -239,7 +263,9 @@ function main() {
     const title = h1 + " · Eric's Notebook";
     const desc = p.summary || (p.name + ' 课程核心笔记');
 
-    const ld = `<script type="application/ld+json">${JSON.stringify({
+    // JSON-LD 位于 <script> 上下文：必须转义 < > & ，
+    // 否则标题/摘要里的 "</script>" 会提前闭合脚本，把 JSON 变成可执行的 HTML。
+    const ld = `<script type="application/ld+json">${safeJsonLd({
       '@context': 'https://schema.org',
       '@type': 'Article',
       headline: h1,

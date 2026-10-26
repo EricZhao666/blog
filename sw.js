@@ -4,7 +4,7 @@
 //   - vendor / 静态资源：stale-while-revalidate（先快后新）
 //   - 第三方（giscus 等）：不拦截
 // 每次发布请递增 CACHE_VERSION。
-const CACHE_VERSION = '2026-10-23-4';
+const CACHE_VERSION = '2026-10-23-5';
 // CACHE：安装期预缓存的核心资源（只随版本整体替换）
 // CACHE_RT：运行期按需缓存（页面/数据/静态笔记页），带条数上限防止无限增长
 const CACHE = 'blog-' + CACHE_VERSION;
@@ -17,7 +17,9 @@ const REQUIRED_ASSETS = [
   './index.html',
   './css/style.css',
   './js/app.js',
-  './js/data.js'
+  './js/data.js',
+  './vendor/marked.min.js',
+  './vendor/purify.min.js'
 ];
 
 // 可选资源：预缓存失败只降级（在线仍可用），不阻断安装

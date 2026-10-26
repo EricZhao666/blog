@@ -75,6 +75,41 @@ function loadGiscus(term) {
 // ============================================
 
 // Merge built-in posts with user-published posts
+// ============================================
+// Markdown → 安全 HTML（唯一渲染入口）
+// ============================================
+// marked 只负责「Markdown → HTML」，不做信任判断；
+// 所有不可信来源（文章正文、课程笔记、代码库导读、编辑器预览）都必须过 DOMPurify。
+// 允许规则与静态笔记生成器（gen_notes_pages.js）保持一致。
+const SANITIZE_CONFIG = {
+  ADD_ATTR: ['target', 'rel', 'data-lang', 'id', 'class'],
+  FORBID_TAGS: ['style', 'form', 'input', 'button', 'iframe', 'object', 'embed'],
+  FORBID_ATTR: ['style', 'srcset', 'formaction']
+};
+
+if (typeof DOMPurify !== 'undefined') {
+  DOMPurify.addHook('afterSanitizeAttributes', function (node) {
+    if (node.tagName === 'A' && node.getAttribute('href')) {
+      var href = node.getAttribute('href');
+      // 站外链接：新窗口打开并切断 window.opener
+      if (/^https?:/i.test(href) && href.indexOf(location.host) === -1) {
+        node.setAttribute('target', '_blank');
+        node.setAttribute('rel', 'noopener noreferrer');
+      }
+    }
+  });
+}
+
+function renderMarkdown(src) {
+  const raw = marked.parse(src || '');
+  if (typeof DOMPurify === 'undefined') {
+    // 净化库没加载时不冒险渲染原始 HTML（宁可显示转义文本）
+    console.warn('[security] DOMPurify 未加载，Markdown 输出已降级为纯文本');
+    return '<pre class="markdown-fallback">' + escapeHtml(String(src || '')) + '</pre>';
+  }
+  return DOMPurify.sanitize(raw, SANITIZE_CONFIG);
+}
+
 function getAllPosts() {
   // 统一按日期倒序（稳定排序：同日保持数据源原顺序），
   // 使首页 / 标签页 / 搜索结果与归档、上下篇、RSS 使用同一套顺序
@@ -667,7 +702,7 @@ function renderPost(id) {
     `;
   }
 
-  const html = marked.parse(post.content);
+  const html = renderMarkdown(post.content);
 
   return `
     <a href="#/" class="article-back">
@@ -783,7 +818,7 @@ function renderTags(tag) {
 
   let tagCloud = allTags.map(t => `
     <span class="tag-cloud-item ${tag === t.name ? 'active' : ''}"
-          onclick="location.hash='#/tags/${encodeURIComponent(t.name)}'">
+          data-tag-link="${escapeHtml(t.name)}" role="button" tabindex="0">
       ${escapeHtml(t.name)}
       <span class="tag-count">(${t.count})</span>
     </span>
@@ -974,12 +1009,12 @@ function renderCourses() {
   // Category filter
   const categoryOrder = COURSE_CATEGORY_ORDER;
   html += '<div class="category-filter">';
-  html += `<span class="category-chip ${!activeCategory ? 'active' : ''}" onclick="setCategory(null)">全部</span>`;
+  html += `<span class="category-chip ${!activeCategory ? 'active' : ''}" data-category="" role="button" tabindex="0">全部</span>`;
   for (const cat of categoryOrder) {
     const count = base.filter(c => c.category === cat).length;
     if (count > 0) {
-      html += `<span class="category-chip ${activeCategory === cat ? 'active' : ''}" onclick="setCategory('${cat}')">
-        ${getCategoryIcon(cat)} ${cat}
+      html += `<span class="category-chip ${activeCategory === cat ? 'active' : ''}" data-category="${escapeHtml(cat)}" role="button" tabindex="0">
+        ${getCategoryIcon(cat)} ${escapeHtml(cat)}
         <span class="chip-count">${count}</span>
       </span>`;
     }
@@ -1157,7 +1192,7 @@ function renderCourseNotes(courseId) {
   if (typeof COURSE_NOTES === 'undefined' || !COURSE_NOTES[courseId]) return '';
   const entry = COURSE_NOTES[courseId];
   const summary = entry.summary ? `<p class="course-notes-summary">${escapeHtml(entry.summary)}</p>` : '';
-  const body = entry.notes ? `<div class="markdown-body">${marked.parse(entry.notes)}</div>` : '';
+  const body = entry.notes ? `<div class="markdown-body">${renderMarkdown(entry.notes)}</div>` : '';
   const staticPage = (typeof NOTE_PAGES !== 'undefined' && NOTE_PAGES[courseId]) ? NOTE_PAGES[courseId] : null;
   const permalink = staticPage
     ? `<a class="notes-permalink" href="${staticPage}" title="可被搜索引擎收录、便于分享的静态版本">🔗 静态页</a>`
@@ -1262,7 +1297,7 @@ function renderCodeDetail(libId) {
           <span class="meta-item">💾 ${lib.totalSizeFormatted}</span>
         </div>
         ${lib.description ? `<div class="course-description">${escapeHtml(lib.description)}</div>` : ''}
-        ${lib.guide ? `<div class="code-lib-guide"><div class="code-lib-guide-title">📖 代码库导读</div>${marked.parse(lib.guide)}</div>` : ''}
+        ${lib.guide ? `<div class="code-lib-guide"><div class="code-lib-guide-title">📖 代码库导读</div>${renderMarkdown(lib.guide)}</div>` : ''}
       </div>
   `;
 
@@ -1415,13 +1450,13 @@ function renderPapersTab() {
       <input type="text" id="paperSearchInput" placeholder="搜索论文标题/作者/摘要..." class="search-input" value="${escapeHtml(paperSearchQuery)}">
     </div>
     <div class="category-filter">
-      <span class="category-chip ${!activePaperCategory ? 'active' : ''}" onclick="setPaperCategory(null)">全部</span>
+      <span class="category-chip ${!activePaperCategory ? 'active' : ''}" data-paper-category="" role="button" tabindex="0">全部</span>
   `;
 
   for (const cat of categoryOrder) {
     if (PAPER_CATEGORIES[cat]) {
-      html += `<span class="category-chip ${activePaperCategory === cat ? 'active' : ''}" onclick="setPaperCategory('${cat}')">
-        ${getPaperCategoryIcon(cat)} ${cat}
+      html += `<span class="category-chip ${activePaperCategory === cat ? 'active' : ''}" data-paper-category="${escapeHtml(cat)}" role="button" tabindex="0">
+        ${getPaperCategoryIcon(cat)} ${escapeHtml(cat)}
         <span class="chip-count">${PAPER_CATEGORIES[cat].count}</span>
       </span>`;
     }
@@ -1902,7 +1937,7 @@ function updateEditorPreview() {
   if (!content || !preview) return;
   var text = content.value || '';
   try {
-    preview.innerHTML = marked.parse(text);
+    preview.innerHTML = renderMarkdown(text);
     enhanceCodeBlocks(preview);
     highlightIn(preview);
   } catch (e) {
@@ -2488,6 +2523,34 @@ if ('serviceWorker' in navigator) {
 }
 
 // Skip link：跳到主内容（不能用 #app 锚点，会被 hash 路由当成页面路由）
+// ============================================
+// 分类 / 标签点击：事件委托，不再把数据拼进内联 onclick
+// ============================================
+(function initDelegatedNav() {
+  function pick(target) {
+    if (!target || !target.closest) return null;
+    return target.closest('[data-category],[data-paper-category],[data-tag-link]');
+  }
+  document.addEventListener('click', function (e) {
+    const el = pick(e.target);
+    if (!el) return;
+    if (el.hasAttribute('data-category')) {
+      if (typeof setCategory === 'function') setCategory(el.getAttribute('data-category') || null);
+    } else if (el.hasAttribute('data-paper-category')) {
+      if (typeof setPaperCategory === 'function') setPaperCategory(el.getAttribute('data-paper-category') || null);
+    } else {
+      location.hash = '#/tags/' + encodeURIComponent(el.getAttribute('data-tag-link') || '');
+    }
+  });
+  document.addEventListener('keydown', function (e) {
+    if (e.key !== 'Enter' && e.key !== ' ') return;
+    const el = pick(e.target);
+    if (!el) return;
+    e.preventDefault();
+    el.click();
+  });
+})();
+
 (function initSkipLink() {
   const skip = document.getElementById('skipLink');
   if (!skip) return;
