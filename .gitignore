@@ -18,6 +18,11 @@ desktop.ini
 tests/reports/
 tests/browser/artifacts/
 
+# 性能基线的临时产物与 Lighthouse 原始报告（体积大；精简汇总见 tests/perf/reports/lighthouse-summary.json）
+tests/perf/tmp/
+tests/perf/reports/lighthouse/
+tests/perf/reports/_*.json
+
 # Python cache
 __pycache__/
 
