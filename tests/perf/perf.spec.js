@@ -48,7 +48,7 @@ const TBT_TAIL_MS = 2000;      // TBT 近似窗口尾部
 const SEARCH_STABLE_MS = 1200; // 搜索渲染稳定判定
 const THIRD_PARTY_BLOCK = ['*giscus.app*'];
 
-const ALL_SCENARIOS = ['cold-home', 'warm-home', 'long-post', 'search'];
+const ALL_SCENARIOS = ['cold-home', 'warm-home', 'long-post', 'post-lazy', 'search'];
 const ALL_CONFIGS = ['desktop', 'mobile'];
 
 // ---------------------------------------------------------------- 工具函数
@@ -118,6 +118,12 @@ function longestPostId() {
   const fn = new Function(src + '\nreturn { POSTS: POSTS, USER_POSTS: typeof USER_POSTS === "undefined" ? [] : USER_POSTS };');
   const { POSTS, USER_POSTS } = fn();
   const all = POSTS.concat(USER_POSTS || []);
+  // Batch 6B-2 起正文在 data/posts/<id>.md，长度需要从正文文件读，保证新旧两版选中同一篇
+  all.forEach((p) => {
+    if (typeof p.content === 'string') return;
+    const f = path.join(ROOT, 'data', 'posts', p.id + '.md');
+    if (fs.existsSync(f)) p.content = fs.readFileSync(f, 'utf8');
+  });
   const sorted = all.slice().sort((a, b) => (b.content || '').length - (a.content || '').length);
   return { id: sorted[0].id, title: sorted[0].title, contentChars: (sorted[0].content || '').length, totalPosts: all.length };
 }
@@ -399,6 +405,39 @@ async function routeSwitchFn(hash) {
   };
 }
 
+// Batch 6B-2：从首页点进文章（SPA 路由，正文按需加载）→ 正文可读时刻
+async function openPostFn(arg) {
+  const t0 = performance.now();
+  const app = document.getElementById('app');
+  if (!app) return { ok: false, error: 'no #app' };
+  let mutations = 0;
+  const obs = new MutationObserver(() => { mutations++; });
+  obs.observe(app, { childList: true, subtree: true });
+  location.hash = '#/post/' + arg.id;
+
+  const deadline = t0 + 30000;
+  for (;;) {
+    const body = document.querySelector('#app .article-detail-body');
+    if (body && body.textContent.trim().length > 200) {
+      const readableMs = Math.round((performance.now() - t0) * 100) / 100;
+      await new Promise(r => requestAnimationFrame(() => requestAnimationFrame(r)));
+      obs.disconnect();
+      return {
+        ok: true,
+        readableMs: readableMs,
+        paintMs: Math.round((performance.now() - t0) * 100) / 100,
+        chars: body.textContent.length,
+        mutations: mutations
+      };
+    }
+    if (performance.now() > deadline) {
+      obs.disconnect();
+      return { ok: false, error: 'timeout', readableMs: null, mutations: mutations };
+    }
+    await new Promise(r => setTimeout(r, 20));
+  }
+}
+
 // 搜索测量：一次完整的输入事件 → 结果渲染（含 180ms 防抖），返回首帧/最终帧时间
 async function searchFn(arg) {
   const keyword = arg.keyword;
@@ -411,9 +450,19 @@ async function searchFn(arg) {
 
   // 首次输入会触发 courses/papers/notes 懒加载：必须等到数据真正就绪并完成补渲染，
   // 否则会把「懒加载补齐」算到下一次输入头上。
+  // 正文语料（Batch 6B-2 拆出来后是独立的 search-index.json）也算"数据到齐"的一部分：
+  // 拆分前的版本 POSTS 自带 content，这里恒为 true，因此新旧两版可用同一套测量。
+  const postBodiesReady = () => {
+    try {
+      return typeof POSTS === 'undefined' || POSTS.every(p => typeof p.content === 'string');
+    } catch (e) {
+      return false;
+    }
+  };
   const dataReady = () => {
     try {
-      return typeof COURSES !== 'undefined' && typeof PAPERS !== 'undefined' && typeof COURSE_NOTES !== 'undefined';
+      return typeof COURSES !== 'undefined' && typeof PAPERS !== 'undefined' &&
+        typeof COURSE_NOTES !== 'undefined' && postBodiesReady();
     } catch (e) {
       return false;
     }
@@ -501,6 +550,10 @@ async function microFn(arg) {
     sanitizeConfigAvailable: typeof SANITIZE_CONFIG !== 'undefined'
   };
 
+  // Batch 6B-2：正文按需加载后，先取回正文，否则 renderPost 基准测到的是加载态
+  if (post && typeof loadPostBody === 'function') {
+    try { await loadPostBody(post.id); } catch (e) { out.meta.bodyLoadError = String(e && e.message); }
+  }
   if (typeof renderHome === 'function') out.bench.renderHome = bench(() => renderHome(), 7);
   if (post && typeof renderPost === 'function') out.bench.renderPost = bench(() => renderPost(post.id), 7);
   if (post && typeof renderMarkdown === 'function') {
@@ -1081,6 +1134,112 @@ async function runLongPost(config, deps, opt) {
   };
 }
 
+// Batch 6B-2：文章正文按需加载（首次打开 / 重复打开 / 离线重开）
+async function runPostLazy(config, deps, opt) {
+  const samples = [];
+  let cacheState = null;
+  const postId = opt.post.id;
+  for (let rep = 1; rep <= opt.repeat; rep++) {
+    const bag = { errors: [] };
+    const startedAt = new Date().toISOString();
+    const ctx = await newContextFor(deps.browser, config, deps);
+    let sample;
+    try {
+      const page = await ctx.newPage();
+      attachDiagnostics(page, bag);
+      const cdp = await attachCDP(page, config, bag);
+      const warm = await warmUp(page, config, deps);
+      if (!cacheState) cacheState = warm;
+
+      // 1) 首次打开：首页 → 文章（正文按需请求）
+      await page.evaluate(() => { location.hash = '#/'; });
+      await page.waitForTimeout(300);
+      const hitsBefore = snapshotHits(deps.state);
+      const pre = await cdpMetrics(cdp);
+      const probeMark = deps.probe ? deps.probe.mark() : null;
+      const first = await page.evaluate(openPostFn, { id: postId });
+      const mid = await cdpMetrics(cdp);
+      const hitsFirst = diffHits(hitsBefore, snapshotHits(deps.state));
+
+      // 2) 回首页再打开同一篇（正文已在内存 / 缓存里）
+      await page.evaluate(() => { location.hash = '#/'; });
+      await page.waitForTimeout(400);
+      const pre2 = await cdpMetrics(cdp);
+      const repeat = await page.evaluate(openPostFn, { id: postId });
+      const post2 = await cdpMetrics(cdp);
+
+      // 3) 离线重开已缓存文章（文档级重载，正文必须来自缓存）
+      await ctx.setOffline(true);
+      const t0 = Date.now();
+      let offlineLoad = null;
+      try {
+        const resp = await page.goto(config.baseUrl + PREFIX + '/#/post/' + postId, { waitUntil: 'load', timeout: 30000 });
+        offlineLoad = resp ? resp.status() : 0;
+      } catch (e) { offlineLoad = -1; }
+      const offlineReadable = await page.waitForFunction(() => {
+        const b = document.querySelector('#app .article-detail-body');
+        return !!b && b.textContent.trim().length > 200;
+      }, null, { timeout: 30000 }).then(() => true).catch(() => false);
+      const offlineMs = Date.now() - t0;
+      await ctx.setOffline(false);
+
+      const bodyBytes = (deps.probe && probeMark != null)
+        ? deps.probe.since(probeMark).filter(r => r.path.indexOf('/data/posts/') !== -1).reduce((s, r) => s + r.bytes, 0)
+        : null;
+      const d1 = resolveCdp(pre, mid).values;
+      const d2 = resolveCdp(pre2, post2).values;
+
+      sample = {
+        rep,
+        scenario: 'post-lazy',
+        config: config.id,
+        startedAt,
+        ok: !!(first.ok && repeat.ok),
+        error: first.error || repeat.error || null,
+        metrics: {
+          postFirstReadableMs: first.readableMs,
+          postFirstPaintMs: first.paintMs,
+          postFirstChars: first.chars,
+          postRepeatReadableMs: repeat.readableMs,
+          postRepeatPaintMs: repeat.paintMs,
+          postBodyBytes: bodyBytes,
+          postFirstScriptMs: d1 ? d1.ScriptDuration : null,
+          postRepeatScriptMs: d2 ? d2.ScriptDuration : null,
+          postServerRequests: Object.keys(hitsFirst).reduce((s, k) => s + hitsFirst[k], 0),
+          offlinePostStatus: offlineLoad,
+          offlinePostReadable: offlineReadable,
+          offlinePostReadableMs: offlineMs
+        },
+        sw: { controller: true },
+        serverHits: hitsFirst,
+        post: { first, repeat },
+        extra: { warmVerified: warm.warmVerified, postId, offlineReadable: offlineReadable },
+        errors: bag.errors.slice(0, 20)
+      };
+    } catch (e) {
+      sample = failedSample('post-lazy', config, rep, e, bag);
+    }
+    samples.push(sample);
+    await ctx.close();
+    if (!opt.quiet) {
+      console.log('    post-lazy/' + config.id + ' rep ' + rep + '/' + opt.repeat + (sample.ok
+        ? ' ok first=' + sample.metrics.postFirstReadableMs + 'ms repeat=' + sample.metrics.postRepeatReadableMs + 'ms offline=' + sample.metrics.offlinePostReadableMs + 'ms'
+        : ' FAIL: ' + sample.error));
+    }
+  }
+  return {
+    samples,
+    cacheState: cacheState ? {
+      mode: 'warm',
+      serviceWorker: '已注册并接管（预热后从首页点进文章）',
+      warmVerified: cacheState.warmVerified,
+      coreCacheName: cacheState.coreCacheName,
+      coreEntryCount: cacheState.coreEntryCount,
+      missingRequired: cacheState.missingRequired
+    } : null
+  };
+}
+
 async function runSearch(config, deps, opt) {
   const samples = [];
   let cacheState = null;
@@ -1162,6 +1321,7 @@ const RUNNERS = {
   'cold-home': runColdHome,
   'warm-home': runWarmHome,
   'long-post': runLongPost,
+  'post-lazy': runPostLazy,
   'search': runSearch
 };
 
@@ -1181,9 +1341,14 @@ const SCENARIO_META = {
     description: '预热后整页重载最长的一篇文章（Markdown + DOMPurify 渲染），并测量首页↔文章的 SPA 路由切换耗时。',
     url: '#/post/<id>'
   },
+  'post-lazy': {
+    label: 'E. 文章正文按需加载',
+    description: '预热后从首页点进最长的一篇文章：首次打开触发正文请求，重复打开复用内存/缓存，最后离线重开同一篇。',
+    url: '#/post/<id>'
+  },
   'search': {
     label: 'D. 全局搜索首次/重复输入',
-    description: '预热后输入固定关键词：首次输入会触发 courses/papers/notes 懒加载，重复输入复用已加载数据。',
+    description: '预热后输入固定关键词：首次输入会触发 courses/papers/notes 懒加载（6B-2 起还包括正文搜索语料），重复输入复用已加载数据。',
     url: HOME + ' + #searchInput'
   }
 };
@@ -1224,7 +1389,19 @@ const METRIC_META = {
   searchRepeatFinalMs: { label: '搜索重复输入：最终渲染稳定时间', unit: 'ms', basis: 'measured' },
   searchRepeatRenderCount: { label: '搜索重复输入：DOM 重绘次数', unit: 'count', basis: 'measured' },
   searchRepeatLongTaskMs: { label: '搜索重复输入：长任务阻塞时间', unit: 'ms', basis: 'calculated' },
-  searchRepeatScriptMs: { label: '搜索重复输入：JS 执行时间', unit: 'ms', basis: 'measured' }
+  searchRepeatScriptMs: { label: '搜索重复输入：JS 执行时间', unit: 'ms', basis: 'measured' },
+  postFirstReadableMs: { label: '首次打开文章：正文可读时间（SPA 切换起算）', unit: 'ms', basis: 'measured' },
+  postFirstPaintMs: { label: '首次打开文章：正文绘制完成（双 rAF）', unit: 'ms', basis: 'measured' },
+  postFirstChars: { label: '首次打开文章：正文可见字符数', unit: 'count', basis: 'measured' },
+  postRepeatReadableMs: { label: '重复打开文章：正文可读时间', unit: 'ms', basis: 'measured' },
+  postRepeatPaintMs: { label: '重复打开文章：正文绘制完成（双 rAF）', unit: 'ms', basis: 'measured' },
+  postBodyBytes: { label: '首次打开文章：正文传输字节（data/posts/*.md）', unit: 'bytes', basis: 'measured' },
+  postFirstScriptMs: { label: '首次打开文章：JS 执行时间', unit: 'ms', basis: 'measured' },
+  postRepeatScriptMs: { label: '重复打开文章：JS 执行时间', unit: 'ms', basis: 'measured' },
+  postServerRequests: { label: '首次打开文章：服务端请求数', unit: 'count', basis: 'measured' },
+  offlinePostStatus: { label: '离线重开文章：文档状态码', unit: 'count', basis: 'measured' },
+  offlinePostReadable: { label: '离线重开文章：正文是否可读', unit: 'bool', basis: 'measured' },
+  offlinePostReadableMs: { label: '离线重开文章：正文可读时间', unit: 'ms', basis: 'measured' }
 };
 
 function summarize(samples) {
@@ -1322,6 +1499,7 @@ function printSummary(baseline) {
     'cold-home': ['fcpMs', 'lcpMs', 'cls', 'loadMs', 'scriptMs', 'tbtMs', 'requestCount', 'encodedBytes', 'serverRequestCount'],
     'warm-home': ['fcpMs', 'lcpMs', 'cls', 'loadMs', 'scriptMs', 'tbtMs', 'requestCount', 'encodedBytes', 'serverRequestCount', 'networkBytes', 'swCacheEntries'],
     'long-post': ['fcpMs', 'lcpMs', 'loadMs', 'scriptMs', 'tbtMs', 'encodedBytes', 'routeRenderMs', 'routePaintMs', 'routeBackRenderMs'],
+    'post-lazy': ['postFirstReadableMs', 'postFirstPaintMs', 'postBodyBytes', 'postServerRequests', 'postFirstScriptMs', 'postRepeatReadableMs', 'offlinePostReadableMs'],
     'search': ['searchFirstRenderMs', 'searchFirstFinalMs', 'searchLazyBytes', 'searchRepeatRenderMs', 'searchRepeatScriptMs']
   };
   console.log('\n===== 中位数（最小值 ~ 最大值） =====');

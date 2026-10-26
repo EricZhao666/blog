@@ -1876,6 +1876,35 @@ main {
   margin-bottom: 4px;
 }
 
+/* 正文检索语料按需加载时的说明（Batch 6B-2） */
+.search-hint {
+  color: var(--color-text-muted);
+  font-size: 0.8rem;
+  margin: 0 0 18px;
+  padding: 6px 10px;
+  border-left: 3px solid var(--color-border);
+  background: var(--color-bg-soft, transparent);
+}
+
+/* 文章正文加载态 / 失败重试 */
+.article-loading .article-detail-title {
+  margin-bottom: 8px;
+}
+
+.retry-btn {
+  font: inherit;
+  color: var(--color-primary, #2563eb);
+  background: none;
+  border: 1px solid currentColor;
+  border-radius: 6px;
+  padding: 4px 12px;
+  cursor: pointer;
+}
+
+.retry-btn:hover {
+  background: rgba(37, 99, 235, 0.08);
+}
+
 /* ============================================
    Series Navigation
    ============================================ */

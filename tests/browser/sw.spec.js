@@ -24,6 +24,16 @@ const SW_VER = (function () {
 const CORE_NAME = 'blog-' + SW_VER;
 const RT_NAME = 'blog-rt-' + SW_VER;
 
+// Batch 6B-2：从 js/data.js 取前两个文章 id（正文按需加载用例要用真实存在的 id）
+const firstPostIds = (function () {
+  const src = fs.readFileSync(path.join(ROOT, 'js', 'data.js'), 'utf8');
+  const ids = [];
+  const re = /id:\s*'([^']+)'/g;
+  let m;
+  while ((m = re.exec(src)) && ids.length < 3) ids.push(m[1]);
+  return ids;
+})();
+
 let pass = 0, fail = 0;
 const results = [];
 function check(name, cond, extra) {
@@ -361,6 +371,82 @@ async function main() {
       check('S14 首屏脚本慢时页面仍正常渲染（宁可等待，不混版）',
         status === 200 && rendered, status + ' / rendered=' + rendered);
       check('S14 慢脚本加载后仍是新版本（没有塞回旧缓存）', fetchedV2 === true);
+      await ctx.close();
+    }
+
+    // ------------------------------------------------ S15 首访首页不下载文章正文
+    // Batch 6B-2：正文改成 data/posts/<id>.md 按需加载，首页只加载元数据。
+    {
+      reset();
+      const ctx = await newContext(browser);
+      const page = await ctx.newPage();
+      await gotoApp(page, base);
+      await waitController(page);
+      await sleep(1500);
+      const bodyHits = Object.keys(state.hits).filter(k => k.indexOf('/data/posts/') === 0);
+      const idxHits = state.hits['/data/search-index.json'] || 0;
+      check('S15 首访不请求任何文章正文', bodyHits.length === 0, bodyHits.join(',') || '0 个');
+      check('S15 首访不请求全文搜索语料', idxHits === 0, idxHits);
+      const homeText = await page.evaluate(() => document.getElementById('app').textContent.length);
+      check('S15 首页列表仍然完整渲染', homeText > 500, homeText + ' 字符');
+      await ctx.close();
+    }
+
+    // ------------------------------------------------ S16 进入文章后正文可离线复用
+    {
+      reset();
+      const ctx = await newContext(browser);
+      const page = await ctx.newPage();
+      await gotoApp(page, base);
+      await waitController(page);
+      const postId = firstPostIds[0];
+      await page.evaluate((id) => { location.hash = '#/post/' + id; }, postId);
+      const rendered = await page.waitForFunction(() => {
+        const b = document.querySelector('#app .article-detail-body');
+        return !!b && b.textContent.trim().length > 50;
+      }, null, { timeout: 15000 }).then(() => true).catch(() => false);
+      check('S16 进入文章后正文渲染完成', rendered, postId);
+      const keys = await cacheKeys(page);
+      const rt = keys[RT_NAME] || [];
+      check('S16 正文进入运行期缓存', rt.some(p => p.endsWith('/data/posts/' + postId + '.md')),
+        rt.filter(p => p.indexOf('/data/posts/') !== -1).length + ' 篇');
+
+      await ctx.setOffline(true);
+      const resp = await page.reload({ waitUntil: 'load', timeout: 15000 }).catch(() => null);
+      const offlineRendered = await page.waitForFunction(() => {
+        const b = document.querySelector('#app .article-detail-body');
+        return !!b && b.textContent.trim().length > 50;
+      }, null, { timeout: 15000 }).then(() => true).catch(() => false);
+      check('S16 已访问文章离线仍可阅读', !!resp && offlineRendered, resp ? resp.status() : 'reload failed');
+      await ctx.setOffline(false);
+      await ctx.close();
+    }
+
+    // ------------------------------------------------ S17 未缓存文章离线时给出重试入口
+    {
+      reset();
+      const ctx = await newContext(browser);
+      const page = await ctx.newPage();
+      await gotoApp(page, base);
+      await waitController(page);
+      const freshId = firstPostIds[1];
+      await ctx.setOffline(true);
+      await page.evaluate((id) => { location.hash = '#/post/' + id; }, freshId);
+      const hasRetry = await page.waitForSelector('#app [data-retry-post]', { timeout: 15000 })
+        .then(() => true).catch(() => false);
+      const bodyText = await page.evaluate(() => document.getElementById('app').textContent);
+      check('S17 未缓存文章离线时给出明确失败提示', hasRetry && /加载失败/.test(bodyText),
+        bodyText.trim().slice(0, 40).replace(/\s+/g, ' '));
+      check('S17 离线失败时不显示空白页或其它文章',
+        !/article-detail-body/.test(await page.evaluate(() => document.getElementById('app').innerHTML)));
+
+      await ctx.setOffline(false);
+      await page.click('#app [data-retry-post]');
+      const recovered = await page.waitForFunction(() => {
+        const b = document.querySelector('#app .article-detail-body');
+        return !!b && b.textContent.trim().length > 50;
+      }, null, { timeout: 15000 }).then(() => true).catch(() => false);
+      check('S17 恢复网络后点“重新加载”能读到正文', recovered, freshId);
       await ctx.close();
     }
 

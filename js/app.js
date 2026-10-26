@@ -141,7 +141,10 @@ function readingTime(content) {
 }
 
 function getExcerpt(post) {
-  return post.excerpt || post.content.replace(/[#*`>\-\[\]]/g, '').slice(0, 120) + '...';
+  if (post.excerpt) return post.excerpt;
+  // 拆分后正文可能还没加载：此时宁可留空，也不要抛错或显示 undefined
+  const content = cachedPostContent(post) || '';
+  return content ? content.replace(/[#*`>\-\[\]]/g, '').slice(0, 120) + '...' : '';
 }
 
 function getAllTags() {
@@ -386,6 +389,101 @@ function renderLoadError(label) {
     '<p><a href="#" onclick="location.reload();return false;">点击重试</a></p></div>';
 }
 
+// ============================================
+// 文章正文 / 全文搜索语料：按需加载（Batch 6B-2）
+// ============================================
+// 首页只需要 js/data.js 里的元数据；正文按 id 单独存放（data/posts/<id>.md），
+// 全文搜索语料单独一份（data/search-index.json），都只在真正需要时才请求。
+const POST_BODY_DIR = 'data/posts/';
+const SEARCH_INDEX_URL = 'data/search-index.json';
+const _postBodies = Object.create(null);         // id -> 正文字符串
+const _postBodyPromises = Object.create(null);   // id -> 进行中的请求（失败即清除，便于重试）
+let _searchDocsPromise = null;
+let _searchDocsReady = false;
+let _searchDocsError = false;
+
+function postBodyUrl(id) {
+  return POST_BODY_DIR + encodeURIComponent(id) + '.md';
+}
+
+// 同源文本请求：优先 fetch；jsdom 等没有 fetch 的环境退回 XHR
+function requestText(url) {
+  if (typeof fetch === 'function') {
+    return fetch(url, { credentials: 'same-origin' }).then(function (resp) {
+      if (!resp.ok) throw new Error('HTTP ' + resp.status);
+      return resp.text();
+    });
+  }
+  return new Promise(function (resolve, reject) {
+    const xhr = new XMLHttpRequest();
+    xhr.open('GET', url, true);
+    xhr.onload = function () {
+      if (xhr.status >= 200 && xhr.status < 300) resolve(xhr.responseText);
+      else reject(new Error('HTTP ' + xhr.status));
+    };
+    xhr.onerror = function () { reject(new Error('network error')); };
+    xhr.send();
+  });
+}
+
+function requestJson(url) {
+  return requestText(url).then(function (text) { return JSON.parse(text); });
+}
+
+// 内存里已有的正文：用户文章自带 content；其它文章可能来自正文请求或搜索语料
+function cachedPostContent(post) {
+  if (!post) return null;
+  if (typeof post.content === 'string') return post.content;
+  return _postBodies[post.id] == null ? null : _postBodies[post.id];
+}
+
+function loadPostBody(id) {
+  if (_postBodies[id] != null) return Promise.resolve(_postBodies[id]);
+  if (_postBodyPromises[id]) return _postBodyPromises[id];
+  const task = requestText(postBodyUrl(id))
+    .then(function (text) {
+      _postBodies[id] = text;
+      delete _postBodyPromises[id];
+      return text;
+    })
+    .catch(function (err) {
+      delete _postBodyPromises[id];   // 允许再次点击重试
+      throw err;
+    });
+  _postBodyPromises[id] = task;
+  return task;
+}
+
+// 全文搜索语料：首次搜索才加载（约 107KB），后续搜索复用同一份
+function ensureSearchDocs() {
+  if (_searchDocsReady) return Promise.resolve();
+  if (_searchDocsPromise) return _searchDocsPromise;
+  _searchDocsPromise = requestJson(SEARCH_INDEX_URL)
+    .then(function (docs) {
+      // 把正文挂回内存对象：搜索/渲染逻辑与拆分前保持完全一致
+      getAllPosts().forEach(function (post) {
+        if (post.content == null && docs && typeof docs[post.id] === 'string') {
+          post.content = docs[post.id];
+        }
+      });
+      _searchDocsReady = true;
+      _searchDocsError = false;
+    })
+    .catch(function (err) {
+      _searchDocsPromise = null;      // 下次输入会重试
+      _searchDocsError = true;
+      console.warn('搜索语料加载失败:', err.message);
+      throw err;
+    });
+  return _searchDocsPromise;
+}
+
+// 阅读时长：优先用构建期算好的值（与 readingTime 等价），没有正文时也不会算错
+function postMinutes(post) {
+  if (post && typeof post.readingMinutes === 'number') return post.readingMinutes;
+  return readingTime(cachedPostContent(post) || '');
+}
+
 // ---- 代码高亮（懒加载，只在出现代码块时下载 55KB 精简包）----
 let _hljsPromise = null;
 function ensureHighlight() {
@@ -586,7 +684,7 @@ function renderHome() {
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
             <circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>
           </svg>
-          ${readingTime(post.content)} 分钟阅读
+          ${postMinutes(post)} 分钟阅读
         </span>
         <div class="article-card-tags">
           ${post.tags.map(t => `<span class="tag" onclick="event.stopPropagation(); location.hash='#/tags/${encodeURIComponent(t)}'">${escapeHtml(t)}</span>`).join('')}
@@ -630,6 +728,12 @@ function renderGlobalSearch(query) {
 
   const total = posts.length + courses.length + papers.length + materials.length;
   let html = `<div class="search-results-count">找到 ${total} 条与 “${escapeHtml(query)}” 相关的结果</div>`;
+  // 正文语料是首次搜索才加载的：明确告诉用户当前结果只覆盖标题/摘要/标签
+  if (!_searchDocsReady) {
+    html += '<div class="search-hint">' + (_searchDocsError
+      ? '正文检索暂不可用（当前只匹配标题 / 摘要 / 标签），重新输入可重试'
+      : '正在加载正文检索语料，结果会随后补全…') + '</div>';
+  }
 
   if (posts.length) {
     html += `<div class="search-section-title">📝 文章 (${posts.length})</div>`;
@@ -690,19 +794,45 @@ function renderGlobalSearch(query) {
   return html;
 }
 
-function renderPost(id) {
-  const post = getAllPosts().find(p => p.id === id);
-  if (!post) {
-    return `
+function renderPostMissing() {
+  return `
       <div class="empty-state">
         <div class="empty-state-icon">📄</div>
         <p>文章不存在</p>
         <p><a href="#/">返回首页</a></p>
       </div>
     `;
-  }
+}
 
-  const html = renderMarkdown(post.content);
+// 正文还没到：先给出标题与明确的加载态，避免空白页
+function renderPostLoading(post) {
+  const title = post ? `<h1 class="article-detail-title">${escapeHtml(post.title)}</h1>` : '';
+  return `
+      <div class="article-loading">
+        ${title}
+        <div class="empty-state">
+          <div class="empty-state-icon">⏳</div>
+          <p>正在加载文章正文…</p>
+        </div>
+      </div>
+    `;
+}
+
+// 正文加载失败：给出可重试的入口（重试按钮走事件委托）
+function renderPostError(id) {
+  return `
+      <div class="empty-state">
+        <div class="empty-state-icon">⚠️</div>
+        <p>文章正文加载失败，请检查网络后重试</p>
+        <p><button type="button" class="retry-btn" data-retry-post="${escapeHtml(id)}">重新加载</button>
+           <a href="#/">返回首页</a></p>
+      </div>
+    `;
+}
+
+// 有正文之后的文章详情渲染（原 renderPost 的主体）
+function renderPostView(post, content) {
+  const html = renderMarkdown(content);
 
   return `
     <a href="#/" class="article-back">
@@ -725,7 +855,7 @@ function renderPost(id) {
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
               <circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>
             </svg>
-            ${readingTime(post.content)} 分钟阅读
+            ${postMinutes(post)} 分钟阅读
           </span>
           <div class="article-card-tags">
             ${post.tags.map(t => `<span class="tag" onclick="location.hash='#/tags/${encodeURIComponent(t)}'">${escapeHtml(t)}</span>`).join('')}
@@ -744,6 +874,15 @@ function renderPost(id) {
       ${GISCUS_CONFIG.enabled ? '' : '<div class="giscus-hint">评论基于 GitHub Discussions（免费）。启用方法：在 <code>js/app.js</code> 顶部的 <code>GISCUS_CONFIG</code> 中填入 <code>repoId</code> 和 <code>categoryId</code>（在 <a href="https://giscus.app" target="_blank" rel="noopener">giscus.app</a> 配置后获取），并把 <code>enabled</code> 改为 <code>true</code>。详见「关于」页说明。</div>'}
     </div>
   `;
+}
+
+// 同步版本：正文已在内存里就直接出完整页面，否则给加载态（路由会异步补上）
+function renderPost(id) {
+  const post = getAllPosts().find(p => p.id === id);
+  if (!post) return renderPostMissing();
+  const content = cachedPostContent(post);
+  if (content == null) return renderPostLoading(post);
+  return renderPostView(post, content);
 }
 
 // 上一篇/下一篇（按日期）+ 基于标签重叠的相关推荐
@@ -2187,7 +2326,22 @@ async function router() {
       app.innerHTML = renderHome();
     } else if (hash.startsWith('/post/')) {
       const id = hash.slice('/post/'.length);
-      app.innerHTML = renderPost(id);
+      const post = getAllPosts().find(p => p.id === id);
+      if (!post || cachedPostContent(post) != null) {
+        app.innerHTML = renderPost(id);
+      } else {
+        // 正文按需加载：先给加载态，到齐后再渲染；期间路由若已切走则丢弃结果
+        app.innerHTML = renderPostLoading(post);
+        let bodyFailed = false;
+        try {
+          await loadPostBody(id);
+        } catch (err) {
+          bodyFailed = true;
+          console.warn('文章正文加载失败:', err && err.message);
+        }
+        if (token !== _routeToken) return;    // 快速切换路由：不要显示上一篇文章
+        app.innerHTML = bodyFailed ? renderPostError(id) : renderPost(id);
+      }
       loadGiscus(id);
     } else if (hash.startsWith('/tags')) {
       const parts = hash.split('/');
@@ -2373,19 +2527,52 @@ function isHomeRoute() {
   return h === '' || h === '#' || h === '#/';
 }
 
-bindLiveSearch('searchInput', (val) => {
+function applyGlobalSearch(val) {
   searchQuery = val;
   if (!isHomeRoute()) return;
   document.getElementById('app').innerHTML = renderHome();
-  if (val.trim() && (!dataReady('courses') || !dataReady('papers') || !dataReady('notes'))) {
-    const target = val.trim();
-    Promise.all([loadData('courses'), loadData('papers'), loadData('notes')]).then(function () {
-      if (!isHomeRoute()) return;
-      if (searchQuery.trim() === target) {
-        document.getElementById('app').innerHTML = renderHome();
-      }
-    });
+
+  const target = val.trim();
+  if (!target) return;
+  const needData = !dataReady('courses') || !dataReady('papers') || !dataReady('notes');
+  const needBodies = !_searchDocsReady;
+  if (!needData && !needBodies) return;
+
+  // 正文语料加载失败时降级为"仅标题/摘要/标签命中"，不阻断搜索
+  Promise.all([
+    loadData('courses'), loadData('papers'), loadData('notes'),
+    ensureSearchDocs().catch(function () { return null; })
+  ]).then(function () {
+    if (!isHomeRoute()) return;                 // 已经离开首页：不能覆盖当前路由
+    if (searchQuery.trim() !== target) return;  // 输入已变化：丢弃过时的异步结果
+    const box = document.getElementById('app');
+    if (!box) return;
+    box.innerHTML = renderHome();
+    // 重绘会换掉输入框，必须重新绑定，否则后续输入不再生效
+    bindLiveSearch('searchInput', applyGlobalSearch, 180);
+    const input = document.getElementById('searchInput');
+    if (input) { input.value = searchQuery; input.focus(); }
+  });
+}
+
+bindLiveSearch('searchInput', applyGlobalSearch);
+
+// 用户一旦聚焦搜索框（点/按 /），就先把正文语料预热起来：
+// 等 180ms 防抖 + 真正输入完通常还有几百毫秒，可以少等一会儿；失败不影响任何功能
+document.addEventListener('focusin', function (e) {
+  if (e.target && e.target.id === 'searchInput') {
+    ensureSearchDocs().catch(function () { return null; });
   }
+});
+
+// 正文加载失败后的"重新加载"：事件委托，避免把 id 拼进内联事件
+document.addEventListener('click', function (e) {
+  const btn = e.target && e.target.closest ? e.target.closest('[data-retry-post]') : null;
+  if (!btn) return;
+  e.preventDefault();
+  const id = btn.getAttribute('data-retry-post');
+  delete _postBodyPromises[id];
+  router();
 });
 
 // Mobile menu toggle

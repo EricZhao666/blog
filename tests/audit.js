@@ -98,6 +98,8 @@ server.listen(8131, async () => {
 
   // 预加载全部数据，避免路由等待
   await window.eval('Promise.all([loadData("courses"),loadData("notes"),loadData("papers"),loadData("codefiles")])');
+  // Batch 6B-2：正文改为按需加载，巡检前先把 18 篇正文取齐（等价于"用户逐篇都读过"）
+  await window.eval('Promise.all(POSTS.map(function (p) { return loadPostBody(p.id); }))');
 
   const routes = ['/', '/courses', '/papers', '/code', '/tags', '/projects', '/archive', '/about', '/links', '/editor', '/nope'];
   D.COURSES.forEach(c => routes.push('/course/' + encodeURIComponent(c.id)));
