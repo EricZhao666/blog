@@ -144,7 +144,8 @@ function parseArgs(argv) {
     diagnostics: true,
     quiet: false,
     swConfig: null,
-    swFile: null
+    swFile: null,
+    searchThink: 0
   };
   for (let i = 0; i < argv.length; i++) {
     const k = argv[i];
@@ -164,6 +165,7 @@ function parseArgs(argv) {
       case '--channel': a.channel = next(); break;
       case '--port': a.port = Number(next()); break;
       case '--proxy-port': a.proxyPort = Number(next()); break;
+      case '--search-think': a.searchThink = Number(next()); break;
       case '--no-diagnostics': a.diagnostics = false; break;
       case '--sw-config': a.swConfig = parseSwConfig(next()); break;
       case '--sw-file': a.swFile = next(); break;
@@ -487,10 +489,13 @@ async function searchFn(arg) {
 
   const marks = [];
   const obs = new MutationObserver(() => marks.push(performance.now()));
-  const t0 = performance.now();
   obs.observe(app, { childList: true });
 
   input.focus();
+  // 模拟"点了搜索框再想一下"：这段时间里聚焦预热（ensureSearchDocs）已在后台拉语料；
+  // t0 从真正开始输入算起，因此结论是"思考时间能抵消多少"，而非把等待算进搜索耗时。
+  if (arg.thinkMs) await new Promise(r => setTimeout(r, arg.thinkMs));
+  const t0 = performance.now();
   input.value = keyword;
   input.dispatchEvent(new Event('input', { bubbles: true }));
 
@@ -1276,7 +1281,7 @@ async function runSearch(config, deps, opt) {
       const pre = await cdpMetrics(cdp);
       const probeMark = deps.probe ? deps.probe.mark() : null;
 
-      const first = await page.evaluate(searchFn, { keyword: opt.keyword, expectLazy: true });
+      const first = await page.evaluate(searchFn, { keyword: opt.keyword, expectLazy: true, thinkMs: opt.searchThink });
       const mid = await cdpMetrics(cdp);
       const repeat = await page.evaluate(searchFn, { keyword: opt.keyword2, expectLazy: false });
       const post = await cdpMetrics(cdp);

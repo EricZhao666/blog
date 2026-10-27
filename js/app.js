@@ -498,20 +498,40 @@ function ensureHighlight() {
   return _hljsPromise;
 }
 
+// 高亮必须分帧：一篇文章可能有几十个代码块，一次性 highlightElement 在 4× CPU 下
+// 会连续占用主线程近 1 秒；这段时间里连"下一次导航"的 fetch 事件都派发不出去
+// （实测：文档级打开文章从 ~800ms 恶化到 ~2100ms）。分批 + 让出主线程即可消除。
+const HL_BATCH_SIZE = 4;
+
+function whenIdle(fn) {
+  if (typeof requestIdleCallback === 'function') {
+    requestIdleCallback(function () { fn(); }, { timeout: 200 });
+  } else {
+    setTimeout(fn, 16);
+  }
+}
+
 function highlightIn(root) {
   if (!root) return;
-  const blocks = root.querySelectorAll('pre code');
+  const blocks = Array.prototype.slice.call(root.querySelectorAll('pre code'));
   if (!blocks.length) return;
   ensureHighlight().then(function () {
     if (typeof hljs === 'undefined') return;
-    blocks.forEach(function (el) {
-      if (el.dataset.highlighted === 'yes') return;
-      const m = (el.className || '').match(/language-([\w+#-]+)/);
-      if (m && !hljs.getLanguage(m[1])) {
-        el.className = el.className.replace(/language-[\w+#-]+/, '').trim();
+    let i = 0;
+    const step = function () {
+      const end = Math.min(i + HL_BATCH_SIZE, blocks.length);
+      for (; i < end; i++) {
+        const el = blocks[i];
+        if (!el.isConnected || el.dataset.highlighted === 'yes') continue;
+        const m = (el.className || '').match(/language-([\w+#-]+)/);
+        if (m && !hljs.getLanguage(m[1])) {
+          el.className = el.className.replace(/language-[\w+#-]+/, '').trim();
+        }
+        try { hljs.highlightElement(el); } catch (e) {}
       }
-      try { hljs.highlightElement(el); } catch (e) {}
-    });
+      if (i < blocks.length) whenIdle(step);
+    };
+    step();
   });
 }
 
@@ -2559,12 +2579,16 @@ function applyGlobalSearch(val) {
 
 bindLiveSearch('searchInput', applyGlobalSearch);
 
-// 用户一旦聚焦搜索框（点/按 /），就先把正文语料预热起来：
-// 等 180ms 防抖 + 真正输入完通常还有几百毫秒，可以少等一会儿；失败不影响任何功能
+// 用户一旦聚焦搜索框（点/按 /），就把搜索需要的数据全部预热：
+// 首个搜索的耗时几乎全在"课程/论文/笔记 157KB + 正文语料 107KB"上，
+// 而"点开搜索框"到"真正敲字"通常有几百毫秒，用来并行拉取正好。
+// 失败不影响任何功能（下次输入仍会重试）。
 document.addEventListener('focusin', function (e) {
-  if (e.target && e.target.id === 'searchInput') {
-    ensureSearchDocs().catch(function () { return null; });
-  }
+  if (!e.target || e.target.id !== 'searchInput') return;
+  loadData('courses');
+  loadData('papers');
+  loadData('notes');
+  ensureSearchDocs().catch(function () { return null; });
 });
 
 // 正文加载失败后的"重新加载"：事件委托，避免把 id 拼进内联事件
