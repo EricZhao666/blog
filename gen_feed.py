@@ -21,6 +21,7 @@ import argparse
 import datetime
 import json
 import os
+import re
 import sys
 
 SITE = 'https://ericzhao666.github.io/blog'
@@ -434,6 +435,8 @@ def parse_args(argv=None):
     ap.add_argument('--user-posts', default=DEFAULT_USER_POSTS, help='user-posts.js 路径')
     ap.add_argument('--out', default=DEFAULT_OUT, help='输出 feed.xml 路径')
     ap.add_argument('--now', help='固定 lastBuildDate（ISO8601），用于可重复生成')
+    ap.add_argument('--check', action='store_true',
+                    help='只校验：重新生成并与现有 feed.xml 比较（忽略 lastBuildDate），不一致返回 1')
     return ap.parse_args(argv)
 
 
@@ -453,6 +456,21 @@ def main(argv=None):
 
     for pid in duplicates:
         print('[WARN] 重复文章 id 已忽略后出现的那条: %s' % pid, file=sys.stderr)
+
+    if args.check:
+        # CI 用：忘记重新生成 feed.xml（新增/删除文章、改标题或摘要）必须让流水线失败。
+        if not os.path.exists(args.out):
+            print('[FAIL] 缺少 %s（请运行 python gen_feed.py）' % args.out, file=sys.stderr)
+            return 1
+        with open(args.out, encoding='utf-8') as f:
+            on_disk = f.read()
+        stamp = re.compile(r'<lastBuildDate>[^<]*</lastBuildDate>')
+        same = stamp.sub('<lastBuildDate/>', on_disk) == stamp.sub('<lastBuildDate/>', feed)
+        if not same:
+            print('[FAIL] %s 与当前数据不一致（请运行 python gen_feed.py 重新生成）' % args.out, file=sys.stderr)
+            return 1
+        print('OK: feed.xml 与 js/data.js + js/user-posts.js 一致（%d 条）' % len(posts))
+        return 0
 
     write_atomic(args.out, feed)
     print('feed.xml generated: %d posts -> %s' % (len(posts), args.out))

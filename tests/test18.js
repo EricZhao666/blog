@@ -126,6 +126,29 @@ function main() {
     POSTS.every(p => p.title && /^\d{4}-\d{2}-\d{2}$/.test(p.date) && p.excerpt && p.tags.length > 0),
     tags.size + ' 个不同标签');
 
+  // ---- 部署完整性：SW 里声明的首屏/必需资源必须真的存在（防止"忘了部署某个文件"）
+  const swSrc = fs.readFileSync(path.join(ROOT, 'sw.js'), 'utf8');
+  const listOf = (name) => {
+    const m = new RegExp('const ' + name + ' = \\[([\\s\\S]*?)\\];').exec(swSrc);
+    // 清单里两种写法都有：'./index.html'（相对 SW 脚本）与 'css/style.css'（相对 scope）
+    return m ? (m[1].match(/['"]([^'"]+)['"]/g) || []).map(s => s.replace(/['"]/g, '')) : [];
+  };
+  const required = listOf('REQUIRED_ASSETS');
+  const firstScreen = listOf('FIRST_SCREEN_ASSETS');
+  const missingAssets = required.filter(rel => !fs.existsSync(path.join(ROOT, rel.replace(/^\.\//, ''))));
+  check('SW 安装期必需资源全部存在', required.length >= 6 && missingAssets.length === 0,
+    required.length + ' 项 / 缺失: ' + (missingAssets.join(',') || '0'));
+  check('SW 首屏资源全部存在', firstScreen.length >= 5 &&
+    firstScreen.every(rel => fs.existsSync(path.join(ROOT, rel))), firstScreen.join(','));
+
+  // ---- RSS 必须覆盖全部文章（新增/删除文章后忘记重新生成会在这里暴露）
+  const feed = fs.readFileSync(path.join(ROOT, 'feed.xml'), 'utf8');
+  const feedItems = (feed.match(/<item>/g) || []).length;
+  const missingInFeed = POSTS.filter(p => feed.indexOf('/#/post/' + p.id) === -1).map(p => p.id);
+  check('RSS 条目数与文章数一致且每篇都有链接',
+    feedItems === POSTS.length && missingInFeed.length === 0,
+    feedItems + ' 条 / 缺失: ' + (missingInFeed.join(',') || '0'));
+
   console.log('\n共 ' + (pass + fail) + ' 项，PASS ' + pass + '，FAIL ' + fail);
   if (fail) console.log('失败项：\n  - ' + failures.join('\n  - '));
   return fail ? 1 : 0;

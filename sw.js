@@ -11,7 +11,7 @@
 //   - vendor / 静态资源：stale-while-revalidate（先快后新）
 //   - 第三方（giscus 等）：不拦截
 // 每次发布请递增 CACHE_VERSION。
-const CACHE_VERSION = '2026-10-26-2';
+const CACHE_VERSION = '2026-10-27-1';
 // CACHE：安装期预缓存的核心资源（只随版本整体替换）
 // CACHE_RT：运行期按需缓存（页面/数据/静态笔记页），带条数上限防止无限增长
 const CACHE = 'blog-' + CACHE_VERSION;
@@ -192,6 +192,11 @@ function isAppShell(pathname) {
   try { scope = new URL(self.registration.scope).pathname; } catch (e) {}
   return pathname === '/' || pathname === '/index.html' ||
     pathname === scope || pathname === scope + 'index.html';
+}
+
+// 按需加载的文章数据（正文 / 搜索语料）：离线与重复打开都靠运行期缓存
+function isPostData(pathname) {
+  return pathname.indexOf('/data/posts/') !== -1 || /\/data\/search-index\.json$/.test(pathname);
 }
 
 // 首屏资源判定：返回用于缓存读写的相对 key，非首屏返回 null
@@ -441,6 +446,25 @@ self.addEventListener('fetch', function (e) {
   const key = firstScreenKey(url.pathname);
   if (key) {
     e.respondWith(firstScreenResponse(req, key, e));
+    return;
+  }
+
+  // 3.5) 文章正文与搜索语料：先给缓存、后台校验
+  //   它们是按需加载的大块数据，重复打开同一篇时没必要每次都等网络；
+  //   版本一致性仍由 CACHE_VERSION 换代保证（发版时整个 RT 缓存一起换掉），
+  //   后台回填保证第二次打开就是新内容。
+  if (isPostData(url.pathname)) {
+    e.respondWith(
+      matchAny(req).then(function (cached) {
+        const network = fetch(req).then(function (resp) {
+          if (resp && resp.ok) {
+            try { e.waitUntil(putRuntime(req, resp.clone())); } catch (err) {}
+          }
+          return resp;
+        }).catch(function () { return cached; });
+        return cached || network;
+      })
+    );
     return;
   }
 

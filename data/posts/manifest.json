@@ -171,11 +171,12 @@
     "sha256": "395089e282229a9e4372281aa5bfef22dbce561d5f41a51dfee8c936709e5bc7"
   },
   "source": {
-    "bytes": 111306,
+    "bytes": 8010,
     "contentChars": 66495,
+    "mode": "sync",
     "path": "js/data.js",
     "posts": 18,
-    "sha256": "5ad4aab66634148ed30548e21fe0b0bc48a8597af2ad4bb2e160b43a21379579"
+    "sha256": "ae985f24b94171deab45fd749a9dac1218232c094174ae274a9e86c6530ea552"
   },
   "tagOrder": [
     "具身智能",
@@ -195,5 +196,5 @@
     "深圳",
     "产线"
   ],
-  "version": 1
+  "version": 2
 }

@@ -406,17 +406,19 @@ function postBodyUrl(id) {
   return POST_BODY_DIR + encodeURIComponent(id) + '.md';
 }
 
-// 同源文本请求：优先 fetch；jsdom 等没有 fetch 的环境退回 XHR
+// 同源文本请求：优先 fetch；jsdom 等没有 fetch 的环境退回 XHR。
+// 一律先转成绝对 URL —— 相对地址在 Node 的 fetch 实现里会直接抛 "Failed to parse URL"。
 function requestText(url) {
+  const href = new URL(url, location.href).href;
   if (typeof fetch === 'function') {
-    return fetch(url, { credentials: 'same-origin' }).then(function (resp) {
+    return fetch(href, { credentials: 'same-origin' }).then(function (resp) {
       if (!resp.ok) throw new Error('HTTP ' + resp.status);
       return resp.text();
     });
   }
   return new Promise(function (resolve, reject) {
     const xhr = new XMLHttpRequest();
-    xhr.open('GET', url, true);
+    xhr.open('GET', href, true);
     xhr.onload = function () {
       if (xhr.status >= 200 && xhr.status < 300) resolve(xhr.responseText);
       else reject(new Error('HTTP ' + xhr.status));

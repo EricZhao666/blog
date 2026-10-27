@@ -233,6 +233,22 @@ const INIT_SCRIPT = `(() => {
     } catch (e2) { st.observerErrors.push('longtask: ' + e2.message); }
   }
   st.cachesAvailable = typeof caches !== 'undefined';
+  // 首张文章卡片出现的时间：首页 LCP 只反映页头（6A §8.3），这个指标才代表"内容可见"
+  st.firstCard = null;
+  try {
+    // 观察 documentElement：addInitScript 执行时 #app 还不存在，而 defer 脚本会在
+    // DOMContentLoaded 之前就把首页渲染出来 —— 只等 DOMContentLoaded 会漏掉首屏渲染。
+    const mo = new MutationObserver(() => {
+      if (st.firstCard != null) return;
+      if (document.querySelectorAll('#app .article-card').length > 5) {
+        st.firstCard = Math.round(performance.now() * 100) / 100;
+        mo.disconnect();
+      }
+    });
+    mo.observe(document, { childList: true, subtree: true });
+  } catch (err) {
+    st.observerErrors.push('firstCard: ' + err.message);
+  }
   window.addEventListener('load', () => {
     st.controllerAtLoad = !!(navigator.serviceWorker && navigator.serviceWorker.controller);
     if (st.cachesAvailable) {
@@ -332,6 +348,7 @@ function pageSnapshotFn(opts) {
       cachesAvailable: !!st.cachesAvailable,
       observerErrors: st.observerErrors || []
     },
+    firstCardMs: st.firstCard == null ? null : st.firstCard,
     title: document.title
   };
 }
@@ -884,6 +901,7 @@ function deriveMetrics(scenario, snap, delta) {
     loadMs: nav.load == null ? null : nav.load,
     fcpMs: snap.paints.fcp,
     lcpMs: snap.lcp.value,
+    firstCardMs: snap.firstCardMs,
     cls: snap.cls.value,
     longTaskCount: snap.longTasks.count,
     longTaskMaxMs: snap.longTasks.maxMs,
@@ -1358,6 +1376,7 @@ const METRIC_META = {
   ttfbMs: { label: 'TTFB', unit: 'ms', basis: 'measured' },
   fcpMs: { label: 'FCP', unit: 'ms', basis: 'measured' },
   lcpMs: { label: 'LCP', unit: 'ms', basis: 'measured' },
+  firstCardMs: { label: '首张文章卡片可见（首页内容可见时间）', unit: 'ms', basis: 'measured' },
   cls: { label: 'CLS（session window 最大值）', unit: 'score', basis: 'measured' },
   dclMs: { label: 'DOMContentLoaded', unit: 'ms', basis: 'measured' },
   loadMs: { label: '页面加载完成 loadEventEnd', unit: 'ms', basis: 'measured' },
@@ -1496,7 +1515,7 @@ function calibration(baseline) {
 
 function printSummary(baseline) {
   const keysByScenario = {
-    'cold-home': ['fcpMs', 'lcpMs', 'cls', 'loadMs', 'scriptMs', 'tbtMs', 'requestCount', 'encodedBytes', 'serverRequestCount'],
+    'cold-home': ['fcpMs', 'lcpMs', 'firstCardMs', 'cls', 'loadMs', 'scriptMs', 'tbtMs', 'requestCount', 'encodedBytes', 'serverRequestCount'],
     'warm-home': ['fcpMs', 'lcpMs', 'cls', 'loadMs', 'scriptMs', 'tbtMs', 'requestCount', 'encodedBytes', 'serverRequestCount', 'networkBytes', 'swCacheEntries'],
     'long-post': ['fcpMs', 'lcpMs', 'loadMs', 'scriptMs', 'tbtMs', 'encodedBytes', 'routeRenderMs', 'routePaintMs', 'routeBackRenderMs'],
     'post-lazy': ['postFirstReadableMs', 'postFirstPaintMs', 'postBodyBytes', 'postServerRequests', 'postFirstScriptMs', 'postRepeatReadableMs', 'offlinePostReadableMs'],
