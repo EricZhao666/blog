@@ -1,0 +1,200 @@
+{
+  "generator": "scripts/split_posts.py",
+  "posts": [
+    {
+      "contentBytes": 2720,
+      "contentChars": 1425,
+      "contentSha256": "38983b603e8b08731ce76360b733d95cefccbc5139c90904ade92e687933f36e",
+      "file": "data/posts/embodied-ai-notes.md",
+      "id": "embodied-ai-notes",
+      "metaSha256": "c581feb3ef57ca672398577d293a0231d65efa2ba6c1f16532c5989526180c67",
+      "readingMinutes": 2
+    },
+    {
+      "contentBytes": 4591,
+      "contentChars": 2807,
+      "contentSha256": "3c7e9ba24805f4090a1be6568ca48f4c2c679c25811a93323d6d676bd9d89592",
+      "file": "data/posts/vla-model-intro.md",
+      "id": "vla-model-intro",
+      "metaSha256": "dbec2169cd002c1926578ed6a4f592b624928b2966a057dad0e3b602c734cb58",
+      "readingMinutes": 4
+    },
+    {
+      "contentBytes": 3364,
+      "contentChars": 2060,
+      "contentSha256": "b15905915e9dc60bd1c7036f8b59629c79fe01854abcec061f2e19a9702785f3",
+      "file": "data/posts/arm-trajectory-planning.md",
+      "id": "arm-trajectory-planning",
+      "metaSha256": "4ae661a54b75c2f2cf7dda567a7eb0f116e63a7eaa857baeb5bc3516ce2a7f3c",
+      "readingMinutes": 3
+    },
+    {
+      "contentBytes": 3205,
+      "contentChars": 1261,
+      "contentSha256": "5caa6a5743a984224b574e14e112c786e670f5a0529c12c04a194ee9d4aba797",
+      "file": "data/posts/smart-production-line.md",
+      "id": "smart-production-line",
+      "metaSha256": "920f870d7d4736f6b2d2bc1e03ce9b1969d60ba5e3ce2c3af29de1a348c125cc",
+      "readingMinutes": 3
+    },
+    {
+      "contentBytes": 2479,
+      "contentChars": 1030,
+      "contentSha256": "4039de0df6b2566e2cb284bd153c0fd6c7995a5f9f7e69401b6d471d7145bf35",
+      "file": "data/posts/shenzhen-weekend.md",
+      "id": "shenzhen-weekend",
+      "metaSha256": "593b74ce35413f7a04e3e36c570f7db55e38ac6b8a1289a3edd8e8a4a5a29d41",
+      "readingMinutes": 2
+    },
+    {
+      "contentBytes": 4565,
+      "contentChars": 2658,
+      "contentSha256": "cbbb587673e3c9c6a5a98019fba8c2b69ccef47b1c9da948fb631d7226fd7be1",
+      "file": "data/posts/robotics-textbook-notes.md",
+      "id": "robotics-textbook-notes",
+      "metaSha256": "0eabc8558a98c1386056bf4d794d5aeceb16fc72eaa69d7f7ab3c5261ee410cc",
+      "readingMinutes": 4
+    },
+    {
+      "contentBytes": 3061,
+      "contentChars": 1707,
+      "contentSha256": "af59a0b70184ee3c10ad7528c4db62fa19d0774c7c689fe76c47c643e4725e00",
+      "file": "data/posts/sim-to-real-gap.md",
+      "id": "sim-to-real-gap",
+      "metaSha256": "5dcb1fe1a5890677e83de7d9e3f120d04478d7830f52e8abfe8eb30da8600aa7",
+      "readingMinutes": 3
+    },
+    {
+      "contentBytes": 3701,
+      "contentChars": 1983,
+      "contentSha256": "35072c1d8f3043f68827cf67f0939c7857b209c92b1e9898667ce6f261946402",
+      "file": "data/posts/vla-industrial-challenges.md",
+      "id": "vla-industrial-challenges",
+      "metaSha256": "626991ef457cd2c6e9521443dc4da6beef211c0c64a710af8997b913b0a8e253",
+      "readingMinutes": 3
+    },
+    {
+      "contentBytes": 4659,
+      "contentChars": 2765,
+      "contentSha256": "6873c8d617136d52fdb3276d367edf07f30567598bea97591e41d26cabcfe12c",
+      "file": "data/posts/robot-grasping-survey.md",
+      "id": "robot-grasping-survey",
+      "metaSha256": "58bbd423ef28d891e5a8e2651ced312447ec0d24b51ca5873483c24d1828e969",
+      "readingMinutes": 3
+    },
+    {
+      "contentBytes": 4750,
+      "contentChars": 2916,
+      "contentSha256": "ba2a485918802ea8c30552c6ee29d1a6313e1ea6d187973a4476860c5cd5904f",
+      "file": "data/posts/industrial-protocols-notes.md",
+      "id": "industrial-protocols-notes",
+      "metaSha256": "99cf3f6ff0823d551801b4ed4374b92c1d0ecc8098d53409a9693a3f9a976976",
+      "readingMinutes": 4
+    },
+    {
+      "contentBytes": 4793,
+      "contentChars": 2893,
+      "contentSha256": "cf31e25b7f59d023e394dc1d4b556fb0919ba7d7041076b07986a6cad1d28e00",
+      "file": "data/posts/force-compliance-control.md",
+      "id": "force-compliance-control",
+      "metaSha256": "130f04774ae25afc82f37828a8d9359635dc710b792c47afce9dba0d597d8b72",
+      "readingMinutes": 4
+    },
+    {
+      "contentBytes": 5285,
+      "contentChars": 3129,
+      "contentSha256": "0d5f9ae9af62bb56df0f75192d28663d744faba403d1e3348dd29c0f78488522",
+      "file": "data/posts/digital-twin-manufacturing.md",
+      "id": "digital-twin-manufacturing",
+      "metaSha256": "cdf913851ddcc66ffa6ab432a229b64ead3d386fe56bfa805613b353e8e881c3",
+      "readingMinutes": 4
+    },
+    {
+      "contentBytes": 8093,
+      "contentChars": 5401,
+      "contentSha256": "0ba051c623dfee510e5772fdec9ff4d325bdba051220e8f581666dc0d0e9298c",
+      "file": "data/posts/ml-fundamentals-overview.md",
+      "id": "ml-fundamentals-overview",
+      "metaSha256": "d8ea3bcb03483a57b01d6c8910382774671ae2ebb303946183df12d3ea734729",
+      "readingMinutes": 6
+    },
+    {
+      "contentBytes": 9049,
+      "contentChars": 6464,
+      "contentSha256": "16b75c77dc0921c244e97e9816a79b82efa872ef1961308330e1ac4fb86d9f38",
+      "file": "data/posts/rl-from-mdp-to-ppo.md",
+      "id": "rl-from-mdp-to-ppo",
+      "metaSha256": "d75ce403e716e5c804b01728dd371f8c6480525a5b59bc9c0364de3b88f59298",
+      "readingMinutes": 6
+    },
+    {
+      "contentBytes": 10472,
+      "contentChars": 7131,
+      "contentSha256": "d687b170de8f4307b0367659b8933cd3faeafdffa9091473ac69c2fcb074bad0",
+      "file": "data/posts/slam-overview-filtering-to-graph.md",
+      "id": "slam-overview-filtering-to-graph",
+      "metaSha256": "731a044618c4cc97e1855c2e3b4fa29e97cfde3f8b982423fda32fa17d360453",
+      "readingMinutes": 8
+    },
+    {
+      "contentBytes": 8665,
+      "contentChars": 6433,
+      "contentSha256": "acbe970a64ad87e2fb3edf50e10c078e635381e155e83cf2931be33662b73081",
+      "file": "data/posts/rl-robot-control.md",
+      "id": "rl-robot-control",
+      "metaSha256": "f233761c3a9b833055662319d72f8dfc08ab4dcf9f557ba7e499e111836bdee8",
+      "readingMinutes": 6
+    },
+    {
+      "contentBytes": 8839,
+      "contentChars": 6335,
+      "contentSha256": "426ffeb402108395af0b6d716ebff0416259790b7b835ba696e946cf8af5783c",
+      "file": "data/posts/visual-slam-frontend.md",
+      "id": "visual-slam-frontend",
+      "metaSha256": "2f9c43cd3a833cbc891ad49d084a89193d7cd1bcfb8bb977e424da8be8737f30",
+      "readingMinutes": 6
+    },
+    {
+      "contentBytes": 10647,
+      "contentChars": 8097,
+      "contentSha256": "4a2134e8025a0faf3db7ed36a74673459b0cf0f18020475b17eddd850a1d8e77",
+      "file": "data/posts/deep-learning-in-slam.md",
+      "id": "deep-learning-in-slam",
+      "metaSha256": "d733c36b57d2b5df0881f6ac27ee450c4ceeabf532b51e360b9272b3de4bbbb4",
+      "readingMinutes": 7
+    }
+  ],
+  "readingMinutesRule": "app.js readingTime(): ceil(中文/400 + 英文/200)，至少 1",
+  "searchIndex": {
+    "bytes": 106904,
+    "path": "data/search-index.json",
+    "sha256": "395089e282229a9e4372281aa5bfef22dbce561d5f41a51dfee8c936709e5bc7"
+  },
+  "source": {
+    "bytes": 8010,
+    "contentChars": 66495,
+    "mode": "sync",
+    "path": "js/data.js",
+    "posts": 18,
+    "sha256": "ae985f24b94171deab45fd749a9dac1218232c094174ae274a9e86c6530ea552"
+  },
+  "tagOrder": [
+    "具身智能",
+    "VLA",
+    "机械臂",
+    "智能制造",
+    "机器人",
+    "深度学习",
+    "机器学习",
+    "强化学习",
+    "SLAM",
+    "运动控制",
+    "读书笔记",
+    "技术笔记",
+    "随笔",
+    "生活",
+    "深圳",
+    "产线"
+  ],
+  "version": 2
+}

@@ -1,0 +1,2475 @@
+{
+  "meta": {
+    "batch": "6A",
+    "generator": "tests/perf/perf.spec.js",
+    "generatedAt": "2026-10-26T10:57:29.062Z",
+    "durationSec": 100.48,
+    "git": {
+      "branch": "feature/batch6b2-data-split",
+      "head": "c87b39b45d68961f7f2124f3c2a2dbc1fec3235d",
+      "headShort": "c87b39b",
+      "subject": "修复：SW 首屏缓存的版本一致性，新增 35 项一致性验证套件",
+      "dirty": true
+    },
+    "resources": [
+      {
+        "path": "index.html",
+        "bytes": 5440,
+        "sha256": "9da4794ce778d542"
+      },
+      {
+        "path": "js/data.js",
+        "bytes": 8010,
+        "sha256": "ae985f24b94171de"
+      },
+      {
+        "path": "js/app.js",
+        "bytes": 110737,
+        "sha256": "b0e5eb8d8beae18b"
+      },
+      {
+        "path": "css/style.css",
+        "bytes": 51561,
+        "sha256": "eba8cf0044865ac5"
+      },
+      {
+        "path": "vendor/marked.min.js",
+        "bytes": 39903,
+        "sha256": "3e7e7d7feb3e5d58"
+      },
+      {
+        "path": "vendor/purify.min.js",
+        "bytes": 29828,
+        "sha256": "cd37898f9782adf5"
+      },
+      {
+        "path": "sw.js",
+        "bytes": 18708,
+        "sha256": "737ff3cab41b70ce"
+      }
+    ],
+    "sw": {
+      "cacheVersion": "2026-10-26-2",
+      "runtimeCacheCap": 120,
+      "strategy": {
+        "navigate": "network-first",
+        "vendor": "stale-while-revalidate",
+        "otherSameOrigin": "network-first",
+        "crossOrigin": "bypass"
+      }
+    },
+    "swCandidate": {
+      "injected": true,
+      "sourcePath": "sw.js",
+      "config": null,
+      "bytes": 18708,
+      "sha256": "737ff3cab41b70ce",
+      "note": "仓库 sw.js 未被修改：候选脚本只在测量链路的观测探针里替换 /blog/sw.js 的响应"
+    },
+    "networkProbe": {
+      "enabled": true,
+      "port": 8139,
+      "metrics": "networkBytes = 导航窗口内所有 HTTP 响应体字节（含 SW 后台预取/后台校验）"
+    },
+    "browser": {
+      "channel": "chrome",
+      "version": "156.0.8078.48",
+      "headless": true,
+      "args": [
+        "--disable-background-timer-throttling",
+        "--disable-renderer-backgrounding"
+      ]
+    },
+    "host": {
+      "platform": "win32",
+      "release": "10.0.19045",
+      "arch": "x64",
+      "cpuModel": "AMD Ryzen 7 3750H with Radeon Vega Mobile Gfx  ",
+      "cpuCores": 8,
+      "totalMemGB": 15.44,
+      "nodeVersion": "v24.22.1"
+    },
+    "server": {
+      "staticServer": "tests/browser/helpers/server.js（未修改）",
+      "prefix": "/blog",
+      "cacheControl": "no-store（继承 B4 测试服务器行为，HTTP 缓存因此在桌面场景中不参与）",
+      "staticPort": 8137,
+      "shapingProxyPort": 8138,
+      "shapingProxy": {
+        "latencyMs": 150,
+        "downloadKbps": 1638.4
+      }
+    },
+    "controls": {
+      "settleMs": 2500,
+      "tbtTailMs": 2000,
+      "searchStableMs": 1200,
+      "thirdPartyBlocked": [
+        "*giscus.app*"
+      ],
+      "thirdPartyReason": "giscus 评论组件为跨域第三方资源，会引入不可复现的网络波动，测量中被 CDP 屏蔽",
+      "repetitions": 5
+    },
+    "metricMeta": {
+      "ttfbMs": {
+        "label": "TTFB",
+        "unit": "ms",
+        "basis": "measured"
+      },
+      "fcpMs": {
+        "label": "FCP",
+        "unit": "ms",
+        "basis": "measured"
+      },
+      "lcpMs": {
+        "label": "LCP",
+        "unit": "ms",
+        "basis": "measured"
+      },
+      "cls": {
+        "label": "CLS（session window 最大值）",
+        "unit": "score",
+        "basis": "measured"
+      },
+      "dclMs": {
+        "label": "DOMContentLoaded",
+        "unit": "ms",
+        "basis": "measured"
+      },
+      "loadMs": {
+        "label": "页面加载完成 loadEventEnd",
+        "unit": "ms",
+        "basis": "measured"
+      },
+      "scriptMs": {
+        "label": "JS 执行时间（CDP ScriptDuration，主线程）",
+        "unit": "ms",
+        "basis": "measured"
+      },
+      "taskMs": {
+        "label": "主线程任务总时长（CDP TaskDuration）",
+        "unit": "ms",
+        "basis": "measured"
+      },
+      "layoutMs": {
+        "label": "布局耗时（CDP LayoutDuration）",
+        "unit": "ms",
+        "basis": "measured"
+      },
+      "longTaskCount": {
+        "label": "长任务数量（>50ms）",
+        "unit": "count",
+        "basis": "measured"
+      },
+      "longTaskMaxMs": {
+        "label": "最长长任务",
+        "unit": "ms",
+        "basis": "measured"
+      },
+      "tbtMs": {
+        "label": "TBT 近似（长任务阻塞时间，窗口=导航开始→load+2s）",
+        "unit": "ms",
+        "basis": "calculated"
+      },
+      "requestCount": {
+        "label": "请求数量（Resource Timing）",
+        "unit": "count",
+        "basis": "measured"
+      },
+      "transferBytes": {
+        "label": "资源传输字节（transferSize 合计）",
+        "unit": "bytes",
+        "basis": "measured"
+      },
+      "encodedBytes": {
+        "label": "编码后体积（encodedBodySize 合计）",
+        "unit": "bytes",
+        "basis": "measured"
+      },
+      "serverRequestCount": {
+        "label": "真实到达服务器的请求数（服务端计数）",
+        "unit": "count",
+        "basis": "measured"
+      },
+      "networkBytes": {
+        "label": "导航窗口内网络传输字节（HTTP 层，含 SW 后台预取/后台校验）",
+        "unit": "bytes",
+        "basis": "measured"
+      },
+      "networkRequests": {
+        "label": "导航窗口内到达服务器的请求数（HTTP 层）",
+        "unit": "count",
+        "basis": "measured"
+      },
+      "swCacheEntries": {
+        "label": "SW 缓存条目总数",
+        "unit": "count",
+        "basis": "measured"
+      },
+      "routeRenderMs": {
+        "label": "路由切换：DOM 更新完成（首页→文章）",
+        "unit": "ms",
+        "basis": "measured"
+      },
+      "routePaintMs": {
+        "label": "路由切换：渲染完成（首页→文章，双 rAF）",
+        "unit": "ms",
+        "basis": "measured"
+      },
+      "routeBackRenderMs": {
+        "label": "路由切换：DOM 更新完成（文章→首页）",
+        "unit": "ms",
+        "basis": "measured"
+      },
+      "routeScriptMs": {
+        "label": "路由切换 JS 执行（首页→文章）",
+        "unit": "ms",
+        "basis": "measured"
+      },
+      "routeBackScriptMs": {
+        "label": "路由切换 JS 执行（文章→首页）",
+        "unit": "ms",
+        "basis": "measured"
+      },
+      "searchFirstRenderMs": {
+        "label": "搜索首次输入：首个结果渲染（含 180ms 防抖）",
+        "unit": "ms",
+        "basis": "measured"
+      },
+      "searchFirstFinalMs": {
+        "label": "搜索首次输入：懒加载补齐后最终渲染",
+        "unit": "ms",
+        "basis": "measured"
+      },
+      "searchFirstRenderCount": {
+        "label": "搜索首次输入：DOM 重绘次数",
+        "unit": "count",
+        "basis": "measured"
+      },
+      "searchLazyBytes": {
+        "label": "搜索首次输入：新增下载字节",
+        "unit": "bytes",
+        "basis": "measured"
+      },
+      "searchFirstLongTaskMs": {
+        "label": "搜索首次输入：长任务阻塞时间",
+        "unit": "ms",
+        "basis": "calculated"
+      },
+      "searchFirstScriptMs": {
+        "label": "搜索首次输入：JS 执行时间",
+        "unit": "ms",
+        "basis": "measured"
+      },
+      "searchRepeatRenderMs": {
+        "label": "搜索重复输入：结果渲染（含 180ms 防抖）",
+        "unit": "ms",
+        "basis": "measured"
+      },
+      "searchRepeatFinalMs": {
+        "label": "搜索重复输入：最终渲染稳定时间",
+        "unit": "ms",
+        "basis": "measured"
+      },
+      "searchRepeatRenderCount": {
+        "label": "搜索重复输入：DOM 重绘次数",
+        "unit": "count",
+        "basis": "measured"
+      },
+      "searchRepeatLongTaskMs": {
+        "label": "搜索重复输入：长任务阻塞时间",
+        "unit": "ms",
+        "basis": "calculated"
+      },
+      "searchRepeatScriptMs": {
+        "label": "搜索重复输入：JS 执行时间",
+        "unit": "ms",
+        "basis": "measured"
+      },
+      "postFirstReadableMs": {
+        "label": "首次打开文章：正文可读时间（SPA 切换起算）",
+        "unit": "ms",
+        "basis": "measured"
+      },
+      "postFirstPaintMs": {
+        "label": "首次打开文章：正文绘制完成（双 rAF）",
+        "unit": "ms",
+        "basis": "measured"
+      },
+      "postFirstChars": {
+        "label": "首次打开文章：正文可见字符数",
+        "unit": "count",
+        "basis": "measured"
+      },
+      "postRepeatReadableMs": {
+        "label": "重复打开文章：正文可读时间",
+        "unit": "ms",
+        "basis": "measured"
+      },
+      "postRepeatPaintMs": {
+        "label": "重复打开文章：正文绘制完成（双 rAF）",
+        "unit": "ms",
+        "basis": "measured"
+      },
+      "postBodyBytes": {
+        "label": "首次打开文章：正文传输字节（data/posts/*.md）",
+        "unit": "bytes",
+        "basis": "measured"
+      },
+      "postFirstScriptMs": {
+        "label": "首次打开文章：JS 执行时间",
+        "unit": "ms",
+        "basis": "measured"
+      },
+      "postRepeatScriptMs": {
+        "label": "重复打开文章：JS 执行时间",
+        "unit": "ms",
+        "basis": "measured"
+      },
+      "postServerRequests": {
+        "label": "首次打开文章：服务端请求数",
+        "unit": "count",
+        "basis": "measured"
+      },
+      "offlinePostStatus": {
+        "label": "离线重开文章：文档状态码",
+        "unit": "count",
+        "basis": "measured"
+      },
+      "offlinePostReadable": {
+        "label": "离线重开文章：正文是否可读",
+        "unit": "bool",
+        "basis": "measured"
+      },
+      "offlinePostReadableMs": {
+        "label": "离线重开文章：正文可读时间",
+        "unit": "ms",
+        "basis": "measured"
+      }
+    },
+    "scenarioMeta": {
+      "cold-home": {
+        "label": "A. 首页冷启动",
+        "description": "全新 BrowserContext 首次打开首页：HTTP 缓存为空、无 Service Worker 控制；测量到 load +2.5s。",
+        "url": "/blog/"
+      },
+      "warm-home": {
+        "label": "B. 首页热启动",
+        "description": "新 BrowserContext 内先完成 SW 安装与缓存预热（校验 CORE 必需资源齐全、预取已收敛），再整页 reload 测量。",
+        "url": "/blog/"
+      },
+      "long-post": {
+        "label": "C. 长文文章页 + SPA 路由切换",
+        "description": "预热后整页重载最长的一篇文章（Markdown + DOMPurify 渲染），并测量首页↔文章的 SPA 路由切换耗时。",
+        "url": "#/post/<id>"
+      },
+      "post-lazy": {
+        "label": "E. 文章正文按需加载",
+        "description": "预热后从首页点进最长的一篇文章：首次打开触发正文请求，重复打开复用内存/缓存，最后离线重开同一篇。",
+        "url": "#/post/<id>"
+      },
+      "search": {
+        "label": "D. 全局搜索首次/重复输入",
+        "description": "预热后输入固定关键词：首次输入会触发 courses/papers/notes 懒加载（6B-2 起还包括正文搜索语料），重复输入复用已加载数据。",
+        "url": "/blog/ + #searchInput"
+      }
+    },
+    "post": {
+      "id": "deep-learning-in-slam",
+      "title": "深度学习在SLAM中的应用",
+      "contentChars": 8097,
+      "totalPosts": 18
+    },
+    "keywords": {
+      "first": "SLAM",
+      "second": "学习"
+    },
+    "configs": {
+      "mobile": {
+        "label": "移动 Chromium：Pixel 7 设备模拟 + CPU 4x + Lighthouse mobileSlow4G 等价网络整形",
+        "conditions": {
+          "viewport": "412×839",
+          "deviceScaleFactor": 2.625,
+          "userAgent": "Mozilla/5.0 (Linux; Android 14; Pixel 7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/156.0.8078.4 Mobile Safari/537.36",
+          "cpuThrottle": "4x（CDP Emulation.setCPUThrottlingRate）",
+          "network": "下行 1638.4 kbps / 上行 750 kbps / 每请求首字节延迟 150ms（HTTP 层整形代理）",
+          "emulation": "Playwright devices['Pixel 7']（isMobile / hasTouch）"
+        },
+        "cpuThrottle": 4,
+        "network": {
+          "latencyMs": 150,
+          "downloadKbps": 1638.4,
+          "uploadKbps": 750
+        },
+        "serverEndpoint": {
+          "via": "HTTP 整形代理",
+          "port": 8138,
+          "upstreamPort": 8139
+        },
+        "contextOptions": {
+          "viewport": {
+            "width": 412,
+            "height": 839
+          },
+          "deviceScaleFactor": 2.625,
+          "isMobile": true,
+          "hasTouch": true,
+          "userAgent": "Mozilla/5.0 (Linux; Android 14; Pixel 7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/156.0.8078.4 Mobile Safari/537.36"
+        }
+      }
+    },
+    "verdict": "BATCH6A_READY",
+    "verdictBasis": "每个场景/配置的有效样本数 ≥ min(5, repeat) 视为完成"
+  },
+  "scenarios": {
+    "cold-home": {
+      "mobile": {
+        "label": "A. 首页冷启动",
+        "description": "全新 BrowserContext 首次打开首页：HTTP 缓存为空、无 Service Worker 控制；测量到 load +2.5s。",
+        "url": "http://127.0.0.1:8138/blog/",
+        "cacheState": {
+          "mode": "cold",
+          "serviceWorker": "首次注册（本页面加载期间未受 SW 控制）",
+          "browserCache": "空"
+        },
+        "samples": [
+          {
+            "rep": 1,
+            "scenario": "cold-home",
+            "config": "mobile",
+            "startedAt": "2026-10-26T10:57:29.437Z",
+            "ok": true,
+            "error": null,
+            "metrics": {
+              "ttfbMs": 215.2,
+              "dclMs": 2557.6,
+              "loadMs": 3173.1,
+              "fcpMs": 1528,
+              "lcpMs": 1528,
+              "cls": 0.1168,
+              "longTaskCount": 1,
+              "longTaskMaxMs": 697,
+              "tbtMs": 647,
+              "requestCount": 9,
+              "transferBytes": 252784,
+              "encodedBytes": 250084,
+              "scriptMs": 137.26,
+              "taskMs": 1660.85,
+              "layoutMs": 1135.64,
+              "serverRequestCount": 19,
+              "networkBytes": 573245,
+              "networkRequests": 20,
+              "networkLastEndMs": 5673,
+              "firstScreenNetEndMs": 3603
+            },
+            "cdp": {
+              "basis": "absolute（全新渲染进程，累计值即本次导航）",
+              "raw": {
+                "Documents": 7,
+                "Nodes": 1036,
+                "LayoutCount": 4,
+                "RecalcStyleCount": 65,
+                "LayoutDuration": 1.135635,
+                "RecalcStyleDuration": 0.105459,
+                "ScriptDuration": 0.137265,
+                "TaskDuration": 1.660851
+              },
+              "pre": null,
+              "values": {
+                "Documents": 7,
+                "Nodes": 1036,
+                "LayoutCount": 4,
+                "RecalcStyleCount": 65,
+                "LayoutDuration": 1135.64,
+                "RecalcStyleDuration": 105.46,
+                "ScriptDuration": 137.26,
+                "TaskDuration": 1660.85
+              }
+            },
+            "navigation": {
+              "ttfb": 215.2,
+              "dcl": 2557.6,
+              "load": 3173.1,
+              "duration": 3173.1,
+              "transfer": 5740,
+              "encoded": 5440,
+              "protocol": "http/1.1"
+            },
+            "paints": {
+              "fp": 1528,
+              "fcp": 1528
+            },
+            "lcp": {
+              "value": 1528,
+              "tag": null,
+              "text": null,
+              "size": 5073
+            },
+            "cls": {
+              "value": 0.1168,
+              "rawSum": 0.1168,
+              "windows": 1,
+              "shiftCount": 1
+            },
+            "longTasks": {
+              "count": 1,
+              "maxMs": 697,
+              "tbtMs": 647,
+              "all": [
+                {
+                  "start": 2478,
+                  "dur": 697
+                }
+              ]
+            },
+            "dom": {
+              "nodes": 414,
+              "appChildren": 1,
+              "hasArticleBody": false,
+              "articleBodyChars": 0,
+              "articleHeadings": 0,
+              "tocItems": 0
+            },
+            "sw": {
+              "controllerAtLoad": false,
+              "cacheNamesAtLoad": [],
+              "controller": false,
+              "active": false,
+              "scriptURL": null,
+              "observerErrors": []
+            },
+            "cache": null,
+            "serverHits": {
+              "/index.html": 3,
+              "/css/style.css": 2,
+              "/vendor/atom-one-light.min.css": 2,
+              "/vendor/marked.min.js": 2,
+              "/vendor/purify.min.js": 2,
+              "/js/user-posts.js": 1,
+              "/js/data.js": 2,
+              "/js/projects.js": 1,
+              "/js/app.js": 2,
+              "/manifest.json": 1,
+              "/icons/icon-192.png": 1
+            },
+            "resources": [
+              {
+                "url": "/blog/css/style.css",
+                "type": "link",
+                "start": 270.5,
+                "dur": 196.9,
+                "ttfb": 196.2,
+                "transfer": 51861,
+                "encoded": 51561
+              },
+              {
+                "url": "/blog/vendor/atom-one-light.min.css",
+                "type": "link",
+                "start": 272.9,
+                "dur": 602.6,
+                "ttfb": 602,
+                "transfer": 1156,
+                "encoded": 856
+              },
+              {
+                "url": "/blog/vendor/marked.min.js",
+                "type": "script",
+                "start": 274.9,
+                "dur": 741.7,
+                "ttfb": 741.2,
+                "transfer": 40203,
+                "encoded": 39903
+              },
+              {
+                "url": "/blog/vendor/purify.min.js",
+                "type": "script",
+                "start": 275.2,
+                "dur": 1090.1,
+                "ttfb": 1089.6,
+                "transfer": 30128,
+                "encoded": 29828
+              },
+              {
+                "url": "/blog/js/data.js",
+                "type": "script",
+                "start": 275.2,
+                "dur": 1529.8,
+                "ttfb": 1529.2,
+                "transfer": 8310,
+                "encoded": 8010
+              },
+              {
+                "url": "/blog/js/user-posts.js",
+                "type": "script",
+                "start": 275.4,
+                "dur": 1388.4,
+                "ttfb": 1387.4,
+                "transfer": 505,
+                "encoded": 205
+              },
+              {
+                "url": "/blog/js/projects.js",
+                "type": "script",
+                "start": 275.5,
+                "dur": 1718.4,
+                "ttfb": 1717.9,
+                "transfer": 3844,
+                "encoded": 3544
+              },
+              {
+                "url": "/blog/js/app.js",
+                "type": "script",
+                "start": 275.6,
+                "dur": 2198.8,
+                "ttfb": 1890.3,
+                "transfer": 111037,
+                "encoded": 110737
+              }
+            ],
+            "title": "Eric's Notebook",
+            "giscusBlock": "cdp",
+            "errors": [],
+            "extra": {
+              "freshContext": true,
+              "httpCache": "空（新 BrowserContext + 服务端 Cache-Control: no-store）"
+            }
+          },
+          {
+            "rep": 2,
+            "scenario": "cold-home",
+            "config": "mobile",
+            "startedAt": "2026-10-26T10:57:35.559Z",
+            "ok": true,
+            "error": null,
+            "metrics": {
+              "ttfbMs": 570.3,
+              "dclMs": 2866.3,
+              "loadMs": 3470.3,
+              "fcpMs": 1864,
+              "lcpMs": 1864,
+              "cls": 0.1168,
+              "longTaskCount": 1,
+              "longTaskMaxMs": 672,
+              "tbtMs": 622,
+              "requestCount": 9,
+              "transferBytes": 252784,
+              "encodedBytes": 250084,
+              "scriptMs": 105.99,
+              "taskMs": 1657.64,
+              "layoutMs": 1124.91,
+              "serverRequestCount": 19,
+              "networkBytes": 573245,
+              "networkRequests": 20,
+              "networkLastEndMs": 5960,
+              "firstScreenNetEndMs": 3895
+            },
+            "cdp": {
+              "basis": "absolute（全新渲染进程，累计值即本次导航）",
+              "raw": {
+                "Documents": 7,
+                "Nodes": 1036,
+                "LayoutCount": 4,
+                "RecalcStyleCount": 66,
+                "LayoutDuration": 1.124908,
+                "RecalcStyleDuration": 0.115883,
+                "ScriptDuration": 0.10599,
+                "TaskDuration": 1.657636
+              },
+              "pre": null,
+              "values": {
+                "Documents": 7,
+                "Nodes": 1036,
+                "LayoutCount": 4,
+                "RecalcStyleCount": 66,
+                "LayoutDuration": 1124.91,
+                "RecalcStyleDuration": 115.88,
+                "ScriptDuration": 105.99,
+                "TaskDuration": 1657.64
+              }
+            },
+            "navigation": {
+              "ttfb": 570.3,
+              "dcl": 2866.3,
+              "load": 3470.3,
+              "duration": 3470.3,
+              "transfer": 5740,
+              "encoded": 5440,
+              "protocol": "http/1.1"
+            },
+            "paints": {
+              "fp": 1864,
+              "fcp": 1864
+            },
+            "lcp": {
+              "value": 1864,
+              "tag": null,
+              "text": null,
+              "size": 5073
+            },
+            "cls": {
+              "value": 0.1168,
+              "rawSum": 0.1168,
+              "windows": 1,
+              "shiftCount": 1
+            },
+            "longTasks": {
+              "count": 1,
+              "maxMs": 672,
+              "tbtMs": 622,
+              "all": [
+                {
+                  "start": 2800,
+                  "dur": 672
+                }
+              ]
+            },
+            "dom": {
+              "nodes": 414,
+              "appChildren": 1,
+              "hasArticleBody": false,
+              "articleBodyChars": 0,
+              "articleHeadings": 0,
+              "tocItems": 0
+            },
+            "sw": {
+              "controllerAtLoad": false,
+              "cacheNamesAtLoad": [],
+              "controller": false,
+              "active": false,
+              "scriptURL": null,
+              "observerErrors": []
+            },
+            "cache": null,
+            "serverHits": {
+              "/index.html": 3,
+              "/css/style.css": 2,
+              "/vendor/atom-one-light.min.css": 2,
+              "/vendor/marked.min.js": 2,
+              "/vendor/purify.min.js": 2,
+              "/js/user-posts.js": 1,
+              "/js/data.js": 2,
+              "/js/projects.js": 1,
+              "/js/app.js": 2,
+              "/manifest.json": 1,
+              "/icons/icon-192.png": 1
+            },
+            "resources": [
+              {
+                "url": "/blog/css/style.css",
+                "type": "link",
+                "start": 618.8,
+                "dur": 187.3,
+                "ttfb": 186.4,
+                "transfer": 51861,
+                "encoded": 51561
+              },
+              {
+                "url": "/blog/vendor/atom-one-light.min.css",
+                "type": "link",
+                "start": 620.9,
+                "dur": 601.6,
+                "ttfb": 600.8,
+                "transfer": 1156,
+                "encoded": 856
+              },
+              {
+                "url": "/blog/vendor/marked.min.js",
+                "type": "script",
+                "start": 622.7,
+                "dur": 1027.4,
+                "ttfb": 1026.8,
+                "transfer": 40203,
+                "encoded": 39903
+              },
+              {
+                "url": "/blog/vendor/purify.min.js",
+                "type": "script",
+                "start": 623.5,
+                "dur": 731.6,
+                "ttfb": 729.7,
+                "transfer": 30128,
+                "encoded": 29828
+              },
+              {
+                "url": "/blog/js/data.js",
+                "type": "script",
+                "start": 623.9,
+                "dur": 1356.3,
+                "ttfb": 1355.9,
+                "transfer": 8310,
+                "encoded": 8010
+              },
+              {
+                "url": "/blog/js/user-posts.js",
+                "type": "script",
+                "start": 624.5,
+                "dur": 1544.6,
+                "ttfb": 1543.9,
+                "transfer": 505,
+                "encoded": 205
+              },
+              {
+                "url": "/blog/js/projects.js",
+                "type": "script",
+                "start": 625.2,
+                "dur": 1700.9,
+                "ttfb": 1700.2,
+                "transfer": 3844,
+                "encoded": 3544
+              },
+              {
+                "url": "/blog/js/app.js",
+                "type": "script",
+                "start": 626.5,
+                "dur": 2171.3,
+                "ttfb": 1856.8,
+                "transfer": 111037,
+                "encoded": 110737
+              }
+            ],
+            "title": "Eric's Notebook",
+            "giscusBlock": "cdp",
+            "errors": [],
+            "extra": {
+              "freshContext": true,
+              "httpCache": "空（新 BrowserContext + 服务端 Cache-Control: no-store）"
+            }
+          },
+          {
+            "rep": 3,
+            "scenario": "cold-home",
+            "config": "mobile",
+            "startedAt": "2026-10-26T10:57:41.805Z",
+            "ok": true,
+            "error": null,
+            "metrics": {
+              "ttfbMs": 542.6,
+              "dclMs": 2819.2,
+              "loadMs": 3360.1,
+              "fcpMs": 1864,
+              "lcpMs": 1864,
+              "cls": 0.1168,
+              "longTaskCount": 1,
+              "longTaskMaxMs": 605,
+              "tbtMs": 555,
+              "requestCount": 9,
+              "transferBytes": 252784,
+              "encodedBytes": 250084,
+              "scriptMs": 114.94,
+              "taskMs": 1664.75,
+              "layoutMs": 1142.99,
+              "serverRequestCount": 19,
+              "networkBytes": 573245,
+              "networkRequests": 20,
+              "networkLastEndMs": 5853,
+              "firstScreenNetEndMs": 3784
+            },
+            "cdp": {
+              "basis": "absolute（全新渲染进程，累计值即本次导航）",
+              "raw": {
+                "Documents": 7,
+                "Nodes": 1036,
+                "LayoutCount": 4,
+                "RecalcStyleCount": 65,
+                "LayoutDuration": 1.14299,
+                "RecalcStyleDuration": 0.101314,
+                "ScriptDuration": 0.114937,
+                "TaskDuration": 1.66475
+              },
+              "pre": null,
+              "values": {
+                "Documents": 7,
+                "Nodes": 1036,
+                "LayoutCount": 4,
+                "RecalcStyleCount": 65,
+                "LayoutDuration": 1142.99,
+                "RecalcStyleDuration": 101.31,
+                "ScriptDuration": 114.94,
+                "TaskDuration": 1664.75
+              }
+            },
+            "navigation": {
+              "ttfb": 542.6,
+              "dcl": 2819.2,
+              "load": 3360.1,
+              "duration": 3360.1,
+              "transfer": 5740,
+              "encoded": 5440,
+              "protocol": "http/1.1"
+            },
+            "paints": {
+              "fp": 1864,
+              "fcp": 1864
+            },
+            "lcp": {
+              "value": 1864,
+              "tag": null,
+              "text": null,
+              "size": 5073
+            },
+            "cls": {
+              "value": 0.1168,
+              "rawSum": 0.1168,
+              "windows": 1,
+              "shiftCount": 1
+            },
+            "longTasks": {
+              "count": 1,
+              "maxMs": 605,
+              "tbtMs": 555,
+              "all": [
+                {
+                  "start": 2757,
+                  "dur": 605
+                }
+              ]
+            },
+            "dom": {
+              "nodes": 414,
+              "appChildren": 1,
+              "hasArticleBody": false,
+              "articleBodyChars": 0,
+              "articleHeadings": 0,
+              "tocItems": 0
+            },
+            "sw": {
+              "controllerAtLoad": false,
+              "cacheNamesAtLoad": [],
+              "controller": false,
+              "active": false,
+              "scriptURL": null,
+              "observerErrors": []
+            },
+            "cache": null,
+            "serverHits": {
+              "/index.html": 3,
+              "/css/style.css": 2,
+              "/vendor/atom-one-light.min.css": 2,
+              "/vendor/marked.min.js": 2,
+              "/vendor/purify.min.js": 2,
+              "/js/user-posts.js": 1,
+              "/js/data.js": 2,
+              "/js/projects.js": 1,
+              "/js/app.js": 2,
+              "/manifest.json": 1,
+              "/icons/icon-192.png": 1
+            },
+            "resources": [
+              {
+                "url": "/blog/css/style.css",
+                "type": "link",
+                "start": 584.8,
+                "dur": 178.6,
+                "ttfb": 177.8,
+                "transfer": 51861,
+                "encoded": 51561
+              },
+              {
+                "url": "/blog/vendor/atom-one-light.min.css",
+                "type": "link",
+                "start": 586.7,
+                "dur": 567.7,
+                "ttfb": 566.9,
+                "transfer": 1156,
+                "encoded": 856
+              },
+              {
+                "url": "/blog/vendor/marked.min.js",
+                "type": "script",
+                "start": 587.7,
+                "dur": 724.2,
+                "ttfb": 723.2,
+                "transfer": 40203,
+                "encoded": 39903
+              },
+              {
+                "url": "/blog/vendor/purify.min.js",
+                "type": "script",
+                "start": 588,
+                "dur": 1247.2,
+                "ttfb": 1246,
+                "transfer": 30128,
+                "encoded": 29828
+              },
+              {
+                "url": "/blog/js/data.js",
+                "type": "script",
+                "start": 588.2,
+                "dur": 1067.9,
+                "ttfb": 1067.3,
+                "transfer": 8310,
+                "encoded": 8010
+              },
+              {
+                "url": "/blog/js/user-posts.js",
+                "type": "script",
+                "start": 589.1,
+                "dur": 1536.8,
+                "ttfb": 1536,
+                "transfer": 505,
+                "encoded": 205
+              },
+              {
+                "url": "/blog/js/projects.js",
+                "type": "script",
+                "start": 589.9,
+                "dur": 1692.1,
+                "ttfb": 1691.5,
+                "transfer": 3844,
+                "encoded": 3544
+              },
+              {
+                "url": "/blog/js/app.js",
+                "type": "script",
+                "start": 590.5,
+                "dur": 2163.6,
+                "ttfb": 1863.8,
+                "transfer": 111037,
+                "encoded": 110737
+              }
+            ],
+            "title": "Eric's Notebook",
+            "giscusBlock": "cdp",
+            "errors": [],
+            "extra": {
+              "freshContext": true,
+              "httpCache": "空（新 BrowserContext + 服务端 Cache-Control: no-store）"
+            }
+          },
+          {
+            "rep": 4,
+            "scenario": "cold-home",
+            "config": "mobile",
+            "startedAt": "2026-10-26T10:57:47.987Z",
+            "ok": true,
+            "error": null,
+            "metrics": {
+              "ttfbMs": 533.7,
+              "dclMs": 2824.4,
+              "loadMs": 3357,
+              "fcpMs": 1740,
+              "lcpMs": 1740,
+              "cls": 0.1168,
+              "longTaskCount": 1,
+              "longTaskMaxMs": 601,
+              "tbtMs": 551,
+              "requestCount": 9,
+              "transferBytes": 252784,
+              "encodedBytes": 250084,
+              "scriptMs": 121.21,
+              "taskMs": 1545.76,
+              "layoutMs": 1025.51,
+              "serverRequestCount": 19,
+              "networkBytes": 573245,
+              "networkRequests": 20,
+              "networkLastEndMs": 5846,
+              "firstScreenNetEndMs": 3772
+            },
+            "cdp": {
+              "basis": "absolute（全新渲染进程，累计值即本次导航）",
+              "raw": {
+                "Documents": 7,
+                "Nodes": 1036,
+                "LayoutCount": 4,
+                "RecalcStyleCount": 63,
+                "LayoutDuration": 1.02551,
+                "RecalcStyleDuration": 0.094246,
+                "ScriptDuration": 0.121206,
+                "TaskDuration": 1.545761
+              },
+              "pre": null,
+              "values": {
+                "Documents": 7,
+                "Nodes": 1036,
+                "LayoutCount": 4,
+                "RecalcStyleCount": 63,
+                "LayoutDuration": 1025.51,
+                "RecalcStyleDuration": 94.25,
+                "ScriptDuration": 121.21,
+                "TaskDuration": 1545.76
+              }
+            },
+            "navigation": {
+              "ttfb": 533.7,
+              "dcl": 2824.4,
+              "load": 3357,
+              "duration": 3357,
+              "transfer": 5740,
+              "encoded": 5440,
+              "protocol": "http/1.1"
+            },
+            "paints": {
+              "fp": 1740,
+              "fcp": 1740
+            },
+            "lcp": {
+              "value": 1740,
+              "tag": null,
+              "text": null,
+              "size": 5073
+            },
+            "cls": {
+              "value": 0.1168,
+              "rawSum": 0.1168,
+              "windows": 1,
+              "shiftCount": 1
+            },
+            "longTasks": {
+              "count": 1,
+              "maxMs": 601,
+              "tbtMs": 551,
+              "all": [
+                {
+                  "start": 2758,
+                  "dur": 601
+                }
+              ]
+            },
+            "dom": {
+              "nodes": 414,
+              "appChildren": 1,
+              "hasArticleBody": false,
+              "articleBodyChars": 0,
+              "articleHeadings": 0,
+              "tocItems": 0
+            },
+            "sw": {
+              "controllerAtLoad": false,
+              "cacheNamesAtLoad": [],
+              "controller": false,
+              "active": false,
+              "scriptURL": null,
+              "observerErrors": []
+            },
+            "cache": null,
+            "serverHits": {
+              "/index.html": 3,
+              "/css/style.css": 2,
+              "/vendor/atom-one-light.min.css": 2,
+              "/vendor/marked.min.js": 2,
+              "/vendor/purify.min.js": 2,
+              "/js/user-posts.js": 1,
+              "/js/data.js": 2,
+              "/js/projects.js": 1,
+              "/js/app.js": 2,
+              "/manifest.json": 1,
+              "/icons/icon-192.png": 1
+            },
+            "resources": [
+              {
+                "url": "/blog/css/style.css",
+                "type": "link",
+                "start": 577.9,
+                "dur": 173.3,
+                "ttfb": 172.8,
+                "transfer": 51861,
+                "encoded": 51561
+              },
+              {
+                "url": "/blog/vendor/atom-one-light.min.css",
+                "type": "link",
+                "start": 580.4,
+                "dur": 577.7,
+                "ttfb": 577.2,
+                "transfer": 1156,
+                "encoded": 856
+              },
+              {
+                "url": "/blog/vendor/marked.min.js",
+                "type": "script",
+                "start": 581.6,
+                "dur": 1358.7,
+                "ttfb": 1357.9,
+                "transfer": 40203,
+                "encoded": 39903
+              },
+              {
+                "url": "/blog/vendor/purify.min.js",
+                "type": "script",
+                "start": 582.1,
+                "dur": 733.1,
+                "ttfb": 732.6,
+                "transfer": 30128,
+                "encoded": 29828
+              },
+              {
+                "url": "/blog/js/data.js",
+                "type": "script",
+                "start": 582.5,
+                "dur": 1013.8,
+                "ttfb": 1013.2,
+                "transfer": 8310,
+                "encoded": 8010
+              },
+              {
+                "url": "/blog/js/user-posts.js",
+                "type": "script",
+                "start": 582.8,
+                "dur": 1200.3,
+                "ttfb": 1199.6,
+                "transfer": 505,
+                "encoded": 205
+              },
+              {
+                "url": "/blog/js/projects.js",
+                "type": "script",
+                "start": 583.3,
+                "dur": 1702,
+                "ttfb": 1701.2,
+                "transfer": 3844,
+                "encoded": 3544
+              },
+              {
+                "url": "/blog/js/app.js",
+                "type": "script",
+                "start": 583.8,
+                "dur": 2171,
+                "ttfb": 1856.8,
+                "transfer": 111037,
+                "encoded": 110737
+              }
+            ],
+            "title": "Eric's Notebook",
+            "giscusBlock": "cdp",
+            "errors": [],
+            "extra": {
+              "freshContext": true,
+              "httpCache": "空（新 BrowserContext + 服务端 Cache-Control: no-store）"
+            }
+          },
+          {
+            "rep": 5,
+            "scenario": "cold-home",
+            "config": "mobile",
+            "startedAt": "2026-10-26T10:57:54.155Z",
+            "ok": true,
+            "error": null,
+            "metrics": {
+              "ttfbMs": 557.5,
+              "dclMs": 2873.4,
+              "loadMs": 3637,
+              "fcpMs": 1772,
+              "lcpMs": 1772,
+              "cls": 0.1168,
+              "longTaskCount": 1,
+              "longTaskMaxMs": 856,
+              "tbtMs": 806,
+              "requestCount": 9,
+              "transferBytes": 252784,
+              "encodedBytes": 250084,
+              "scriptMs": 142.85,
+              "taskMs": 1877.48,
+              "layoutMs": 1249.4,
+              "serverRequestCount": 19,
+              "networkBytes": 573245,
+              "networkRequests": 20,
+              "networkLastEndMs": 6134,
+              "firstScreenNetEndMs": 4067
+            },
+            "cdp": {
+              "basis": "absolute（全新渲染进程，累计值即本次导航）",
+              "raw": {
+                "Documents": 7,
+                "Nodes": 1036,
+                "LayoutCount": 4,
+                "RecalcStyleCount": 65,
+                "LayoutDuration": 1.249403,
+                "RecalcStyleDuration": 0.118971,
+                "ScriptDuration": 0.142852,
+                "TaskDuration": 1.877482
+              },
+              "pre": null,
+              "values": {
+                "Documents": 7,
+                "Nodes": 1036,
+                "LayoutCount": 4,
+                "RecalcStyleCount": 65,
+                "LayoutDuration": 1249.4,
+                "RecalcStyleDuration": 118.97,
+                "ScriptDuration": 142.85,
+                "TaskDuration": 1877.48
+              }
+            },
+            "navigation": {
+              "ttfb": 557.5,
+              "dcl": 2873.4,
+              "load": 3637,
+              "duration": 3637,
+              "transfer": 5740,
+              "encoded": 5440,
+              "protocol": "http/1.1"
+            },
+            "paints": {
+              "fp": 1772,
+              "fcp": 1772
+            },
+            "lcp": {
+              "value": 1772,
+              "tag": null,
+              "text": null,
+              "size": 5073
+            },
+            "cls": {
+              "value": 0.1168,
+              "rawSum": 0.1168,
+              "windows": 1,
+              "shiftCount": 1
+            },
+            "longTasks": {
+              "count": 1,
+              "maxMs": 856,
+              "tbtMs": 806,
+              "all": [
+                {
+                  "start": 2782,
+                  "dur": 856
+                }
+              ]
+            },
+            "dom": {
+              "nodes": 414,
+              "appChildren": 1,
+              "hasArticleBody": false,
+              "articleBodyChars": 0,
+              "articleHeadings": 0,
+              "tocItems": 0
+            },
+            "sw": {
+              "controllerAtLoad": false,
+              "cacheNamesAtLoad": [],
+              "controller": false,
+              "active": false,
+              "scriptURL": null,
+              "observerErrors": []
+            },
+            "cache": null,
+            "serverHits": {
+              "/index.html": 3,
+              "/css/style.css": 2,
+              "/vendor/atom-one-light.min.css": 2,
+              "/vendor/marked.min.js": 2,
+              "/vendor/purify.min.js": 2,
+              "/js/user-posts.js": 1,
+              "/js/data.js": 2,
+              "/js/projects.js": 1,
+              "/js/app.js": 2,
+              "/manifest.json": 1,
+              "/icons/icon-192.png": 1
+            },
+            "resources": [
+              {
+                "url": "/blog/css/style.css",
+                "type": "link",
+                "start": 602.1,
+                "dur": 175,
+                "ttfb": 174.2,
+                "transfer": 51861,
+                "encoded": 51561
+              },
+              {
+                "url": "/blog/vendor/atom-one-light.min.css",
+                "type": "link",
+                "start": 605,
+                "dur": 575.4,
+                "ttfb": 574.9,
+                "transfer": 1156,
+                "encoded": 856
+              },
+              {
+                "url": "/blog/vendor/marked.min.js",
+                "type": "script",
+                "start": 606.4,
+                "dur": 730.1,
+                "ttfb": 729.5,
+                "transfer": 40203,
+                "encoded": 39903
+              },
+              {
+                "url": "/blog/vendor/purify.min.js",
+                "type": "script",
+                "start": 607,
+                "dur": 1075.1,
+                "ttfb": 1074.6,
+                "transfer": 30128,
+                "encoded": 29828
+              },
+              {
+                "url": "/blog/js/data.js",
+                "type": "script",
+                "start": 607.4,
+                "dur": 1357.7,
+                "ttfb": 1357,
+                "transfer": 8310,
+                "encoded": 8010
+              },
+              {
+                "url": "/blog/js/user-posts.js",
+                "type": "script",
+                "start": 607.8,
+                "dur": 1545.6,
+                "ttfb": 1544.9,
+                "transfer": 505,
+                "encoded": 205
+              },
+              {
+                "url": "/blog/js/projects.js",
+                "type": "script",
+                "start": 608.2,
+                "dur": 1701.9,
+                "ttfb": 1701.2,
+                "transfer": 3844,
+                "encoded": 3544
+              },
+              {
+                "url": "/blog/js/app.js",
+                "type": "script",
+                "start": 609.6,
+                "dur": 2168.9,
+                "ttfb": 1870.9,
+                "transfer": 111037,
+                "encoded": 110737
+              }
+            ],
+            "title": "Eric's Notebook",
+            "giscusBlock": "cdp",
+            "errors": [],
+            "extra": {
+              "freshContext": true,
+              "httpCache": "空（新 BrowserContext + 服务端 Cache-Control: no-store）"
+            }
+          }
+        ],
+        "summary": {
+          "cls": {
+            "label": "CLS（session window 最大值）",
+            "unit": "score",
+            "basis": "measured",
+            "n": 5,
+            "median": 0.12,
+            "min": 0.12,
+            "max": 0.12,
+            "spread": 0,
+            "spreadPct": 0,
+            "stdev": 0,
+            "unavailable": false
+          },
+          "dclMs": {
+            "label": "DOMContentLoaded",
+            "unit": "ms",
+            "basis": "measured",
+            "n": 5,
+            "median": 2824.4,
+            "min": 2557.6,
+            "max": 2873.4,
+            "spread": 315.8,
+            "spreadPct": 11.18,
+            "stdev": 117.31,
+            "unavailable": false
+          },
+          "encodedBytes": {
+            "label": "编码后体积（encodedBodySize 合计）",
+            "unit": "bytes",
+            "basis": "measured",
+            "n": 5,
+            "median": 250084,
+            "min": 250084,
+            "max": 250084,
+            "spread": 0,
+            "spreadPct": 0,
+            "stdev": 0,
+            "unavailable": false
+          },
+          "fcpMs": {
+            "label": "FCP",
+            "unit": "ms",
+            "basis": "measured",
+            "n": 5,
+            "median": 1772,
+            "min": 1528,
+            "max": 1864,
+            "spread": 336,
+            "spreadPct": 18.96,
+            "stdev": 123.12,
+            "unavailable": false
+          },
+          "firstScreenNetEndMs": {
+            "label": "firstScreenNetEndMs",
+            "unit": "",
+            "basis": "measured",
+            "n": 5,
+            "median": 3784,
+            "min": 3603,
+            "max": 4067,
+            "spread": 464,
+            "spreadPct": 12.26,
+            "stdev": 153.12,
+            "unavailable": false
+          },
+          "layoutMs": {
+            "label": "布局耗时（CDP LayoutDuration）",
+            "unit": "ms",
+            "basis": "measured",
+            "n": 5,
+            "median": 1135.64,
+            "min": 1025.51,
+            "max": 1249.4,
+            "spread": 223.89,
+            "spreadPct": 19.71,
+            "stdev": 71.05,
+            "unavailable": false
+          },
+          "lcpMs": {
+            "label": "LCP",
+            "unit": "ms",
+            "basis": "measured",
+            "n": 5,
+            "median": 1772,
+            "min": 1528,
+            "max": 1864,
+            "spread": 336,
+            "spreadPct": 18.96,
+            "stdev": 123.12,
+            "unavailable": false
+          },
+          "loadMs": {
+            "label": "页面加载完成 loadEventEnd",
+            "unit": "ms",
+            "basis": "measured",
+            "n": 5,
+            "median": 3360.1,
+            "min": 3173.1,
+            "max": 3637,
+            "spread": 463.9,
+            "spreadPct": 13.81,
+            "stdev": 152.34,
+            "unavailable": false
+          },
+          "longTaskCount": {
+            "label": "长任务数量（>50ms）",
+            "unit": "count",
+            "basis": "measured",
+            "n": 5,
+            "median": 1,
+            "min": 1,
+            "max": 1,
+            "spread": 0,
+            "spreadPct": 0,
+            "stdev": 0,
+            "unavailable": false
+          },
+          "longTaskMaxMs": {
+            "label": "最长长任务",
+            "unit": "ms",
+            "basis": "measured",
+            "n": 5,
+            "median": 672,
+            "min": 601,
+            "max": 856,
+            "spread": 255,
+            "spreadPct": 37.95,
+            "stdev": 92.74,
+            "unavailable": false
+          },
+          "networkBytes": {
+            "label": "导航窗口内网络传输字节（HTTP 层，含 SW 后台预取/后台校验）",
+            "unit": "bytes",
+            "basis": "measured",
+            "n": 5,
+            "median": 573245,
+            "min": 573245,
+            "max": 573245,
+            "spread": 0,
+            "spreadPct": 0,
+            "stdev": 0,
+            "unavailable": false
+          },
+          "networkLastEndMs": {
+            "label": "networkLastEndMs",
+            "unit": "",
+            "basis": "measured",
+            "n": 5,
+            "median": 5853,
+            "min": 5673,
+            "max": 6134,
+            "spread": 461,
+            "spreadPct": 7.88,
+            "stdev": 151.51,
+            "unavailable": false
+          },
+          "networkRequests": {
+            "label": "导航窗口内到达服务器的请求数（HTTP 层）",
+            "unit": "count",
+            "basis": "measured",
+            "n": 5,
+            "median": 20,
+            "min": 20,
+            "max": 20,
+            "spread": 0,
+            "spreadPct": 0,
+            "stdev": 0,
+            "unavailable": false
+          },
+          "requestCount": {
+            "label": "请求数量（Resource Timing）",
+            "unit": "count",
+            "basis": "measured",
+            "n": 5,
+            "median": 9,
+            "min": 9,
+            "max": 9,
+            "spread": 0,
+            "spreadPct": 0,
+            "stdev": 0,
+            "unavailable": false
+          },
+          "scriptMs": {
+            "label": "JS 执行时间（CDP ScriptDuration，主线程）",
+            "unit": "ms",
+            "basis": "measured",
+            "n": 5,
+            "median": 121.21,
+            "min": 105.99,
+            "max": 142.85,
+            "spread": 36.86,
+            "spreadPct": 30.41,
+            "stdev": 13.74,
+            "unavailable": false
+          },
+          "serverRequestCount": {
+            "label": "真实到达服务器的请求数（服务端计数）",
+            "unit": "count",
+            "basis": "measured",
+            "n": 5,
+            "median": 19,
+            "min": 19,
+            "max": 19,
+            "spread": 0,
+            "spreadPct": 0,
+            "stdev": 0,
+            "unavailable": false
+          },
+          "taskMs": {
+            "label": "主线程任务总时长（CDP TaskDuration）",
+            "unit": "ms",
+            "basis": "measured",
+            "n": 5,
+            "median": 1660.85,
+            "min": 1545.76,
+            "max": 1877.48,
+            "spread": 331.72,
+            "spreadPct": 19.97,
+            "stdev": 107.8,
+            "unavailable": false
+          },
+          "tbtMs": {
+            "label": "TBT 近似（长任务阻塞时间，窗口=导航开始→load+2s）",
+            "unit": "ms",
+            "basis": "calculated",
+            "n": 5,
+            "median": 622,
+            "min": 551,
+            "max": 806,
+            "spread": 255,
+            "spreadPct": 41,
+            "stdev": 92.74,
+            "unavailable": false
+          },
+          "transferBytes": {
+            "label": "资源传输字节（transferSize 合计）",
+            "unit": "bytes",
+            "basis": "measured",
+            "n": 5,
+            "median": 252784,
+            "min": 252784,
+            "max": 252784,
+            "spread": 0,
+            "spreadPct": 0,
+            "stdev": 0,
+            "unavailable": false
+          },
+          "ttfbMs": {
+            "label": "TTFB",
+            "unit": "ms",
+            "basis": "measured",
+            "n": 5,
+            "median": 542.6,
+            "min": 215.2,
+            "max": 570.3,
+            "spread": 355.1,
+            "spreadPct": 65.44,
+            "stdev": 134.91,
+            "unavailable": false
+          }
+        },
+        "validity": {
+          "requested": 5,
+          "completed": 5,
+          "minRequired": 5
+        }
+      }
+    },
+    "search": {
+      "mobile": {
+        "label": "D. 全局搜索首次/重复输入",
+        "description": "预热后输入固定关键词：首次输入会触发 courses/papers/notes 懒加载（6B-2 起还包括正文搜索语料），重复输入复用已加载数据。",
+        "url": "http://127.0.0.1:8138/blog/",
+        "cacheState": {
+          "mode": "warm",
+          "serviceWorker": "已注册并接管（首页预热后再输入关键词）",
+          "warmVerified": true,
+          "coreCacheName": "blog-2026-10-26-2",
+          "coreEntryCount": 12,
+          "missingRequired": []
+        },
+        "samples": [
+          {
+            "rep": 1,
+            "scenario": "search",
+            "config": "mobile",
+            "startedAt": "2026-10-26T10:58:00.615Z",
+            "ok": true,
+            "error": null,
+            "metrics": {
+              "searchFirstRenderMs": 204.2,
+              "searchFirstFinalMs": 2053.6,
+              "searchFirstRenderCount": 2,
+              "searchLazyBytes": 265717,
+              "searchFirstLongTaskMs": 0,
+              "searchFirstScriptMs": 18.29,
+              "searchRepeatRenderMs": 206.4,
+              "searchRepeatFinalMs": 206.4,
+              "searchRepeatRenderCount": 1,
+              "searchRepeatLongTaskMs": 0,
+              "searchRepeatScriptMs": 10.32,
+              "serverRequestCount": 5,
+              "networkBytes": 265717
+            },
+            "sw": {
+              "controller": true
+            },
+            "cache": null,
+            "serverHits": {
+              "/js/papers.js": 1,
+              "/js/courses.js": 1,
+              "/js/course-notes.js": 1,
+              "/js/note-slugs.js": 1,
+              "/data/search-index.json": 1
+            },
+            "search": {
+              "first": {
+                "keyword": "SLAM",
+                "expectLazy": true,
+                "lazyDataReady": true,
+                "renderCount": 2,
+                "renderTimelineMs": [
+                  204.2,
+                  2053.6
+                ],
+                "firstRenderMs": 204.2,
+                "finalRenderMs": 2053.6,
+                "newResources": [
+                  {
+                    "url": "/blog/data/search-index.json",
+                    "dur": 476.1,
+                    "transfer": 0,
+                    "encoded": 106904
+                  },
+                  {
+                    "url": "/blog/js/courses.js",
+                    "dur": 626.2,
+                    "transfer": 0,
+                    "encoded": 14876
+                  },
+                  {
+                    "url": "/blog/js/papers.js",
+                    "dur": 844.8,
+                    "transfer": 0,
+                    "encoded": 42068
+                  },
+                  {
+                    "url": "/blog/js/course-notes.js",
+                    "dur": 1502.6,
+                    "transfer": 0,
+                    "encoded": 100903
+                  },
+                  {
+                    "url": "/blog/js/note-slugs.js",
+                    "dur": 323.7,
+                    "transfer": 0,
+                    "encoded": 966
+                  }
+                ],
+                "lazyBytes": 265717,
+                "resultText": "找到 7 条与 “SLAM” 相关的结果",
+                "longTaskCount": 0,
+                "longTaskMs": 0
+              },
+              "repeat": {
+                "keyword": "学习",
+                "expectLazy": false,
+                "lazyDataReady": true,
+                "renderCount": 1,
+                "renderTimelineMs": [
+                  206.4
+                ],
+                "firstRenderMs": 206.4,
+                "finalRenderMs": 206.4,
+                "newResources": [],
+                "lazyBytes": 0,
+                "resultText": "找到 19 条与 “学习” 相关的结果",
+                "longTaskCount": 0,
+                "longTaskMs": 0
+              }
+            },
+            "extra": {
+              "warmVerified": true,
+              "keywords": [
+                "SLAM",
+                "学习"
+              ],
+              "debounceMs": 180
+            },
+            "errors": []
+          },
+          {
+            "rep": 2,
+            "scenario": "search",
+            "config": "mobile",
+            "startedAt": "2026-10-26T10:58:14.553Z",
+            "ok": true,
+            "error": null,
+            "metrics": {
+              "searchFirstRenderMs": 209.4,
+              "searchFirstFinalMs": 2052.6,
+              "searchFirstRenderCount": 2,
+              "searchLazyBytes": 265717,
+              "searchFirstLongTaskMs": 0,
+              "searchFirstScriptMs": 18.12,
+              "searchRepeatRenderMs": 498.2,
+              "searchRepeatFinalMs": 498.2,
+              "searchRepeatRenderCount": 1,
+              "searchRepeatLongTaskMs": 0,
+              "searchRepeatScriptMs": 9.05,
+              "serverRequestCount": 5,
+              "networkBytes": 265717
+            },
+            "sw": {
+              "controller": true
+            },
+            "cache": null,
+            "serverHits": {
+              "/js/papers.js": 1,
+              "/js/courses.js": 1,
+              "/js/course-notes.js": 1,
+              "/js/note-slugs.js": 1,
+              "/data/search-index.json": 1
+            },
+            "search": {
+              "first": {
+                "keyword": "SLAM",
+                "expectLazy": true,
+                "lazyDataReady": true,
+                "renderCount": 2,
+                "renderTimelineMs": [
+                  209.4,
+                  2052.6
+                ],
+                "firstRenderMs": 209.4,
+                "finalRenderMs": 2052.6,
+                "newResources": [
+                  {
+                    "url": "/blog/data/search-index.json",
+                    "dur": 477.5,
+                    "transfer": 0,
+                    "encoded": 106904
+                  },
+                  {
+                    "url": "/blog/js/courses.js",
+                    "dur": 621.9,
+                    "transfer": 0,
+                    "encoded": 14876
+                  },
+                  {
+                    "url": "/blog/js/papers.js",
+                    "dur": 839.5,
+                    "transfer": 0,
+                    "encoded": 42068
+                  },
+                  {
+                    "url": "/blog/js/course-notes.js",
+                    "dur": 1511.1,
+                    "transfer": 0,
+                    "encoded": 100903
+                  },
+                  {
+                    "url": "/blog/js/note-slugs.js",
+                    "dur": 309.4,
+                    "transfer": 0,
+                    "encoded": 966
+                  }
+                ],
+                "lazyBytes": 265717,
+                "resultText": "找到 7 条与 “SLAM” 相关的结果",
+                "longTaskCount": 0,
+                "longTaskMs": 0
+              },
+              "repeat": {
+                "keyword": "学习",
+                "expectLazy": false,
+                "lazyDataReady": true,
+                "renderCount": 1,
+                "renderTimelineMs": [
+                  498.2
+                ],
+                "firstRenderMs": 498.2,
+                "finalRenderMs": 498.2,
+                "newResources": [],
+                "lazyBytes": 0,
+                "resultText": "找到 19 条与 “学习” 相关的结果",
+                "longTaskCount": 0,
+                "longTaskMs": 0
+              }
+            },
+            "extra": {
+              "warmVerified": true,
+              "keywords": [
+                "SLAM",
+                "学习"
+              ],
+              "debounceMs": 180
+            },
+            "errors": []
+          },
+          {
+            "rep": 3,
+            "scenario": "search",
+            "config": "mobile",
+            "startedAt": "2026-10-26T10:58:28.071Z",
+            "ok": true,
+            "error": null,
+            "metrics": {
+              "searchFirstRenderMs": 207.1,
+              "searchFirstFinalMs": 2048.7,
+              "searchFirstRenderCount": 2,
+              "searchLazyBytes": 265717,
+              "searchFirstLongTaskMs": 0,
+              "searchFirstScriptMs": 17.15,
+              "searchRepeatRenderMs": 293.3,
+              "searchRepeatFinalMs": 293.3,
+              "searchRepeatRenderCount": 1,
+              "searchRepeatLongTaskMs": 0,
+              "searchRepeatScriptMs": 11.54,
+              "serverRequestCount": 5,
+              "networkBytes": 265717
+            },
+            "sw": {
+              "controller": true
+            },
+            "cache": null,
+            "serverHits": {
+              "/js/papers.js": 1,
+              "/js/courses.js": 1,
+              "/js/course-notes.js": 1,
+              "/js/note-slugs.js": 1,
+              "/data/search-index.json": 1
+            },
+            "search": {
+              "first": {
+                "keyword": "SLAM",
+                "expectLazy": true,
+                "lazyDataReady": true,
+                "renderCount": 2,
+                "renderTimelineMs": [
+                  207.1,
+                  2048.7
+                ],
+                "firstRenderMs": 207.1,
+                "finalRenderMs": 2048.7,
+                "newResources": [
+                  {
+                    "url": "/blog/data/search-index.json",
+                    "dur": 478.9,
+                    "transfer": 0,
+                    "encoded": 106904
+                  },
+                  {
+                    "url": "/blog/js/courses.js",
+                    "dur": 629,
+                    "transfer": 0,
+                    "encoded": 14876
+                  },
+                  {
+                    "url": "/blog/js/papers.js",
+                    "dur": 851.5,
+                    "transfer": 0,
+                    "encoded": 42068
+                  },
+                  {
+                    "url": "/blog/js/course-notes.js",
+                    "dur": 1504.3,
+                    "transfer": 0,
+                    "encoded": 100903
+                  },
+                  {
+                    "url": "/blog/js/note-slugs.js",
+                    "dur": 311.6,
+                    "transfer": 0,
+                    "encoded": 966
+                  }
+                ],
+                "lazyBytes": 265717,
+                "resultText": "找到 7 条与 “SLAM” 相关的结果",
+                "longTaskCount": 0,
+                "longTaskMs": 0
+              },
+              "repeat": {
+                "keyword": "学习",
+                "expectLazy": false,
+                "lazyDataReady": true,
+                "renderCount": 1,
+                "renderTimelineMs": [
+                  293.3
+                ],
+                "firstRenderMs": 293.3,
+                "finalRenderMs": 293.3,
+                "newResources": [],
+                "lazyBytes": 0,
+                "resultText": "找到 19 条与 “学习” 相关的结果",
+                "longTaskCount": 0,
+                "longTaskMs": 0
+              }
+            },
+            "extra": {
+              "warmVerified": true,
+              "keywords": [
+                "SLAM",
+                "学习"
+              ],
+              "debounceMs": 180
+            },
+            "errors": []
+          },
+          {
+            "rep": 4,
+            "scenario": "search",
+            "config": "mobile",
+            "startedAt": "2026-10-26T10:58:41.476Z",
+            "ok": true,
+            "error": null,
+            "metrics": {
+              "searchFirstRenderMs": 205.8,
+              "searchFirstFinalMs": 2056.6,
+              "searchFirstRenderCount": 2,
+              "searchLazyBytes": 265717,
+              "searchFirstLongTaskMs": 0,
+              "searchFirstScriptMs": 16.84,
+              "searchRepeatRenderMs": 256,
+              "searchRepeatFinalMs": 256,
+              "searchRepeatRenderCount": 1,
+              "searchRepeatLongTaskMs": 0,
+              "searchRepeatScriptMs": 11.76,
+              "serverRequestCount": 5,
+              "networkBytes": 265717
+            },
+            "sw": {
+              "controller": true
+            },
+            "cache": null,
+            "serverHits": {
+              "/js/papers.js": 1,
+              "/js/courses.js": 1,
+              "/js/course-notes.js": 1,
+              "/js/note-slugs.js": 1,
+              "/data/search-index.json": 1
+            },
+            "search": {
+              "first": {
+                "keyword": "SLAM",
+                "expectLazy": true,
+                "lazyDataReady": true,
+                "renderCount": 2,
+                "renderTimelineMs": [
+                  205.8,
+                  2056.6
+                ],
+                "firstRenderMs": 205.8,
+                "finalRenderMs": 2056.6,
+                "newResources": [
+                  {
+                    "url": "/blog/data/search-index.json",
+                    "dur": 472.8,
+                    "transfer": 0,
+                    "encoded": 106904
+                  },
+                  {
+                    "url": "/blog/js/courses.js",
+                    "dur": 642.3,
+                    "transfer": 0,
+                    "encoded": 14876
+                  },
+                  {
+                    "url": "/blog/js/papers.js",
+                    "dur": 849.3,
+                    "transfer": 0,
+                    "encoded": 42068
+                  },
+                  {
+                    "url": "/blog/js/course-notes.js",
+                    "dur": 1505,
+                    "transfer": 0,
+                    "encoded": 100903
+                  },
+                  {
+                    "url": "/blog/js/note-slugs.js",
+                    "dur": 322.3,
+                    "transfer": 0,
+                    "encoded": 966
+                  }
+                ],
+                "lazyBytes": 265717,
+                "resultText": "找到 7 条与 “SLAM” 相关的结果",
+                "longTaskCount": 0,
+                "longTaskMs": 0
+              },
+              "repeat": {
+                "keyword": "学习",
+                "expectLazy": false,
+                "lazyDataReady": true,
+                "renderCount": 1,
+                "renderTimelineMs": [
+                  256
+                ],
+                "firstRenderMs": 256,
+                "finalRenderMs": 256,
+                "newResources": [],
+                "lazyBytes": 0,
+                "resultText": "找到 19 条与 “学习” 相关的结果",
+                "longTaskCount": 0,
+                "longTaskMs": 0
+              }
+            },
+            "extra": {
+              "warmVerified": true,
+              "keywords": [
+                "SLAM",
+                "学习"
+              ],
+              "debounceMs": 180
+            },
+            "errors": []
+          },
+          {
+            "rep": 5,
+            "scenario": "search",
+            "config": "mobile",
+            "startedAt": "2026-10-26T10:58:54.872Z",
+            "ok": true,
+            "error": null,
+            "metrics": {
+              "searchFirstRenderMs": 208.9,
+              "searchFirstFinalMs": 2043.8,
+              "searchFirstRenderCount": 2,
+              "searchLazyBytes": 265717,
+              "searchFirstLongTaskMs": 0,
+              "searchFirstScriptMs": 16.53,
+              "searchRepeatRenderMs": 277.4,
+              "searchRepeatFinalMs": 277.4,
+              "searchRepeatRenderCount": 1,
+              "searchRepeatLongTaskMs": 0,
+              "searchRepeatScriptMs": 11.7,
+              "serverRequestCount": 5,
+              "networkBytes": 265717
+            },
+            "sw": {
+              "controller": true
+            },
+            "cache": null,
+            "serverHits": {
+              "/js/papers.js": 1,
+              "/js/courses.js": 1,
+              "/js/course-notes.js": 1,
+              "/js/note-slugs.js": 1,
+              "/data/search-index.json": 1
+            },
+            "search": {
+              "first": {
+                "keyword": "SLAM",
+                "expectLazy": true,
+                "lazyDataReady": true,
+                "renderCount": 2,
+                "renderTimelineMs": [
+                  208.9,
+                  2043.8
+                ],
+                "firstRenderMs": 208.9,
+                "finalRenderMs": 2043.8,
+                "newResources": [
+                  {
+                    "url": "/blog/data/search-index.json",
+                    "dur": 479.7,
+                    "transfer": 0,
+                    "encoded": 106904
+                  },
+                  {
+                    "url": "/blog/js/courses.js",
+                    "dur": 619.2,
+                    "transfer": 0,
+                    "encoded": 14876
+                  },
+                  {
+                    "url": "/blog/js/papers.js",
+                    "dur": 836.5,
+                    "transfer": 0,
+                    "encoded": 42068
+                  },
+                  {
+                    "url": "/blog/js/course-notes.js",
+                    "dur": 1504.4,
+                    "transfer": 0,
+                    "encoded": 100903
+                  },
+                  {
+                    "url": "/blog/js/note-slugs.js",
+                    "dur": 308.3,
+                    "transfer": 0,
+                    "encoded": 966
+                  }
+                ],
+                "lazyBytes": 265717,
+                "resultText": "找到 7 条与 “SLAM” 相关的结果",
+                "longTaskCount": 0,
+                "longTaskMs": 0
+              },
+              "repeat": {
+                "keyword": "学习",
+                "expectLazy": false,
+                "lazyDataReady": true,
+                "renderCount": 1,
+                "renderTimelineMs": [
+                  277.4
+                ],
+                "firstRenderMs": 277.4,
+                "finalRenderMs": 277.4,
+                "newResources": [],
+                "lazyBytes": 0,
+                "resultText": "找到 19 条与 “学习” 相关的结果",
+                "longTaskCount": 0,
+                "longTaskMs": 0
+              }
+            },
+            "extra": {
+              "warmVerified": true,
+              "keywords": [
+                "SLAM",
+                "学习"
+              ],
+              "debounceMs": 180
+            },
+            "errors": []
+          }
+        ],
+        "summary": {
+          "networkBytes": {
+            "label": "导航窗口内网络传输字节（HTTP 层，含 SW 后台预取/后台校验）",
+            "unit": "bytes",
+            "basis": "measured",
+            "n": 5,
+            "median": 265717,
+            "min": 265717,
+            "max": 265717,
+            "spread": 0,
+            "spreadPct": 0,
+            "stdev": 0,
+            "unavailable": false
+          },
+          "searchFirstFinalMs": {
+            "label": "搜索首次输入：懒加载补齐后最终渲染",
+            "unit": "ms",
+            "basis": "measured",
+            "n": 5,
+            "median": 2052.6,
+            "min": 2043.8,
+            "max": 2056.6,
+            "spread": 12.8,
+            "spreadPct": 0.62,
+            "stdev": 4.42,
+            "unavailable": false
+          },
+          "searchFirstLongTaskMs": {
+            "label": "搜索首次输入：长任务阻塞时间",
+            "unit": "ms",
+            "basis": "calculated",
+            "n": 5,
+            "median": 0,
+            "min": 0,
+            "max": 0,
+            "spread": 0,
+            "spreadPct": null,
+            "stdev": 0,
+            "unavailable": false
+          },
+          "searchFirstRenderCount": {
+            "label": "搜索首次输入：DOM 重绘次数",
+            "unit": "count",
+            "basis": "measured",
+            "n": 5,
+            "median": 2,
+            "min": 2,
+            "max": 2,
+            "spread": 0,
+            "spreadPct": 0,
+            "stdev": 0,
+            "unavailable": false
+          },
+          "searchFirstRenderMs": {
+            "label": "搜索首次输入：首个结果渲染（含 180ms 防抖）",
+            "unit": "ms",
+            "basis": "measured",
+            "n": 5,
+            "median": 207.1,
+            "min": 204.2,
+            "max": 209.4,
+            "spread": 5.2,
+            "spreadPct": 2.51,
+            "stdev": 1.93,
+            "unavailable": false
+          },
+          "searchFirstScriptMs": {
+            "label": "搜索首次输入：JS 执行时间",
+            "unit": "ms",
+            "basis": "measured",
+            "n": 5,
+            "median": 17.15,
+            "min": 16.53,
+            "max": 18.29,
+            "spread": 1.76,
+            "spreadPct": 10.26,
+            "stdev": 0.7,
+            "unavailable": false
+          },
+          "searchLazyBytes": {
+            "label": "搜索首次输入：新增下载字节",
+            "unit": "bytes",
+            "basis": "measured",
+            "n": 5,
+            "median": 265717,
+            "min": 265717,
+            "max": 265717,
+            "spread": 0,
+            "spreadPct": 0,
+            "stdev": 0,
+            "unavailable": false
+          },
+          "searchRepeatFinalMs": {
+            "label": "搜索重复输入：最终渲染稳定时间",
+            "unit": "ms",
+            "basis": "measured",
+            "n": 5,
+            "median": 277.4,
+            "min": 206.4,
+            "max": 498.2,
+            "spread": 291.8,
+            "spreadPct": 105.19,
+            "stdev": 100.34,
+            "unavailable": false
+          },
+          "searchRepeatLongTaskMs": {
+            "label": "搜索重复输入：长任务阻塞时间",
+            "unit": "ms",
+            "basis": "calculated",
+            "n": 5,
+            "median": 0,
+            "min": 0,
+            "max": 0,
+            "spread": 0,
+            "spreadPct": null,
+            "stdev": 0,
+            "unavailable": false
+          },
+          "searchRepeatRenderCount": {
+            "label": "搜索重复输入：DOM 重绘次数",
+            "unit": "count",
+            "basis": "measured",
+            "n": 5,
+            "median": 1,
+            "min": 1,
+            "max": 1,
+            "spread": 0,
+            "spreadPct": 0,
+            "stdev": 0,
+            "unavailable": false
+          },
+          "searchRepeatRenderMs": {
+            "label": "搜索重复输入：结果渲染（含 180ms 防抖）",
+            "unit": "ms",
+            "basis": "measured",
+            "n": 5,
+            "median": 277.4,
+            "min": 206.4,
+            "max": 498.2,
+            "spread": 291.8,
+            "spreadPct": 105.19,
+            "stdev": 100.34,
+            "unavailable": false
+          },
+          "searchRepeatScriptMs": {
+            "label": "搜索重复输入：JS 执行时间",
+            "unit": "ms",
+            "basis": "measured",
+            "n": 5,
+            "median": 11.54,
+            "min": 9.05,
+            "max": 11.76,
+            "spread": 2.71,
+            "spreadPct": 23.48,
+            "stdev": 1.05,
+            "unavailable": false
+          },
+          "serverRequestCount": {
+            "label": "真实到达服务器的请求数（服务端计数）",
+            "unit": "count",
+            "basis": "measured",
+            "n": 5,
+            "median": 5,
+            "min": 5,
+            "max": 5,
+            "spread": 0,
+            "spreadPct": 0,
+            "stdev": 0,
+            "unavailable": false
+          }
+        },
+        "validity": {
+          "requested": 5,
+          "completed": 5,
+          "minRequired": 5
+        }
+      }
+    }
+  },
+  "unavailable": [],
+  "failures": [],
+  "calibration": {
+    "note": "用于判断限速/CPU 限速是否真的生效：对比同一次冷启动中 js/data.js 的传输耗时与 ScriptDuration",
+    "desktop": null,
+    "mobile": {
+      "durMs": 1529.8,
+      "encoded": 8010,
+      "scriptMs": 137.26,
+      "loadMs": 3173.1
+    },
+    "expected": {
+      "dataJsBytes": 114583,
+      "dataJsTransferMsAt1638kbps": 546
+    },
+    "networkShaping": {
+      "effective": false,
+      "basis": "inferred（移动端 data.js 传输耗时 ≥ max(300ms, 桌面端 5 倍) 视为整形生效）"
+    },
+    "cpuThrottling": {
+      "ratio": null,
+      "effective": false,
+      "basis": "inferred（移动端 ScriptDuration / 桌面端 ScriptDuration ≥ 2 视为 4x CPU 限速生效）"
+    }
+  }
+}

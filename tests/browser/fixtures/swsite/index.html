@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-ver="{{ver}}">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>SW fixture v{{ver}}</title>
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+<div id="app" data-ver="{{ver}}">boot v{{ver}}</div>
+<pre id="versions">pending</pre>
+<script src="js/data.js"></script>
+<script src="js/user-posts.js"></script>
+<script src="js/projects.js"></script>
+<script src="js/app.js"></script>
+<script>
+  // 与生产一致：load 之后才注册 SW（预取/安装都发生在首屏之后）
+  window.addEventListener('load', function () {
+    var el = document.getElementById('versions');
+    el.textContent = JSON.stringify(window.__versions || null);
+    window.__versionsDumped = true;
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('sw.js').catch(function (e) {
+        window.__swError = String(e && e.message || e);
+      });
+    }
+  });
+</script>
+</body>
+</html>

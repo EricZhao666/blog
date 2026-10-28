@@ -8,6 +8,8 @@ const path = require('path');
 const fs = require('fs');
 const { chromium } = require('playwright');
 const { createServer, listen } = require('./helpers/server');
+const { createProbe, listen: listenProbe } = require('../perf/http-probe');
+const { buildSwCandidate, parseSwConfig } = require('../perf/sw-candidates/build');
 
 const ROOT = path.resolve(__dirname, '..', '..');
 const PREFIX = '/blog';
@@ -21,6 +23,16 @@ const SW_VER = (function () {
 })();
 const CORE_NAME = 'blog-' + SW_VER;
 const RT_NAME = 'blog-rt-' + SW_VER;
+
+// Batch 6B-2：从 js/data.js 取前两个文章 id（正文按需加载用例要用真实存在的 id）
+const firstPostIds = (function () {
+  const src = fs.readFileSync(path.join(ROOT, 'js', 'data.js'), 'utf8');
+  const ids = [];
+  const re = /id:\s*'([^']+)'/g;
+  let m;
+  while ((m = re.exec(src)) && ids.length < 3) ids.push(m[1]);
+  return ids;
+})();
 
 let pass = 0, fail = 0;
 const results = [];
@@ -80,7 +92,34 @@ async function main() {
   fs.mkdirSync(SHOTS, { recursive: true });
   const { server, state } = createServer(ROOT, PREFIX);
   const port = await listen(server, 0);
-  const base = 'http://127.0.0.1:' + port;
+  let base = 'http://127.0.0.1:' + port;
+  let probe = null;
+
+  // Batch 6B：可选地用「候选 Service Worker」跑同一批用例（SW_FILE / SW_CONFIG），
+  // 用于验证候选策略是否仍然满足 Batch 4 的安装失败保护、离线、更新与容量约束。
+  const swFile = process.env.SW_FILE || null;
+  const swConfigText = process.env.SW_CONFIG || null;
+  let swUnderTest = { sourcePath: 'sw.js', config: null, sha256: null, injected: false };
+  if (swFile || swConfigText) {
+    const candidate = buildSwCandidate(swConfigText ? parseSwConfig(swConfigText) : null, swFile);
+    probe = createProbe({
+      targetPort: port,
+      overrides: {
+        // 与 helpers/server.js 的「模拟发布」保持一致：swap 版本时也要改写候选脚本的 CACHE_VERSION，
+        // 否则 S11/S12 观察不到新版本（那会变成测试工具的假象，而不是策略问题）
+        [PREFIX + '/sw.js']: {
+          bodyFn: function () {
+            return state.swBump
+              ? candidate.source.replace(/CACHE_VERSION = '([^']+)'/, "CACHE_VERSION = '$1-t2'")
+              : candidate.source;
+          }
+        }
+      }
+    });
+    const probePort = await listenProbe(probe.server, 0);
+    base = 'http://127.0.0.1:' + probePort;
+    swUnderTest = { sourcePath: candidate.sourcePath, config: candidate.config, sha256: candidate.sha256, injected: true, bytes: candidate.bytes };
+  }
 
   const launchOpts = { headless: true };
   if (CHANNEL !== 'chromium') launchOpts.channel = CHANNEL;
@@ -94,6 +133,10 @@ async function main() {
     process.exit(2);
   }
   console.log('浏览器: ' + CHANNEL + ' ' + browser.version());
+  console.log('被测 SW: ' + swUnderTest.sourcePath
+    + (swUnderTest.config ? ' ' + JSON.stringify(swUnderTest.config) : '')
+    + (swUnderTest.sha256 ? ' sha256:' + swUnderTest.sha256 : '')
+    + (swUnderTest.injected ? '（经观测探针注入，仓库 sw.js 未修改）' : '（仓库当前版本）'));
 
   // 重置注入状态
   const reset = () => {
@@ -204,6 +247,8 @@ async function main() {
       const r1 = await page.reload({ waitUntil: 'load' }).catch(() => null);
       const body1 = await page.evaluate(() => document.body.innerText.slice(0, 60));
       check('S6 已缓存的静态笔记离线可读', !!r1 && body1.indexOf('CS422') !== -1 || body1.length > 20, body1);
+      // Batch 6B 补充断言：离线笔记页不能退化成离线兜底页（原断言只要正文超过 20 字符就会通过）
+      check('S6 离线笔记不是离线兜底页', body1.indexOf('当前离线') === -1, body1.slice(0, 40).replace(/\n/g, ' '));
 
       // 未缓存过的笔记页：不得伪造成首页
       const page2 = await ctx.newPage();
@@ -255,6 +300,153 @@ async function main() {
       check('S9 可选资源已进入运行期缓存',
         rt.some(p => p.endsWith('/js/courses.js')) && rt.some(p => p.endsWith('/js/papers.js')),
         rt.length + ' 项: ' + rt.join(',') + ' | hits(courses)=' + (state.hits['/js/courses.js'] || 0));
+      await ctx.close();
+    }
+
+    // ---------------------------------------------------------------- S13 预取契约（Batch 6B 变更）
+    // 变更前：首访预取 6 个可选资源（含 380KB 的 codefiles.js）。
+    // 变更后：首访只预取首页/搜索需要的 5 个；codefiles.js 由 /code 路由按需加载后进入运行期缓存。
+    {
+      reset();
+      const ctx = await newContext(browser);
+      const page = await ctx.newPage();
+      await gotoApp(page, base);
+      await waitController(page);
+      await sleep(1500);
+      const keys1 = await cacheKeys(page);
+      const rt1 = keys1[RT_NAME] || [];
+      check('S13 首访不再预取 codefiles.js（380KB）',
+        !rt1.some(p => p.endsWith('/js/codefiles.js')), rt1.length + ' 项: ' + rt1.join(','));
+      check('S13 首访仍预取搜索与笔记所需分区数据',
+        ['courses.js', 'papers.js', 'course-notes.js', 'note-slugs.js']
+          .every(f => rt1.some(p => p.endsWith('/js/' + f))),
+        rt1.length + ' 项');
+
+      // 访问 /code 路由时才拉取（在线可用），随后进入运行期缓存
+      await page.goto(base + PREFIX + '/#/code', { waitUntil: 'load' });
+      await sleep(1500);
+      const keys2 = await cacheKeys(page);
+      const rt2 = keys2[RT_NAME] || [];
+      check('S13 访问 /code 后 codefiles.js 进入运行期缓存',
+        rt2.some(p => p.endsWith('/js/codefiles.js')), rt2.length + ' 项');
+
+      await ctx.setOffline(true);
+      const offlineCode = await page.evaluate(async () => {
+        try {
+          const r = await fetch('./js/codefiles.js');
+          return r.ok ? 'ok' : String(r.status);
+        } catch (e) { return 'error'; }
+      });
+      check('S13 访问过 /code 后离线仍可读取代码库数据', offlineCode === 'ok', offlineCode);
+      await ctx.close();
+    }
+
+    // ------------------------------------------------- S14 首屏慢时不混用旧版本
+    // Batch 6B-1.1 契约变更：外壳走网络（本次文档=新版本）时，首屏子资源**不允许**单独回退到
+    // 旧缓存；宁可等慢网络，也不产生"新 HTML + 旧脚本"。原断言（慢资源必须回退缓存并在 900ms 内完成）
+    // 描述的是被取消的逐资源超时行为，这里改为验证真正要保护的东西：不混版 + 后续仍能拿到新内容。
+    {
+      reset();
+      const ctx = await newContext(browser);
+      const page = await ctx.newPage();
+      await gotoApp(page, base);
+      await waitController(page);
+      state.version = 2;                      // app.js 追加 // build:v2
+      state.delays['/js/app.js'] = 900;       // 模拟慢链路：首屏脚本远超 150ms 阈值
+      let status = 0;
+      try {
+        const r = await page.reload({ waitUntil: 'load', timeout: 20000 });
+        status = r.status();
+      } catch (e) { status = -1; }
+      const rendered = await page.evaluate(() => {
+        const app = document.getElementById('app');
+        return !!app && app.children.length > 0;
+      });
+      const fetchedV2 = await page.evaluate(async () => {
+        const r = await fetch('./js/app.js');
+        const t = await r.text();
+        return t.indexOf('build:v2') !== -1;
+      });
+      state.delays = {};
+      check('S14 首屏脚本慢时页面仍正常渲染（宁可等待，不混版）',
+        status === 200 && rendered, status + ' / rendered=' + rendered);
+      check('S14 慢脚本加载后仍是新版本（没有塞回旧缓存）', fetchedV2 === true);
+      await ctx.close();
+    }
+
+    // ------------------------------------------------ S15 首访首页不下载文章正文
+    // Batch 6B-2：正文改成 data/posts/<id>.md 按需加载，首页只加载元数据。
+    {
+      reset();
+      const ctx = await newContext(browser);
+      const page = await ctx.newPage();
+      await gotoApp(page, base);
+      await waitController(page);
+      await sleep(1500);
+      const bodyHits = Object.keys(state.hits).filter(k => k.indexOf('/data/posts/') === 0);
+      const idxHits = state.hits['/data/search-index.json'] || 0;
+      check('S15 首访不请求任何文章正文', bodyHits.length === 0, bodyHits.join(',') || '0 个');
+      check('S15 首访不请求全文搜索语料', idxHits === 0, idxHits);
+      const homeText = await page.evaluate(() => document.getElementById('app').textContent.length);
+      check('S15 首页列表仍然完整渲染', homeText > 500, homeText + ' 字符');
+      await ctx.close();
+    }
+
+    // ------------------------------------------------ S16 进入文章后正文可离线复用
+    {
+      reset();
+      const ctx = await newContext(browser);
+      const page = await ctx.newPage();
+      await gotoApp(page, base);
+      await waitController(page);
+      const postId = firstPostIds[0];
+      await page.evaluate((id) => { location.hash = '#/post/' + id; }, postId);
+      const rendered = await page.waitForFunction(() => {
+        const b = document.querySelector('#app .article-detail-body');
+        return !!b && b.textContent.trim().length > 50;
+      }, null, { timeout: 15000 }).then(() => true).catch(() => false);
+      check('S16 进入文章后正文渲染完成', rendered, postId);
+      const keys = await cacheKeys(page);
+      const rt = keys[RT_NAME] || [];
+      check('S16 正文进入运行期缓存', rt.some(p => p.endsWith('/data/posts/' + postId + '.md')),
+        rt.filter(p => p.indexOf('/data/posts/') !== -1).length + ' 篇');
+
+      await ctx.setOffline(true);
+      const resp = await page.reload({ waitUntil: 'load', timeout: 15000 }).catch(() => null);
+      const offlineRendered = await page.waitForFunction(() => {
+        const b = document.querySelector('#app .article-detail-body');
+        return !!b && b.textContent.trim().length > 50;
+      }, null, { timeout: 15000 }).then(() => true).catch(() => false);
+      check('S16 已访问文章离线仍可阅读', !!resp && offlineRendered, resp ? resp.status() : 'reload failed');
+      await ctx.setOffline(false);
+      await ctx.close();
+    }
+
+    // ------------------------------------------------ S17 未缓存文章离线时给出重试入口
+    {
+      reset();
+      const ctx = await newContext(browser);
+      const page = await ctx.newPage();
+      await gotoApp(page, base);
+      await waitController(page);
+      const freshId = firstPostIds[1];
+      await ctx.setOffline(true);
+      await page.evaluate((id) => { location.hash = '#/post/' + id; }, freshId);
+      const hasRetry = await page.waitForSelector('#app [data-retry-post]', { timeout: 15000 })
+        .then(() => true).catch(() => false);
+      const bodyText = await page.evaluate(() => document.getElementById('app').textContent);
+      check('S17 未缓存文章离线时给出明确失败提示', hasRetry && /加载失败/.test(bodyText),
+        bodyText.trim().slice(0, 40).replace(/\s+/g, ' '));
+      check('S17 离线失败时不显示空白页或其它文章',
+        !/article-detail-body/.test(await page.evaluate(() => document.getElementById('app').innerHTML)));
+
+      await ctx.setOffline(false);
+      await page.click('#app [data-retry-post]');
+      const recovered = await page.waitForFunction(() => {
+        const b = document.querySelector('#app .article-detail-body');
+        return !!b && b.textContent.trim().length > 50;
+      }, null, { timeout: 15000 }).then(() => true).catch(() => false);
+      check('S17 恢复网络后点“重新加载”能读到正文', recovered, freshId);
       await ctx.close();
     }
 
@@ -371,6 +563,7 @@ async function main() {
   } finally {
     await browser.close();
     server.close();
+    if (probe) probe.server.close();
   }
 
   const failed = results.filter(r => !r.ok);

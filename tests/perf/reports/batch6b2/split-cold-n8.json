@@ -1,0 +1,2340 @@
+{
+  "meta": {
+    "batch": "6A",
+    "generator": "tests/perf/perf.spec.js",
+    "generatedAt": "2026-10-26T11:00:21.246Z",
+    "durationSec": 51.04,
+    "git": {
+      "branch": "feature/batch6b2-data-split",
+      "head": "c87b39b45d68961f7f2124f3c2a2dbc1fec3235d",
+      "headShort": "c87b39b",
+      "subject": "修复：SW 首屏缓存的版本一致性，新增 35 项一致性验证套件",
+      "dirty": true
+    },
+    "resources": [
+      {
+        "path": "index.html",
+        "bytes": 5440,
+        "sha256": "9da4794ce778d542"
+      },
+      {
+        "path": "js/data.js",
+        "bytes": 8010,
+        "sha256": "ae985f24b94171de"
+      },
+      {
+        "path": "js/app.js",
+        "bytes": 110737,
+        "sha256": "b0e5eb8d8beae18b"
+      },
+      {
+        "path": "css/style.css",
+        "bytes": 51561,
+        "sha256": "eba8cf0044865ac5"
+      },
+      {
+        "path": "vendor/marked.min.js",
+        "bytes": 39903,
+        "sha256": "3e7e7d7feb3e5d58"
+      },
+      {
+        "path": "vendor/purify.min.js",
+        "bytes": 29828,
+        "sha256": "cd37898f9782adf5"
+      },
+      {
+        "path": "sw.js",
+        "bytes": 18708,
+        "sha256": "737ff3cab41b70ce"
+      }
+    ],
+    "sw": {
+      "cacheVersion": "2026-10-26-2",
+      "runtimeCacheCap": 120,
+      "strategy": {
+        "navigate": "network-first",
+        "vendor": "stale-while-revalidate",
+        "otherSameOrigin": "network-first",
+        "crossOrigin": "bypass"
+      }
+    },
+    "swCandidate": {
+      "injected": true,
+      "sourcePath": "sw.js",
+      "config": null,
+      "bytes": 18708,
+      "sha256": "737ff3cab41b70ce",
+      "note": "仓库 sw.js 未被修改：候选脚本只在测量链路的观测探针里替换 /blog/sw.js 的响应"
+    },
+    "networkProbe": {
+      "enabled": true,
+      "port": 8139,
+      "metrics": "networkBytes = 导航窗口内所有 HTTP 响应体字节（含 SW 后台预取/后台校验）"
+    },
+    "browser": {
+      "channel": "chrome",
+      "version": "156.0.8078.48",
+      "headless": true,
+      "args": [
+        "--disable-background-timer-throttling",
+        "--disable-renderer-backgrounding"
+      ]
+    },
+    "host": {
+      "platform": "win32",
+      "release": "10.0.19045",
+      "arch": "x64",
+      "cpuModel": "AMD Ryzen 7 3750H with Radeon Vega Mobile Gfx  ",
+      "cpuCores": 8,
+      "totalMemGB": 15.44,
+      "nodeVersion": "v24.22.1"
+    },
+    "server": {
+      "staticServer": "tests/browser/helpers/server.js（未修改）",
+      "prefix": "/blog",
+      "cacheControl": "no-store（继承 B4 测试服务器行为，HTTP 缓存因此在桌面场景中不参与）",
+      "staticPort": 8137,
+      "shapingProxyPort": 8138,
+      "shapingProxy": {
+        "latencyMs": 150,
+        "downloadKbps": 1638.4
+      }
+    },
+    "controls": {
+      "settleMs": 2500,
+      "tbtTailMs": 2000,
+      "searchStableMs": 1200,
+      "thirdPartyBlocked": [
+        "*giscus.app*"
+      ],
+      "thirdPartyReason": "giscus 评论组件为跨域第三方资源，会引入不可复现的网络波动，测量中被 CDP 屏蔽",
+      "repetitions": 8
+    },
+    "metricMeta": {
+      "ttfbMs": {
+        "label": "TTFB",
+        "unit": "ms",
+        "basis": "measured"
+      },
+      "fcpMs": {
+        "label": "FCP",
+        "unit": "ms",
+        "basis": "measured"
+      },
+      "lcpMs": {
+        "label": "LCP",
+        "unit": "ms",
+        "basis": "measured"
+      },
+      "cls": {
+        "label": "CLS（session window 最大值）",
+        "unit": "score",
+        "basis": "measured"
+      },
+      "dclMs": {
+        "label": "DOMContentLoaded",
+        "unit": "ms",
+        "basis": "measured"
+      },
+      "loadMs": {
+        "label": "页面加载完成 loadEventEnd",
+        "unit": "ms",
+        "basis": "measured"
+      },
+      "scriptMs": {
+        "label": "JS 执行时间（CDP ScriptDuration，主线程）",
+        "unit": "ms",
+        "basis": "measured"
+      },
+      "taskMs": {
+        "label": "主线程任务总时长（CDP TaskDuration）",
+        "unit": "ms",
+        "basis": "measured"
+      },
+      "layoutMs": {
+        "label": "布局耗时（CDP LayoutDuration）",
+        "unit": "ms",
+        "basis": "measured"
+      },
+      "longTaskCount": {
+        "label": "长任务数量（>50ms）",
+        "unit": "count",
+        "basis": "measured"
+      },
+      "longTaskMaxMs": {
+        "label": "最长长任务",
+        "unit": "ms",
+        "basis": "measured"
+      },
+      "tbtMs": {
+        "label": "TBT 近似（长任务阻塞时间，窗口=导航开始→load+2s）",
+        "unit": "ms",
+        "basis": "calculated"
+      },
+      "requestCount": {
+        "label": "请求数量（Resource Timing）",
+        "unit": "count",
+        "basis": "measured"
+      },
+      "transferBytes": {
+        "label": "资源传输字节（transferSize 合计）",
+        "unit": "bytes",
+        "basis": "measured"
+      },
+      "encodedBytes": {
+        "label": "编码后体积（encodedBodySize 合计）",
+        "unit": "bytes",
+        "basis": "measured"
+      },
+      "serverRequestCount": {
+        "label": "真实到达服务器的请求数（服务端计数）",
+        "unit": "count",
+        "basis": "measured"
+      },
+      "networkBytes": {
+        "label": "导航窗口内网络传输字节（HTTP 层，含 SW 后台预取/后台校验）",
+        "unit": "bytes",
+        "basis": "measured"
+      },
+      "networkRequests": {
+        "label": "导航窗口内到达服务器的请求数（HTTP 层）",
+        "unit": "count",
+        "basis": "measured"
+      },
+      "swCacheEntries": {
+        "label": "SW 缓存条目总数",
+        "unit": "count",
+        "basis": "measured"
+      },
+      "routeRenderMs": {
+        "label": "路由切换：DOM 更新完成（首页→文章）",
+        "unit": "ms",
+        "basis": "measured"
+      },
+      "routePaintMs": {
+        "label": "路由切换：渲染完成（首页→文章，双 rAF）",
+        "unit": "ms",
+        "basis": "measured"
+      },
+      "routeBackRenderMs": {
+        "label": "路由切换：DOM 更新完成（文章→首页）",
+        "unit": "ms",
+        "basis": "measured"
+      },
+      "routeScriptMs": {
+        "label": "路由切换 JS 执行（首页→文章）",
+        "unit": "ms",
+        "basis": "measured"
+      },
+      "routeBackScriptMs": {
+        "label": "路由切换 JS 执行（文章→首页）",
+        "unit": "ms",
+        "basis": "measured"
+      },
+      "searchFirstRenderMs": {
+        "label": "搜索首次输入：首个结果渲染（含 180ms 防抖）",
+        "unit": "ms",
+        "basis": "measured"
+      },
+      "searchFirstFinalMs": {
+        "label": "搜索首次输入：懒加载补齐后最终渲染",
+        "unit": "ms",
+        "basis": "measured"
+      },
+      "searchFirstRenderCount": {
+        "label": "搜索首次输入：DOM 重绘次数",
+        "unit": "count",
+        "basis": "measured"
+      },
+      "searchLazyBytes": {
+        "label": "搜索首次输入：新增下载字节",
+        "unit": "bytes",
+        "basis": "measured"
+      },
+      "searchFirstLongTaskMs": {
+        "label": "搜索首次输入：长任务阻塞时间",
+        "unit": "ms",
+        "basis": "calculated"
+      },
+      "searchFirstScriptMs": {
+        "label": "搜索首次输入：JS 执行时间",
+        "unit": "ms",
+        "basis": "measured"
+      },
+      "searchRepeatRenderMs": {
+        "label": "搜索重复输入：结果渲染（含 180ms 防抖）",
+        "unit": "ms",
+        "basis": "measured"
+      },
+      "searchRepeatFinalMs": {
+        "label": "搜索重复输入：最终渲染稳定时间",
+        "unit": "ms",
+        "basis": "measured"
+      },
+      "searchRepeatRenderCount": {
+        "label": "搜索重复输入：DOM 重绘次数",
+        "unit": "count",
+        "basis": "measured"
+      },
+      "searchRepeatLongTaskMs": {
+        "label": "搜索重复输入：长任务阻塞时间",
+        "unit": "ms",
+        "basis": "calculated"
+      },
+      "searchRepeatScriptMs": {
+        "label": "搜索重复输入：JS 执行时间",
+        "unit": "ms",
+        "basis": "measured"
+      },
+      "postFirstReadableMs": {
+        "label": "首次打开文章：正文可读时间（SPA 切换起算）",
+        "unit": "ms",
+        "basis": "measured"
+      },
+      "postFirstPaintMs": {
+        "label": "首次打开文章：正文绘制完成（双 rAF）",
+        "unit": "ms",
+        "basis": "measured"
+      },
+      "postFirstChars": {
+        "label": "首次打开文章：正文可见字符数",
+        "unit": "count",
+        "basis": "measured"
+      },
+      "postRepeatReadableMs": {
+        "label": "重复打开文章：正文可读时间",
+        "unit": "ms",
+        "basis": "measured"
+      },
+      "postRepeatPaintMs": {
+        "label": "重复打开文章：正文绘制完成（双 rAF）",
+        "unit": "ms",
+        "basis": "measured"
+      },
+      "postBodyBytes": {
+        "label": "首次打开文章：正文传输字节（data/posts/*.md）",
+        "unit": "bytes",
+        "basis": "measured"
+      },
+      "postFirstScriptMs": {
+        "label": "首次打开文章：JS 执行时间",
+        "unit": "ms",
+        "basis": "measured"
+      },
+      "postRepeatScriptMs": {
+        "label": "重复打开文章：JS 执行时间",
+        "unit": "ms",
+        "basis": "measured"
+      },
+      "postServerRequests": {
+        "label": "首次打开文章：服务端请求数",
+        "unit": "count",
+        "basis": "measured"
+      },
+      "offlinePostStatus": {
+        "label": "离线重开文章：文档状态码",
+        "unit": "count",
+        "basis": "measured"
+      },
+      "offlinePostReadable": {
+        "label": "离线重开文章：正文是否可读",
+        "unit": "bool",
+        "basis": "measured"
+      },
+      "offlinePostReadableMs": {
+        "label": "离线重开文章：正文可读时间",
+        "unit": "ms",
+        "basis": "measured"
+      }
+    },
+    "scenarioMeta": {
+      "cold-home": {
+        "label": "A. 首页冷启动",
+        "description": "全新 BrowserContext 首次打开首页：HTTP 缓存为空、无 Service Worker 控制；测量到 load +2.5s。",
+        "url": "/blog/"
+      },
+      "warm-home": {
+        "label": "B. 首页热启动",
+        "description": "新 BrowserContext 内先完成 SW 安装与缓存预热（校验 CORE 必需资源齐全、预取已收敛），再整页 reload 测量。",
+        "url": "/blog/"
+      },
+      "long-post": {
+        "label": "C. 长文文章页 + SPA 路由切换",
+        "description": "预热后整页重载最长的一篇文章（Markdown + DOMPurify 渲染），并测量首页↔文章的 SPA 路由切换耗时。",
+        "url": "#/post/<id>"
+      },
+      "post-lazy": {
+        "label": "E. 文章正文按需加载",
+        "description": "预热后从首页点进最长的一篇文章：首次打开触发正文请求，重复打开复用内存/缓存，最后离线重开同一篇。",
+        "url": "#/post/<id>"
+      },
+      "search": {
+        "label": "D. 全局搜索首次/重复输入",
+        "description": "预热后输入固定关键词：首次输入会触发 courses/papers/notes 懒加载（6B-2 起还包括正文搜索语料），重复输入复用已加载数据。",
+        "url": "/blog/ + #searchInput"
+      }
+    },
+    "post": {
+      "id": "deep-learning-in-slam",
+      "title": "深度学习在SLAM中的应用",
+      "contentChars": 8097,
+      "totalPosts": 18
+    },
+    "keywords": {
+      "first": "SLAM",
+      "second": "学习"
+    },
+    "configs": {
+      "mobile": {
+        "label": "移动 Chromium：Pixel 7 设备模拟 + CPU 4x + Lighthouse mobileSlow4G 等价网络整形",
+        "conditions": {
+          "viewport": "412×839",
+          "deviceScaleFactor": 2.625,
+          "userAgent": "Mozilla/5.0 (Linux; Android 14; Pixel 7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/156.0.8078.4 Mobile Safari/537.36",
+          "cpuThrottle": "4x（CDP Emulation.setCPUThrottlingRate）",
+          "network": "下行 1638.4 kbps / 上行 750 kbps / 每请求首字节延迟 150ms（HTTP 层整形代理）",
+          "emulation": "Playwright devices['Pixel 7']（isMobile / hasTouch）"
+        },
+        "cpuThrottle": 4,
+        "network": {
+          "latencyMs": 150,
+          "downloadKbps": 1638.4,
+          "uploadKbps": 750
+        },
+        "serverEndpoint": {
+          "via": "HTTP 整形代理",
+          "port": 8138,
+          "upstreamPort": 8139
+        },
+        "contextOptions": {
+          "viewport": {
+            "width": 412,
+            "height": 839
+          },
+          "deviceScaleFactor": 2.625,
+          "isMobile": true,
+          "hasTouch": true,
+          "userAgent": "Mozilla/5.0 (Linux; Android 14; Pixel 7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/156.0.8078.4 Mobile Safari/537.36"
+        }
+      }
+    },
+    "verdict": "BATCH6A_READY",
+    "verdictBasis": "每个场景/配置的有效样本数 ≥ min(5, repeat) 视为完成"
+  },
+  "scenarios": {
+    "cold-home": {
+      "mobile": {
+        "label": "A. 首页冷启动",
+        "description": "全新 BrowserContext 首次打开首页：HTTP 缓存为空、无 Service Worker 控制；测量到 load +2.5s。",
+        "url": "http://127.0.0.1:8138/blog/",
+        "cacheState": {
+          "mode": "cold",
+          "serviceWorker": "首次注册（本页面加载期间未受 SW 控制）",
+          "browserCache": "空"
+        },
+        "samples": [
+          {
+            "rep": 1,
+            "scenario": "cold-home",
+            "config": "mobile",
+            "startedAt": "2026-10-26T11:00:21.450Z",
+            "ok": true,
+            "error": null,
+            "metrics": {
+              "ttfbMs": 197,
+              "dclMs": 2541.3,
+              "loadMs": 3217.2,
+              "fcpMs": 1556,
+              "lcpMs": 1556,
+              "cls": 0.1168,
+              "longTaskCount": 1,
+              "longTaskMaxMs": 756,
+              "tbtMs": 706,
+              "requestCount": 9,
+              "transferBytes": 252784,
+              "encodedBytes": 250084,
+              "scriptMs": 144.61,
+              "taskMs": 1800.87,
+              "layoutMs": 1251.1,
+              "serverRequestCount": 19,
+              "networkBytes": 573245,
+              "networkRequests": 20,
+              "networkLastEndMs": 5722,
+              "firstScreenNetEndMs": 3654
+            },
+            "cdp": {
+              "basis": "absolute（全新渲染进程，累计值即本次导航）",
+              "raw": {
+                "Documents": 7,
+                "Nodes": 1036,
+                "LayoutCount": 4,
+                "RecalcStyleCount": 65,
+                "LayoutDuration": 1.251095,
+                "RecalcStyleDuration": 0.10315,
+                "ScriptDuration": 0.144605,
+                "TaskDuration": 1.80087
+              },
+              "pre": null,
+              "values": {
+                "Documents": 7,
+                "Nodes": 1036,
+                "LayoutCount": 4,
+                "RecalcStyleCount": 65,
+                "LayoutDuration": 1251.1,
+                "RecalcStyleDuration": 103.15,
+                "ScriptDuration": 144.61,
+                "TaskDuration": 1800.87
+              }
+            },
+            "navigation": {
+              "ttfb": 197,
+              "dcl": 2541.3,
+              "load": 3217.2,
+              "duration": 3217.2,
+              "transfer": 5740,
+              "encoded": 5440,
+              "protocol": "http/1.1"
+            },
+            "paints": {
+              "fp": 1556,
+              "fcp": 1556
+            },
+            "lcp": {
+              "value": 1556,
+              "tag": null,
+              "text": null,
+              "size": 5073
+            },
+            "cls": {
+              "value": 0.1168,
+              "rawSum": 0.1168,
+              "windows": 1,
+              "shiftCount": 1
+            },
+            "longTasks": {
+              "count": 1,
+              "maxMs": 756,
+              "tbtMs": 706,
+              "all": [
+                {
+                  "start": 2464,
+                  "dur": 756
+                }
+              ]
+            },
+            "dom": {
+              "nodes": 414,
+              "appChildren": 1,
+              "hasArticleBody": false,
+              "articleBodyChars": 0,
+              "articleHeadings": 0,
+              "tocItems": 0
+            },
+            "sw": {
+              "controllerAtLoad": false,
+              "cacheNamesAtLoad": [],
+              "controller": false,
+              "active": false,
+              "scriptURL": null,
+              "observerErrors": []
+            },
+            "cache": null,
+            "serverHits": {
+              "/index.html": 3,
+              "/css/style.css": 2,
+              "/vendor/atom-one-light.min.css": 2,
+              "/vendor/marked.min.js": 2,
+              "/vendor/purify.min.js": 2,
+              "/js/data.js": 2,
+              "/js/user-posts.js": 1,
+              "/js/projects.js": 1,
+              "/js/app.js": 2,
+              "/manifest.json": 1,
+              "/icons/icon-192.png": 1
+            },
+            "resources": [
+              {
+                "url": "/blog/css/style.css",
+                "type": "link",
+                "start": 252.7,
+                "dur": 209.1,
+                "ttfb": 208.3,
+                "transfer": 51861,
+                "encoded": 51561
+              },
+              {
+                "url": "/blog/vendor/atom-one-light.min.css",
+                "type": "link",
+                "start": 253.2,
+                "dur": 596.3,
+                "ttfb": 595.6,
+                "transfer": 1156,
+                "encoded": 856
+              },
+              {
+                "url": "/blog/vendor/marked.min.js",
+                "type": "script",
+                "start": 253.4,
+                "dur": 753.6,
+                "ttfb": 752.3,
+                "transfer": 40203,
+                "encoded": 39903
+              },
+              {
+                "url": "/blog/vendor/purify.min.js",
+                "type": "script",
+                "start": 253.5,
+                "dur": 1098.9,
+                "ttfb": 1098.1,
+                "transfer": 30128,
+                "encoded": 29828
+              },
+              {
+                "url": "/blog/js/data.js",
+                "type": "script",
+                "start": 253.6,
+                "dur": 1379.3,
+                "ttfb": 1378.5,
+                "transfer": 8310,
+                "encoded": 8010
+              },
+              {
+                "url": "/blog/js/user-posts.js",
+                "type": "script",
+                "start": 253.8,
+                "dur": 1573.7,
+                "ttfb": 1565.4,
+                "transfer": 505,
+                "encoded": 205
+              },
+              {
+                "url": "/blog/js/projects.js",
+                "type": "script",
+                "start": 253.8,
+                "dur": 1722.2,
+                "ttfb": 1721.7,
+                "transfer": 3844,
+                "encoded": 3544
+              },
+              {
+                "url": "/blog/js/app.js",
+                "type": "script",
+                "start": 253.9,
+                "dur": 2207.3,
+                "ttfb": 1895.3,
+                "transfer": 111037,
+                "encoded": 110737
+              }
+            ],
+            "title": "Eric's Notebook",
+            "giscusBlock": "cdp",
+            "errors": [],
+            "extra": {
+              "freshContext": true,
+              "httpCache": "空（新 BrowserContext + 服务端 Cache-Control: no-store）"
+            }
+          },
+          {
+            "rep": 2,
+            "scenario": "cold-home",
+            "config": "mobile",
+            "startedAt": "2026-10-26T11:00:27.570Z",
+            "ok": true,
+            "error": null,
+            "metrics": {
+              "ttfbMs": 571.5,
+              "dclMs": 2863.1,
+              "loadMs": 3424.9,
+              "fcpMs": 1860,
+              "lcpMs": 1860,
+              "cls": 0.1168,
+              "longTaskCount": 1,
+              "longTaskMaxMs": 631,
+              "tbtMs": 581,
+              "requestCount": 9,
+              "transferBytes": 252784,
+              "encodedBytes": 250084,
+              "scriptMs": 121.6,
+              "taskMs": 1644.24,
+              "layoutMs": 1125.36,
+              "serverRequestCount": 19,
+              "networkBytes": 573245,
+              "networkRequests": 20,
+              "networkLastEndMs": 5912,
+              "firstScreenNetEndMs": 3853
+            },
+            "cdp": {
+              "basis": "absolute（全新渲染进程，累计值即本次导航）",
+              "raw": {
+                "Documents": 7,
+                "Nodes": 1036,
+                "LayoutCount": 4,
+                "RecalcStyleCount": 66,
+                "LayoutDuration": 1.125363,
+                "RecalcStyleDuration": 0.098007,
+                "ScriptDuration": 0.121604,
+                "TaskDuration": 1.644238
+              },
+              "pre": null,
+              "values": {
+                "Documents": 7,
+                "Nodes": 1036,
+                "LayoutCount": 4,
+                "RecalcStyleCount": 66,
+                "LayoutDuration": 1125.36,
+                "RecalcStyleDuration": 98.01,
+                "ScriptDuration": 121.6,
+                "TaskDuration": 1644.24
+              }
+            },
+            "navigation": {
+              "ttfb": 571.5,
+              "dcl": 2863.1,
+              "load": 3424.9,
+              "duration": 3424.9,
+              "transfer": 5740,
+              "encoded": 5440,
+              "protocol": "http/1.1"
+            },
+            "paints": {
+              "fp": 1860,
+              "fcp": 1860
+            },
+            "lcp": {
+              "value": 1860,
+              "tag": null,
+              "text": null,
+              "size": 5073
+            },
+            "cls": {
+              "value": 0.1168,
+              "rawSum": 0.1168,
+              "windows": 1,
+              "shiftCount": 1
+            },
+            "longTasks": {
+              "count": 1,
+              "maxMs": 631,
+              "tbtMs": 581,
+              "all": [
+                {
+                  "start": 2796,
+                  "dur": 631
+                }
+              ]
+            },
+            "dom": {
+              "nodes": 414,
+              "appChildren": 1,
+              "hasArticleBody": false,
+              "articleBodyChars": 0,
+              "articleHeadings": 0,
+              "tocItems": 0
+            },
+            "sw": {
+              "controllerAtLoad": false,
+              "cacheNamesAtLoad": [],
+              "controller": false,
+              "active": false,
+              "scriptURL": null,
+              "observerErrors": []
+            },
+            "cache": null,
+            "serverHits": {
+              "/index.html": 3,
+              "/css/style.css": 2,
+              "/vendor/atom-one-light.min.css": 2,
+              "/vendor/marked.min.js": 2,
+              "/vendor/purify.min.js": 2,
+              "/js/data.js": 2,
+              "/js/user-posts.js": 1,
+              "/js/projects.js": 1,
+              "/js/app.js": 2,
+              "/manifest.json": 1,
+              "/icons/icon-192.png": 1
+            },
+            "resources": [
+              {
+                "url": "/blog/css/style.css",
+                "type": "link",
+                "start": 620.4,
+                "dur": 172.2,
+                "ttfb": 171.2,
+                "transfer": 51861,
+                "encoded": 51561
+              },
+              {
+                "url": "/blog/vendor/atom-one-light.min.css",
+                "type": "link",
+                "start": 622.2,
+                "dur": 577,
+                "ttfb": 576.2,
+                "transfer": 1156,
+                "encoded": 856
+              },
+              {
+                "url": "/blog/vendor/marked.min.js",
+                "type": "script",
+                "start": 623,
+                "dur": 731.1,
+                "ttfb": 730.5,
+                "transfer": 40203,
+                "encoded": 39903
+              },
+              {
+                "url": "/blog/vendor/purify.min.js",
+                "type": "script",
+                "start": 623.4,
+                "dur": 1073.3,
+                "ttfb": 1072.5,
+                "transfer": 30128,
+                "encoded": 29828
+              },
+              {
+                "url": "/blog/js/data.js",
+                "type": "script",
+                "start": 623.8,
+                "dur": 1353.9,
+                "ttfb": 1353.3,
+                "transfer": 8310,
+                "encoded": 8010
+              },
+              {
+                "url": "/blog/js/user-posts.js",
+                "type": "script",
+                "start": 624.2,
+                "dur": 1541.2,
+                "ttfb": 1540.5,
+                "transfer": 505,
+                "encoded": 205
+              },
+              {
+                "url": "/blog/js/projects.js",
+                "type": "script",
+                "start": 624.5,
+                "dur": 1697.8,
+                "ttfb": 1697.3,
+                "transfer": 3844,
+                "encoded": 3544
+              },
+              {
+                "url": "/blog/js/app.js",
+                "type": "script",
+                "start": 624.9,
+                "dur": 2167.9,
+                "ttfb": 1853,
+                "transfer": 111037,
+                "encoded": 110737
+              }
+            ],
+            "title": "Eric's Notebook",
+            "giscusBlock": "cdp",
+            "errors": [],
+            "extra": {
+              "freshContext": true,
+              "httpCache": "空（新 BrowserContext + 服务端 Cache-Control: no-store）"
+            }
+          },
+          {
+            "rep": 3,
+            "scenario": "cold-home",
+            "config": "mobile",
+            "startedAt": "2026-10-26T11:00:33.756Z",
+            "ok": true,
+            "error": null,
+            "metrics": {
+              "ttfbMs": 572.4,
+              "dclMs": 2859,
+              "loadMs": 3400.7,
+              "fcpMs": 1828,
+              "lcpMs": 1828,
+              "cls": 0.1168,
+              "longTaskCount": 1,
+              "longTaskMaxMs": 611,
+              "tbtMs": 561,
+              "requestCount": 9,
+              "transferBytes": 252784,
+              "encodedBytes": 250084,
+              "scriptMs": 120.54,
+              "taskMs": 1614.68,
+              "layoutMs": 1082.95,
+              "serverRequestCount": 19,
+              "networkBytes": 573245,
+              "networkRequests": 20,
+              "networkLastEndMs": 5894,
+              "firstScreenNetEndMs": 3820
+            },
+            "cdp": {
+              "basis": "absolute（全新渲染进程，累计值即本次导航）",
+              "raw": {
+                "Documents": 7,
+                "Nodes": 1036,
+                "LayoutCount": 4,
+                "RecalcStyleCount": 66,
+                "LayoutDuration": 1.082953,
+                "RecalcStyleDuration": 0.107957,
+                "ScriptDuration": 0.120536,
+                "TaskDuration": 1.614676
+              },
+              "pre": null,
+              "values": {
+                "Documents": 7,
+                "Nodes": 1036,
+                "LayoutCount": 4,
+                "RecalcStyleCount": 66,
+                "LayoutDuration": 1082.95,
+                "RecalcStyleDuration": 107.96,
+                "ScriptDuration": 120.54,
+                "TaskDuration": 1614.68
+              }
+            },
+            "navigation": {
+              "ttfb": 572.4,
+              "dcl": 2859,
+              "load": 3400.7,
+              "duration": 3400.7,
+              "transfer": 5740,
+              "encoded": 5440,
+              "protocol": "http/1.1"
+            },
+            "paints": {
+              "fp": 1828,
+              "fcp": 1828
+            },
+            "lcp": {
+              "value": 1828,
+              "tag": null,
+              "text": null,
+              "size": 5073
+            },
+            "cls": {
+              "value": 0.1168,
+              "rawSum": 0.1168,
+              "windows": 1,
+              "shiftCount": 1
+            },
+            "longTasks": {
+              "count": 1,
+              "maxMs": 611,
+              "tbtMs": 561,
+              "all": [
+                {
+                  "start": 2791,
+                  "dur": 611
+                }
+              ]
+            },
+            "dom": {
+              "nodes": 414,
+              "appChildren": 1,
+              "hasArticleBody": false,
+              "articleBodyChars": 0,
+              "articleHeadings": 0,
+              "tocItems": 0
+            },
+            "sw": {
+              "controllerAtLoad": false,
+              "cacheNamesAtLoad": [],
+              "controller": false,
+              "active": false,
+              "scriptURL": null,
+              "observerErrors": []
+            },
+            "cache": null,
+            "serverHits": {
+              "/index.html": 3,
+              "/css/style.css": 2,
+              "/vendor/atom-one-light.min.css": 2,
+              "/vendor/marked.min.js": 2,
+              "/vendor/purify.min.js": 2,
+              "/js/data.js": 2,
+              "/js/user-posts.js": 1,
+              "/js/projects.js": 1,
+              "/js/app.js": 2,
+              "/manifest.json": 1,
+              "/icons/icon-192.png": 1
+            },
+            "resources": [
+              {
+                "url": "/blog/css/style.css",
+                "type": "link",
+                "start": 615,
+                "dur": 174.7,
+                "ttfb": 174.2,
+                "transfer": 51861,
+                "encoded": 51561
+              },
+              {
+                "url": "/blog/vendor/atom-one-light.min.css",
+                "type": "link",
+                "start": 616.8,
+                "dur": 565.5,
+                "ttfb": 564.8,
+                "transfer": 1156,
+                "encoded": 856
+              },
+              {
+                "url": "/blog/vendor/marked.min.js",
+                "type": "script",
+                "start": 618.2,
+                "dur": 718.8,
+                "ttfb": 718.3,
+                "transfer": 40203,
+                "encoded": 39903
+              },
+              {
+                "url": "/blog/vendor/purify.min.js",
+                "type": "script",
+                "start": 618.6,
+                "dur": 1402.3,
+                "ttfb": 1401.6,
+                "transfer": 30128,
+                "encoded": 29828
+              },
+              {
+                "url": "/blog/js/data.js",
+                "type": "script",
+                "start": 619.1,
+                "dur": 1060.8,
+                "ttfb": 1060.1,
+                "transfer": 8310,
+                "encoded": 8010
+              },
+              {
+                "url": "/blog/js/user-posts.js",
+                "type": "script",
+                "start": 619.5,
+                "dur": 1246.4,
+                "ttfb": 1245.7,
+                "transfer": 505,
+                "encoded": 205
+              },
+              {
+                "url": "/blog/js/projects.js",
+                "type": "script",
+                "start": 619.9,
+                "dur": 1698.1,
+                "ttfb": 1697.6,
+                "transfer": 3844,
+                "encoded": 3544
+              },
+              {
+                "url": "/blog/js/app.js",
+                "type": "script",
+                "start": 620.1,
+                "dur": 2168.2,
+                "ttfb": 1852.8,
+                "transfer": 111037,
+                "encoded": 110737
+              }
+            ],
+            "title": "Eric's Notebook",
+            "giscusBlock": "cdp",
+            "errors": [],
+            "extra": {
+              "freshContext": true,
+              "httpCache": "空（新 BrowserContext + 服务端 Cache-Control: no-store）"
+            }
+          },
+          {
+            "rep": 4,
+            "scenario": "cold-home",
+            "config": "mobile",
+            "startedAt": "2026-10-26T11:00:39.952Z",
+            "ok": true,
+            "error": null,
+            "metrics": {
+              "ttfbMs": 560.3,
+              "dclMs": 2866.4,
+              "loadMs": 3587.8,
+              "fcpMs": 1772,
+              "lcpMs": 1772,
+              "cls": 0.1168,
+              "longTaskCount": 1,
+              "longTaskMaxMs": 798,
+              "tbtMs": 748,
+              "requestCount": 9,
+              "transferBytes": 252784,
+              "encodedBytes": 250084,
+              "scriptMs": 124.22,
+              "taskMs": 1738.22,
+              "layoutMs": 1214.55,
+              "serverRequestCount": 19,
+              "networkBytes": 573245,
+              "networkRequests": 20,
+              "networkLastEndMs": 6080,
+              "firstScreenNetEndMs": 4005
+            },
+            "cdp": {
+              "basis": "absolute（全新渲染进程，累计值即本次导航）",
+              "raw": {
+                "Documents": 7,
+                "Nodes": 1036,
+                "LayoutCount": 4,
+                "RecalcStyleCount": 64,
+                "LayoutDuration": 1.214553,
+                "RecalcStyleDuration": 0.098884,
+                "ScriptDuration": 0.124224,
+                "TaskDuration": 1.738216
+              },
+              "pre": null,
+              "values": {
+                "Documents": 7,
+                "Nodes": 1036,
+                "LayoutCount": 4,
+                "RecalcStyleCount": 64,
+                "LayoutDuration": 1214.55,
+                "RecalcStyleDuration": 98.88,
+                "ScriptDuration": 124.22,
+                "TaskDuration": 1738.22
+              }
+            },
+            "navigation": {
+              "ttfb": 560.3,
+              "dcl": 2866.4,
+              "load": 3587.8,
+              "duration": 3587.8,
+              "transfer": 5740,
+              "encoded": 5440,
+              "protocol": "http/1.1"
+            },
+            "paints": {
+              "fp": 1772,
+              "fcp": 1772
+            },
+            "lcp": {
+              "value": 1772,
+              "tag": null,
+              "text": null,
+              "size": 5073
+            },
+            "cls": {
+              "value": 0.1168,
+              "rawSum": 0.1168,
+              "windows": 1,
+              "shiftCount": 1
+            },
+            "longTasks": {
+              "count": 1,
+              "maxMs": 798,
+              "tbtMs": 748,
+              "all": [
+                {
+                  "start": 2792,
+                  "dur": 798
+                }
+              ]
+            },
+            "dom": {
+              "nodes": 414,
+              "appChildren": 1,
+              "hasArticleBody": false,
+              "articleBodyChars": 0,
+              "articleHeadings": 0,
+              "tocItems": 0
+            },
+            "sw": {
+              "controllerAtLoad": false,
+              "cacheNamesAtLoad": [],
+              "controller": false,
+              "active": false,
+              "scriptURL": null,
+              "observerErrors": []
+            },
+            "cache": null,
+            "serverHits": {
+              "/index.html": 3,
+              "/css/style.css": 2,
+              "/vendor/atom-one-light.min.css": 2,
+              "/vendor/marked.min.js": 2,
+              "/vendor/purify.min.js": 2,
+              "/js/data.js": 2,
+              "/js/user-posts.js": 1,
+              "/js/projects.js": 1,
+              "/js/app.js": 2,
+              "/manifest.json": 1,
+              "/icons/icon-192.png": 1
+            },
+            "resources": [
+              {
+                "url": "/blog/css/style.css",
+                "type": "link",
+                "start": 606.9,
+                "dur": 175.5,
+                "ttfb": 174.6,
+                "transfer": 51861,
+                "encoded": 51561
+              },
+              {
+                "url": "/blog/vendor/atom-one-light.min.css",
+                "type": "link",
+                "start": 609.8,
+                "dur": 578.8,
+                "ttfb": 578.2,
+                "transfer": 1156,
+                "encoded": 856
+              },
+              {
+                "url": "/blog/vendor/marked.min.js",
+                "type": "script",
+                "start": 611,
+                "dur": 733.3,
+                "ttfb": 732.6,
+                "transfer": 40203,
+                "encoded": 39903
+              },
+              {
+                "url": "/blog/vendor/purify.min.js",
+                "type": "script",
+                "start": 611.4,
+                "dur": 1064.1,
+                "ttfb": 1063.4,
+                "transfer": 30128,
+                "encoded": 29828
+              },
+              {
+                "url": "/blog/js/data.js",
+                "type": "script",
+                "start": 611.8,
+                "dur": 1361.5,
+                "ttfb": 1360.7,
+                "transfer": 8310,
+                "encoded": 8010
+              },
+              {
+                "url": "/blog/js/user-posts.js",
+                "type": "script",
+                "start": 612.3,
+                "dur": 1550,
+                "ttfb": 1549.4,
+                "transfer": 505,
+                "encoded": 205
+              },
+              {
+                "url": "/blog/js/projects.js",
+                "type": "script",
+                "start": 612.6,
+                "dur": 1690.5,
+                "ttfb": 1689.8,
+                "transfer": 3844,
+                "encoded": 3544
+              },
+              {
+                "url": "/blog/js/app.js",
+                "type": "script",
+                "start": 613,
+                "dur": 2175.9,
+                "ttfb": 1862.7,
+                "transfer": 111037,
+                "encoded": 110737
+              }
+            ],
+            "title": "Eric's Notebook",
+            "giscusBlock": "cdp",
+            "errors": [],
+            "extra": {
+              "freshContext": true,
+              "httpCache": "空（新 BrowserContext + 服务端 Cache-Control: no-store）"
+            }
+          },
+          {
+            "rep": 5,
+            "scenario": "cold-home",
+            "config": "mobile",
+            "startedAt": "2026-10-26T11:00:46.332Z",
+            "ok": true,
+            "error": null,
+            "metrics": {
+              "ttfbMs": 584.7,
+              "dclMs": 2872.7,
+              "loadMs": 3395.8,
+              "fcpMs": 1876,
+              "lcpMs": 1876,
+              "cls": 0.1168,
+              "longTaskCount": 1,
+              "longTaskMaxMs": 589,
+              "tbtMs": 539,
+              "requestCount": 9,
+              "transferBytes": 252784,
+              "encodedBytes": 250084,
+              "scriptMs": 115.25,
+              "taskMs": 1638.49,
+              "layoutMs": 1098.49,
+              "serverRequestCount": 19,
+              "networkBytes": 573245,
+              "networkRequests": 20,
+              "networkLastEndMs": 5884,
+              "firstScreenNetEndMs": 3821
+            },
+            "cdp": {
+              "basis": "absolute（全新渲染进程，累计值即本次导航）",
+              "raw": {
+                "Documents": 7,
+                "Nodes": 1036,
+                "LayoutCount": 4,
+                "RecalcStyleCount": 68,
+                "LayoutDuration": 1.098492,
+                "RecalcStyleDuration": 0.105089,
+                "ScriptDuration": 0.115252,
+                "TaskDuration": 1.638488
+              },
+              "pre": null,
+              "values": {
+                "Documents": 7,
+                "Nodes": 1036,
+                "LayoutCount": 4,
+                "RecalcStyleCount": 68,
+                "LayoutDuration": 1098.49,
+                "RecalcStyleDuration": 105.09,
+                "ScriptDuration": 115.25,
+                "TaskDuration": 1638.49
+              }
+            },
+            "navigation": {
+              "ttfb": 584.7,
+              "dcl": 2872.7,
+              "load": 3395.8,
+              "duration": 3395.8,
+              "transfer": 5740,
+              "encoded": 5440,
+              "protocol": "http/1.1"
+            },
+            "paints": {
+              "fp": 1876,
+              "fcp": 1876
+            },
+            "lcp": {
+              "value": 1876,
+              "tag": null,
+              "text": null,
+              "size": 5073
+            },
+            "cls": {
+              "value": 0.1168,
+              "rawSum": 0.1168,
+              "windows": 1,
+              "shiftCount": 1
+            },
+            "longTasks": {
+              "count": 1,
+              "maxMs": 589,
+              "tbtMs": 539,
+              "all": [
+                {
+                  "start": 2808,
+                  "dur": 589
+                }
+              ]
+            },
+            "dom": {
+              "nodes": 414,
+              "appChildren": 1,
+              "hasArticleBody": false,
+              "articleBodyChars": 0,
+              "articleHeadings": 0,
+              "tocItems": 0
+            },
+            "sw": {
+              "controllerAtLoad": false,
+              "cacheNamesAtLoad": [],
+              "controller": false,
+              "active": false,
+              "scriptURL": null,
+              "observerErrors": []
+            },
+            "cache": null,
+            "serverHits": {
+              "/index.html": 3,
+              "/css/style.css": 2,
+              "/vendor/atom-one-light.min.css": 2,
+              "/vendor/marked.min.js": 2,
+              "/vendor/purify.min.js": 2,
+              "/js/data.js": 2,
+              "/js/user-posts.js": 1,
+              "/js/projects.js": 1,
+              "/js/app.js": 2,
+              "/manifest.json": 1,
+              "/icons/icon-192.png": 1
+            },
+            "resources": [
+              {
+                "url": "/blog/css/style.css",
+                "type": "link",
+                "start": 628.2,
+                "dur": 175.7,
+                "ttfb": 174.9,
+                "transfer": 51861,
+                "encoded": 51561
+              },
+              {
+                "url": "/blog/vendor/atom-one-light.min.css",
+                "type": "link",
+                "start": 630.8,
+                "dur": 564.9,
+                "ttfb": 564.4,
+                "transfer": 1156,
+                "encoded": 856
+              },
+              {
+                "url": "/blog/vendor/marked.min.js",
+                "type": "script",
+                "start": 632.4,
+                "dur": 718.9,
+                "ttfb": 718.1,
+                "transfer": 40203,
+                "encoded": 39903
+              },
+              {
+                "url": "/blog/vendor/purify.min.js",
+                "type": "script",
+                "start": 633.4,
+                "dur": 1213.6,
+                "ttfb": 1212.8,
+                "transfer": 30128,
+                "encoded": 29828
+              },
+              {
+                "url": "/blog/js/data.js",
+                "type": "script",
+                "start": 634,
+                "dur": 1511,
+                "ttfb": 1510.4,
+                "transfer": 8310,
+                "encoded": 8010
+              },
+              {
+                "url": "/blog/js/user-posts.js",
+                "type": "script",
+                "start": 634.2,
+                "dur": 1059.5,
+                "ttfb": 1058.7,
+                "transfer": 505,
+                "encoded": 205
+              },
+              {
+                "url": "/blog/js/projects.js",
+                "type": "script",
+                "start": 634.6,
+                "dur": 1698.2,
+                "ttfb": 1697.5,
+                "transfer": 3844,
+                "encoded": 3544
+              },
+              {
+                "url": "/blog/js/app.js",
+                "type": "script",
+                "start": 635,
+                "dur": 2170.6,
+                "ttfb": 1855.2,
+                "transfer": 111037,
+                "encoded": 110737
+              }
+            ],
+            "title": "Eric's Notebook",
+            "giscusBlock": "cdp",
+            "errors": [],
+            "extra": {
+              "freshContext": true,
+              "httpCache": "空（新 BrowserContext + 服务端 Cache-Control: no-store）"
+            }
+          },
+          {
+            "rep": 6,
+            "scenario": "cold-home",
+            "config": "mobile",
+            "startedAt": "2026-10-26T11:00:52.502Z",
+            "ok": true,
+            "error": null,
+            "metrics": {
+              "ttfbMs": 568.5,
+              "dclMs": 2851.1,
+              "loadMs": 3367.5,
+              "fcpMs": 1812,
+              "lcpMs": 1812,
+              "cls": 0.1168,
+              "longTaskCount": 1,
+              "longTaskMaxMs": 586,
+              "tbtMs": 536,
+              "requestCount": 9,
+              "transferBytes": 252784,
+              "encodedBytes": 250084,
+              "scriptMs": 127.66,
+              "taskMs": 1576.88,
+              "layoutMs": 1050.67,
+              "serverRequestCount": 19,
+              "networkBytes": 573245,
+              "networkRequests": 20,
+              "networkLastEndMs": 5853,
+              "firstScreenNetEndMs": 3779
+            },
+            "cdp": {
+              "basis": "absolute（全新渲染进程，累计值即本次导航）",
+              "raw": {
+                "Documents": 7,
+                "Nodes": 1036,
+                "LayoutCount": 4,
+                "RecalcStyleCount": 66,
+                "LayoutDuration": 1.050666,
+                "RecalcStyleDuration": 0.097277,
+                "ScriptDuration": 0.127662,
+                "TaskDuration": 1.576883
+              },
+              "pre": null,
+              "values": {
+                "Documents": 7,
+                "Nodes": 1036,
+                "LayoutCount": 4,
+                "RecalcStyleCount": 66,
+                "LayoutDuration": 1050.67,
+                "RecalcStyleDuration": 97.28,
+                "ScriptDuration": 127.66,
+                "TaskDuration": 1576.88
+              }
+            },
+            "navigation": {
+              "ttfb": 568.5,
+              "dcl": 2851.1,
+              "load": 3367.5,
+              "duration": 3367.5,
+              "transfer": 5740,
+              "encoded": 5440,
+              "protocol": "http/1.1"
+            },
+            "paints": {
+              "fp": 1812,
+              "fcp": 1812
+            },
+            "lcp": {
+              "value": 1812,
+              "tag": null,
+              "text": null,
+              "size": 5073
+            },
+            "cls": {
+              "value": 0.1168,
+              "rawSum": 0.1168,
+              "windows": 1,
+              "shiftCount": 1
+            },
+            "longTasks": {
+              "count": 1,
+              "maxMs": 586,
+              "tbtMs": 536,
+              "all": [
+                {
+                  "start": 2783,
+                  "dur": 586
+                }
+              ]
+            },
+            "dom": {
+              "nodes": 414,
+              "appChildren": 1,
+              "hasArticleBody": false,
+              "articleBodyChars": 0,
+              "articleHeadings": 0,
+              "tocItems": 0
+            },
+            "sw": {
+              "controllerAtLoad": false,
+              "cacheNamesAtLoad": [],
+              "controller": false,
+              "active": false,
+              "scriptURL": null,
+              "observerErrors": []
+            },
+            "cache": null,
+            "serverHits": {
+              "/index.html": 3,
+              "/css/style.css": 2,
+              "/vendor/atom-one-light.min.css": 2,
+              "/vendor/marked.min.js": 2,
+              "/vendor/purify.min.js": 2,
+              "/js/data.js": 2,
+              "/js/user-posts.js": 1,
+              "/js/projects.js": 1,
+              "/js/app.js": 2,
+              "/manifest.json": 1,
+              "/icons/icon-192.png": 1
+            },
+            "resources": [
+              {
+                "url": "/blog/css/style.css",
+                "type": "link",
+                "start": 610.7,
+                "dur": 177.9,
+                "ttfb": 177.3,
+                "transfer": 51861,
+                "encoded": 51561
+              },
+              {
+                "url": "/blog/vendor/atom-one-light.min.css",
+                "type": "link",
+                "start": 612.6,
+                "dur": 568.8,
+                "ttfb": 568.5,
+                "transfer": 1156,
+                "encoded": 856
+              },
+              {
+                "url": "/blog/vendor/marked.min.js",
+                "type": "script",
+                "start": 613.7,
+                "dur": 726.4,
+                "ttfb": 725.4,
+                "transfer": 40203,
+                "encoded": 39903
+              },
+              {
+                "url": "/blog/vendor/purify.min.js",
+                "type": "script",
+                "start": 614.1,
+                "dur": 1399.4,
+                "ttfb": 1398.6,
+                "transfer": 30128,
+                "encoded": 29828
+              },
+              {
+                "url": "/blog/js/data.js",
+                "type": "script",
+                "start": 614.5,
+                "dur": 1068.8,
+                "ttfb": 1068.2,
+                "transfer": 8310,
+                "encoded": 8010
+              },
+              {
+                "url": "/blog/js/user-posts.js",
+                "type": "script",
+                "start": 614.7,
+                "dur": 1257.6,
+                "ttfb": 1257.1,
+                "transfer": 505,
+                "encoded": 205
+              },
+              {
+                "url": "/blog/js/projects.js",
+                "type": "script",
+                "start": 615.1,
+                "dur": 1696.2,
+                "ttfb": 1695.4,
+                "transfer": 3844,
+                "encoded": 3544
+              },
+              {
+                "url": "/blog/js/app.js",
+                "type": "script",
+                "start": 615.9,
+                "dur": 2164.8,
+                "ttfb": 1866.3,
+                "transfer": 111037,
+                "encoded": 110737
+              }
+            ],
+            "title": "Eric's Notebook",
+            "giscusBlock": "cdp",
+            "errors": [],
+            "extra": {
+              "freshContext": true,
+              "httpCache": "空（新 BrowserContext + 服务端 Cache-Control: no-store）"
+            }
+          },
+          {
+            "rep": 7,
+            "scenario": "cold-home",
+            "config": "mobile",
+            "startedAt": "2026-10-26T11:00:58.655Z",
+            "ok": true,
+            "error": null,
+            "metrics": {
+              "ttfbMs": 596.2,
+              "dclMs": 2896.1,
+              "loadMs": 3451.4,
+              "fcpMs": 1816,
+              "lcpMs": 1816,
+              "cls": 0.1168,
+              "longTaskCount": 1,
+              "longTaskMaxMs": 632,
+              "tbtMs": 582,
+              "requestCount": 9,
+              "transferBytes": 252784,
+              "encodedBytes": 250084,
+              "scriptMs": 124.3,
+              "taskMs": 1584.4,
+              "layoutMs": 1055.25,
+              "serverRequestCount": 19,
+              "networkBytes": 573245,
+              "networkRequests": 20,
+              "networkLastEndMs": 5939,
+              "firstScreenNetEndMs": 3864
+            },
+            "cdp": {
+              "basis": "absolute（全新渲染进程，累计值即本次导航）",
+              "raw": {
+                "Documents": 7,
+                "Nodes": 1036,
+                "LayoutCount": 4,
+                "RecalcStyleCount": 64,
+                "LayoutDuration": 1.055253,
+                "RecalcStyleDuration": 0.102211,
+                "ScriptDuration": 0.124299,
+                "TaskDuration": 1.5844
+              },
+              "pre": null,
+              "values": {
+                "Documents": 7,
+                "Nodes": 1036,
+                "LayoutCount": 4,
+                "RecalcStyleCount": 64,
+                "LayoutDuration": 1055.25,
+                "RecalcStyleDuration": 102.21,
+                "ScriptDuration": 124.3,
+                "TaskDuration": 1584.4
+              }
+            },
+            "navigation": {
+              "ttfb": 596.2,
+              "dcl": 2896.1,
+              "load": 3451.4,
+              "duration": 3451.4,
+              "transfer": 5740,
+              "encoded": 5440,
+              "protocol": "http/1.1"
+            },
+            "paints": {
+              "fp": 1816,
+              "fcp": 1816
+            },
+            "lcp": {
+              "value": 1816,
+              "tag": null,
+              "text": null,
+              "size": 5073
+            },
+            "cls": {
+              "value": 0.1168,
+              "rawSum": 0.1168,
+              "windows": 1,
+              "shiftCount": 1
+            },
+            "longTasks": {
+              "count": 1,
+              "maxMs": 632,
+              "tbtMs": 582,
+              "all": [
+                {
+                  "start": 2821,
+                  "dur": 632
+                }
+              ]
+            },
+            "dom": {
+              "nodes": 414,
+              "appChildren": 1,
+              "hasArticleBody": false,
+              "articleBodyChars": 0,
+              "articleHeadings": 0,
+              "tocItems": 0
+            },
+            "sw": {
+              "controllerAtLoad": false,
+              "cacheNamesAtLoad": [],
+              "controller": false,
+              "active": false,
+              "scriptURL": null,
+              "observerErrors": []
+            },
+            "cache": null,
+            "serverHits": {
+              "/index.html": 3,
+              "/css/style.css": 2,
+              "/vendor/atom-one-light.min.css": 2,
+              "/vendor/marked.min.js": 2,
+              "/vendor/purify.min.js": 2,
+              "/js/data.js": 2,
+              "/js/user-posts.js": 1,
+              "/js/projects.js": 1,
+              "/js/app.js": 2,
+              "/manifest.json": 1,
+              "/icons/icon-192.png": 1
+            },
+            "resources": [
+              {
+                "url": "/blog/css/style.css",
+                "type": "link",
+                "start": 640.8,
+                "dur": 174.6,
+                "ttfb": 173.9,
+                "transfer": 51861,
+                "encoded": 51561
+              },
+              {
+                "url": "/blog/vendor/atom-one-light.min.css",
+                "type": "link",
+                "start": 642.5,
+                "dur": 578.9,
+                "ttfb": 578.2,
+                "transfer": 1156,
+                "encoded": 856
+              },
+              {
+                "url": "/blog/vendor/marked.min.js",
+                "type": "script",
+                "start": 644,
+                "dur": 733.9,
+                "ttfb": 733.2,
+                "transfer": 40203,
+                "encoded": 39903
+              },
+              {
+                "url": "/blog/vendor/purify.min.js",
+                "type": "script",
+                "start": 644.8,
+                "dur": 1246.9,
+                "ttfb": 1246.4,
+                "transfer": 30128,
+                "encoded": 29828
+              },
+              {
+                "url": "/blog/js/data.js",
+                "type": "script",
+                "start": 646,
+                "dur": 1058.2,
+                "ttfb": 1057.5,
+                "transfer": 8310,
+                "encoded": 8010
+              },
+              {
+                "url": "/blog/js/user-posts.js",
+                "type": "script",
+                "start": 646.9,
+                "dur": 1542.5,
+                "ttfb": 1542,
+                "transfer": 505,
+                "encoded": 205
+              },
+              {
+                "url": "/blog/js/projects.js",
+                "type": "script",
+                "start": 647.5,
+                "dur": 1700.9,
+                "ttfb": 1700.2,
+                "transfer": 3844,
+                "encoded": 3544
+              },
+              {
+                "url": "/blog/js/app.js",
+                "type": "script",
+                "start": 648.1,
+                "dur": 2168.9,
+                "ttfb": 1855.4,
+                "transfer": 111037,
+                "encoded": 110737
+              }
+            ],
+            "title": "Eric's Notebook",
+            "giscusBlock": "cdp",
+            "errors": [],
+            "extra": {
+              "freshContext": true,
+              "httpCache": "空（新 BrowserContext + 服务端 Cache-Control: no-store）"
+            }
+          },
+          {
+            "rep": 8,
+            "scenario": "cold-home",
+            "config": "mobile",
+            "startedAt": "2026-10-26T11:01:04.875Z",
+            "ok": true,
+            "error": null,
+            "metrics": {
+              "ttfbMs": 559,
+              "dclMs": 2867.2,
+              "loadMs": 3488.7,
+              "fcpMs": 1800,
+              "lcpMs": 1800,
+              "cls": 0.1168,
+              "longTaskCount": 1,
+              "longTaskMaxMs": 691,
+              "tbtMs": 641,
+              "requestCount": 9,
+              "transferBytes": 252784,
+              "encodedBytes": 250084,
+              "scriptMs": 121.63,
+              "taskMs": 1684.02,
+              "layoutMs": 1134.75,
+              "serverRequestCount": 19,
+              "networkBytes": 573245,
+              "networkRequests": 20,
+              "networkLastEndMs": 5980,
+              "firstScreenNetEndMs": 3908
+            },
+            "cdp": {
+              "basis": "absolute（全新渲染进程，累计值即本次导航）",
+              "raw": {
+                "Documents": 7,
+                "Nodes": 1036,
+                "LayoutCount": 4,
+                "RecalcStyleCount": 65,
+                "LayoutDuration": 1.134747,
+                "RecalcStyleDuration": 0.10569,
+                "ScriptDuration": 0.12163,
+                "TaskDuration": 1.684016
+              },
+              "pre": null,
+              "values": {
+                "Documents": 7,
+                "Nodes": 1036,
+                "LayoutCount": 4,
+                "RecalcStyleCount": 65,
+                "LayoutDuration": 1134.75,
+                "RecalcStyleDuration": 105.69,
+                "ScriptDuration": 121.63,
+                "TaskDuration": 1684.02
+              }
+            },
+            "navigation": {
+              "ttfb": 559,
+              "dcl": 2867.2,
+              "load": 3488.7,
+              "duration": 3488.7,
+              "transfer": 5740,
+              "encoded": 5440,
+              "protocol": "http/1.1"
+            },
+            "paints": {
+              "fp": 1800,
+              "fcp": 1800
+            },
+            "lcp": {
+              "value": 1800,
+              "tag": null,
+              "text": null,
+              "size": 5073
+            },
+            "cls": {
+              "value": 0.1168,
+              "rawSum": 0.1168,
+              "windows": 1,
+              "shiftCount": 1
+            },
+            "longTasks": {
+              "count": 1,
+              "maxMs": 691,
+              "tbtMs": 641,
+              "all": [
+                {
+                  "start": 2800,
+                  "dur": 691
+                }
+              ]
+            },
+            "dom": {
+              "nodes": 414,
+              "appChildren": 1,
+              "hasArticleBody": false,
+              "articleBodyChars": 0,
+              "articleHeadings": 0,
+              "tocItems": 0
+            },
+            "sw": {
+              "controllerAtLoad": false,
+              "cacheNamesAtLoad": [],
+              "controller": false,
+              "active": false,
+              "scriptURL": null,
+              "observerErrors": []
+            },
+            "cache": null,
+            "serverHits": {
+              "/index.html": 3,
+              "/css/style.css": 2,
+              "/vendor/atom-one-light.min.css": 2,
+              "/vendor/marked.min.js": 2,
+              "/vendor/purify.min.js": 2,
+              "/js/data.js": 2,
+              "/js/user-posts.js": 1,
+              "/js/projects.js": 1,
+              "/js/app.js": 2,
+              "/manifest.json": 1,
+              "/icons/icon-192.png": 1
+            },
+            "resources": [
+              {
+                "url": "/blog/css/style.css",
+                "type": "link",
+                "start": 608.4,
+                "dur": 184,
+                "ttfb": 183.3,
+                "transfer": 51861,
+                "encoded": 51561
+              },
+              {
+                "url": "/blog/vendor/atom-one-light.min.css",
+                "type": "link",
+                "start": 610.4,
+                "dur": 572.3,
+                "ttfb": 571.7,
+                "transfer": 1156,
+                "encoded": 856
+              },
+              {
+                "url": "/blog/vendor/marked.min.js",
+                "type": "script",
+                "start": 611.8,
+                "dur": 726.3,
+                "ttfb": 725.7,
+                "transfer": 40203,
+                "encoded": 39903
+              },
+              {
+                "url": "/blog/vendor/purify.min.js",
+                "type": "script",
+                "start": 612.4,
+                "dur": 1211.3,
+                "ttfb": 1210.8,
+                "transfer": 30128,
+                "encoded": 29828
+              },
+              {
+                "url": "/blog/js/data.js",
+                "type": "script",
+                "start": 612.8,
+                "dur": 1510.3,
+                "ttfb": 1509.5,
+                "transfer": 8310,
+                "encoded": 8010
+              },
+              {
+                "url": "/blog/js/user-posts.js",
+                "type": "script",
+                "start": 613.1,
+                "dur": 1067.7,
+                "ttfb": 1067.2,
+                "transfer": 505,
+                "encoded": 205
+              },
+              {
+                "url": "/blog/js/projects.js",
+                "type": "script",
+                "start": 613.6,
+                "dur": 1697.4,
+                "ttfb": 1696.9,
+                "transfer": 3844,
+                "encoded": 3544
+              },
+              {
+                "url": "/blog/js/app.js",
+                "type": "script",
+                "start": 614,
+                "dur": 2183.4,
+                "ttfb": 1868.2,
+                "transfer": 111037,
+                "encoded": 110737
+              }
+            ],
+            "title": "Eric's Notebook",
+            "giscusBlock": "cdp",
+            "errors": [],
+            "extra": {
+              "freshContext": true,
+              "httpCache": "空（新 BrowserContext + 服务端 Cache-Control: no-store）"
+            }
+          }
+        ],
+        "summary": {
+          "cls": {
+            "label": "CLS（session window 最大值）",
+            "unit": "score",
+            "basis": "measured",
+            "n": 8,
+            "median": 0.12,
+            "min": 0.12,
+            "max": 0.12,
+            "spread": 0,
+            "spreadPct": 0,
+            "stdev": 0,
+            "unavailable": false
+          },
+          "dclMs": {
+            "label": "DOMContentLoaded",
+            "unit": "ms",
+            "basis": "measured",
+            "n": 8,
+            "median": 2864.75,
+            "min": 2541.3,
+            "max": 2896.1,
+            "spread": 354.8,
+            "spreadPct": 12.39,
+            "stdev": 108.72,
+            "unavailable": false
+          },
+          "encodedBytes": {
+            "label": "编码后体积（encodedBodySize 合计）",
+            "unit": "bytes",
+            "basis": "measured",
+            "n": 8,
+            "median": 250084,
+            "min": 250084,
+            "max": 250084,
+            "spread": 0,
+            "spreadPct": 0,
+            "stdev": 0,
+            "unavailable": false
+          },
+          "fcpMs": {
+            "label": "FCP",
+            "unit": "ms",
+            "basis": "measured",
+            "n": 8,
+            "median": 1814,
+            "min": 1556,
+            "max": 1876,
+            "spread": 320,
+            "spreadPct": 17.64,
+            "stdev": 93.59,
+            "unavailable": false
+          },
+          "firstScreenNetEndMs": {
+            "label": "firstScreenNetEndMs",
+            "unit": "",
+            "basis": "measured",
+            "n": 8,
+            "median": 3837,
+            "min": 3654,
+            "max": 4005,
+            "spread": 351,
+            "spreadPct": 9.15,
+            "stdev": 94.63,
+            "unavailable": false
+          },
+          "layoutMs": {
+            "label": "布局耗时（CDP LayoutDuration）",
+            "unit": "ms",
+            "basis": "measured",
+            "n": 8,
+            "median": 1111.93,
+            "min": 1050.67,
+            "max": 1251.1,
+            "spread": 200.43,
+            "spreadPct": 18.03,
+            "stdev": 67.87,
+            "unavailable": false
+          },
+          "lcpMs": {
+            "label": "LCP",
+            "unit": "ms",
+            "basis": "measured",
+            "n": 8,
+            "median": 1814,
+            "min": 1556,
+            "max": 1876,
+            "spread": 320,
+            "spreadPct": 17.64,
+            "stdev": 93.59,
+            "unavailable": false
+          },
+          "loadMs": {
+            "label": "页面加载完成 loadEventEnd",
+            "unit": "ms",
+            "basis": "measured",
+            "n": 8,
+            "median": 3412.8,
+            "min": 3217.2,
+            "max": 3587.8,
+            "spread": 370.6,
+            "spreadPct": 10.86,
+            "stdev": 99.15,
+            "unavailable": false
+          },
+          "longTaskCount": {
+            "label": "长任务数量（>50ms）",
+            "unit": "count",
+            "basis": "measured",
+            "n": 8,
+            "median": 1,
+            "min": 1,
+            "max": 1,
+            "spread": 0,
+            "spreadPct": 0,
+            "stdev": 0,
+            "unavailable": false
+          },
+          "longTaskMaxMs": {
+            "label": "最长长任务",
+            "unit": "ms",
+            "basis": "measured",
+            "n": 8,
+            "median": 631.5,
+            "min": 586,
+            "max": 798,
+            "spread": 212,
+            "spreadPct": 33.57,
+            "stdev": 73.94,
+            "unavailable": false
+          },
+          "networkBytes": {
+            "label": "导航窗口内网络传输字节（HTTP 层，含 SW 后台预取/后台校验）",
+            "unit": "bytes",
+            "basis": "measured",
+            "n": 8,
+            "median": 573245,
+            "min": 573245,
+            "max": 573245,
+            "spread": 0,
+            "spreadPct": 0,
+            "stdev": 0,
+            "unavailable": false
+          },
+          "networkLastEndMs": {
+            "label": "networkLastEndMs",
+            "unit": "",
+            "basis": "measured",
+            "n": 8,
+            "median": 5903,
+            "min": 5722,
+            "max": 6080,
+            "spread": 358,
+            "spreadPct": 6.06,
+            "stdev": 96.27,
+            "unavailable": false
+          },
+          "networkRequests": {
+            "label": "导航窗口内到达服务器的请求数（HTTP 层）",
+            "unit": "count",
+            "basis": "measured",
+            "n": 8,
+            "median": 20,
+            "min": 20,
+            "max": 20,
+            "spread": 0,
+            "spreadPct": 0,
+            "stdev": 0,
+            "unavailable": false
+          },
+          "requestCount": {
+            "label": "请求数量（Resource Timing）",
+            "unit": "count",
+            "basis": "measured",
+            "n": 8,
+            "median": 9,
+            "min": 9,
+            "max": 9,
+            "spread": 0,
+            "spreadPct": 0,
+            "stdev": 0,
+            "unavailable": false
+          },
+          "scriptMs": {
+            "label": "JS 执行时间（CDP ScriptDuration，主线程）",
+            "unit": "ms",
+            "basis": "measured",
+            "n": 8,
+            "median": 122.93,
+            "min": 115.25,
+            "max": 144.61,
+            "spread": 29.36,
+            "spreadPct": 23.88,
+            "stdev": 8.14,
+            "unavailable": false
+          },
+          "serverRequestCount": {
+            "label": "真实到达服务器的请求数（服务端计数）",
+            "unit": "count",
+            "basis": "measured",
+            "n": 8,
+            "median": 19,
+            "min": 19,
+            "max": 19,
+            "spread": 0,
+            "spreadPct": 0,
+            "stdev": 0,
+            "unavailable": false
+          },
+          "taskMs": {
+            "label": "主线程任务总时长（CDP TaskDuration）",
+            "unit": "ms",
+            "basis": "measured",
+            "n": 8,
+            "median": 1641.37,
+            "min": 1576.88,
+            "max": 1800.87,
+            "spread": 223.99,
+            "spreadPct": 13.65,
+            "stdev": 72.4,
+            "unavailable": false
+          },
+          "tbtMs": {
+            "label": "TBT 近似（长任务阻塞时间，窗口=导航开始→load+2s）",
+            "unit": "ms",
+            "basis": "calculated",
+            "n": 8,
+            "median": 581.5,
+            "min": 536,
+            "max": 748,
+            "spread": 212,
+            "spreadPct": 36.46,
+            "stdev": 73.94,
+            "unavailable": false
+          },
+          "transferBytes": {
+            "label": "资源传输字节（transferSize 合计）",
+            "unit": "bytes",
+            "basis": "measured",
+            "n": 8,
+            "median": 252784,
+            "min": 252784,
+            "max": 252784,
+            "spread": 0,
+            "spreadPct": 0,
+            "stdev": 0,
+            "unavailable": false
+          },
+          "ttfbMs": {
+            "label": "TTFB",
+            "unit": "ms",
+            "basis": "measured",
+            "n": 8,
+            "median": 570,
+            "min": 197,
+            "max": 596.2,
+            "spread": 399.2,
+            "spreadPct": 70.04,
+            "stdev": 124.95,
+            "unavailable": false
+          }
+        },
+        "validity": {
+          "requested": 8,
+          "completed": 8,
+          "minRequired": 5
+        }
+      }
+    }
+  },
+  "unavailable": [],
+  "failures": [],
+  "calibration": {
+    "note": "用于判断限速/CPU 限速是否真的生效：对比同一次冷启动中 js/data.js 的传输耗时与 ScriptDuration",
+    "desktop": null,
+    "mobile": {
+      "durMs": 1379.3,
+      "encoded": 8010,
+      "scriptMs": 144.61,
+      "loadMs": 3217.2
+    },
+    "expected": {
+      "dataJsBytes": 114583,
+      "dataJsTransferMsAt1638kbps": 546
+    },
+    "networkShaping": {
+      "effective": false,
+      "basis": "inferred（移动端 data.js 传输耗时 ≥ max(300ms, 桌面端 5 倍) 视为整形生效）"
+    },
+    "cpuThrottling": {
+      "ratio": null,
+      "effective": false,
+      "basis": "inferred（移动端 ScriptDuration / 桌面端 ScriptDuration ≥ 2 视为 4x CPU 限速生效）"
+    }
+  }
+}

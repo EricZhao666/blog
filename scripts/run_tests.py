@@ -31,6 +31,9 @@ import time
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 DEFAULT_REPORT = os.path.join(ROOT, 'tests', 'reports', 'last-run.md')
 TIMEOUT = 240
+# 浏览器套件（真实 Chromium + 本地服务器）在 2 核 CI 上耗时远高于开发机：
+# 本机 sw-consistency 约 90 s，负载高时可到 260 s，因此单独放宽而不是压缩用例。
+BROWSER_TIMEOUT = 600
 
 # ---------------------------------------------------------------- 测试清单
 # kind: 'jsdom' 需要 node + jsdom；'python' 需要 python
@@ -50,8 +53,22 @@ TESTS = [
     {'name': 'test15', 'file': 'tests/test15.py', 'kind': 'python', 'desc': 'Batch 3.5：生成器合成 Fixture 可复现性'},
     {'name': 'test16', 'file': 'tests/test16.js', 'kind': 'jsdom', 'desc': 'B5：Markdown 净化与动态事件编码'},
     {'name': 'test17', 'file': 'tests/test17.py', 'kind': 'python', 'desc': 'B5：静态笔记页 JSON-LD 与正文安全'},
+    {'name': 'test18', 'file': 'tests/test18.js', 'kind': 'jsdom',
+     'desc': 'B6B2：文章数据拆分完整性（元数据/正文/搜索语料/哈希）'},
+    {'name': 'split-check', 'file': 'scripts/split_posts.py', 'kind': 'python',
+     'desc': 'B6B2：文章数据产物校验（--check）', 'pass_marker': 'OK:'},
+    {'name': 'test19', 'file': 'tests/test19_data_lifecycle.py', 'kind': 'python',
+     'desc': 'B6C：文章数据生命周期（改/增/删/改 id/损坏）'},
+    {'name': 'test20', 'file': 'tests/test20_publish_search.js', 'kind': 'jsdom',
+     'desc': 'B6C：发布与搜索一致性（含按需加载与快速切换）'},
+    {'name': 'feed-check', 'file': 'gen_feed.py', 'kind': 'python', 'args': ['--check'],
+     'desc': 'B6C：RSS 产物与数据一致（--check）', 'pass_marker': 'OK:'},
     {'name': 'browser', 'file': 'tests/browser/sw.spec.js', 'kind': 'browser',
      'desc': 'B4：真实 Chromium 下的 SW 安装 / 离线 / 更新 / 容量'},
+    {'name': 'sw-consistency', 'file': 'tests/browser/sw-consistency.spec.js', 'kind': 'browser',
+     'desc': 'B6B1.1：版本一致性 / 慢网 / 离线 / HTTP 错误 / SW 重启'},
+    {'name': 'sw-upgrade', 'file': 'tests/browser/sw-upgrade.spec.js', 'kind': 'browser',
+     'desc': 'B6C：旧版安装 → 新版部署 / 安装失败回退 / 多标签页 / 混部'},
 ]
 
 COUNT_RE = re.compile(r'共\s*(\d+)\s*项[，,]\s*PASS\s*(\d+)[，,]\s*FAIL\s*(\d+)')
@@ -148,8 +165,9 @@ def check_env(selected):
 
 
 def run_test(t):
-    cmd = ([sys.executable] if t['kind'] == 'python' else ['node']) + [t['file']]
-    code, out, dur = run(cmd)
+    cmd = ([sys.executable] if t['kind'] == 'python' else ['node']) + [t['file']] + list(t.get('args') or [])
+    timeout = t.get('timeout') or (BROWSER_TIMEOUT if t['kind'] == 'browser' else TIMEOUT)
+    code, out, dur = run(cmd, timeout=timeout)
     # 浏览器用例用退出码 2 表示"环境不可用"，必须显式标记为阻塞而不是失败/通过
     blocked = (t['kind'] == 'browser' and code == 2)
     marker = t.get('pass_marker')
@@ -159,6 +177,9 @@ def run_test(t):
         ok = marker in out and code == 0
     else:
         ok = code == 0
+    if not ok:
+        head = [ln.strip() for ln in out.splitlines() if ln.strip().startswith('FAIL')][:5]
+        print('    [FAIL] %s (exit %s) %s' % (t['name'], code, ('; '.join(head))[:400]))
     m = COUNT_RE.search(out)
     counts = None
     if m:

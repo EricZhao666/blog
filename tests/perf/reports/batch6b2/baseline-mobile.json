@@ -1,0 +1,4481 @@
+{
+  "meta": {
+    "batch": "6A",
+    "generator": "tests/perf/perf.spec.js",
+    "generatedAt": "2026-10-26T10:47:28.122Z",
+    "durationSec": 228.41,
+    "git": {
+      "branch": "feature/batch6b2-data-split",
+      "head": "c87b39b45d68961f7f2124f3c2a2dbc1fec3235d",
+      "headShort": "c87b39b",
+      "subject": "修复：SW 首屏缓存的版本一致性，新增 35 项一致性验证套件",
+      "dirty": true
+    },
+    "resources": [
+      {
+        "path": "index.html",
+        "bytes": 5440,
+        "sha256": "9da4794ce778d542"
+      },
+      {
+        "path": "js/data.js",
+        "bytes": 111306,
+        "sha256": "5ad4aab66634148e"
+      },
+      {
+        "path": "js/app.js",
+        "bytes": 103156,
+        "sha256": "3207210471b85420"
+      },
+      {
+        "path": "css/style.css",
+        "bytes": 50928,
+        "sha256": "34ba2cbc5af9d30b"
+      },
+      {
+        "path": "vendor/marked.min.js",
+        "bytes": 39903,
+        "sha256": "3e7e7d7feb3e5d58"
+      },
+      {
+        "path": "vendor/purify.min.js",
+        "bytes": 29828,
+        "sha256": "cd37898f9782adf5"
+      },
+      {
+        "path": "sw.js",
+        "bytes": 18708,
+        "sha256": "737ff3cab41b70ce"
+      }
+    ],
+    "sw": {
+      "cacheVersion": "2026-10-26-2",
+      "runtimeCacheCap": 120,
+      "strategy": {
+        "navigate": "network-first",
+        "vendor": "stale-while-revalidate",
+        "otherSameOrigin": "network-first",
+        "crossOrigin": "bypass"
+      }
+    },
+    "swCandidate": {
+      "injected": true,
+      "sourcePath": "sw.js",
+      "config": null,
+      "bytes": 18708,
+      "sha256": "737ff3cab41b70ce",
+      "note": "仓库 sw.js 未被修改：候选脚本只在测量链路的观测探针里替换 /blog/sw.js 的响应"
+    },
+    "networkProbe": {
+      "enabled": true,
+      "port": 8139,
+      "metrics": "networkBytes = 导航窗口内所有 HTTP 响应体字节（含 SW 后台预取/后台校验）"
+    },
+    "browser": {
+      "channel": "chrome",
+      "version": "156.0.8078.48",
+      "headless": true,
+      "args": [
+        "--disable-background-timer-throttling",
+        "--disable-renderer-backgrounding"
+      ]
+    },
+    "host": {
+      "platform": "win32",
+      "release": "10.0.19045",
+      "arch": "x64",
+      "cpuModel": "AMD Ryzen 7 3750H with Radeon Vega Mobile Gfx  ",
+      "cpuCores": 8,
+      "totalMemGB": 15.44,
+      "nodeVersion": "v24.22.1"
+    },
+    "server": {
+      "staticServer": "tests/browser/helpers/server.js（未修改）",
+      "prefix": "/blog",
+      "cacheControl": "no-store（继承 B4 测试服务器行为，HTTP 缓存因此在桌面场景中不参与）",
+      "staticPort": 8137,
+      "shapingProxyPort": 8138,
+      "shapingProxy": {
+        "latencyMs": 150,
+        "downloadKbps": 1638.4
+      }
+    },
+    "controls": {
+      "settleMs": 2500,
+      "tbtTailMs": 2000,
+      "searchStableMs": 1200,
+      "thirdPartyBlocked": [
+        "*giscus.app*"
+      ],
+      "thirdPartyReason": "giscus 评论组件为跨域第三方资源，会引入不可复现的网络波动，测量中被 CDP 屏蔽",
+      "repetitions": 5
+    },
+    "metricMeta": {
+      "ttfbMs": {
+        "label": "TTFB",
+        "unit": "ms",
+        "basis": "measured"
+      },
+      "fcpMs": {
+        "label": "FCP",
+        "unit": "ms",
+        "basis": "measured"
+      },
+      "lcpMs": {
+        "label": "LCP",
+        "unit": "ms",
+        "basis": "measured"
+      },
+      "cls": {
+        "label": "CLS（session window 最大值）",
+        "unit": "score",
+        "basis": "measured"
+      },
+      "dclMs": {
+        "label": "DOMContentLoaded",
+        "unit": "ms",
+        "basis": "measured"
+      },
+      "loadMs": {
+        "label": "页面加载完成 loadEventEnd",
+        "unit": "ms",
+        "basis": "measured"
+      },
+      "scriptMs": {
+        "label": "JS 执行时间（CDP ScriptDuration，主线程）",
+        "unit": "ms",
+        "basis": "measured"
+      },
+      "taskMs": {
+        "label": "主线程任务总时长（CDP TaskDuration）",
+        "unit": "ms",
+        "basis": "measured"
+      },
+      "layoutMs": {
+        "label": "布局耗时（CDP LayoutDuration）",
+        "unit": "ms",
+        "basis": "measured"
+      },
+      "longTaskCount": {
+        "label": "长任务数量（>50ms）",
+        "unit": "count",
+        "basis": "measured"
+      },
+      "longTaskMaxMs": {
+        "label": "最长长任务",
+        "unit": "ms",
+        "basis": "measured"
+      },
+      "tbtMs": {
+        "label": "TBT 近似（长任务阻塞时间，窗口=导航开始→load+2s）",
+        "unit": "ms",
+        "basis": "calculated"
+      },
+      "requestCount": {
+        "label": "请求数量（Resource Timing）",
+        "unit": "count",
+        "basis": "measured"
+      },
+      "transferBytes": {
+        "label": "资源传输字节（transferSize 合计）",
+        "unit": "bytes",
+        "basis": "measured"
+      },
+      "encodedBytes": {
+        "label": "编码后体积（encodedBodySize 合计）",
+        "unit": "bytes",
+        "basis": "measured"
+      },
+      "serverRequestCount": {
+        "label": "真实到达服务器的请求数（服务端计数）",
+        "unit": "count",
+        "basis": "measured"
+      },
+      "networkBytes": {
+        "label": "导航窗口内网络传输字节（HTTP 层，含 SW 后台预取/后台校验）",
+        "unit": "bytes",
+        "basis": "measured"
+      },
+      "networkRequests": {
+        "label": "导航窗口内到达服务器的请求数（HTTP 层）",
+        "unit": "count",
+        "basis": "measured"
+      },
+      "swCacheEntries": {
+        "label": "SW 缓存条目总数",
+        "unit": "count",
+        "basis": "measured"
+      },
+      "routeRenderMs": {
+        "label": "路由切换：DOM 更新完成（首页→文章）",
+        "unit": "ms",
+        "basis": "measured"
+      },
+      "routePaintMs": {
+        "label": "路由切换：渲染完成（首页→文章，双 rAF）",
+        "unit": "ms",
+        "basis": "measured"
+      },
+      "routeBackRenderMs": {
+        "label": "路由切换：DOM 更新完成（文章→首页）",
+        "unit": "ms",
+        "basis": "measured"
+      },
+      "routeScriptMs": {
+        "label": "路由切换 JS 执行（首页→文章）",
+        "unit": "ms",
+        "basis": "measured"
+      },
+      "routeBackScriptMs": {
+        "label": "路由切换 JS 执行（文章→首页）",
+        "unit": "ms",
+        "basis": "measured"
+      },
+      "searchFirstRenderMs": {
+        "label": "搜索首次输入：首个结果渲染（含 180ms 防抖）",
+        "unit": "ms",
+        "basis": "measured"
+      },
+      "searchFirstFinalMs": {
+        "label": "搜索首次输入：懒加载补齐后最终渲染",
+        "unit": "ms",
+        "basis": "measured"
+      },
+      "searchFirstRenderCount": {
+        "label": "搜索首次输入：DOM 重绘次数",
+        "unit": "count",
+        "basis": "measured"
+      },
+      "searchLazyBytes": {
+        "label": "搜索首次输入：新增下载字节",
+        "unit": "bytes",
+        "basis": "measured"
+      },
+      "searchFirstLongTaskMs": {
+        "label": "搜索首次输入：长任务阻塞时间",
+        "unit": "ms",
+        "basis": "calculated"
+      },
+      "searchFirstScriptMs": {
+        "label": "搜索首次输入：JS 执行时间",
+        "unit": "ms",
+        "basis": "measured"
+      },
+      "searchRepeatRenderMs": {
+        "label": "搜索重复输入：结果渲染（含 180ms 防抖）",
+        "unit": "ms",
+        "basis": "measured"
+      },
+      "searchRepeatFinalMs": {
+        "label": "搜索重复输入：最终渲染稳定时间",
+        "unit": "ms",
+        "basis": "measured"
+      },
+      "searchRepeatRenderCount": {
+        "label": "搜索重复输入：DOM 重绘次数",
+        "unit": "count",
+        "basis": "measured"
+      },
+      "searchRepeatLongTaskMs": {
+        "label": "搜索重复输入：长任务阻塞时间",
+        "unit": "ms",
+        "basis": "calculated"
+      },
+      "searchRepeatScriptMs": {
+        "label": "搜索重复输入：JS 执行时间",
+        "unit": "ms",
+        "basis": "measured"
+      },
+      "postFirstReadableMs": {
+        "label": "首次打开文章：正文可读时间（SPA 切换起算）",
+        "unit": "ms",
+        "basis": "measured"
+      },
+      "postFirstPaintMs": {
+        "label": "首次打开文章：正文绘制完成（双 rAF）",
+        "unit": "ms",
+        "basis": "measured"
+      },
+      "postFirstChars": {
+        "label": "首次打开文章：正文可见字符数",
+        "unit": "count",
+        "basis": "measured"
+      },
+      "postRepeatReadableMs": {
+        "label": "重复打开文章：正文可读时间",
+        "unit": "ms",
+        "basis": "measured"
+      },
+      "postRepeatPaintMs": {
+        "label": "重复打开文章：正文绘制完成（双 rAF）",
+        "unit": "ms",
+        "basis": "measured"
+      },
+      "postBodyBytes": {
+        "label": "首次打开文章：正文传输字节（data/posts/*.md）",
+        "unit": "bytes",
+        "basis": "measured"
+      },
+      "postFirstScriptMs": {
+        "label": "首次打开文章：JS 执行时间",
+        "unit": "ms",
+        "basis": "measured"
+      },
+      "postRepeatScriptMs": {
+        "label": "重复打开文章：JS 执行时间",
+        "unit": "ms",
+        "basis": "measured"
+      },
+      "postServerRequests": {
+        "label": "首次打开文章：服务端请求数",
+        "unit": "count",
+        "basis": "measured"
+      },
+      "offlinePostStatus": {
+        "label": "离线重开文章：文档状态码",
+        "unit": "count",
+        "basis": "measured"
+      },
+      "offlinePostReadable": {
+        "label": "离线重开文章：正文是否可读",
+        "unit": "bool",
+        "basis": "measured"
+      },
+      "offlinePostReadableMs": {
+        "label": "离线重开文章：正文可读时间",
+        "unit": "ms",
+        "basis": "measured"
+      }
+    },
+    "scenarioMeta": {
+      "cold-home": {
+        "label": "A. 首页冷启动",
+        "description": "全新 BrowserContext 首次打开首页：HTTP 缓存为空、无 Service Worker 控制；测量到 load +2.5s。",
+        "url": "/blog/"
+      },
+      "warm-home": {
+        "label": "B. 首页热启动",
+        "description": "新 BrowserContext 内先完成 SW 安装与缓存预热（校验 CORE 必需资源齐全、预取已收敛），再整页 reload 测量。",
+        "url": "/blog/"
+      },
+      "long-post": {
+        "label": "C. 长文文章页 + SPA 路由切换",
+        "description": "预热后整页重载最长的一篇文章（Markdown + DOMPurify 渲染），并测量首页↔文章的 SPA 路由切换耗时。",
+        "url": "#/post/<id>"
+      },
+      "post-lazy": {
+        "label": "E. 文章正文按需加载",
+        "description": "预热后从首页点进最长的一篇文章：首次打开触发正文请求，重复打开复用内存/缓存，最后离线重开同一篇。",
+        "url": "#/post/<id>"
+      },
+      "search": {
+        "label": "D. 全局搜索首次/重复输入",
+        "description": "预热后输入固定关键词：首次输入会触发 courses/papers/notes 懒加载（6B-2 起还包括正文搜索语料），重复输入复用已加载数据。",
+        "url": "/blog/ + #searchInput"
+      }
+    },
+    "post": {
+      "id": "deep-learning-in-slam",
+      "title": "深度学习在SLAM中的应用",
+      "contentChars": 8097,
+      "totalPosts": 18
+    },
+    "keywords": {
+      "first": "SLAM",
+      "second": "学习"
+    },
+    "configs": {
+      "mobile": {
+        "label": "移动 Chromium：Pixel 7 设备模拟 + CPU 4x + Lighthouse mobileSlow4G 等价网络整形",
+        "conditions": {
+          "viewport": "412×839",
+          "deviceScaleFactor": 2.625,
+          "userAgent": "Mozilla/5.0 (Linux; Android 14; Pixel 7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/156.0.8078.4 Mobile Safari/537.36",
+          "cpuThrottle": "4x（CDP Emulation.setCPUThrottlingRate）",
+          "network": "下行 1638.4 kbps / 上行 750 kbps / 每请求首字节延迟 150ms（HTTP 层整形代理）",
+          "emulation": "Playwright devices['Pixel 7']（isMobile / hasTouch）"
+        },
+        "cpuThrottle": 4,
+        "network": {
+          "latencyMs": 150,
+          "downloadKbps": 1638.4,
+          "uploadKbps": 750
+        },
+        "serverEndpoint": {
+          "via": "HTTP 整形代理",
+          "port": 8138,
+          "upstreamPort": 8139
+        },
+        "contextOptions": {
+          "viewport": {
+            "width": 412,
+            "height": 839
+          },
+          "deviceScaleFactor": 2.625,
+          "isMobile": true,
+          "hasTouch": true,
+          "userAgent": "Mozilla/5.0 (Linux; Android 14; Pixel 7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/156.0.8078.4 Mobile Safari/537.36"
+        }
+      }
+    },
+    "verdict": "BATCH6A_READY",
+    "verdictBasis": "每个场景/配置的有效样本数 ≥ min(5, repeat) 视为完成"
+  },
+  "scenarios": {
+    "cold-home": {
+      "mobile": {
+        "label": "A. 首页冷启动",
+        "description": "全新 BrowserContext 首次打开首页：HTTP 缓存为空、无 Service Worker 控制；测量到 load +2.5s。",
+        "url": "http://127.0.0.1:8138/blog/",
+        "cacheState": {
+          "mode": "cold",
+          "serviceWorker": "首次注册（本页面加载期间未受 SW 控制）",
+          "browserCache": "空"
+        },
+        "samples": [
+          {
+            "rep": 1,
+            "scenario": "cold-home",
+            "config": "mobile",
+            "startedAt": "2026-10-26T10:47:28.358Z",
+            "ok": true,
+            "error": null,
+            "metrics": {
+              "ttfbMs": 194.3,
+              "dclMs": 2997.7,
+              "loadMs": 3662.6,
+              "fcpMs": 1588,
+              "lcpMs": 1588,
+              "cls": 0.1168,
+              "longTaskCount": 1,
+              "longTaskMaxMs": 760,
+              "tbtMs": 710,
+              "requestCount": 9,
+              "transferBytes": 347866,
+              "encodedBytes": 345166,
+              "scriptMs": 141.14,
+              "taskMs": 1879.8,
+              "layoutMs": 1300.44,
+              "serverRequestCount": 15,
+              "networkBytes": 704435,
+              "networkRequests": 16,
+              "networkLastEndMs": 4957,
+              "firstScreenNetEndMs": 4082
+            },
+            "cdp": {
+              "basis": "absolute（全新渲染进程，累计值即本次导航）",
+              "raw": {
+                "Documents": 7,
+                "Nodes": 1036,
+                "LayoutCount": 4,
+                "RecalcStyleCount": 65,
+                "LayoutDuration": 1.300437,
+                "RecalcStyleDuration": 0.113534,
+                "ScriptDuration": 0.141143,
+                "TaskDuration": 1.8798
+              },
+              "pre": null,
+              "values": {
+                "Documents": 7,
+                "Nodes": 1036,
+                "LayoutCount": 4,
+                "RecalcStyleCount": 65,
+                "LayoutDuration": 1300.44,
+                "RecalcStyleDuration": 113.53,
+                "ScriptDuration": 141.14,
+                "TaskDuration": 1879.8
+              }
+            },
+            "navigation": {
+              "ttfb": 194.3,
+              "dcl": 2997.7,
+              "load": 3662.6,
+              "duration": 3662.6,
+              "transfer": 5740,
+              "encoded": 5440,
+              "protocol": "http/1.1"
+            },
+            "paints": {
+              "fp": 1588,
+              "fcp": 1588
+            },
+            "lcp": {
+              "value": 1588,
+              "tag": null,
+              "text": null,
+              "size": 5073
+            },
+            "cls": {
+              "value": 0.1168,
+              "rawSum": 0.1168,
+              "windows": 1,
+              "shiftCount": 1
+            },
+            "longTasks": {
+              "count": 1,
+              "maxMs": 760,
+              "tbtMs": 710,
+              "all": [
+                {
+                  "start": 2905,
+                  "dur": 760
+                }
+              ]
+            },
+            "dom": {
+              "nodes": 414,
+              "appChildren": 1,
+              "hasArticleBody": false,
+              "articleBodyChars": 0,
+              "articleHeadings": 0,
+              "tocItems": 0
+            },
+            "sw": {
+              "controllerAtLoad": false,
+              "cacheNamesAtLoad": [],
+              "controller": false,
+              "active": false,
+              "scriptURL": null,
+              "observerErrors": []
+            },
+            "cache": null,
+            "serverHits": {
+              "/index.html": 2,
+              "/css/style.css": 2,
+              "/vendor/atom-one-light.min.css": 1,
+              "/vendor/marked.min.js": 2,
+              "/js/data.js": 2,
+              "/js/user-posts.js": 1,
+              "/vendor/purify.min.js": 2,
+              "/js/projects.js": 1,
+              "/js/app.js": 2
+            },
+            "resources": [
+              {
+                "url": "/blog/css/style.css",
+                "type": "link",
+                "start": 236.4,
+                "dur": 192.4,
+                "ttfb": 191.8,
+                "transfer": 51228,
+                "encoded": 50928
+              },
+              {
+                "url": "/blog/vendor/atom-one-light.min.css",
+                "type": "link",
+                "start": 239.1,
+                "dur": 581.3,
+                "ttfb": 580.6,
+                "transfer": 1156,
+                "encoded": 856
+              },
+              {
+                "url": "/blog/vendor/marked.min.js",
+                "type": "script",
+                "start": 241,
+                "dur": 724.7,
+                "ttfb": 722,
+                "transfer": 40203,
+                "encoded": 39903
+              },
+              {
+                "url": "/blog/vendor/purify.min.js",
+                "type": "script",
+                "start": 241.7,
+                "dur": 1893.4,
+                "ttfb": 1892.8,
+                "transfer": 30128,
+                "encoded": 29828
+              },
+              {
+                "url": "/blog/js/data.js",
+                "type": "script",
+                "start": 242.1,
+                "dur": 1378.5,
+                "ttfb": 1065.2,
+                "transfer": 111606,
+                "encoded": 111306
+              },
+              {
+                "url": "/blog/js/user-posts.js",
+                "type": "script",
+                "start": 242.5,
+                "dur": 1736.5,
+                "ttfb": 1736,
+                "transfer": 505,
+                "encoded": 205
+              },
+              {
+                "url": "/blog/js/projects.js",
+                "type": "script",
+                "start": 242.9,
+                "dur": 2208.4,
+                "ttfb": 2207.7,
+                "transfer": 3844,
+                "encoded": 3544
+              },
+              {
+                "url": "/blog/js/app.js",
+                "type": "script",
+                "start": 243.3,
+                "dur": 2659.4,
+                "ttfb": 2347.4,
+                "transfer": 103456,
+                "encoded": 103156
+              }
+            ],
+            "title": "Eric's Notebook",
+            "giscusBlock": "cdp",
+            "errors": [],
+            "extra": {
+              "freshContext": true,
+              "httpCache": "空（新 BrowserContext + 服务端 Cache-Control: no-store）"
+            }
+          },
+          {
+            "rep": 2,
+            "scenario": "cold-home",
+            "config": "mobile",
+            "startedAt": "2026-10-26T10:47:34.923Z",
+            "ok": true,
+            "error": null,
+            "metrics": {
+              "ttfbMs": 172.3,
+              "dclMs": 2966.3,
+              "loadMs": 3589.3,
+              "fcpMs": 1472,
+              "lcpMs": 1472,
+              "cls": 0.1168,
+              "longTaskCount": 1,
+              "longTaskMaxMs": 703,
+              "tbtMs": 653,
+              "requestCount": 9,
+              "transferBytes": 347866,
+              "encodedBytes": 345166,
+              "scriptMs": 136.17,
+              "taskMs": 1759.7,
+              "layoutMs": 1204.9,
+              "serverRequestCount": 15,
+              "networkBytes": 704435,
+              "networkRequests": 16,
+              "networkLastEndMs": 4894,
+              "firstScreenNetEndMs": 4020
+            },
+            "cdp": {
+              "basis": "absolute（全新渲染进程，累计值即本次导航）",
+              "raw": {
+                "Documents": 7,
+                "Nodes": 1036,
+                "LayoutCount": 4,
+                "RecalcStyleCount": 64,
+                "LayoutDuration": 1.204898,
+                "RecalcStyleDuration": 0.109173,
+                "ScriptDuration": 0.136167,
+                "TaskDuration": 1.759698
+              },
+              "pre": null,
+              "values": {
+                "Documents": 7,
+                "Nodes": 1036,
+                "LayoutCount": 4,
+                "RecalcStyleCount": 64,
+                "LayoutDuration": 1204.9,
+                "RecalcStyleDuration": 109.17,
+                "ScriptDuration": 136.17,
+                "TaskDuration": 1759.7
+              }
+            },
+            "navigation": {
+              "ttfb": 172.3,
+              "dcl": 2966.3,
+              "load": 3589.3,
+              "duration": 3589.3,
+              "transfer": 5740,
+              "encoded": 5440,
+              "protocol": "http/1.1"
+            },
+            "paints": {
+              "fp": 1472,
+              "fcp": 1472
+            },
+            "lcp": {
+              "value": 1472,
+              "tag": null,
+              "text": null,
+              "size": 5073
+            },
+            "cls": {
+              "value": 0.1168,
+              "rawSum": 0.1168,
+              "windows": 1,
+              "shiftCount": 1
+            },
+            "longTasks": {
+              "count": 1,
+              "maxMs": 703,
+              "tbtMs": 653,
+              "all": [
+                {
+                  "start": 2889,
+                  "dur": 703
+                }
+              ]
+            },
+            "dom": {
+              "nodes": 414,
+              "appChildren": 1,
+              "hasArticleBody": false,
+              "articleBodyChars": 0,
+              "articleHeadings": 0,
+              "tocItems": 0
+            },
+            "sw": {
+              "controllerAtLoad": false,
+              "cacheNamesAtLoad": [],
+              "controller": false,
+              "active": false,
+              "scriptURL": null,
+              "observerErrors": []
+            },
+            "cache": null,
+            "serverHits": {
+              "/index.html": 2,
+              "/css/style.css": 2,
+              "/vendor/atom-one-light.min.css": 1,
+              "/vendor/marked.min.js": 2,
+              "/js/data.js": 2,
+              "/js/user-posts.js": 1,
+              "/vendor/purify.min.js": 2,
+              "/js/projects.js": 1,
+              "/js/app.js": 2
+            },
+            "resources": [
+              {
+                "url": "/blog/css/style.css",
+                "type": "link",
+                "start": 216.2,
+                "dur": 175.9,
+                "ttfb": 175.2,
+                "transfer": 51228,
+                "encoded": 50928
+              },
+              {
+                "url": "/blog/vendor/atom-one-light.min.css",
+                "type": "link",
+                "start": 219.1,
+                "dur": 564.9,
+                "ttfb": 564.4,
+                "transfer": 1156,
+                "encoded": 856
+              },
+              {
+                "url": "/blog/vendor/marked.min.js",
+                "type": "script",
+                "start": 220.5,
+                "dur": 721.6,
+                "ttfb": 720.9,
+                "transfer": 40203,
+                "encoded": 39903
+              },
+              {
+                "url": "/blog/vendor/purify.min.js",
+                "type": "script",
+                "start": 221.1,
+                "dur": 1065.8,
+                "ttfb": 1064.7,
+                "transfer": 30128,
+                "encoded": 29828
+              },
+              {
+                "url": "/blog/js/data.js",
+                "type": "script",
+                "start": 221.6,
+                "dur": 1671.8,
+                "ttfb": 1360.7,
+                "transfer": 111606,
+                "encoded": 111306
+              },
+              {
+                "url": "/blog/js/user-posts.js",
+                "type": "script",
+                "start": 222.1,
+                "dur": 2033.6,
+                "ttfb": 2033,
+                "transfer": 505,
+                "encoded": 205
+              },
+              {
+                "url": "/blog/js/projects.js",
+                "type": "script",
+                "start": 222.5,
+                "dur": 2191.3,
+                "ttfb": 2190.7,
+                "transfer": 3844,
+                "encoded": 3544
+              },
+              {
+                "url": "/blog/js/app.js",
+                "type": "script",
+                "start": 222.9,
+                "dur": 2663.3,
+                "ttfb": 2346.8,
+                "transfer": 103456,
+                "encoded": 103156
+              }
+            ],
+            "title": "Eric's Notebook",
+            "giscusBlock": "cdp",
+            "errors": [],
+            "extra": {
+              "freshContext": true,
+              "httpCache": "空（新 BrowserContext + 服务端 Cache-Control: no-store）"
+            }
+          },
+          {
+            "rep": 3,
+            "scenario": "cold-home",
+            "config": "mobile",
+            "startedAt": "2026-10-26T10:47:41.320Z",
+            "ok": true,
+            "error": null,
+            "metrics": {
+              "ttfbMs": 167.5,
+              "dclMs": 2951,
+              "loadMs": 3519.8,
+              "fcpMs": 1396,
+              "lcpMs": 1396,
+              "cls": 0.1168,
+              "longTaskCount": 1,
+              "longTaskMaxMs": 646,
+              "tbtMs": 596,
+              "requestCount": 9,
+              "transferBytes": 347866,
+              "encodedBytes": 345166,
+              "scriptMs": 121.19,
+              "taskMs": 1627.88,
+              "layoutMs": 1072.85,
+              "serverRequestCount": 15,
+              "networkBytes": 704435,
+              "networkRequests": 16,
+              "networkLastEndMs": 4821,
+              "firstScreenNetEndMs": 3935
+            },
+            "cdp": {
+              "basis": "absolute（全新渲染进程，累计值即本次导航）",
+              "raw": {
+                "Documents": 7,
+                "Nodes": 1036,
+                "LayoutCount": 4,
+                "RecalcStyleCount": 64,
+                "LayoutDuration": 1.072855,
+                "RecalcStyleDuration": 0.108489,
+                "ScriptDuration": 0.121185,
+                "TaskDuration": 1.627879
+              },
+              "pre": null,
+              "values": {
+                "Documents": 7,
+                "Nodes": 1036,
+                "LayoutCount": 4,
+                "RecalcStyleCount": 64,
+                "LayoutDuration": 1072.85,
+                "RecalcStyleDuration": 108.49,
+                "ScriptDuration": 121.19,
+                "TaskDuration": 1627.88
+              }
+            },
+            "navigation": {
+              "ttfb": 167.5,
+              "dcl": 2951,
+              "load": 3519.8,
+              "duration": 3519.8,
+              "transfer": 5740,
+              "encoded": 5440,
+              "protocol": "http/1.1"
+            },
+            "paints": {
+              "fp": 1396,
+              "fcp": 1396
+            },
+            "lcp": {
+              "value": 1396,
+              "tag": null,
+              "text": null,
+              "size": 5073
+            },
+            "cls": {
+              "value": 0.1168,
+              "rawSum": 0.1168,
+              "windows": 1,
+              "shiftCount": 1
+            },
+            "longTasks": {
+              "count": 1,
+              "maxMs": 646,
+              "tbtMs": 596,
+              "all": [
+                {
+                  "start": 2876,
+                  "dur": 646
+                }
+              ]
+            },
+            "dom": {
+              "nodes": 414,
+              "appChildren": 1,
+              "hasArticleBody": false,
+              "articleBodyChars": 0,
+              "articleHeadings": 0,
+              "tocItems": 0
+            },
+            "sw": {
+              "controllerAtLoad": false,
+              "cacheNamesAtLoad": [],
+              "controller": false,
+              "active": false,
+              "scriptURL": null,
+              "observerErrors": []
+            },
+            "cache": null,
+            "serverHits": {
+              "/index.html": 2,
+              "/css/style.css": 2,
+              "/vendor/atom-one-light.min.css": 1,
+              "/vendor/marked.min.js": 2,
+              "/js/data.js": 2,
+              "/js/user-posts.js": 1,
+              "/vendor/purify.min.js": 2,
+              "/js/projects.js": 1,
+              "/js/app.js": 2
+            },
+            "resources": [
+              {
+                "url": "/blog/css/style.css",
+                "type": "link",
+                "start": 212.6,
+                "dur": 174,
+                "ttfb": 173.4,
+                "transfer": 51228,
+                "encoded": 50928
+              },
+              {
+                "url": "/blog/vendor/atom-one-light.min.css",
+                "type": "link",
+                "start": 214.9,
+                "dur": 574.7,
+                "ttfb": 573.9,
+                "transfer": 1156,
+                "encoded": 856
+              },
+              {
+                "url": "/blog/vendor/marked.min.js",
+                "type": "script",
+                "start": 216.7,
+                "dur": 713.8,
+                "ttfb": 713.2,
+                "transfer": 40203,
+                "encoded": 39903
+              },
+              {
+                "url": "/blog/vendor/purify.min.js",
+                "type": "script",
+                "start": 217.1,
+                "dur": 1058.2,
+                "ttfb": 1057.4,
+                "transfer": 30128,
+                "encoded": 29828
+              },
+              {
+                "url": "/blog/js/data.js",
+                "type": "script",
+                "start": 217.7,
+                "dur": 1666.4,
+                "ttfb": 1352.2,
+                "transfer": 111606,
+                "encoded": 111306
+              },
+              {
+                "url": "/blog/js/user-posts.js",
+                "type": "script",
+                "start": 218.2,
+                "dur": 2025.7,
+                "ttfb": 2025.1,
+                "transfer": 505,
+                "encoded": 205
+              },
+              {
+                "url": "/blog/js/projects.js",
+                "type": "script",
+                "start": 218.6,
+                "dur": 2182.8,
+                "ttfb": 2182.2,
+                "transfer": 3844,
+                "encoded": 3544
+              },
+              {
+                "url": "/blog/js/app.js",
+                "type": "script",
+                "start": 219.1,
+                "dur": 2654.6,
+                "ttfb": 2354.9,
+                "transfer": 103456,
+                "encoded": 103156
+              }
+            ],
+            "title": "Eric's Notebook",
+            "giscusBlock": "cdp",
+            "errors": [],
+            "extra": {
+              "freshContext": true,
+              "httpCache": "空（新 BrowserContext + 服务端 Cache-Control: no-store）"
+            }
+          },
+          {
+            "rep": 4,
+            "scenario": "cold-home",
+            "config": "mobile",
+            "startedAt": "2026-10-26T10:47:47.628Z",
+            "ok": true,
+            "error": null,
+            "metrics": {
+              "ttfbMs": 176.1,
+              "dclMs": 2970.6,
+              "loadMs": 3518.4,
+              "fcpMs": 1424,
+              "lcpMs": 1424,
+              "cls": 0.1168,
+              "longTaskCount": 1,
+              "longTaskMaxMs": 622,
+              "tbtMs": 572,
+              "requestCount": 9,
+              "transferBytes": 347866,
+              "encodedBytes": 345166,
+              "scriptMs": 125.72,
+              "taskMs": 1598.29,
+              "layoutMs": 1068.84,
+              "serverRequestCount": 15,
+              "networkBytes": 704435,
+              "networkRequests": 16,
+              "networkLastEndMs": 4756,
+              "firstScreenNetEndMs": 3944
+            },
+            "cdp": {
+              "basis": "absolute（全新渲染进程，累计值即本次导航）",
+              "raw": {
+                "Documents": 7,
+                "Nodes": 1036,
+                "LayoutCount": 4,
+                "RecalcStyleCount": 66,
+                "LayoutDuration": 1.068837,
+                "RecalcStyleDuration": 0.099661,
+                "ScriptDuration": 0.125718,
+                "TaskDuration": 1.598292
+              },
+              "pre": null,
+              "values": {
+                "Documents": 7,
+                "Nodes": 1036,
+                "LayoutCount": 4,
+                "RecalcStyleCount": 66,
+                "LayoutDuration": 1068.84,
+                "RecalcStyleDuration": 99.66,
+                "ScriptDuration": 125.72,
+                "TaskDuration": 1598.29
+              }
+            },
+            "navigation": {
+              "ttfb": 176.1,
+              "dcl": 2970.6,
+              "load": 3518.4,
+              "duration": 3518.4,
+              "transfer": 5740,
+              "encoded": 5440,
+              "protocol": "http/1.1"
+            },
+            "paints": {
+              "fp": 1424,
+              "fcp": 1424
+            },
+            "lcp": {
+              "value": 1424,
+              "tag": null,
+              "text": null,
+              "size": 5073
+            },
+            "cls": {
+              "value": 0.1168,
+              "rawSum": 0.1168,
+              "windows": 1,
+              "shiftCount": 1
+            },
+            "longTasks": {
+              "count": 1,
+              "maxMs": 622,
+              "tbtMs": 572,
+              "all": [
+                {
+                  "start": 2898,
+                  "dur": 622
+                }
+              ]
+            },
+            "dom": {
+              "nodes": 414,
+              "appChildren": 1,
+              "hasArticleBody": false,
+              "articleBodyChars": 0,
+              "articleHeadings": 0,
+              "tocItems": 0
+            },
+            "sw": {
+              "controllerAtLoad": false,
+              "cacheNamesAtLoad": [],
+              "controller": false,
+              "active": false,
+              "scriptURL": null,
+              "observerErrors": []
+            },
+            "cache": null,
+            "serverHits": {
+              "/index.html": 2,
+              "/css/style.css": 2,
+              "/vendor/atom-one-light.min.css": 1,
+              "/vendor/marked.min.js": 2,
+              "/js/data.js": 2,
+              "/js/user-posts.js": 1,
+              "/vendor/purify.min.js": 2,
+              "/js/projects.js": 1,
+              "/js/app.js": 2
+            },
+            "resources": [
+              {
+                "url": "/blog/css/style.css",
+                "type": "link",
+                "start": 228.4,
+                "dur": 182.5,
+                "ttfb": 181.7,
+                "transfer": 51228,
+                "encoded": 50928
+              },
+              {
+                "url": "/blog/vendor/atom-one-light.min.css",
+                "type": "link",
+                "start": 230.3,
+                "dur": 571.4,
+                "ttfb": 570.9,
+                "transfer": 1156,
+                "encoded": 856
+              },
+              {
+                "url": "/blog/vendor/marked.min.js",
+                "type": "script",
+                "start": 231.5,
+                "dur": 726.5,
+                "ttfb": 725.8,
+                "transfer": 40203,
+                "encoded": 39903
+              },
+              {
+                "url": "/blog/vendor/purify.min.js",
+                "type": "script",
+                "start": 231.9,
+                "dur": 1057,
+                "ttfb": 1056.5,
+                "transfer": 30128,
+                "encoded": 29828
+              },
+              {
+                "url": "/blog/js/data.js",
+                "type": "script",
+                "start": 232.5,
+                "dur": 1664.8,
+                "ttfb": 1352.2,
+                "transfer": 111606,
+                "encoded": 111306
+              },
+              {
+                "url": "/blog/js/user-posts.js",
+                "type": "script",
+                "start": 232.7,
+                "dur": 2039.4,
+                "ttfb": 2038.7,
+                "transfer": 505,
+                "encoded": 205
+              },
+              {
+                "url": "/blog/js/projects.js",
+                "type": "script",
+                "start": 233.1,
+                "dur": 2193.8,
+                "ttfb": 2193.1,
+                "transfer": 3844,
+                "encoded": 3544
+              },
+              {
+                "url": "/blog/js/app.js",
+                "type": "script",
+                "start": 233.6,
+                "dur": 2661.4,
+                "ttfb": 2348.9,
+                "transfer": 103456,
+                "encoded": 103156
+              }
+            ],
+            "title": "Eric's Notebook",
+            "giscusBlock": "cdp",
+            "errors": [],
+            "extra": {
+              "freshContext": true,
+              "httpCache": "空（新 BrowserContext + 服务端 Cache-Control: no-store）"
+            }
+          },
+          {
+            "rep": 5,
+            "scenario": "cold-home",
+            "config": "mobile",
+            "startedAt": "2026-10-26T10:47:53.938Z",
+            "ok": true,
+            "error": null,
+            "metrics": {
+              "ttfbMs": 166.7,
+              "dclMs": 2976.8,
+              "loadMs": 3514.4,
+              "fcpMs": 1380,
+              "lcpMs": 1380,
+              "cls": 0.1168,
+              "longTaskCount": 1,
+              "longTaskMaxMs": 629,
+              "tbtMs": 579,
+              "requestCount": 9,
+              "transferBytes": 347866,
+              "encodedBytes": 345166,
+              "scriptMs": 139.84,
+              "taskMs": 1593.96,
+              "layoutMs": 1039.07,
+              "serverRequestCount": 15,
+              "networkBytes": 704435,
+              "networkRequests": 16,
+              "networkLastEndMs": 4818,
+              "firstScreenNetEndMs": 3944
+            },
+            "cdp": {
+              "basis": "absolute（全新渲染进程，累计值即本次导航）",
+              "raw": {
+                "Documents": 7,
+                "Nodes": 1036,
+                "LayoutCount": 4,
+                "RecalcStyleCount": 64,
+                "LayoutDuration": 1.039069,
+                "RecalcStyleDuration": 0.113473,
+                "ScriptDuration": 0.139843,
+                "TaskDuration": 1.59396
+              },
+              "pre": null,
+              "values": {
+                "Documents": 7,
+                "Nodes": 1036,
+                "LayoutCount": 4,
+                "RecalcStyleCount": 64,
+                "LayoutDuration": 1039.07,
+                "RecalcStyleDuration": 113.47,
+                "ScriptDuration": 139.84,
+                "TaskDuration": 1593.96
+              }
+            },
+            "navigation": {
+              "ttfb": 166.7,
+              "dcl": 2976.8,
+              "load": 3514.4,
+              "duration": 3514.4,
+              "transfer": 5740,
+              "encoded": 5440,
+              "protocol": "http/1.1"
+            },
+            "paints": {
+              "fp": 1380,
+              "fcp": 1380
+            },
+            "lcp": {
+              "value": 1380,
+              "tag": null,
+              "text": null,
+              "size": 5073
+            },
+            "cls": {
+              "value": 0.1168,
+              "rawSum": 0.1168,
+              "windows": 1,
+              "shiftCount": 1
+            },
+            "longTasks": {
+              "count": 1,
+              "maxMs": 629,
+              "tbtMs": 579,
+              "all": [
+                {
+                  "start": 2888,
+                  "dur": 629
+                }
+              ]
+            },
+            "dom": {
+              "nodes": 414,
+              "appChildren": 1,
+              "hasArticleBody": false,
+              "articleBodyChars": 0,
+              "articleHeadings": 0,
+              "tocItems": 0
+            },
+            "sw": {
+              "controllerAtLoad": false,
+              "cacheNamesAtLoad": [],
+              "controller": false,
+              "active": false,
+              "scriptURL": null,
+              "observerErrors": []
+            },
+            "cache": null,
+            "serverHits": {
+              "/index.html": 2,
+              "/css/style.css": 2,
+              "/vendor/atom-one-light.min.css": 1,
+              "/vendor/marked.min.js": 2,
+              "/js/data.js": 2,
+              "/js/user-posts.js": 1,
+              "/vendor/purify.min.js": 2,
+              "/js/projects.js": 1,
+              "/js/app.js": 2
+            },
+            "resources": [
+              {
+                "url": "/blog/css/style.css",
+                "type": "link",
+                "start": 209.6,
+                "dur": 175.8,
+                "ttfb": 175,
+                "transfer": 51228,
+                "encoded": 50928
+              },
+              {
+                "url": "/blog/vendor/atom-one-light.min.css",
+                "type": "link",
+                "start": 211.2,
+                "dur": 564.9,
+                "ttfb": 564.2,
+                "transfer": 1156,
+                "encoded": 856
+              },
+              {
+                "url": "/blog/vendor/marked.min.js",
+                "type": "script",
+                "start": 212,
+                "dur": 720.7,
+                "ttfb": 720.2,
+                "transfer": 40203,
+                "encoded": 39903
+              },
+              {
+                "url": "/blog/vendor/purify.min.js",
+                "type": "script",
+                "start": 212.4,
+                "dur": 1064.7,
+                "ttfb": 1064.2,
+                "transfer": 30128,
+                "encoded": 29828
+              },
+              {
+                "url": "/blog/js/data.js",
+                "type": "script",
+                "start": 213.1,
+                "dur": 1670.9,
+                "ttfb": 1358.7,
+                "transfer": 111606,
+                "encoded": 111306
+              },
+              {
+                "url": "/blog/js/user-posts.js",
+                "type": "script",
+                "start": 213.8,
+                "dur": 2030,
+                "ttfb": 2029.5,
+                "transfer": 505,
+                "encoded": 205
+              },
+              {
+                "url": "/blog/js/projects.js",
+                "type": "script",
+                "start": 214.5,
+                "dur": 2186.5,
+                "ttfb": 2185.8,
+                "transfer": 3844,
+                "encoded": 3544
+              },
+              {
+                "url": "/blog/js/app.js",
+                "type": "script",
+                "start": 215.3,
+                "dur": 2670.5,
+                "ttfb": 2355,
+                "transfer": 103456,
+                "encoded": 103156
+              }
+            ],
+            "title": "Eric's Notebook",
+            "giscusBlock": "cdp",
+            "errors": [],
+            "extra": {
+              "freshContext": true,
+              "httpCache": "空（新 BrowserContext + 服务端 Cache-Control: no-store）"
+            }
+          }
+        ],
+        "summary": {
+          "cls": {
+            "label": "CLS（session window 最大值）",
+            "unit": "score",
+            "basis": "measured",
+            "n": 5,
+            "median": 0.12,
+            "min": 0.12,
+            "max": 0.12,
+            "spread": 0,
+            "spreadPct": 0,
+            "stdev": 0,
+            "unavailable": false
+          },
+          "dclMs": {
+            "label": "DOMContentLoaded",
+            "unit": "ms",
+            "basis": "measured",
+            "n": 5,
+            "median": 2970.6,
+            "min": 2951,
+            "max": 2997.7,
+            "spread": 46.7,
+            "spreadPct": 1.57,
+            "stdev": 15.22,
+            "unavailable": false
+          },
+          "encodedBytes": {
+            "label": "编码后体积（encodedBodySize 合计）",
+            "unit": "bytes",
+            "basis": "measured",
+            "n": 5,
+            "median": 345166,
+            "min": 345166,
+            "max": 345166,
+            "spread": 0,
+            "spreadPct": 0,
+            "stdev": 0,
+            "unavailable": false
+          },
+          "fcpMs": {
+            "label": "FCP",
+            "unit": "ms",
+            "basis": "measured",
+            "n": 5,
+            "median": 1424,
+            "min": 1380,
+            "max": 1588,
+            "spread": 208,
+            "spreadPct": 14.61,
+            "stdev": 74.83,
+            "unavailable": false
+          },
+          "firstScreenNetEndMs": {
+            "label": "firstScreenNetEndMs",
+            "unit": "",
+            "basis": "measured",
+            "n": 5,
+            "median": 3944,
+            "min": 3935,
+            "max": 4082,
+            "spread": 147,
+            "spreadPct": 3.73,
+            "stdev": 57.44,
+            "unavailable": false
+          },
+          "layoutMs": {
+            "label": "布局耗时（CDP LayoutDuration）",
+            "unit": "ms",
+            "basis": "measured",
+            "n": 5,
+            "median": 1072.85,
+            "min": 1039.07,
+            "max": 1300.44,
+            "spread": 261.37,
+            "spreadPct": 24.36,
+            "stdev": 99.67,
+            "unavailable": false
+          },
+          "lcpMs": {
+            "label": "LCP",
+            "unit": "ms",
+            "basis": "measured",
+            "n": 5,
+            "median": 1424,
+            "min": 1380,
+            "max": 1588,
+            "spread": 208,
+            "spreadPct": 14.61,
+            "stdev": 74.83,
+            "unavailable": false
+          },
+          "loadMs": {
+            "label": "页面加载完成 loadEventEnd",
+            "unit": "ms",
+            "basis": "measured",
+            "n": 5,
+            "median": 3519.8,
+            "min": 3514.4,
+            "max": 3662.6,
+            "spread": 148.2,
+            "spreadPct": 4.21,
+            "stdev": 57.98,
+            "unavailable": false
+          },
+          "longTaskCount": {
+            "label": "长任务数量（>50ms）",
+            "unit": "count",
+            "basis": "measured",
+            "n": 5,
+            "median": 1,
+            "min": 1,
+            "max": 1,
+            "spread": 0,
+            "spreadPct": 0,
+            "stdev": 0,
+            "unavailable": false
+          },
+          "longTaskMaxMs": {
+            "label": "最长长任务",
+            "unit": "ms",
+            "basis": "measured",
+            "n": 5,
+            "median": 646,
+            "min": 622,
+            "max": 760,
+            "spread": 138,
+            "spreadPct": 21.36,
+            "stdev": 52.4,
+            "unavailable": false
+          },
+          "networkBytes": {
+            "label": "导航窗口内网络传输字节（HTTP 层，含 SW 后台预取/后台校验）",
+            "unit": "bytes",
+            "basis": "measured",
+            "n": 5,
+            "median": 704435,
+            "min": 704435,
+            "max": 704435,
+            "spread": 0,
+            "spreadPct": 0,
+            "stdev": 0,
+            "unavailable": false
+          },
+          "networkLastEndMs": {
+            "label": "networkLastEndMs",
+            "unit": "",
+            "basis": "measured",
+            "n": 5,
+            "median": 4821,
+            "min": 4756,
+            "max": 4957,
+            "spread": 201,
+            "spreadPct": 4.17,
+            "stdev": 69.4,
+            "unavailable": false
+          },
+          "networkRequests": {
+            "label": "导航窗口内到达服务器的请求数（HTTP 层）",
+            "unit": "count",
+            "basis": "measured",
+            "n": 5,
+            "median": 16,
+            "min": 16,
+            "max": 16,
+            "spread": 0,
+            "spreadPct": 0,
+            "stdev": 0,
+            "unavailable": false
+          },
+          "requestCount": {
+            "label": "请求数量（Resource Timing）",
+            "unit": "count",
+            "basis": "measured",
+            "n": 5,
+            "median": 9,
+            "min": 9,
+            "max": 9,
+            "spread": 0,
+            "spreadPct": 0,
+            "stdev": 0,
+            "unavailable": false
+          },
+          "scriptMs": {
+            "label": "JS 执行时间（CDP ScriptDuration，主线程）",
+            "unit": "ms",
+            "basis": "measured",
+            "n": 5,
+            "median": 136.17,
+            "min": 121.19,
+            "max": 141.14,
+            "spread": 19.95,
+            "spreadPct": 14.65,
+            "stdev": 7.94,
+            "unavailable": false
+          },
+          "serverRequestCount": {
+            "label": "真实到达服务器的请求数（服务端计数）",
+            "unit": "count",
+            "basis": "measured",
+            "n": 5,
+            "median": 15,
+            "min": 15,
+            "max": 15,
+            "spread": 0,
+            "spreadPct": 0,
+            "stdev": 0,
+            "unavailable": false
+          },
+          "taskMs": {
+            "label": "主线程任务总时长（CDP TaskDuration）",
+            "unit": "ms",
+            "basis": "measured",
+            "n": 5,
+            "median": 1627.88,
+            "min": 1593.96,
+            "max": 1879.8,
+            "spread": 285.84,
+            "spreadPct": 17.56,
+            "stdev": 111.68,
+            "unavailable": false
+          },
+          "tbtMs": {
+            "label": "TBT 近似（长任务阻塞时间，窗口=导航开始→load+2s）",
+            "unit": "ms",
+            "basis": "calculated",
+            "n": 5,
+            "median": 596,
+            "min": 572,
+            "max": 710,
+            "spread": 138,
+            "spreadPct": 23.15,
+            "stdev": 52.4,
+            "unavailable": false
+          },
+          "transferBytes": {
+            "label": "资源传输字节（transferSize 合计）",
+            "unit": "bytes",
+            "basis": "measured",
+            "n": 5,
+            "median": 347866,
+            "min": 347866,
+            "max": 347866,
+            "spread": 0,
+            "spreadPct": 0,
+            "stdev": 0,
+            "unavailable": false
+          },
+          "ttfbMs": {
+            "label": "TTFB",
+            "unit": "ms",
+            "basis": "measured",
+            "n": 5,
+            "median": 172.3,
+            "min": 166.7,
+            "max": 194.3,
+            "spread": 27.6,
+            "spreadPct": 16.02,
+            "stdev": 10.05,
+            "unavailable": false
+          }
+        },
+        "validity": {
+          "requested": 5,
+          "completed": 5,
+          "minRequired": 5
+        }
+      }
+    },
+    "warm-home": {
+      "mobile": {
+        "label": "B. 首页热启动",
+        "description": "新 BrowserContext 内先完成 SW 安装与缓存预热（校验 CORE 必需资源齐全、预取已收敛），再整页 reload 测量。",
+        "url": "http://127.0.0.1:8138/blog/",
+        "cacheState": {
+          "mode": "warm",
+          "serviceWorker": "已注册并接管（每次重复均使用全新 BrowserContext 重新预热）",
+          "warmVerified": true,
+          "coreCacheName": "blog-2026-10-26-2",
+          "coreEntryCount": 12,
+          "runtimeCacheName": "blog-rt-2026-10-26-2",
+          "missingRequired": [],
+          "cache": {
+            "blog-2026-10-26-2": {
+              "count": 12,
+              "sample": [
+                "/blog/",
+                "/blog/css/style.css",
+                "/blog/icons/icon-192.png",
+                "/blog/index.html",
+                "/blog/js/app.js",
+                "/blog/js/data.js",
+                "/blog/js/projects.js",
+                "/blog/js/user-posts.js",
+                "/blog/manifest.json",
+                "/blog/vendor/atom-one-light.min.css",
+                "/blog/vendor/marked.min.js",
+                "/blog/vendor/purify.min.js"
+              ]
+            },
+            "blog-rt-2026-10-26-2": {
+              "count": 4,
+              "sample": [
+                "/blog/js/course-notes.js",
+                "/blog/js/courses.js",
+                "/blog/js/papers.js",
+                "/blog/vendor/highlight.min.js"
+              ]
+            }
+          }
+        },
+        "samples": [
+          {
+            "rep": 1,
+            "scenario": "warm-home",
+            "config": "mobile",
+            "startedAt": "2026-10-26T10:48:00.232Z",
+            "ok": true,
+            "error": null,
+            "metrics": {
+              "ttfbMs": 186,
+              "dclMs": 309,
+              "loadMs": 356.2,
+              "fcpMs": 396,
+              "lcpMs": 396,
+              "cls": 0,
+              "longTaskCount": 1,
+              "longTaskMaxMs": 71,
+              "tbtMs": 21,
+              "requestCount": 9,
+              "transferBytes": 0,
+              "encodedBytes": 345166,
+              "scriptMs": 30.87,
+              "taskMs": 372.24,
+              "layoutMs": 20.75,
+              "serverRequestCount": 4,
+              "networkBytes": 94735,
+              "networkRequests": 5,
+              "networkLastEndMs": 2125,
+              "firstScreenNetEndMs": null,
+              "swCacheEntries": 21
+            },
+            "cdp": {
+              "basis": "absolute（导航后渲染进程已重建，累计值即本次导航）",
+              "raw": {
+                "Documents": 12,
+                "Nodes": 2064,
+                "LayoutCount": 3,
+                "RecalcStyleCount": 64,
+                "LayoutDuration": 0.020752,
+                "RecalcStyleDuration": 0.072241,
+                "ScriptDuration": 0.030874,
+                "TaskDuration": 0.372239
+              },
+              "pre": {
+                "Documents": 7,
+                "Nodes": 1036,
+                "LayoutCount": 4,
+                "RecalcStyleCount": 62,
+                "LayoutDuration": 1.165602,
+                "RecalcStyleDuration": 0.104152,
+                "ScriptDuration": 0.129792,
+                "TaskDuration": 1.739828
+              },
+              "values": {
+                "Documents": 12,
+                "Nodes": 2064,
+                "LayoutCount": 3,
+                "RecalcStyleCount": 64,
+                "LayoutDuration": 20.75,
+                "RecalcStyleDuration": 72.24,
+                "ScriptDuration": 30.87,
+                "TaskDuration": 372.24
+              }
+            },
+            "navigation": {
+              "ttfb": 186,
+              "dcl": 309,
+              "load": 356.2,
+              "duration": 356.2,
+              "transfer": 0,
+              "encoded": 5440,
+              "protocol": null
+            },
+            "paints": {
+              "fp": 396,
+              "fcp": 396
+            },
+            "lcp": {
+              "value": 396,
+              "tag": null,
+              "text": null,
+              "size": 5073
+            },
+            "cls": {
+              "value": 0,
+              "rawSum": 0,
+              "windows": 0,
+              "shiftCount": 0
+            },
+            "longTasks": {
+              "count": 1,
+              "maxMs": 71,
+              "tbtMs": 21,
+              "all": [
+                {
+                  "start": 286,
+                  "dur": 71
+                }
+              ]
+            },
+            "dom": {
+              "nodes": 414,
+              "appChildren": 1,
+              "hasArticleBody": false,
+              "articleBodyChars": 0,
+              "articleHeadings": 0,
+              "tocItems": 0
+            },
+            "sw": {
+              "controllerAtLoad": true,
+              "cacheNamesAtLoad": [
+                "blog-2026-10-26-2",
+                "blog-rt-2026-10-26-2"
+              ],
+              "controller": true,
+              "active": true,
+              "scriptURL": "http://127.0.0.1:8138/blog/sw.js",
+              "observerErrors": []
+            },
+            "cache": {
+              "blog-2026-10-26-2": {
+                "count": 12,
+                "sample": [
+                  "/blog/",
+                  "/blog/css/style.css",
+                  "/blog/icons/icon-192.png",
+                  "/blog/index.html",
+                  "/blog/js/app.js",
+                  "/blog/js/data.js",
+                  "/blog/js/projects.js",
+                  "/blog/js/user-posts.js",
+                  "/blog/manifest.json",
+                  "/blog/vendor/atom-one-light.min.css",
+                  "/blog/vendor/marked.min.js",
+                  "/blog/vendor/purify.min.js"
+                ]
+              },
+              "blog-rt-2026-10-26-2": {
+                "count": 9,
+                "sample": [
+                  "/blog/index.html",
+                  "/blog/js/course-notes.js",
+                  "/blog/js/courses.js",
+                  "/blog/js/note-slugs.js",
+                  "/blog/js/papers.js",
+                  "/blog/vendor/atom-one-light.min.css",
+                  "/blog/vendor/highlight.min.js",
+                  "/blog/vendor/marked.min.js",
+                  "/blog/vendor/purify.min.js"
+                ]
+              }
+            },
+            "serverHits": {
+              "/index.html": 1,
+              "/vendor/atom-one-light.min.css": 1,
+              "/vendor/marked.min.js": 1,
+              "/vendor/purify.min.js": 1
+            },
+            "resources": [
+              {
+                "url": "/blog/css/style.css",
+                "type": "link",
+                "start": 227.3,
+                "dur": 3.3,
+                "ttfb": 3.1,
+                "transfer": 0,
+                "encoded": 50928
+              },
+              {
+                "url": "/blog/vendor/atom-one-light.min.css",
+                "type": "link",
+                "start": 230.2,
+                "dur": 2,
+                "ttfb": 1.7,
+                "transfer": 0,
+                "encoded": 856
+              },
+              {
+                "url": "/blog/vendor/marked.min.js",
+                "type": "script",
+                "start": 231.2,
+                "dur": 11.9,
+                "ttfb": 11.4,
+                "transfer": 0,
+                "encoded": 39903
+              },
+              {
+                "url": "/blog/vendor/purify.min.js",
+                "type": "script",
+                "start": 231.9,
+                "dur": 15,
+                "ttfb": 14.5,
+                "transfer": 0,
+                "encoded": 29828
+              },
+              {
+                "url": "/blog/js/data.js",
+                "type": "script",
+                "start": 233.3,
+                "dur": 25.7,
+                "ttfb": 24.6,
+                "transfer": 0,
+                "encoded": 111306
+              },
+              {
+                "url": "/blog/js/user-posts.js",
+                "type": "script",
+                "start": 234.5,
+                "dur": 25,
+                "ttfb": 23.9,
+                "transfer": 0,
+                "encoded": 205
+              },
+              {
+                "url": "/blog/js/projects.js",
+                "type": "script",
+                "start": 235.7,
+                "dur": 24.3,
+                "ttfb": 23.1,
+                "transfer": 0,
+                "encoded": 3544
+              },
+              {
+                "url": "/blog/js/app.js",
+                "type": "script",
+                "start": 236.9,
+                "dur": 23.4,
+                "ttfb": 22.8,
+                "transfer": 0,
+                "encoded": 103156
+              }
+            ],
+            "title": "Eric's Notebook",
+            "giscusBlock": "cdp",
+            "errors": [],
+            "extra": {
+              "warmVerified": true,
+              "warmUpMs": 9271,
+              "warmUpControllerWaitMs": 4211,
+              "prefetchSettleMs": 1430,
+              "missingRequiredInCache": [],
+              "reload": true
+            }
+          },
+          {
+            "rep": 2,
+            "scenario": "warm-home",
+            "config": "mobile",
+            "startedAt": "2026-10-26T10:48:12.649Z",
+            "ok": true,
+            "error": null,
+            "metrics": {
+              "ttfbMs": 165.9,
+              "dclMs": 316.9,
+              "loadMs": 360.5,
+              "fcpMs": 280,
+              "lcpMs": 280,
+              "cls": 0,
+              "longTaskCount": 1,
+              "longTaskMaxMs": 69,
+              "tbtMs": 19,
+              "requestCount": 9,
+              "transferBytes": 0,
+              "encodedBytes": 345166,
+              "scriptMs": 33.19,
+              "taskMs": 401.62,
+              "layoutMs": 31.34,
+              "serverRequestCount": 4,
+              "networkBytes": 94735,
+              "networkRequests": 5,
+              "networkLastEndMs": 2116,
+              "firstScreenNetEndMs": null,
+              "swCacheEntries": 21
+            },
+            "cdp": {
+              "basis": "absolute（导航后渲染进程已重建，累计值即本次导航）",
+              "raw": {
+                "Documents": 12,
+                "Nodes": 2064,
+                "LayoutCount": 4,
+                "RecalcStyleCount": 68,
+                "LayoutDuration": 0.031339,
+                "RecalcStyleDuration": 0.075397,
+                "ScriptDuration": 0.033191,
+                "TaskDuration": 0.401617
+              },
+              "pre": {
+                "Documents": 7,
+                "Nodes": 1036,
+                "LayoutCount": 4,
+                "RecalcStyleCount": 62,
+                "LayoutDuration": 1.138047,
+                "RecalcStyleDuration": 0.103612,
+                "ScriptDuration": 0.132934,
+                "TaskDuration": 1.713239
+              },
+              "values": {
+                "Documents": 12,
+                "Nodes": 2064,
+                "LayoutCount": 4,
+                "RecalcStyleCount": 68,
+                "LayoutDuration": 31.34,
+                "RecalcStyleDuration": 75.4,
+                "ScriptDuration": 33.19,
+                "TaskDuration": 401.62
+              }
+            },
+            "navigation": {
+              "ttfb": 165.9,
+              "dcl": 316.9,
+              "load": 360.5,
+              "duration": 360.5,
+              "transfer": 0,
+              "encoded": 5440,
+              "protocol": null
+            },
+            "paints": {
+              "fp": 280,
+              "fcp": 280
+            },
+            "lcp": {
+              "value": 280,
+              "tag": null,
+              "text": null,
+              "size": 5073
+            },
+            "cls": {
+              "value": 0,
+              "rawSum": 0,
+              "windows": 0,
+              "shiftCount": 0
+            },
+            "longTasks": {
+              "count": 1,
+              "maxMs": 69,
+              "tbtMs": 19,
+              "all": [
+                {
+                  "start": 292,
+                  "dur": 69
+                }
+              ]
+            },
+            "dom": {
+              "nodes": 414,
+              "appChildren": 1,
+              "hasArticleBody": false,
+              "articleBodyChars": 0,
+              "articleHeadings": 0,
+              "tocItems": 0
+            },
+            "sw": {
+              "controllerAtLoad": true,
+              "cacheNamesAtLoad": [
+                "blog-2026-10-26-2",
+                "blog-rt-2026-10-26-2"
+              ],
+              "controller": true,
+              "active": true,
+              "scriptURL": "http://127.0.0.1:8138/blog/sw.js",
+              "observerErrors": []
+            },
+            "cache": {
+              "blog-2026-10-26-2": {
+                "count": 12,
+                "sample": [
+                  "/blog/",
+                  "/blog/css/style.css",
+                  "/blog/icons/icon-192.png",
+                  "/blog/index.html",
+                  "/blog/js/app.js",
+                  "/blog/js/data.js",
+                  "/blog/js/projects.js",
+                  "/blog/js/user-posts.js",
+                  "/blog/manifest.json",
+                  "/blog/vendor/atom-one-light.min.css",
+                  "/blog/vendor/marked.min.js",
+                  "/blog/vendor/purify.min.js"
+                ]
+              },
+              "blog-rt-2026-10-26-2": {
+                "count": 9,
+                "sample": [
+                  "/blog/index.html",
+                  "/blog/js/course-notes.js",
+                  "/blog/js/courses.js",
+                  "/blog/js/note-slugs.js",
+                  "/blog/js/papers.js",
+                  "/blog/vendor/atom-one-light.min.css",
+                  "/blog/vendor/highlight.min.js",
+                  "/blog/vendor/marked.min.js",
+                  "/blog/vendor/purify.min.js"
+                ]
+              }
+            },
+            "serverHits": {
+              "/index.html": 1,
+              "/vendor/atom-one-light.min.css": 1,
+              "/vendor/marked.min.js": 1,
+              "/vendor/purify.min.js": 1
+            },
+            "resources": [
+              {
+                "url": "/blog/css/style.css",
+                "type": "link",
+                "start": 211.9,
+                "dur": 4.1,
+                "ttfb": 4,
+                "transfer": 0,
+                "encoded": 50928
+              },
+              {
+                "url": "/blog/vendor/atom-one-light.min.css",
+                "type": "link",
+                "start": 215.1,
+                "dur": 2.8,
+                "ttfb": 2.7,
+                "transfer": 0,
+                "encoded": 856
+              },
+              {
+                "url": "/blog/vendor/marked.min.js",
+                "type": "script",
+                "start": 216.5,
+                "dur": 11.8,
+                "ttfb": 11.2,
+                "transfer": 0,
+                "encoded": 39903
+              },
+              {
+                "url": "/blog/vendor/purify.min.js",
+                "type": "script",
+                "start": 218.3,
+                "dur": 13.9,
+                "ttfb": 13.2,
+                "transfer": 0,
+                "encoded": 29828
+              },
+              {
+                "url": "/blog/js/data.js",
+                "type": "script",
+                "start": 219.6,
+                "dur": 26.1,
+                "ttfb": 25.2,
+                "transfer": 0,
+                "encoded": 111306
+              },
+              {
+                "url": "/blog/js/user-posts.js",
+                "type": "script",
+                "start": 220.4,
+                "dur": 26.1,
+                "ttfb": 24.7,
+                "transfer": 0,
+                "encoded": 205
+              },
+              {
+                "url": "/blog/js/projects.js",
+                "type": "script",
+                "start": 221,
+                "dur": 25.8,
+                "ttfb": 24.4,
+                "transfer": 0,
+                "encoded": 3544
+              },
+              {
+                "url": "/blog/js/app.js",
+                "type": "script",
+                "start": 221.8,
+                "dur": 25.4,
+                "ttfb": 24.9,
+                "transfer": 0,
+                "encoded": 103156
+              }
+            ],
+            "title": "Eric's Notebook",
+            "giscusBlock": "cdp",
+            "errors": [],
+            "extra": {
+              "warmVerified": true,
+              "warmUpMs": 9302,
+              "warmUpControllerWaitMs": 4310,
+              "prefetchSettleMs": 1424,
+              "missingRequiredInCache": [],
+              "reload": true
+            }
+          },
+          {
+            "rep": 3,
+            "scenario": "warm-home",
+            "config": "mobile",
+            "startedAt": "2026-10-26T10:48:25.109Z",
+            "ok": true,
+            "error": null,
+            "metrics": {
+              "ttfbMs": 168.5,
+              "dclMs": 309.2,
+              "loadMs": 350,
+              "fcpMs": 276,
+              "lcpMs": 276,
+              "cls": 0,
+              "longTaskCount": 1,
+              "longTaskMaxMs": 64,
+              "tbtMs": 14,
+              "requestCount": 9,
+              "transferBytes": 0,
+              "encodedBytes": 345166,
+              "scriptMs": 30.72,
+              "taskMs": 408.29,
+              "layoutMs": 27.19,
+              "serverRequestCount": 4,
+              "networkBytes": 94735,
+              "networkRequests": 5,
+              "networkLastEndMs": 2300,
+              "firstScreenNetEndMs": null,
+              "swCacheEntries": 21
+            },
+            "cdp": {
+              "basis": "absolute（导航后渲染进程已重建，累计值即本次导航）",
+              "raw": {
+                "Documents": 12,
+                "Nodes": 2064,
+                "LayoutCount": 4,
+                "RecalcStyleCount": 68,
+                "LayoutDuration": 0.02719,
+                "RecalcStyleDuration": 0.079374,
+                "ScriptDuration": 0.030717,
+                "TaskDuration": 0.408292
+              },
+              "pre": {
+                "Documents": 7,
+                "Nodes": 1036,
+                "LayoutCount": 4,
+                "RecalcStyleCount": 63,
+                "LayoutDuration": 1.170975,
+                "RecalcStyleDuration": 0.107699,
+                "ScriptDuration": 0.13551,
+                "TaskDuration": 1.761231
+              },
+              "values": {
+                "Documents": 12,
+                "Nodes": 2064,
+                "LayoutCount": 4,
+                "RecalcStyleCount": 68,
+                "LayoutDuration": 27.19,
+                "RecalcStyleDuration": 79.37,
+                "ScriptDuration": 30.72,
+                "TaskDuration": 408.29
+              }
+            },
+            "navigation": {
+              "ttfb": 168.5,
+              "dcl": 309.2,
+              "load": 350,
+              "duration": 350,
+              "transfer": 0,
+              "encoded": 5440,
+              "protocol": null
+            },
+            "paints": {
+              "fp": 276,
+              "fcp": 276
+            },
+            "lcp": {
+              "value": 276,
+              "tag": null,
+              "text": null,
+              "size": 5073
+            },
+            "cls": {
+              "value": 0,
+              "rawSum": 0,
+              "windows": 0,
+              "shiftCount": 0
+            },
+            "longTasks": {
+              "count": 1,
+              "maxMs": 64,
+              "tbtMs": 14,
+              "all": [
+                {
+                  "start": 286,
+                  "dur": 64
+                }
+              ]
+            },
+            "dom": {
+              "nodes": 414,
+              "appChildren": 1,
+              "hasArticleBody": false,
+              "articleBodyChars": 0,
+              "articleHeadings": 0,
+              "tocItems": 0
+            },
+            "sw": {
+              "controllerAtLoad": true,
+              "cacheNamesAtLoad": [
+                "blog-2026-10-26-2",
+                "blog-rt-2026-10-26-2"
+              ],
+              "controller": true,
+              "active": true,
+              "scriptURL": "http://127.0.0.1:8138/blog/sw.js",
+              "observerErrors": []
+            },
+            "cache": {
+              "blog-2026-10-26-2": {
+                "count": 12,
+                "sample": [
+                  "/blog/",
+                  "/blog/css/style.css",
+                  "/blog/icons/icon-192.png",
+                  "/blog/index.html",
+                  "/blog/js/app.js",
+                  "/blog/js/data.js",
+                  "/blog/js/projects.js",
+                  "/blog/js/user-posts.js",
+                  "/blog/manifest.json",
+                  "/blog/vendor/atom-one-light.min.css",
+                  "/blog/vendor/marked.min.js",
+                  "/blog/vendor/purify.min.js"
+                ]
+              },
+              "blog-rt-2026-10-26-2": {
+                "count": 9,
+                "sample": [
+                  "/blog/index.html",
+                  "/blog/js/course-notes.js",
+                  "/blog/js/courses.js",
+                  "/blog/js/note-slugs.js",
+                  "/blog/js/papers.js",
+                  "/blog/vendor/atom-one-light.min.css",
+                  "/blog/vendor/highlight.min.js",
+                  "/blog/vendor/marked.min.js",
+                  "/blog/vendor/purify.min.js"
+                ]
+              }
+            },
+            "serverHits": {
+              "/index.html": 1,
+              "/vendor/atom-one-light.min.css": 1,
+              "/vendor/marked.min.js": 1,
+              "/vendor/purify.min.js": 1
+            },
+            "resources": [
+              {
+                "url": "/blog/css/style.css",
+                "type": "link",
+                "start": 207.9,
+                "dur": 3.9,
+                "ttfb": 3.9,
+                "transfer": 0,
+                "encoded": 50928
+              },
+              {
+                "url": "/blog/vendor/atom-one-light.min.css",
+                "type": "link",
+                "start": 211.8,
+                "dur": 2.5,
+                "ttfb": 2.5,
+                "transfer": 0,
+                "encoded": 856
+              },
+              {
+                "url": "/blog/vendor/marked.min.js",
+                "type": "script",
+                "start": 213.4,
+                "dur": 10.9,
+                "ttfb": 10.4,
+                "transfer": 0,
+                "encoded": 39903
+              },
+              {
+                "url": "/blog/vendor/purify.min.js",
+                "type": "script",
+                "start": 214.3,
+                "dur": 13.2,
+                "ttfb": 12.5,
+                "transfer": 0,
+                "encoded": 29828
+              },
+              {
+                "url": "/blog/js/data.js",
+                "type": "script",
+                "start": 215.7,
+                "dur": 26.7,
+                "ttfb": 25.7,
+                "transfer": 0,
+                "encoded": 111306
+              },
+              {
+                "url": "/blog/js/user-posts.js",
+                "type": "script",
+                "start": 216.5,
+                "dur": 26.2,
+                "ttfb": 25.4,
+                "transfer": 0,
+                "encoded": 205
+              },
+              {
+                "url": "/blog/js/projects.js",
+                "type": "script",
+                "start": 216.9,
+                "dur": 26.2,
+                "ttfb": 25.2,
+                "transfer": 0,
+                "encoded": 3544
+              },
+              {
+                "url": "/blog/js/app.js",
+                "type": "script",
+                "start": 217.5,
+                "dur": 25.8,
+                "ttfb": 25.3,
+                "transfer": 0,
+                "encoded": 103156
+              }
+            ],
+            "title": "Eric's Notebook",
+            "giscusBlock": "cdp",
+            "errors": [],
+            "extra": {
+              "warmVerified": true,
+              "warmUpMs": 9481,
+              "warmUpControllerWaitMs": 4155,
+              "prefetchSettleMs": 1643,
+              "missingRequiredInCache": [],
+              "reload": true
+            }
+          },
+          {
+            "rep": 4,
+            "scenario": "warm-home",
+            "config": "mobile",
+            "startedAt": "2026-10-26T10:48:37.721Z",
+            "ok": true,
+            "error": null,
+            "metrics": {
+              "ttfbMs": 169.4,
+              "dclMs": 326,
+              "loadMs": 373.2,
+              "fcpMs": 288,
+              "lcpMs": 288,
+              "cls": 0,
+              "longTaskCount": 1,
+              "longTaskMaxMs": 74,
+              "tbtMs": 24,
+              "requestCount": 9,
+              "transferBytes": 0,
+              "encodedBytes": 345166,
+              "scriptMs": 34.28,
+              "taskMs": 398.97,
+              "layoutMs": 30.52,
+              "serverRequestCount": 4,
+              "networkBytes": 94735,
+              "networkRequests": 5,
+              "networkLastEndMs": 2137,
+              "firstScreenNetEndMs": null,
+              "swCacheEntries": 21
+            },
+            "cdp": {
+              "basis": "absolute（导航后渲染进程已重建，累计值即本次导航）",
+              "raw": {
+                "Documents": 12,
+                "Nodes": 2064,
+                "LayoutCount": 4,
+                "RecalcStyleCount": 66,
+                "LayoutDuration": 0.030518,
+                "RecalcStyleDuration": 0.077329,
+                "ScriptDuration": 0.034279,
+                "TaskDuration": 0.398966
+              },
+              "pre": {
+                "Documents": 7,
+                "Nodes": 1036,
+                "LayoutCount": 4,
+                "RecalcStyleCount": 66,
+                "LayoutDuration": 1.044578,
+                "RecalcStyleDuration": 0.102219,
+                "ScriptDuration": 0.142232,
+                "TaskDuration": 1.609894
+              },
+              "values": {
+                "Documents": 12,
+                "Nodes": 2064,
+                "LayoutCount": 4,
+                "RecalcStyleCount": 66,
+                "LayoutDuration": 30.52,
+                "RecalcStyleDuration": 77.33,
+                "ScriptDuration": 34.28,
+                "TaskDuration": 398.97
+              }
+            },
+            "navigation": {
+              "ttfb": 169.4,
+              "dcl": 326,
+              "load": 373.2,
+              "duration": 373.2,
+              "transfer": 0,
+              "encoded": 5440,
+              "protocol": null
+            },
+            "paints": {
+              "fp": 288,
+              "fcp": 288
+            },
+            "lcp": {
+              "value": 288,
+              "tag": null,
+              "text": null,
+              "size": 5073
+            },
+            "cls": {
+              "value": 0,
+              "rawSum": 0,
+              "windows": 0,
+              "shiftCount": 0
+            },
+            "longTasks": {
+              "count": 1,
+              "maxMs": 74,
+              "tbtMs": 24,
+              "all": [
+                {
+                  "start": 301,
+                  "dur": 74
+                }
+              ]
+            },
+            "dom": {
+              "nodes": 414,
+              "appChildren": 1,
+              "hasArticleBody": false,
+              "articleBodyChars": 0,
+              "articleHeadings": 0,
+              "tocItems": 0
+            },
+            "sw": {
+              "controllerAtLoad": true,
+              "cacheNamesAtLoad": [
+                "blog-2026-10-26-2",
+                "blog-rt-2026-10-26-2"
+              ],
+              "controller": true,
+              "active": true,
+              "scriptURL": "http://127.0.0.1:8138/blog/sw.js",
+              "observerErrors": []
+            },
+            "cache": {
+              "blog-2026-10-26-2": {
+                "count": 12,
+                "sample": [
+                  "/blog/",
+                  "/blog/css/style.css",
+                  "/blog/icons/icon-192.png",
+                  "/blog/index.html",
+                  "/blog/js/app.js",
+                  "/blog/js/data.js",
+                  "/blog/js/projects.js",
+                  "/blog/js/user-posts.js",
+                  "/blog/manifest.json",
+                  "/blog/vendor/atom-one-light.min.css",
+                  "/blog/vendor/marked.min.js",
+                  "/blog/vendor/purify.min.js"
+                ]
+              },
+              "blog-rt-2026-10-26-2": {
+                "count": 9,
+                "sample": [
+                  "/blog/index.html",
+                  "/blog/js/course-notes.js",
+                  "/blog/js/courses.js",
+                  "/blog/js/note-slugs.js",
+                  "/blog/js/papers.js",
+                  "/blog/vendor/atom-one-light.min.css",
+                  "/blog/vendor/highlight.min.js",
+                  "/blog/vendor/marked.min.js",
+                  "/blog/vendor/purify.min.js"
+                ]
+              }
+            },
+            "serverHits": {
+              "/index.html": 1,
+              "/vendor/atom-one-light.min.css": 1,
+              "/vendor/marked.min.js": 1,
+              "/vendor/purify.min.js": 1
+            },
+            "resources": [
+              {
+                "url": "/blog/css/style.css",
+                "type": "link",
+                "start": 215.5,
+                "dur": 3.9,
+                "ttfb": 3.7,
+                "transfer": 0,
+                "encoded": 50928
+              },
+              {
+                "url": "/blog/vendor/atom-one-light.min.css",
+                "type": "link",
+                "start": 218.5,
+                "dur": 2.5,
+                "ttfb": 2.4,
+                "transfer": 0,
+                "encoded": 856
+              },
+              {
+                "url": "/blog/vendor/marked.min.js",
+                "type": "script",
+                "start": 220.2,
+                "dur": 12.5,
+                "ttfb": 12,
+                "transfer": 0,
+                "encoded": 39903
+              },
+              {
+                "url": "/blog/vendor/purify.min.js",
+                "type": "script",
+                "start": 221.5,
+                "dur": 14.6,
+                "ttfb": 14.1,
+                "transfer": 0,
+                "encoded": 29828
+              },
+              {
+                "url": "/blog/js/data.js",
+                "type": "script",
+                "start": 222.8,
+                "dur": 29.6,
+                "ttfb": 28.8,
+                "transfer": 0,
+                "encoded": 111306
+              },
+              {
+                "url": "/blog/js/user-posts.js",
+                "type": "script",
+                "start": 223.8,
+                "dur": 29.1,
+                "ttfb": 28.3,
+                "transfer": 0,
+                "encoded": 205
+              },
+              {
+                "url": "/blog/js/projects.js",
+                "type": "script",
+                "start": 224.7,
+                "dur": 28.6,
+                "ttfb": 27.6,
+                "transfer": 0,
+                "encoded": 3544
+              },
+              {
+                "url": "/blog/js/app.js",
+                "type": "script",
+                "start": 225.5,
+                "dur": 28.2,
+                "ttfb": 27.6,
+                "transfer": 0,
+                "encoded": 103156
+              }
+            ],
+            "title": "Eric's Notebook",
+            "giscusBlock": "cdp",
+            "errors": [],
+            "extra": {
+              "warmVerified": true,
+              "warmUpMs": 9356,
+              "warmUpControllerWaitMs": 4348,
+              "prefetchSettleMs": 1431,
+              "missingRequiredInCache": [],
+              "reload": true
+            }
+          },
+          {
+            "rep": 5,
+            "scenario": "warm-home",
+            "config": "mobile",
+            "startedAt": "2026-10-26T10:48:50.218Z",
+            "ok": true,
+            "error": null,
+            "metrics": {
+              "ttfbMs": 168.9,
+              "dclMs": 292.7,
+              "loadMs": 347.9,
+              "fcpMs": 384,
+              "lcpMs": 384,
+              "cls": 0,
+              "longTaskCount": 1,
+              "longTaskMaxMs": 78,
+              "tbtMs": 28,
+              "requestCount": 9,
+              "transferBytes": 0,
+              "encodedBytes": 345166,
+              "scriptMs": 30.76,
+              "taskMs": 360.74,
+              "layoutMs": 25.06,
+              "serverRequestCount": 4,
+              "networkBytes": 94735,
+              "networkRequests": 5,
+              "networkLastEndMs": 2090,
+              "firstScreenNetEndMs": null,
+              "swCacheEntries": 21
+            },
+            "cdp": {
+              "basis": "absolute（导航后渲染进程已重建，累计值即本次导航）",
+              "raw": {
+                "Documents": 12,
+                "Nodes": 2064,
+                "LayoutCount": 3,
+                "RecalcStyleCount": 63,
+                "LayoutDuration": 0.025064,
+                "RecalcStyleDuration": 0.069214,
+                "ScriptDuration": 0.030756,
+                "TaskDuration": 0.360736
+              },
+              "pre": {
+                "Documents": 7,
+                "Nodes": 1036,
+                "LayoutCount": 4,
+                "RecalcStyleCount": 63,
+                "LayoutDuration": 1.065105,
+                "RecalcStyleDuration": 0.103691,
+                "ScriptDuration": 0.1332,
+                "TaskDuration": 1.645995
+              },
+              "values": {
+                "Documents": 12,
+                "Nodes": 2064,
+                "LayoutCount": 3,
+                "RecalcStyleCount": 63,
+                "LayoutDuration": 25.06,
+                "RecalcStyleDuration": 69.21,
+                "ScriptDuration": 30.76,
+                "TaskDuration": 360.74
+              }
+            },
+            "navigation": {
+              "ttfb": 168.9,
+              "dcl": 292.7,
+              "load": 347.9,
+              "duration": 347.9,
+              "transfer": 0,
+              "encoded": 5440,
+              "protocol": null
+            },
+            "paints": {
+              "fp": 384,
+              "fcp": 384
+            },
+            "lcp": {
+              "value": 384,
+              "tag": null,
+              "text": null,
+              "size": 5073
+            },
+            "cls": {
+              "value": 0,
+              "rawSum": 0,
+              "windows": 0,
+              "shiftCount": 0
+            },
+            "longTasks": {
+              "count": 1,
+              "maxMs": 78,
+              "tbtMs": 28,
+              "all": [
+                {
+                  "start": 271,
+                  "dur": 78
+                }
+              ]
+            },
+            "dom": {
+              "nodes": 414,
+              "appChildren": 1,
+              "hasArticleBody": false,
+              "articleBodyChars": 0,
+              "articleHeadings": 0,
+              "tocItems": 0
+            },
+            "sw": {
+              "controllerAtLoad": true,
+              "cacheNamesAtLoad": [
+                "blog-2026-10-26-2",
+                "blog-rt-2026-10-26-2"
+              ],
+              "controller": true,
+              "active": true,
+              "scriptURL": "http://127.0.0.1:8138/blog/sw.js",
+              "observerErrors": []
+            },
+            "cache": {
+              "blog-2026-10-26-2": {
+                "count": 12,
+                "sample": [
+                  "/blog/",
+                  "/blog/css/style.css",
+                  "/blog/icons/icon-192.png",
+                  "/blog/index.html",
+                  "/blog/js/app.js",
+                  "/blog/js/data.js",
+                  "/blog/js/projects.js",
+                  "/blog/js/user-posts.js",
+                  "/blog/manifest.json",
+                  "/blog/vendor/atom-one-light.min.css",
+                  "/blog/vendor/marked.min.js",
+                  "/blog/vendor/purify.min.js"
+                ]
+              },
+              "blog-rt-2026-10-26-2": {
+                "count": 9,
+                "sample": [
+                  "/blog/index.html",
+                  "/blog/js/course-notes.js",
+                  "/blog/js/courses.js",
+                  "/blog/js/note-slugs.js",
+                  "/blog/js/papers.js",
+                  "/blog/vendor/atom-one-light.min.css",
+                  "/blog/vendor/highlight.min.js",
+                  "/blog/vendor/marked.min.js",
+                  "/blog/vendor/purify.min.js"
+                ]
+              }
+            },
+            "serverHits": {
+              "/index.html": 1,
+              "/vendor/atom-one-light.min.css": 1,
+              "/vendor/marked.min.js": 1,
+              "/vendor/purify.min.js": 1
+            },
+            "resources": [
+              {
+                "url": "/blog/css/style.css",
+                "type": "link",
+                "start": 212,
+                "dur": 2.7,
+                "ttfb": 2.5,
+                "transfer": 0,
+                "encoded": 50928
+              },
+              {
+                "url": "/blog/vendor/atom-one-light.min.css",
+                "type": "link",
+                "start": 214,
+                "dur": 3.3,
+                "ttfb": 3.1,
+                "transfer": 0,
+                "encoded": 856
+              },
+              {
+                "url": "/blog/vendor/marked.min.js",
+                "type": "script",
+                "start": 215.2,
+                "dur": 11.7,
+                "ttfb": 11.3,
+                "transfer": 0,
+                "encoded": 39903
+              },
+              {
+                "url": "/blog/vendor/purify.min.js",
+                "type": "script",
+                "start": 216.4,
+                "dur": 14.5,
+                "ttfb": 13.6,
+                "transfer": 0,
+                "encoded": 29828
+              },
+              {
+                "url": "/blog/js/data.js",
+                "type": "script",
+                "start": 217.7,
+                "dur": 25.4,
+                "ttfb": 24.8,
+                "transfer": 0,
+                "encoded": 111306
+              },
+              {
+                "url": "/blog/js/user-posts.js",
+                "type": "script",
+                "start": 218.9,
+                "dur": 24.5,
+                "ttfb": 23.9,
+                "transfer": 0,
+                "encoded": 205
+              },
+              {
+                "url": "/blog/js/projects.js",
+                "type": "script",
+                "start": 219.7,
+                "dur": 24.1,
+                "ttfb": 23.2,
+                "transfer": 0,
+                "encoded": 3544
+              },
+              {
+                "url": "/blog/js/app.js",
+                "type": "script",
+                "start": 220.5,
+                "dur": 23.5,
+                "ttfb": 23.1,
+                "transfer": 0,
+                "encoded": 103156
+              }
+            ],
+            "title": "Eric's Notebook",
+            "giscusBlock": "cdp",
+            "errors": [],
+            "extra": {
+              "warmVerified": true,
+              "warmUpMs": 9250,
+              "warmUpControllerWaitMs": 4251,
+              "prefetchSettleMs": 1422,
+              "missingRequiredInCache": [],
+              "reload": true
+            }
+          }
+        ],
+        "summary": {
+          "cls": {
+            "label": "CLS（session window 最大值）",
+            "unit": "score",
+            "basis": "measured",
+            "n": 5,
+            "median": 0,
+            "min": 0,
+            "max": 0,
+            "spread": 0,
+            "spreadPct": null,
+            "stdev": 0,
+            "unavailable": false
+          },
+          "dclMs": {
+            "label": "DOMContentLoaded",
+            "unit": "ms",
+            "basis": "measured",
+            "n": 5,
+            "median": 309.2,
+            "min": 292.7,
+            "max": 326,
+            "spread": 33.3,
+            "spreadPct": 10.77,
+            "stdev": 10.97,
+            "unavailable": false
+          },
+          "encodedBytes": {
+            "label": "编码后体积（encodedBodySize 合计）",
+            "unit": "bytes",
+            "basis": "measured",
+            "n": 5,
+            "median": 345166,
+            "min": 345166,
+            "max": 345166,
+            "spread": 0,
+            "spreadPct": 0,
+            "stdev": 0,
+            "unavailable": false
+          },
+          "fcpMs": {
+            "label": "FCP",
+            "unit": "ms",
+            "basis": "measured",
+            "n": 5,
+            "median": 288,
+            "min": 276,
+            "max": 396,
+            "spread": 120,
+            "spreadPct": 41.67,
+            "stdev": 53.51,
+            "unavailable": false
+          },
+          "firstScreenNetEndMs": {
+            "label": "firstScreenNetEndMs",
+            "unit": "",
+            "basis": "measured",
+            "n": 0,
+            "median": null,
+            "min": null,
+            "max": null,
+            "spread": null,
+            "spreadPct": null,
+            "stdev": null,
+            "unavailable": true
+          },
+          "layoutMs": {
+            "label": "布局耗时（CDP LayoutDuration）",
+            "unit": "ms",
+            "basis": "measured",
+            "n": 5,
+            "median": 27.19,
+            "min": 20.75,
+            "max": 31.34,
+            "spread": 10.59,
+            "spreadPct": 38.95,
+            "stdev": 3.85,
+            "unavailable": false
+          },
+          "lcpMs": {
+            "label": "LCP",
+            "unit": "ms",
+            "basis": "measured",
+            "n": 5,
+            "median": 288,
+            "min": 276,
+            "max": 396,
+            "spread": 120,
+            "spreadPct": 41.67,
+            "stdev": 53.51,
+            "unavailable": false
+          },
+          "loadMs": {
+            "label": "页面加载完成 loadEventEnd",
+            "unit": "ms",
+            "basis": "measured",
+            "n": 5,
+            "median": 356.2,
+            "min": 347.9,
+            "max": 373.2,
+            "spread": 25.3,
+            "spreadPct": 7.1,
+            "stdev": 9.01,
+            "unavailable": false
+          },
+          "longTaskCount": {
+            "label": "长任务数量（>50ms）",
+            "unit": "count",
+            "basis": "measured",
+            "n": 5,
+            "median": 1,
+            "min": 1,
+            "max": 1,
+            "spread": 0,
+            "spreadPct": 0,
+            "stdev": 0,
+            "unavailable": false
+          },
+          "longTaskMaxMs": {
+            "label": "最长长任务",
+            "unit": "ms",
+            "basis": "measured",
+            "n": 5,
+            "median": 71,
+            "min": 64,
+            "max": 78,
+            "spread": 14,
+            "spreadPct": 19.72,
+            "stdev": 4.71,
+            "unavailable": false
+          },
+          "networkBytes": {
+            "label": "导航窗口内网络传输字节（HTTP 层，含 SW 后台预取/后台校验）",
+            "unit": "bytes",
+            "basis": "measured",
+            "n": 5,
+            "median": 94735,
+            "min": 94735,
+            "max": 94735,
+            "spread": 0,
+            "spreadPct": 0,
+            "stdev": 0,
+            "unavailable": false
+          },
+          "networkLastEndMs": {
+            "label": "networkLastEndMs",
+            "unit": "",
+            "basis": "measured",
+            "n": 5,
+            "median": 2125,
+            "min": 2090,
+            "max": 2300,
+            "spread": 210,
+            "spreadPct": 9.88,
+            "stdev": 74.81,
+            "unavailable": false
+          },
+          "networkRequests": {
+            "label": "导航窗口内到达服务器的请求数（HTTP 层）",
+            "unit": "count",
+            "basis": "measured",
+            "n": 5,
+            "median": 5,
+            "min": 5,
+            "max": 5,
+            "spread": 0,
+            "spreadPct": 0,
+            "stdev": 0,
+            "unavailable": false
+          },
+          "requestCount": {
+            "label": "请求数量（Resource Timing）",
+            "unit": "count",
+            "basis": "measured",
+            "n": 5,
+            "median": 9,
+            "min": 9,
+            "max": 9,
+            "spread": 0,
+            "spreadPct": 0,
+            "stdev": 0,
+            "unavailable": false
+          },
+          "scriptMs": {
+            "label": "JS 执行时间（CDP ScriptDuration，主线程）",
+            "unit": "ms",
+            "basis": "measured",
+            "n": 5,
+            "median": 30.87,
+            "min": 30.72,
+            "max": 34.28,
+            "spread": 3.56,
+            "spreadPct": 11.53,
+            "stdev": 1.49,
+            "unavailable": false
+          },
+          "serverRequestCount": {
+            "label": "真实到达服务器的请求数（服务端计数）",
+            "unit": "count",
+            "basis": "measured",
+            "n": 5,
+            "median": 4,
+            "min": 4,
+            "max": 4,
+            "spread": 0,
+            "spreadPct": 0,
+            "stdev": 0,
+            "unavailable": false
+          },
+          "swCacheEntries": {
+            "label": "SW 缓存条目总数",
+            "unit": "count",
+            "basis": "measured",
+            "n": 5,
+            "median": 21,
+            "min": 21,
+            "max": 21,
+            "spread": 0,
+            "spreadPct": 0,
+            "stdev": 0,
+            "unavailable": false
+          },
+          "taskMs": {
+            "label": "主线程任务总时长（CDP TaskDuration）",
+            "unit": "ms",
+            "basis": "measured",
+            "n": 5,
+            "median": 398.97,
+            "min": 360.74,
+            "max": 408.29,
+            "spread": 47.55,
+            "spreadPct": 11.92,
+            "stdev": 18.48,
+            "unavailable": false
+          },
+          "tbtMs": {
+            "label": "TBT 近似（长任务阻塞时间，窗口=导航开始→load+2s）",
+            "unit": "ms",
+            "basis": "calculated",
+            "n": 5,
+            "median": 21,
+            "min": 14,
+            "max": 28,
+            "spread": 14,
+            "spreadPct": 66.67,
+            "stdev": 4.71,
+            "unavailable": false
+          },
+          "transferBytes": {
+            "label": "资源传输字节（transferSize 合计）",
+            "unit": "bytes",
+            "basis": "measured",
+            "n": 5,
+            "median": 0,
+            "min": 0,
+            "max": 0,
+            "spread": 0,
+            "spreadPct": null,
+            "stdev": 0,
+            "unavailable": false
+          },
+          "ttfbMs": {
+            "label": "TTFB",
+            "unit": "ms",
+            "basis": "measured",
+            "n": 5,
+            "median": 168.9,
+            "min": 165.9,
+            "max": 186,
+            "spread": 20.1,
+            "spreadPct": 11.9,
+            "stdev": 7.23,
+            "unavailable": false
+          }
+        },
+        "validity": {
+          "requested": 5,
+          "completed": 5,
+          "minRequired": 5
+        }
+      }
+    },
+    "post-lazy": {
+      "mobile": {
+        "label": "E. 文章正文按需加载",
+        "description": "预热后从首页点进最长的一篇文章：首次打开触发正文请求，重复打开复用内存/缓存，最后离线重开同一篇。",
+        "url": "http://127.0.0.1:8138/blog/",
+        "cacheState": {
+          "mode": "warm",
+          "serviceWorker": "已注册并接管（预热后从首页点进文章）",
+          "warmVerified": true,
+          "coreCacheName": "blog-2026-10-26-2",
+          "coreEntryCount": 12,
+          "missingRequired": []
+        },
+        "samples": [
+          {
+            "rep": 1,
+            "scenario": "post-lazy",
+            "config": "mobile",
+            "startedAt": "2026-10-26T10:49:02.609Z",
+            "ok": true,
+            "error": null,
+            "metrics": {
+              "postFirstReadableMs": 1235.9,
+              "postFirstPaintMs": 1528.2,
+              "postFirstChars": 7754,
+              "postRepeatReadableMs": 189.6,
+              "postRepeatPaintMs": 192.4,
+              "postBodyBytes": 0,
+              "postFirstScriptMs": 226.02,
+              "postRepeatScriptMs": 51.55,
+              "postServerRequests": 1,
+              "offlinePostStatus": 0,
+              "offlinePostReadable": true,
+              "offlinePostReadableMs": 87
+            },
+            "sw": {
+              "controller": true
+            },
+            "serverHits": {
+              "/vendor/highlight.min.js": 1
+            },
+            "post": {
+              "first": {
+                "ok": true,
+                "readableMs": 1235.9,
+                "paintMs": 1528.2,
+                "chars": 7754,
+                "mutations": 2
+              },
+              "repeat": {
+                "ok": true,
+                "readableMs": 189.6,
+                "paintMs": 192.4,
+                "chars": 7754,
+                "mutations": 2
+              }
+            },
+            "extra": {
+              "warmVerified": true,
+              "postId": "deep-learning-in-slam",
+              "offlineReadable": true
+            },
+            "errors": [
+              {
+                "type": "requestfailed",
+                "url": "https://giscus.app/client.js",
+                "reason": "inspector",
+                "thirdParty": true
+              },
+              {
+                "type": "requestfailed",
+                "url": "https://giscus.app/client.js",
+                "reason": "inspector",
+                "thirdParty": true
+              }
+            ]
+          },
+          {
+            "rep": 2,
+            "scenario": "post-lazy",
+            "config": "mobile",
+            "startedAt": "2026-10-26T10:49:15.085Z",
+            "ok": true,
+            "error": null,
+            "metrics": {
+              "postFirstReadableMs": 1115.5,
+              "postFirstPaintMs": 1441.4,
+              "postFirstChars": 7754,
+              "postRepeatReadableMs": 174.2,
+              "postRepeatPaintMs": 176.2,
+              "postBodyBytes": 0,
+              "postFirstScriptMs": 201.57,
+              "postRepeatScriptMs": 52.24,
+              "postServerRequests": 1,
+              "offlinePostStatus": 0,
+              "offlinePostReadable": true,
+              "offlinePostReadableMs": 77
+            },
+            "sw": {
+              "controller": true
+            },
+            "serverHits": {
+              "/vendor/highlight.min.js": 1
+            },
+            "post": {
+              "first": {
+                "ok": true,
+                "readableMs": 1115.5,
+                "paintMs": 1441.4,
+                "chars": 7754,
+                "mutations": 2
+              },
+              "repeat": {
+                "ok": true,
+                "readableMs": 174.2,
+                "paintMs": 176.2,
+                "chars": 7754,
+                "mutations": 2
+              }
+            },
+            "extra": {
+              "warmVerified": true,
+              "postId": "deep-learning-in-slam",
+              "offlineReadable": true
+            },
+            "errors": [
+              {
+                "type": "requestfailed",
+                "url": "https://giscus.app/client.js",
+                "reason": "inspector",
+                "thirdParty": true
+              },
+              {
+                "type": "requestfailed",
+                "url": "https://giscus.app/client.js",
+                "reason": "inspector",
+                "thirdParty": true
+              }
+            ]
+          },
+          {
+            "rep": 3,
+            "scenario": "post-lazy",
+            "config": "mobile",
+            "startedAt": "2026-10-26T10:49:27.440Z",
+            "ok": true,
+            "error": null,
+            "metrics": {
+              "postFirstReadableMs": 1235.9,
+              "postFirstPaintMs": 1514.5,
+              "postFirstChars": 7754,
+              "postRepeatReadableMs": 179.5,
+              "postRepeatPaintMs": 184.2,
+              "postBodyBytes": 0,
+              "postFirstScriptMs": 224.51,
+              "postRepeatScriptMs": 46.27,
+              "postServerRequests": 1,
+              "offlinePostStatus": 0,
+              "offlinePostReadable": true,
+              "offlinePostReadableMs": 74
+            },
+            "sw": {
+              "controller": true
+            },
+            "serverHits": {
+              "/vendor/highlight.min.js": 1
+            },
+            "post": {
+              "first": {
+                "ok": true,
+                "readableMs": 1235.9,
+                "paintMs": 1514.5,
+                "chars": 7754,
+                "mutations": 2
+              },
+              "repeat": {
+                "ok": true,
+                "readableMs": 179.5,
+                "paintMs": 184.2,
+                "chars": 7754,
+                "mutations": 2
+              }
+            },
+            "extra": {
+              "warmVerified": true,
+              "postId": "deep-learning-in-slam",
+              "offlineReadable": true
+            },
+            "errors": [
+              {
+                "type": "requestfailed",
+                "url": "https://giscus.app/client.js",
+                "reason": "inspector",
+                "thirdParty": true
+              },
+              {
+                "type": "requestfailed",
+                "url": "https://giscus.app/client.js",
+                "reason": "inspector",
+                "thirdParty": true
+              }
+            ]
+          },
+          {
+            "rep": 4,
+            "scenario": "post-lazy",
+            "config": "mobile",
+            "startedAt": "2026-10-26T10:49:39.965Z",
+            "ok": true,
+            "error": null,
+            "metrics": {
+              "postFirstReadableMs": 1120.3,
+              "postFirstPaintMs": 1416.6,
+              "postFirstChars": 7754,
+              "postRepeatReadableMs": 175.6,
+              "postRepeatPaintMs": 178.8,
+              "postBodyBytes": 0,
+              "postFirstScriptMs": 200.79,
+              "postRepeatScriptMs": 48.85,
+              "postServerRequests": 1,
+              "offlinePostStatus": 0,
+              "offlinePostReadable": true,
+              "offlinePostReadableMs": 77
+            },
+            "sw": {
+              "controller": true
+            },
+            "serverHits": {
+              "/vendor/highlight.min.js": 1
+            },
+            "post": {
+              "first": {
+                "ok": true,
+                "readableMs": 1120.3,
+                "paintMs": 1416.6,
+                "chars": 7754,
+                "mutations": 2
+              },
+              "repeat": {
+                "ok": true,
+                "readableMs": 175.6,
+                "paintMs": 178.8,
+                "chars": 7754,
+                "mutations": 2
+              }
+            },
+            "extra": {
+              "warmVerified": true,
+              "postId": "deep-learning-in-slam",
+              "offlineReadable": true
+            },
+            "errors": [
+              {
+                "type": "requestfailed",
+                "url": "https://giscus.app/client.js",
+                "reason": "inspector",
+                "thirdParty": true
+              },
+              {
+                "type": "requestfailed",
+                "url": "https://giscus.app/client.js",
+                "reason": "inspector",
+                "thirdParty": true
+              }
+            ]
+          },
+          {
+            "rep": 5,
+            "scenario": "post-lazy",
+            "config": "mobile",
+            "startedAt": "2026-10-26T10:49:52.225Z",
+            "ok": true,
+            "error": null,
+            "metrics": {
+              "postFirstReadableMs": 1350.2,
+              "postFirstPaintMs": 1652,
+              "postFirstChars": 7754,
+              "postRepeatReadableMs": 192.5,
+              "postRepeatPaintMs": 194.5,
+              "postBodyBytes": 0,
+              "postFirstScriptMs": 206.7,
+              "postRepeatScriptMs": 50.58,
+              "postServerRequests": 1,
+              "offlinePostStatus": 0,
+              "offlinePostReadable": true,
+              "offlinePostReadableMs": 141
+            },
+            "sw": {
+              "controller": true
+            },
+            "serverHits": {
+              "/vendor/highlight.min.js": 1
+            },
+            "post": {
+              "first": {
+                "ok": true,
+                "readableMs": 1350.2,
+                "paintMs": 1652,
+                "chars": 7754,
+                "mutations": 2
+              },
+              "repeat": {
+                "ok": true,
+                "readableMs": 192.5,
+                "paintMs": 194.5,
+                "chars": 7754,
+                "mutations": 2
+              }
+            },
+            "extra": {
+              "warmVerified": true,
+              "postId": "deep-learning-in-slam",
+              "offlineReadable": true
+            },
+            "errors": [
+              {
+                "type": "requestfailed",
+                "url": "https://giscus.app/client.js",
+                "reason": "inspector",
+                "thirdParty": true
+              },
+              {
+                "type": "requestfailed",
+                "url": "https://giscus.app/client.js",
+                "reason": "inspector",
+                "thirdParty": true
+              }
+            ]
+          }
+        ],
+        "summary": {
+          "offlinePostReadable": {
+            "label": "离线重开文章：正文是否可读",
+            "unit": "bool",
+            "basis": "measured",
+            "n": 0,
+            "median": null,
+            "min": null,
+            "max": null,
+            "spread": null,
+            "spreadPct": null,
+            "stdev": null,
+            "unavailable": true
+          },
+          "offlinePostReadableMs": {
+            "label": "离线重开文章：正文可读时间",
+            "unit": "ms",
+            "basis": "measured",
+            "n": 5,
+            "median": 77,
+            "min": 74,
+            "max": 141,
+            "spread": 67,
+            "spreadPct": 87.01,
+            "stdev": 25.29,
+            "unavailable": false
+          },
+          "offlinePostStatus": {
+            "label": "离线重开文章：文档状态码",
+            "unit": "count",
+            "basis": "measured",
+            "n": 5,
+            "median": 0,
+            "min": 0,
+            "max": 0,
+            "spread": 0,
+            "spreadPct": null,
+            "stdev": 0,
+            "unavailable": false
+          },
+          "postBodyBytes": {
+            "label": "首次打开文章：正文传输字节（data/posts/*.md）",
+            "unit": "bytes",
+            "basis": "measured",
+            "n": 5,
+            "median": 0,
+            "min": 0,
+            "max": 0,
+            "spread": 0,
+            "spreadPct": null,
+            "stdev": 0,
+            "unavailable": false
+          },
+          "postFirstChars": {
+            "label": "首次打开文章：正文可见字符数",
+            "unit": "count",
+            "basis": "measured",
+            "n": 5,
+            "median": 7754,
+            "min": 7754,
+            "max": 7754,
+            "spread": 0,
+            "spreadPct": 0,
+            "stdev": 0,
+            "unavailable": false
+          },
+          "postFirstPaintMs": {
+            "label": "首次打开文章：正文绘制完成（双 rAF）",
+            "unit": "ms",
+            "basis": "measured",
+            "n": 5,
+            "median": 1514.5,
+            "min": 1416.6,
+            "max": 1652,
+            "spread": 235.4,
+            "spreadPct": 15.54,
+            "stdev": 82.39,
+            "unavailable": false
+          },
+          "postFirstReadableMs": {
+            "label": "首次打开文章：正文可读时间（SPA 切换起算）",
+            "unit": "ms",
+            "basis": "measured",
+            "n": 5,
+            "median": 1235.9,
+            "min": 1115.5,
+            "max": 1350.2,
+            "spread": 234.7,
+            "spreadPct": 18.99,
+            "stdev": 87.13,
+            "unavailable": false
+          },
+          "postFirstScriptMs": {
+            "label": "首次打开文章：JS 执行时间",
+            "unit": "ms",
+            "basis": "measured",
+            "n": 5,
+            "median": 206.7,
+            "min": 200.79,
+            "max": 226.02,
+            "spread": 25.23,
+            "spreadPct": 12.21,
+            "stdev": 11.1,
+            "unavailable": false
+          },
+          "postRepeatPaintMs": {
+            "label": "重复打开文章：正文绘制完成（双 rAF）",
+            "unit": "ms",
+            "basis": "measured",
+            "n": 5,
+            "median": 184.2,
+            "min": 176.2,
+            "max": 194.5,
+            "spread": 18.3,
+            "spreadPct": 9.93,
+            "stdev": 7.23,
+            "unavailable": false
+          },
+          "postRepeatReadableMs": {
+            "label": "重复打开文章：正文可读时间",
+            "unit": "ms",
+            "basis": "measured",
+            "n": 5,
+            "median": 179.5,
+            "min": 174.2,
+            "max": 192.5,
+            "spread": 18.3,
+            "spreadPct": 10.19,
+            "stdev": 7.43,
+            "unavailable": false
+          },
+          "postRepeatScriptMs": {
+            "label": "重复打开文章：JS 执行时间",
+            "unit": "ms",
+            "basis": "measured",
+            "n": 5,
+            "median": 50.58,
+            "min": 46.27,
+            "max": 52.24,
+            "spread": 5.97,
+            "spreadPct": 11.8,
+            "stdev": 2.14,
+            "unavailable": false
+          },
+          "postServerRequests": {
+            "label": "首次打开文章：服务端请求数",
+            "unit": "count",
+            "basis": "measured",
+            "n": 5,
+            "median": 1,
+            "min": 1,
+            "max": 1,
+            "spread": 0,
+            "spreadPct": 0,
+            "stdev": 0,
+            "unavailable": false
+          }
+        },
+        "validity": {
+          "requested": 5,
+          "completed": 5,
+          "minRequired": 5
+        }
+      }
+    },
+    "search": {
+      "mobile": {
+        "label": "D. 全局搜索首次/重复输入",
+        "description": "预热后输入固定关键词：首次输入会触发 courses/papers/notes 懒加载（6B-2 起还包括正文搜索语料），重复输入复用已加载数据。",
+        "url": "http://127.0.0.1:8138/blog/",
+        "cacheState": {
+          "mode": "warm",
+          "serviceWorker": "已注册并接管（首页预热后再输入关键词）",
+          "warmVerified": true,
+          "coreCacheName": "blog-2026-10-26-2",
+          "coreEntryCount": 12,
+          "missingRequired": []
+        },
+        "samples": [
+          {
+            "rep": 1,
+            "scenario": "search",
+            "config": "mobile",
+            "startedAt": "2026-10-26T10:50:04.767Z",
+            "ok": true,
+            "error": null,
+            "metrics": {
+              "searchFirstRenderMs": 198.8,
+              "searchFirstFinalMs": 1589,
+              "searchFirstRenderCount": 2,
+              "searchLazyBytes": 157381,
+              "searchFirstLongTaskMs": 0,
+              "searchFirstScriptMs": 12.4,
+              "searchRepeatRenderMs": 274.2,
+              "searchRepeatFinalMs": 274.2,
+              "searchRepeatRenderCount": 1,
+              "searchRepeatLongTaskMs": 0,
+              "searchRepeatScriptMs": 11.67,
+              "serverRequestCount": 4,
+              "networkBytes": 157381
+            },
+            "sw": {
+              "controller": true
+            },
+            "cache": null,
+            "serverHits": {
+              "/js/courses.js": 1,
+              "/js/papers.js": 1,
+              "/js/course-notes.js": 1,
+              "/js/note-slugs.js": 1
+            },
+            "search": {
+              "first": {
+                "keyword": "SLAM",
+                "expectLazy": true,
+                "lazyDataReady": true,
+                "renderCount": 2,
+                "renderTimelineMs": [
+                  198.8,
+                  1589
+                ],
+                "firstRenderMs": 198.8,
+                "finalRenderMs": 1589,
+                "newResources": [
+                  {
+                    "url": "/blog/js/courses.js",
+                    "dur": 176.1,
+                    "transfer": 0,
+                    "encoded": 14563
+                  },
+                  {
+                    "url": "/blog/js/papers.js",
+                    "dur": 394.1,
+                    "transfer": 0,
+                    "encoded": 40949
+                  },
+                  {
+                    "url": "/blog/js/course-notes.js",
+                    "dur": 1037,
+                    "transfer": 0,
+                    "encoded": 100903
+                  },
+                  {
+                    "url": "/blog/js/note-slugs.js",
+                    "dur": 326.1,
+                    "transfer": 0,
+                    "encoded": 966
+                  }
+                ],
+                "lazyBytes": 157381,
+                "resultText": "找到 7 条与 “SLAM” 相关的结果",
+                "longTaskCount": 0,
+                "longTaskMs": 0
+              },
+              "repeat": {
+                "keyword": "学习",
+                "expectLazy": false,
+                "lazyDataReady": true,
+                "renderCount": 1,
+                "renderTimelineMs": [
+                  274.2
+                ],
+                "firstRenderMs": 274.2,
+                "finalRenderMs": 274.2,
+                "newResources": [],
+                "lazyBytes": 0,
+                "resultText": "找到 19 条与 “学习” 相关的结果",
+                "longTaskCount": 0,
+                "longTaskMs": 0
+              }
+            },
+            "extra": {
+              "warmVerified": true,
+              "keywords": [
+                "SLAM",
+                "学习"
+              ],
+              "debounceMs": 180
+            },
+            "errors": []
+          },
+          {
+            "rep": 2,
+            "scenario": "search",
+            "config": "mobile",
+            "startedAt": "2026-10-26T10:50:18.892Z",
+            "ok": true,
+            "error": null,
+            "metrics": {
+              "searchFirstRenderMs": 203.2,
+              "searchFirstFinalMs": 1586.4,
+              "searchFirstRenderCount": 2,
+              "searchLazyBytes": 157381,
+              "searchFirstLongTaskMs": 0,
+              "searchFirstScriptMs": 13.64,
+              "searchRepeatRenderMs": 241.6,
+              "searchRepeatFinalMs": 241.6,
+              "searchRepeatRenderCount": 1,
+              "searchRepeatLongTaskMs": 0,
+              "searchRepeatScriptMs": 14.1,
+              "serverRequestCount": 4,
+              "networkBytes": 157381
+            },
+            "sw": {
+              "controller": true
+            },
+            "cache": null,
+            "serverHits": {
+              "/js/courses.js": 1,
+              "/js/papers.js": 1,
+              "/js/course-notes.js": 1,
+              "/js/note-slugs.js": 1
+            },
+            "search": {
+              "first": {
+                "keyword": "SLAM",
+                "expectLazy": true,
+                "lazyDataReady": true,
+                "renderCount": 2,
+                "renderTimelineMs": [
+                  203.2,
+                  1586.4
+                ],
+                "firstRenderMs": 203.2,
+                "finalRenderMs": 1586.4,
+                "newResources": [
+                  {
+                    "url": "/blog/js/courses.js",
+                    "dur": 181.2,
+                    "transfer": 0,
+                    "encoded": 14563
+                  },
+                  {
+                    "url": "/blog/js/papers.js",
+                    "dur": 395.3,
+                    "transfer": 0,
+                    "encoded": 40949
+                  },
+                  {
+                    "url": "/blog/js/course-notes.js",
+                    "dur": 1049.3,
+                    "transfer": 0,
+                    "encoded": 100903
+                  },
+                  {
+                    "url": "/blog/js/note-slugs.js",
+                    "dur": 307.1,
+                    "transfer": 0,
+                    "encoded": 966
+                  }
+                ],
+                "lazyBytes": 157381,
+                "resultText": "找到 7 条与 “SLAM” 相关的结果",
+                "longTaskCount": 0,
+                "longTaskMs": 0
+              },
+              "repeat": {
+                "keyword": "学习",
+                "expectLazy": false,
+                "lazyDataReady": true,
+                "renderCount": 1,
+                "renderTimelineMs": [
+                  241.6
+                ],
+                "firstRenderMs": 241.6,
+                "finalRenderMs": 241.6,
+                "newResources": [],
+                "lazyBytes": 0,
+                "resultText": "找到 19 条与 “学习” 相关的结果",
+                "longTaskCount": 0,
+                "longTaskMs": 0
+              }
+            },
+            "extra": {
+              "warmVerified": true,
+              "keywords": [
+                "SLAM",
+                "学习"
+              ],
+              "debounceMs": 180
+            },
+            "errors": []
+          },
+          {
+            "rep": 3,
+            "scenario": "search",
+            "config": "mobile",
+            "startedAt": "2026-10-26T10:50:33.374Z",
+            "ok": true,
+            "error": null,
+            "metrics": {
+              "searchFirstRenderMs": 198.8,
+              "searchFirstFinalMs": 1579.8,
+              "searchFirstRenderCount": 2,
+              "searchLazyBytes": 157381,
+              "searchFirstLongTaskMs": 0,
+              "searchFirstScriptMs": 12.78,
+              "searchRepeatRenderMs": 297.4,
+              "searchRepeatFinalMs": 297.4,
+              "searchRepeatRenderCount": 1,
+              "searchRepeatLongTaskMs": 0,
+              "searchRepeatScriptMs": 15.09,
+              "serverRequestCount": 4,
+              "networkBytes": 157381
+            },
+            "sw": {
+              "controller": true
+            },
+            "cache": null,
+            "serverHits": {
+              "/js/courses.js": 1,
+              "/js/papers.js": 1,
+              "/js/course-notes.js": 1,
+              "/js/note-slugs.js": 1
+            },
+            "search": {
+              "first": {
+                "keyword": "SLAM",
+                "expectLazy": true,
+                "lazyDataReady": true,
+                "renderCount": 2,
+                "renderTimelineMs": [
+                  198.8,
+                  1579.8
+                ],
+                "firstRenderMs": 198.8,
+                "finalRenderMs": 1579.8,
+                "newResources": [
+                  {
+                    "url": "/blog/js/courses.js",
+                    "dur": 174.2,
+                    "transfer": 0,
+                    "encoded": 14563
+                  },
+                  {
+                    "url": "/blog/js/papers.js",
+                    "dur": 389.9,
+                    "transfer": 0,
+                    "encoded": 40949
+                  },
+                  {
+                    "url": "/blog/js/course-notes.js",
+                    "dur": 1043.8,
+                    "transfer": 0,
+                    "encoded": 100903
+                  },
+                  {
+                    "url": "/blog/js/note-slugs.js",
+                    "dur": 310.8,
+                    "transfer": 0,
+                    "encoded": 966
+                  }
+                ],
+                "lazyBytes": 157381,
+                "resultText": "找到 7 条与 “SLAM” 相关的结果",
+                "longTaskCount": 0,
+                "longTaskMs": 0
+              },
+              "repeat": {
+                "keyword": "学习",
+                "expectLazy": false,
+                "lazyDataReady": true,
+                "renderCount": 1,
+                "renderTimelineMs": [
+                  297.4
+                ],
+                "firstRenderMs": 297.4,
+                "finalRenderMs": 297.4,
+                "newResources": [],
+                "lazyBytes": 0,
+                "resultText": "找到 19 条与 “学习” 相关的结果",
+                "longTaskCount": 0,
+                "longTaskMs": 0
+              }
+            },
+            "extra": {
+              "warmVerified": true,
+              "keywords": [
+                "SLAM",
+                "学习"
+              ],
+              "debounceMs": 180
+            },
+            "errors": []
+          },
+          {
+            "rep": 4,
+            "scenario": "search",
+            "config": "mobile",
+            "startedAt": "2026-10-26T10:50:47.320Z",
+            "ok": true,
+            "error": null,
+            "metrics": {
+              "searchFirstRenderMs": 200.8,
+              "searchFirstFinalMs": 1579.3,
+              "searchFirstRenderCount": 2,
+              "searchLazyBytes": 157381,
+              "searchFirstLongTaskMs": 0,
+              "searchFirstScriptMs": 13.59,
+              "searchRepeatRenderMs": 278.4,
+              "searchRepeatFinalMs": 278.4,
+              "searchRepeatRenderCount": 1,
+              "searchRepeatLongTaskMs": 0,
+              "searchRepeatScriptMs": 11.9,
+              "serverRequestCount": 4,
+              "networkBytes": 157381
+            },
+            "sw": {
+              "controller": true
+            },
+            "cache": null,
+            "serverHits": {
+              "/js/courses.js": 1,
+              "/js/papers.js": 1,
+              "/js/course-notes.js": 1,
+              "/js/note-slugs.js": 1
+            },
+            "search": {
+              "first": {
+                "keyword": "SLAM",
+                "expectLazy": true,
+                "lazyDataReady": true,
+                "renderCount": 2,
+                "renderTimelineMs": [
+                  200.8,
+                  1579.3
+                ],
+                "firstRenderMs": 200.8,
+                "finalRenderMs": 1579.3,
+                "newResources": [
+                  {
+                    "url": "/blog/js/courses.js",
+                    "dur": 173.3,
+                    "transfer": 0,
+                    "encoded": 14563
+                  },
+                  {
+                    "url": "/blog/js/papers.js",
+                    "dur": 391.6,
+                    "transfer": 0,
+                    "encoded": 40949
+                  },
+                  {
+                    "url": "/blog/js/course-notes.js",
+                    "dur": 1047.1,
+                    "transfer": 0,
+                    "encoded": 100903
+                  },
+                  {
+                    "url": "/blog/js/note-slugs.js",
+                    "dur": 307.4,
+                    "transfer": 0,
+                    "encoded": 966
+                  }
+                ],
+                "lazyBytes": 157381,
+                "resultText": "找到 7 条与 “SLAM” 相关的结果",
+                "longTaskCount": 0,
+                "longTaskMs": 0
+              },
+              "repeat": {
+                "keyword": "学习",
+                "expectLazy": false,
+                "lazyDataReady": true,
+                "renderCount": 1,
+                "renderTimelineMs": [
+                  278.4
+                ],
+                "firstRenderMs": 278.4,
+                "finalRenderMs": 278.4,
+                "newResources": [],
+                "lazyBytes": 0,
+                "resultText": "找到 19 条与 “学习” 相关的结果",
+                "longTaskCount": 0,
+                "longTaskMs": 0
+              }
+            },
+            "extra": {
+              "warmVerified": true,
+              "keywords": [
+                "SLAM",
+                "学习"
+              ],
+              "debounceMs": 180
+            },
+            "errors": []
+          },
+          {
+            "rep": 5,
+            "scenario": "search",
+            "config": "mobile",
+            "startedAt": "2026-10-26T10:51:01.281Z",
+            "ok": true,
+            "error": null,
+            "metrics": {
+              "searchFirstRenderMs": 198.3,
+              "searchFirstFinalMs": 1582.5,
+              "searchFirstRenderCount": 2,
+              "searchLazyBytes": 157381,
+              "searchFirstLongTaskMs": 0,
+              "searchFirstScriptMs": 12.77,
+              "searchRepeatRenderMs": 362.2,
+              "searchRepeatFinalMs": 362.2,
+              "searchRepeatRenderCount": 1,
+              "searchRepeatLongTaskMs": 0,
+              "searchRepeatScriptMs": 14.32,
+              "serverRequestCount": 4,
+              "networkBytes": 157381
+            },
+            "sw": {
+              "controller": true
+            },
+            "cache": null,
+            "serverHits": {
+              "/js/courses.js": 1,
+              "/js/papers.js": 1,
+              "/js/course-notes.js": 1,
+              "/js/note-slugs.js": 1
+            },
+            "search": {
+              "first": {
+                "keyword": "SLAM",
+                "expectLazy": true,
+                "lazyDataReady": true,
+                "renderCount": 2,
+                "renderTimelineMs": [
+                  198.3,
+                  1582.5
+                ],
+                "firstRenderMs": 198.3,
+                "finalRenderMs": 1582.5,
+                "newResources": [
+                  {
+                    "url": "/blog/js/courses.js",
+                    "dur": 178.3,
+                    "transfer": 0,
+                    "encoded": 14563
+                  },
+                  {
+                    "url": "/blog/js/papers.js",
+                    "dur": 396,
+                    "transfer": 0,
+                    "encoded": 40949
+                  },
+                  {
+                    "url": "/blog/js/course-notes.js",
+                    "dur": 1049.3,
+                    "transfer": 0,
+                    "encoded": 100903
+                  },
+                  {
+                    "url": "/blog/js/note-slugs.js",
+                    "dur": 309,
+                    "transfer": 0,
+                    "encoded": 966
+                  }
+                ],
+                "lazyBytes": 157381,
+                "resultText": "找到 7 条与 “SLAM” 相关的结果",
+                "longTaskCount": 0,
+                "longTaskMs": 0
+              },
+              "repeat": {
+                "keyword": "学习",
+                "expectLazy": false,
+                "lazyDataReady": true,
+                "renderCount": 1,
+                "renderTimelineMs": [
+                  362.2
+                ],
+                "firstRenderMs": 362.2,
+                "finalRenderMs": 362.2,
+                "newResources": [],
+                "lazyBytes": 0,
+                "resultText": "找到 19 条与 “学习” 相关的结果",
+                "longTaskCount": 0,
+                "longTaskMs": 0
+              }
+            },
+            "extra": {
+              "warmVerified": true,
+              "keywords": [
+                "SLAM",
+                "学习"
+              ],
+              "debounceMs": 180
+            },
+            "errors": []
+          }
+        ],
+        "summary": {
+          "networkBytes": {
+            "label": "导航窗口内网络传输字节（HTTP 层，含 SW 后台预取/后台校验）",
+            "unit": "bytes",
+            "basis": "measured",
+            "n": 5,
+            "median": 157381,
+            "min": 157381,
+            "max": 157381,
+            "spread": 0,
+            "spreadPct": 0,
+            "stdev": 0,
+            "unavailable": false
+          },
+          "searchFirstFinalMs": {
+            "label": "搜索首次输入：懒加载补齐后最终渲染",
+            "unit": "ms",
+            "basis": "measured",
+            "n": 5,
+            "median": 1582.5,
+            "min": 1579.3,
+            "max": 1589,
+            "spread": 9.7,
+            "spreadPct": 0.61,
+            "stdev": 3.77,
+            "unavailable": false
+          },
+          "searchFirstLongTaskMs": {
+            "label": "搜索首次输入：长任务阻塞时间",
+            "unit": "ms",
+            "basis": "calculated",
+            "n": 5,
+            "median": 0,
+            "min": 0,
+            "max": 0,
+            "spread": 0,
+            "spreadPct": null,
+            "stdev": 0,
+            "unavailable": false
+          },
+          "searchFirstRenderCount": {
+            "label": "搜索首次输入：DOM 重绘次数",
+            "unit": "count",
+            "basis": "measured",
+            "n": 5,
+            "median": 2,
+            "min": 2,
+            "max": 2,
+            "spread": 0,
+            "spreadPct": 0,
+            "stdev": 0,
+            "unavailable": false
+          },
+          "searchFirstRenderMs": {
+            "label": "搜索首次输入：首个结果渲染（含 180ms 防抖）",
+            "unit": "ms",
+            "basis": "measured",
+            "n": 5,
+            "median": 198.8,
+            "min": 198.3,
+            "max": 203.2,
+            "spread": 4.9,
+            "spreadPct": 2.46,
+            "stdev": 1.82,
+            "unavailable": false
+          },
+          "searchFirstScriptMs": {
+            "label": "搜索首次输入：JS 执行时间",
+            "unit": "ms",
+            "basis": "measured",
+            "n": 5,
+            "median": 12.78,
+            "min": 12.4,
+            "max": 13.64,
+            "spread": 1.24,
+            "spreadPct": 9.7,
+            "stdev": 0.49,
+            "unavailable": false
+          },
+          "searchLazyBytes": {
+            "label": "搜索首次输入：新增下载字节",
+            "unit": "bytes",
+            "basis": "measured",
+            "n": 5,
+            "median": 157381,
+            "min": 157381,
+            "max": 157381,
+            "spread": 0,
+            "spreadPct": 0,
+            "stdev": 0,
+            "unavailable": false
+          },
+          "searchRepeatFinalMs": {
+            "label": "搜索重复输入：最终渲染稳定时间",
+            "unit": "ms",
+            "basis": "measured",
+            "n": 5,
+            "median": 278.4,
+            "min": 241.6,
+            "max": 362.2,
+            "spread": 120.6,
+            "spreadPct": 43.32,
+            "stdev": 39.98,
+            "unavailable": false
+          },
+          "searchRepeatLongTaskMs": {
+            "label": "搜索重复输入：长任务阻塞时间",
+            "unit": "ms",
+            "basis": "calculated",
+            "n": 5,
+            "median": 0,
+            "min": 0,
+            "max": 0,
+            "spread": 0,
+            "spreadPct": null,
+            "stdev": 0,
+            "unavailable": false
+          },
+          "searchRepeatRenderCount": {
+            "label": "搜索重复输入：DOM 重绘次数",
+            "unit": "count",
+            "basis": "measured",
+            "n": 5,
+            "median": 1,
+            "min": 1,
+            "max": 1,
+            "spread": 0,
+            "spreadPct": 0,
+            "stdev": 0,
+            "unavailable": false
+          },
+          "searchRepeatRenderMs": {
+            "label": "搜索重复输入：结果渲染（含 180ms 防抖）",
+            "unit": "ms",
+            "basis": "measured",
+            "n": 5,
+            "median": 278.4,
+            "min": 241.6,
+            "max": 362.2,
+            "spread": 120.6,
+            "spreadPct": 43.32,
+            "stdev": 39.98,
+            "unavailable": false
+          },
+          "searchRepeatScriptMs": {
+            "label": "搜索重复输入：JS 执行时间",
+            "unit": "ms",
+            "basis": "measured",
+            "n": 5,
+            "median": 14.1,
+            "min": 11.67,
+            "max": 15.09,
+            "spread": 3.42,
+            "spreadPct": 24.26,
+            "stdev": 1.37,
+            "unavailable": false
+          },
+          "serverRequestCount": {
+            "label": "真实到达服务器的请求数（服务端计数）",
+            "unit": "count",
+            "basis": "measured",
+            "n": 5,
+            "median": 4,
+            "min": 4,
+            "max": 4,
+            "spread": 0,
+            "spreadPct": 0,
+            "stdev": 0,
+            "unavailable": false
+          }
+        },
+        "validity": {
+          "requested": 5,
+          "completed": 5,
+          "minRequired": 5
+        }
+      }
+    }
+  },
+  "unavailable": [
+    {
+      "scenario": "warm-home",
+      "config": "mobile",
+      "metric": "firstScreenNetEndMs",
+      "label": "firstScreenNetEndMs",
+      "reason": "该配置下所有样本均为 null（采集不可靠或事件未发生）"
+    },
+    {
+      "scenario": "post-lazy",
+      "config": "mobile",
+      "metric": "offlinePostReadable",
+      "label": "离线重开文章：正文是否可读",
+      "reason": "该配置下所有样本均为 null（采集不可靠或事件未发生）"
+    }
+  ],
+  "failures": [],
+  "calibration": {
+    "note": "用于判断限速/CPU 限速是否真的生效：对比同一次冷启动中 js/data.js 的传输耗时与 ScriptDuration",
+    "desktop": null,
+    "mobile": {
+      "durMs": 1378.5,
+      "encoded": 111306,
+      "scriptMs": 141.14,
+      "loadMs": 3662.6
+    },
+    "expected": {
+      "dataJsBytes": 114583,
+      "dataJsTransferMsAt1638kbps": 546
+    },
+    "networkShaping": {
+      "effective": false,
+      "basis": "inferred（移动端 data.js 传输耗时 ≥ max(300ms, 桌面端 5 倍) 视为整形生效）"
+    },
+    "cpuThrottling": {
+      "ratio": null,
+      "effective": false,
+      "basis": "inferred（移动端 ScriptDuration / 桌面端 ScriptDuration ≥ 2 视为 4x CPU 限速生效）"
+    }
+  }
+}
