@@ -184,6 +184,25 @@ function filterPosts(posts, query, tag) {
   return result;
 }
 
+// 首帧之后再跑非关键增强；路由已切换或节点被替换时直接丢弃，避免污染新页面
+function scheduleAfterPaint(fn, token, node) {
+  const run = function () {
+    if (token != null && token !== _routeToken) return;
+    if (node && !node.isConnected) return;
+    fn();
+  };
+  if (typeof requestAnimationFrame === 'function') {
+    requestAnimationFrame(function () { whenIdle(run); });
+  } else {
+    setTimeout(run, 0);
+  }
+}
+
+function perfMark(name) {
+  // 只用于性能诊断（Batch 6C-2）：记录文章渲染各阶段，便于把长任务归因到具体步骤
+  try { performance.mark(name); } catch (e) { /* 老浏览器忽略 */ }
+}
+
 function escapeHtml(text) {
   if (!text) return '';
   return String(text)
@@ -854,7 +873,9 @@ function renderPostError(id) {
 
 // 有正文之后的文章详情渲染（原 renderPost 的主体）
 function renderPostView(post, content) {
+  perfMark('art:md-start');
   const html = renderMarkdown(content);
+  perfMark('art:md-end');
 
   return `
     <a href="#/" class="article-back">
@@ -2481,11 +2502,17 @@ async function router() {
     `;
   }
 
-  // 标题/描述、代码工具条（复制/语言标签）、阅读目录与进度、按需高亮
+  // 标题/描述同步更新（便宜）；代码工具条/目录/高亮都属于"非首屏必需"，
+  // 延后到首帧之后执行：先让第一段文字画出来，再做这些同步 DOM 重建。
   updateMetaForRoute(hash);
-  enhanceCodeBlocks(app);
-  buildReadingTools();
-  highlightIn(app);
+  perfMark('art:html-end');
+  scheduleAfterPaint(function () {
+    perfMark('art:post-start');
+    enhanceCodeBlocks(app);
+    buildReadingTools();
+    highlightIn(app);
+    perfMark('art:post-end');
+  }, token, app);
 
   // Scroll to top on navigation
   window.scrollTo(0, 0);
