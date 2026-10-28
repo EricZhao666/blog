@@ -31,6 +31,9 @@ import time
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 DEFAULT_REPORT = os.path.join(ROOT, 'tests', 'reports', 'last-run.md')
 TIMEOUT = 240
+# 浏览器套件（真实 Chromium + 本地服务器）在 2 核 CI 上耗时远高于开发机：
+# 本机 sw-consistency 约 90 s，负载高时可到 260 s，因此单独放宽而不是压缩用例。
+BROWSER_TIMEOUT = 600
 
 # ---------------------------------------------------------------- 测试清单
 # kind: 'jsdom' 需要 node + jsdom；'python' 需要 python
@@ -163,7 +166,8 @@ def check_env(selected):
 
 def run_test(t):
     cmd = ([sys.executable] if t['kind'] == 'python' else ['node']) + [t['file']] + list(t.get('args') or [])
-    code, out, dur = run(cmd)
+    timeout = t.get('timeout') or (BROWSER_TIMEOUT if t['kind'] == 'browser' else TIMEOUT)
+    code, out, dur = run(cmd, timeout=timeout)
     # 浏览器用例用退出码 2 表示"环境不可用"，必须显式标记为阻塞而不是失败/通过
     blocked = (t['kind'] == 'browser' and code == 2)
     marker = t.get('pass_marker')
@@ -173,6 +177,9 @@ def run_test(t):
         ok = marker in out and code == 0
     else:
         ok = code == 0
+    if not ok:
+        head = [ln.strip() for ln in out.splitlines() if ln.strip().startswith('FAIL')][:5]
+        print('    [FAIL] %s (exit %s) %s' % (t['name'], code, ('; '.join(head))[:400]))
     m = COUNT_RE.search(out)
     counts = None
     if m:
