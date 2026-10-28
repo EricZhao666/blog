@@ -11,7 +11,7 @@
 const http = require('http');
 const fs = require('fs');
 const path = require('path');
-const { JSDOM, VirtualConsole } = require('jsdom');
+const { JSDOM, VirtualConsole, requestInterceptor } = require('jsdom');
 
 const ROOT = path.resolve(__dirname, '..');
 const PORT = 8136;
@@ -42,6 +42,36 @@ const server = http.createServer((req, res) => {
 });
 
 const wait = ms => new Promise(r => setTimeout(r, ms));
+
+// 只允许本地测试服务器：第三方脚本（giscus）不发真实请求，返回一个空响应。
+// 为什么需要它：GISCUS_CONFIG.enabled 为 true，进入文章路由会注入 https://giscus.app/client.js，
+// jsdom 会真的去拉；该脚本在 jsdom 里抛 ResizeObserver is not defined，
+// 于是 "P5 无脚本错误" 只在能连外网的 Linux CI 上失败、本机拉取失败时不失败。
+// 注意：这不是忽略脚本错误——页面自身的同源资源照常加载，真实脚本异常照常收集与断言。
+function createResourceRecorder() {
+  return { loaded: [], blocked: [] };
+}
+
+function resourcesFor(base, recorder) {
+  return {
+    interceptors: [
+      requestInterceptor(async (request) => {
+        const url = String(request.url);
+        if (url.indexOf(base) === 0) {
+          recorder.loaded.push(url);
+          return undefined;               // 同源：放行，走真实 HTTP
+        }
+        recorder.blocked.push(url);
+        // 第三方：不发请求，给一个空响应（脚本元素需要 JS MIME，避免被当成解析错误）
+        return new Response('/* blocked by test20 */', {
+          status: 200,
+          headers: { 'Content-Type': 'application/javascript' }
+        });
+      })
+    ]
+  };
+}
+
 let pass = 0, fail = 0;
 const failures = [];
 const check = (name, cond, extra) => {
@@ -98,12 +128,13 @@ async function openPage(hash) {
     if (!/Not implemented: (window\.scrollTo|Window's scrollTo|scrollIntoView|window\.scroll)/.test(e.message)) errors.push(e.message);
   });
   vc.on('error', (...a) => errors.push(String(a[0])));
+  const loader = createResourceRecorder();
   const dom = await JSDOM.fromURL(BASE + '/index.html' + (hash || ''), {
-    runScripts: 'dangerously', resources: 'usable', pretendToBeVisual: true, virtualConsole: vc
+    runScripts: 'dangerously', resources: resourcesFor(BASE, loader), pretendToBeVisual: true, virtualConsole: vc
   });
   await new Promise(r => dom.window.addEventListener('load', r));
   await wait(400);
-  return { dom, window: dom.window, doc: dom.window.document, errors };
+  return { dom, window: dom.window, doc: dom.window.document, errors, loader };
 }
 
 function fillEditor(doc, title, content) {
@@ -142,7 +173,7 @@ async function typeSearch(doc, window, text, waitMs) {
       // ------------------------------------------------ P1/P2/P3 发布 → 搜索 → 修改 → 删除
       {
         const mock = { getMode: 'ok', posts: [], puts: [] };
-        const { dom, window, doc, errors } = await openPage('#/editor');
+        const { dom, window, doc, errors, loader } = await openPage('#/editor');
         window.fetch = makeFetch(mock, window);
 
         await publish(window, doc, '发布一致性测试文章', '# 发布一致性测试\n\n正文里有唯一词：蓝鲸螺栓校准。\n');
@@ -177,6 +208,8 @@ async function typeSearch(doc, window, text, waitMs) {
         await wait(300);
         check('P3 删除后首页列表不再出现', !/发布一致性测试文章/.test(appText(doc)));
 
+        const extLoaded = loader.loaded.filter(u => u.indexOf(BASE) !== 0);
+        check('P1–P3 未加载任何第三方资源', extLoaded.length === 0, extLoaded.slice(0, 2).join(',') || '0 个');
         check('P1–P3 无脚本错误', errors.length === 0, errors.slice(0, 2).join(' | '));
         dom.window.close();
       }
@@ -208,7 +241,7 @@ async function typeSearch(doc, window, text, waitMs) {
         const secondMark = pickMark(secondBody);
 
         state.delay['/data/posts/' + first + '.md'] = 600;   // 第一篇慢
-        const { dom, window, doc, errors } = await openPage('#/');
+        const { dom, window, doc, errors, loader } = await openPage('#/');
         window.location.hash = '#/post/' + first;
         await wait(120);                                      // 还在加载第一篇
         const loadingShown = /正在加载文章正文/.test(appText(doc));
@@ -227,6 +260,11 @@ async function typeSearch(doc, window, text, waitMs) {
         await wait(900);
         const text2 = appText(doc).replace(/\s+/g, '');
         check('P5 再进入第一篇仍能正常渲染', text2.indexOf(firstMark) !== -1, text2.slice(0, 60));
+        const extLoaded5 = loader.loaded.filter(u => u.indexOf(BASE) !== 0);
+        const nonGiscus = loader.blocked.filter(u => u.indexOf('https://giscus.app/') !== 0);
+        check('P5 未加载任何第三方资源（全部同源）', extLoaded5.length === 0, extLoaded5.slice(0, 2).join(',') || '0 个');
+        check('P5 被拦截的外部请求只来自 giscus（保留因果链证据）',
+          nonGiscus.length === 0, '拦截 ' + loader.blocked.length + ' 个: ' + loader.blocked.slice(0, 2).join(', '));
         check('P5 无脚本错误', errors.length === 0, errors.slice(0, 2).join(' | '));
         dom.window.close();
       }

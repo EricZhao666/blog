@@ -303,12 +303,22 @@ async function main() {
       const a = await reload(page);
       await sleep(700);                       // 外壳/app 已回填，data.js 仍在途中
       const b = await reload(page);
-      await sleep(3500);
-      const c = await reload(page);
+      // "最终收敛"允许不止一次导航：检测到新发布需要一次完整导航（网络外壳到达后才比对），
+      // 之后的下一次导航才切到网络模式；机器负载高时 SW 也可能被回收、决策重置。
+      // 因此最多重试 3 次刷新，但**必须**最终整体为 v3（断言不放松，只是不再依赖固定 sleep）。
+      let c = b;
+      let navigations = 0;
+      for (let i = 0; i < 3; i++) {
+        await sleep(i === 0 ? 3500 : 1500);
+        c = await reload(page);
+        navigations++;
+        if (c.versions && allSame(c.versions) && c.versions.html === '3') break;
+      }
       check('T5 第 1 次导航版本自洽', allSame(a.versions), verSummary(a.versions));
       check('T5 回填窗口内再刷新仍自洽', allSame(b.versions), verSummary(b.versions));
-      check('T5 最终收敛到 v3', allSame(c.versions) && c.versions && c.versions.html === '3', verSummary(c.versions));
-      evidence.T5 = { first: a.versions, midUpdate: b.versions, final: c.versions };
+      check('T5 最终收敛到 v3', allSame(c.versions) && c.versions && c.versions.html === '3',
+        verSummary(c.versions) + ' / 用了 ' + navigations + ' 次导航');
+      evidence.T5 = { first: a.versions, midUpdate: b.versions, final: c.versions, navigations };
       await ctx.close();
     }
 
