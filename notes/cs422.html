@@ -39,13 +39,17 @@
   <header class="site-header">
     <div class="container header-inner">
       <a href="../#/" class="logo"><span class="logo-icon">🦐</span><span class="logo-text">Eric's Notebook</span></a>
-      <nav class="nav">
+      <nav class="nav" id="siteNav">
         <a class="nav-link" href="../#/">首页</a>
         <a class="nav-link" href="../#/courses">课程</a>
         <a class="nav-link" href="../#/papers">论文</a>
         <a class="nav-link" href="../#/code">代码</a>
       </nav>
       <button class="theme-toggle" id="themeToggle" type="button" aria-label="切换深色模式">🌙</button>
+      <button class="menu-toggle" id="menuToggle" type="button" aria-label="菜单"
+              aria-expanded="false" aria-controls="siteNav">
+        <span></span><span></span><span></span>
+      </button>
     </div>
   </header>
   <main class="container" id="app">
@@ -187,6 +191,52 @@ F(q) = -∇U(q) = -∇U_att - ∇U_rep
         try { localStorage.setItem('theme', next); } catch (e) {}
         sync();
       });
+    })();
+  </script>
+  <script>
+    // 移动端菜单：静态页不加载 js/app.js，这里复用主站同一套
+    // .nav / .nav.open / .menu-toggle 样式与类名，保证视觉与行为一致
+    (function () {
+      var btn = document.getElementById('menuToggle');
+      var nav = document.getElementById('siteNav');
+      if (!btn || !nav) return;
+      var mq = window.matchMedia ? window.matchMedia('(max-width: 768px)') : null;
+
+      function isOpen() { return nav.classList.contains('open'); }
+
+      // 类名、按钮动画、aria-expanded 必须同步更新
+      function setOpen(open, focusBtn) {
+        nav.classList.toggle('open', open);
+        btn.classList.toggle('active', open);
+        btn.setAttribute('aria-expanded', open ? 'true' : 'false');
+        if (!open && focusBtn) btn.focus();
+      }
+
+      // button 原生支持 Enter / Space 触发 click，不需要再绑定 keydown
+      btn.addEventListener('click', function () { setOpen(!isOpen()); });
+
+      // Esc 关闭并把焦点还给按钮，键盘用户不会丢焦点
+      document.addEventListener('keydown', function (e) {
+        if ((e.key === 'Escape' || e.key === 'Esc') && isOpen()) setOpen(false, true);
+      });
+
+      // 面板是 fixed 覆盖层：点到正文就收起，避免长期遮挡内容
+      document.addEventListener('click', function (e) {
+        if (!isOpen()) return;
+        if (nav.contains(e.target) || btn.contains(e.target)) return;
+        setOpen(false);
+      });
+
+      // 回到桌面宽度时导航本就常显，必须清掉移动端状态，
+      // 否则 aria-expanded 与实际可见性不一致
+      function onBreakpoint() {
+        if (!mq || !mq.matches) setOpen(false);
+      }
+      if (mq) {
+        if (mq.addEventListener) mq.addEventListener('change', onBreakpoint);
+        else if (mq.addListener) mq.addListener(onBreakpoint);
+      }
+      window.addEventListener('resize', onBreakpoint);
     })();
   </script>
   <script src="../vendor/highlight.min.js"></script>

@@ -47,7 +47,7 @@
         <span class="logo-icon">🦐</span>
         <span class="logo-text">Eric's Notebook</span>
       </a>
-      <nav class="nav">
+      <nav class="nav" id="siteNav">
         <a href="#/" class="nav-link" data-route="/">首页</a>
         <a href="#/courses" class="nav-link" data-route="/courses">课程</a>
         <a href="#/papers" class="nav-link" data-route="/papers">论文</a>
@@ -59,7 +59,8 @@
         <a href="#/about" class="nav-link" data-route="/about">关于</a>
       </nav>
       <button class="theme-toggle" id="themeToggle" aria-label="切换深色模式">🌙</button>
-      <button class="menu-toggle" id="menuToggle" aria-label="菜单">
+      <button class="menu-toggle" id="menuToggle" type="button" aria-label="菜单"
+              aria-expanded="false" aria-controls="siteNav">
         <span></span><span></span><span></span>
       </button>
     </div>
