@@ -1,13 +1,15 @@
 # Batch 7A 交付报告：移动端静态笔记导航 + 课程 SEO 元数据修复
 
 - 仓库：`E:\work_funnycode\blog`（GitHub `EricZhao666/blog`）
-- 分支：`feature/batch7a-mobile-seo`
+- 分支：`feature/batch7-improvements`（原临时分支名 `feature/batch7a-mobile-seo`，已重命名）
 - 基线：`main @ 303d99e`（Fast-forward 自 `32e537d`）
 - 回退基线：tag `batch7a-base`、分支 `backup/pre-batch7a-303d99e`（均指向 `303d99e`）
 - 修复提交：`182e7fe`
 - 本机环境：Node 24.22.1 / Python 3.12.7 / Playwright 1.64.1 / 浏览器通道 `chrome`
   （CI 使用 `PW_CHANNEL=chromium` + `npx playwright install --with-deps chromium`）
 - 判定：**BATCH7A_LOCAL_READY**
+- 独立复核：本会话在干净工作区上重跑两套新增用例、全量回归与生成器逐字节比对，
+  结果与下表一致（见 §5.2）
 
 ---
 
@@ -22,20 +24,20 @@
 | 异步路由竞态 | PASS | PASS（A→B、A→首页 均不串页，canonical 唯一） |
 | 静态 HTML SEO | PASS | PASS（14 页 + 索引：canonical/og:url/JSON-LD/sitemap 全部正确） |
 | 原有 21 套回归 | PASS | PASS（23 套合计 PASS 23 / FAIL 0 / SKIP 0 / BLOCKED 0） |
-| 新增浏览器测试 | PASS | PASS（mobile-notes 213/213，course-seo 45/45） |
+| 新增浏览器测试 | PASS | PASS（mobile-notes 224/224，course-seo 45/45） |
 | 数据与生成器一致性 | PASS | PASS（15 页逐字节可复现；sitemap/映射/RSS/文章日期未变） |
-| Git 状态 | 干净 | PASS（无未提交改动；仅剩沙箱拒绝删除的临时目录 `%TMPBASE%/`，见 §7 风险 6） |
+| Git 状态 | 干净 | PASS（`git status` 无未提交改动；遗留临时目录 `%TMPBASE%/` 已删除，见 §7 风险 6） |
 
 ---
 
 ## 1. 问题复现记录（修复前）
 
-复现方法：用 tag `batch7a-base` 建临时 `git worktree` 检出 `303d99e`，把本轮新增的两个用例拷进去，
+复现方法：`git archive 303d99e` 解包到临时目录，把本轮新增的两个用例拷进去，
 在**未修改**的代码上运行（`NODE_PATH` 指向仓库 `node_modules`，`PW_CHANNEL=chrome`）。
 
 ### 1.1 B7A-01 静态笔记页没有移动端菜单
 
-基线运行结果：**共 144 项，PASS 101，FAIL 43**
+基线运行结果（含第 9 节新增的主站 SPA 检查）：**共 155 项，PASS 107，FAIL 48**
 
 | 观察点 | 修复前实际值 |
 |---|---|
@@ -43,6 +45,7 @@
 | ≤768px `.nav` 计算样式 | `visibility: hidden; display: flex`（CSS 已隐藏，但没有任何入口打开） |
 | 点击汉堡按钮的用例 | `page.click('#menuToggle')` 超时 30 000 ms |
 | `aria-expanded` / `aria-controls` | 不存在 |
+| 主站 `index.html` 的菜单按钮 | 有按钮但缺 `type` / `aria-expanded` / `aria-controls`；`app.js` 也没有跨断点复位（375 展开 → 1280 → 回 375 会"自动展开"且 aria 仍为 true） |
 | 1280px 桌面布局、无横向溢出、主题切换 | 正常（说明差异只在移动端导航入口） |
 
 根因：`css/style.css` 在 `@media (max-width: 768px)` 里把 `.nav` 变成需要 `.nav.open` 才显示的覆盖层，
@@ -80,7 +83,7 @@
 | `notes/*.html`（15 个） | 用固定 `--now 2026-10-22` 重新生成（每页 +52/−1） | 产物必须与生成器一致 |
 | `css/style.css` | 移动端 `.nav` 增加 `max-height: calc(100dvh - var(--header-height))`、`overflow-y: auto`、`overscroll-behavior: contain`、轻量阴影 | 面板限高并自身滚动，长菜单也不会盖满整屏遮挡正文操作区 |
 | `index.html` | 菜单按钮补 `type`、`aria-expanded`、`aria-controls`，`<nav id="siteNav">` | 与静态页保持同一套无障碍契约 |
-| `js/app.js` | 抽出 `setMobileMenu(open, focusBtn)`；路由切换统一调用；点击监听改为同步 `aria-expanded`；新增 Esc 收起（仅菜单展开时生效） | 一套行为，避免主站与静态页两套实现漂移 |
+| `js/app.js` | 抽出 `setMobileMenu(open, focusBtn)`；路由切换统一调用；点击监听改为同步 `aria-expanded`；新增 Esc 收起（仅菜单展开时生效）；补 `matchMedia` + `resize` 跨断点复位 | 一套行为，避免主站与静态页两套实现漂移 |
 
 键盘与焦点：
 
@@ -90,10 +93,13 @@
   `outline-style: solid`、`outline-width: 2px`；
 - Tab 顺序：skip-link → logo → 导航链接 → 主题按钮 → 菜单按钮（1280px 下菜单按钮 `display:none` 不参与）。
 
-断点行为：
+断点行为（静态页与主站 `js/app.js` 各有一份等价实现）：
 
 - `matchMedia('(max-width: 768px)')` 的 `change` 事件 + `resize` 兜底：跨到 769px 时移除 `.open`、
-  复位 `aria-expanded="false"`，避免"按钮隐藏但 aria 仍为 true"的状态残留。
+  复位 `aria-expanded="false"`，避免"按钮隐藏但 aria 仍为 true"的状态残留；
+- 主站（`index.html` + `app.js`）原实现没有断点复位，复核时实测存在残留：375px 展开 → 1280px →
+  回 375px 后菜单自动展开且 `aria-expanded` 仍为 `true`。本轮已补齐等价实现，
+  复测结果为 `open=false`、`aria-expanded=false`。
 
 修复前后行为对比：
 
@@ -159,7 +165,7 @@ if (!notesReady) {
 本地 HTTP Server 把仓库挂到 `/blog/` 子路径，`serviceWorkers: 'block'` 隔离 SW，
 所有非 `127.0.0.1` 请求一律 `fulfill 204`（避免 CI 访问 giscus.app 造成抖动）。
 
-### 3.1 `tests/browser/mobile-notes.spec.js`：**213/213 PASS**
+### 3.1 `tests/browser/mobile-notes.spec.js`：**224/224 PASS**
 
 覆盖矩阵：
 
@@ -169,7 +175,7 @@ if (!notesReady) {
 | 页面 | `notes/index.html`、普通笔记 `notes/materials.html`、长文笔记（自动取最大文件，实测 `mech7010.html`） |
 | 冷启动 | 每个视口都用新 context 直接 `goto`，无 referrer、无历史 |
 | 交互 | 点击展开/收起、Esc、点击正文关闭、Tab 聚焦、Enter、Space |
-| 断点 | 768 展开 → 769 收起并复位 → 768 再次收起 |
+| 断点 | 768 展开 → 769 收起并复位 → 768 再次收起；另加主站 SPA 375↔1280 双向复位 |
 | 主题 | 浅色 / 深色（`localStorage.theme=dark`）、主题切换按钮 |
 | 导航 | 静态页 → `#/courses`（14 门课程卡）、静态页 → `#/`（18 篇文章） |
 | 布局 | `scrollWidth - innerWidth = 0`（全部 12 个页面×视口组合，展开后仍为 0） |
@@ -241,12 +247,26 @@ if (!notesReady) {
 | 19 | browser（SW 安装/离线/更新） | PASS | 37/37 | 35.3s |
 | 20 | sw-consistency（版本一致性/慢网） | PASS | 35/35 | 86.4s |
 | 21 | sw-upgrade（跨版本升级/回退） | PASS | 25/25 | 25.9s |
-| 22 | **mobile-notes（新增）** | PASS | 213/213 | 26.9s |
+| 22 | **mobile-notes（新增）** | PASS | 224/224 | 30.2s |
 | 23 | **course-seo（新增）** | PASS | 45/45 | 21.4s |
 
 汇总：**PASS 23 / FAIL 0 / SKIP 0 / BLOCKED 0**；语法检查 25 个 JS + 11 个 Python 文件全部 OK。
 新增两套用例在 Linux CI 中由同一入口真实执行（`kind: 'browser'`），浏览器不可用时按既有约定
 退出码 2 记为 BLOCKED 并使 job 失败，不会"跳过但仍报通过"。
+
+### 5.2 独立复核（本会话复跑，工作区无改动）
+
+| 复核项 | 命令 | 结果 |
+|---|---|---|
+| 全量回归 | `python scripts/run_tests.py --report tests/reports/batch7a-verify.md` | PASS 23 / FAIL 0 / SKIP 0 / BLOCKED 0 |
+| 移动端用例 | `node tests/browser/mobile-notes.spec.js` | 共 224 项，PASS 224，FAIL 0 |
+| SEO 用例 | `node tests/browser/course-seo.spec.js` | 共 45 项，PASS 45，FAIL 0 |
+| 修复前复现 | `git archive 303d99e` 解包到临时目录，拷入两套用例后运行 | mobile-notes 155 项 48 FAIL；course-seo 45 项 7 FAIL |
+| 断点复位定点验证 | 临时回退 `js/app.js` 的 `resetMenuOnDesktop` 后重跑 | 仅 `SPA 375→1280 残留 open 状态已清理`、`SPA 1280→375 回到收起状态` 2 项 FAIL（224→222 PASS），恢复后全绿 |
+| 产物一致性 | `node gen_notes_pages.js --out-dir <tmp> --now 2026-10-22` 后逐文件 SHA256 比对 | 15 页 + `sitemap.xml` + `js/note-slugs.js` 差异数 0 |
+| 时序抖动 | 一次全量运行（本机同时有其他浏览器进程） | `sw-consistency` T2「load 明显快于 800ms 网络」实测 976 ms → FAIL；同机单独复跑 243 ms PASS，随后全量复跑 PASS 23 / FAIL 0。**未修改阈值、未改用例**，按 Batch 6 约定保留原断言 |
+
+复核用浏览器：`chrome 156.0.8078.74`。CI 端通道为 `chromium`，两者均由 Playwright 真实驱动。
 
 ---
 
@@ -278,9 +298,12 @@ if (!notesReady) {
 4. **CACHE_VERSION 递增**会触发客户端一次性重新预缓存（`CACHE` 整版本替换），首访流量略增。
 5. **移动菜单仍是下拉覆盖层**（与主站一致），不是全屏抽屉；已通过限高、外部点击、Esc、链接跳转关闭
    来控制遮挡，但展开时仍会覆盖正文顶部约 210 px。
-6. **工作区残留**：本轮一次 shell 引号处理失误在仓库根目录创建了未跟踪目录 `%TMPBASE%/`
-   （内容是本仓库的临时归档副本）。沙箱安全删除以"路径含非法字符"为由拒绝执行，需人工删除：
-   `rmdir /s /q "%TMPBASE%"`。该目录未被 `git add`（本轮提交使用显式路径），不影响提交内容。
+6. **工作区残留（已处理）**：一次 shell 引号处理失误在仓库根目录创建过未跟踪目录 `%TMPBASE%/`。
+   经 `git hash-object` 比对确认其 `gen_notes_pages.js` / `js/app.js` / `css/style.css` / `sw.js`
+   与 `303d99e` 完全一致（即基线副本，无独有数据），已在本地删除；该目录从未被 `git add`。
+7. **时序敏感用例**：`sw-consistency` 的 T2 用 800 ms 断言"缓存 load 明显更快"，机器有其他负载时
+   可能测到 900 ms+ 而报 FAIL。本轮实测出现过一次（976 ms），单独复跑 243 ms 通过。
+   这是既有用例的固有特性，本轮未放宽阈值；CI 上偶发失败应先看机器负载再判断回退。
 
 ### 回退
 
@@ -306,7 +329,14 @@ git checkout batch7a-base -- notes gen_notes_pages.js
 | 提交 | 说明 |
 |---|---|
 | `182e7fe` | 修复：静态笔记页补移动端菜单，课程异步加载后同步 SEO 元数据（B7A） |
-| 本次文档提交 | 新增 `BATCH7A_REPORT.md` |
+| `a6a97b6` | 文档：新增 `BATCH7A_REPORT.md` |
+| 本文件最后一次修订所在提交 | 分支重命名说明 + 本会话独立复核结果（`git log -1 --format=%h -- BATCH7A_REPORT.md`） |
+
+基线与分支：
+
+- `main` / `origin/main` = `303d99e`
+- 工作分支：`feature/batch7-improvements`（基于 `303d99e`）
+- 回退点：tag `batch7a-base`、分支 `backup/pre-batch7a-303d99e`
 
 ### PR 标题
 
@@ -335,7 +365,7 @@ Batch 7A：修复静态笔记移动端导航与课程页 SEO 元数据
 
 ## 验证
 - python scripts/run_tests.py：23 套全通过（原 21 套 + 新增 2 套），0 失败 0 阻塞。
-- 修复前对照（基线 worktree）：移动端用例 144 项 43 失败；SEO 用例 45 项 7 失败。
+- 修复前对照（`git archive 303d99e`）：移动端用例 155 项 48 失败；SEO 用例 45 项 7 失败。
 - 静态产物：sitemap / note-slugs / feed / 文章日期均未变；重新生成逐字节一致。
 
 ## 边界
@@ -352,7 +382,7 @@ Batch 7A：修复静态笔记移动端导航与课程页 SEO 元数据
 | `notes/*.html`（15） | 重新生成 | 与生成器保持一致 |
 | `css/style.css` | 修改 | 移动端导航面板限高与滚动 |
 | `index.html` | 修改 | 菜单按钮 aria / type、`nav#siteNav` |
-| `js/app.js` | 修改 | 菜单状态统一 + 课程异步元数据同步 |
+| `js/app.js` | 修改 | 菜单状态统一 + Esc + 跨断点复位 + 课程异步元数据同步 |
 | `sw.js` | 修改 | `CACHE_VERSION` 递增 |
 | `tests/browser/mobile-notes.spec.js` | 新增 | 移动端导航回归 |
 | `tests/browser/course-seo.spec.js` | 新增 | 课程 SEO 回归 |
