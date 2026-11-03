@@ -466,6 +466,53 @@ async function main() {
         await ctx.close();
       });
     }
+    // ---------------------------------------------------------------- 9. 主站 SPA 菜单跨断点
+    // 静态页与主站在 css/style.css 里共用同一套 .nav / .nav.open：
+    // 主站若缺少 .open 复位，放大到桌面再缩回手机时菜单会莫名其妙地展开。
+    {
+      await runScenario('主站 SPA 菜单', async () => {
+        const { ctx, page, errors } = await newSession(browser, { width: 375, height: 812 });
+        await page.goto(base + PREFIX + '/#/', { waitUntil: 'load', timeout: 60000 });
+        await page.waitForFunction(() => {
+          const app = document.getElementById('app');
+          return !!app && app.querySelectorAll('a[href^="#/post/"]').length > 0;
+        }, null, { timeout: 20000 }).catch(() => {});
+        await page.waitForTimeout(200);
+
+        let s = await menuState(page);
+        check('SPA 375px 菜单按钮可见', s.btnVisible && s.hasBtn);
+        check('SPA 375px 默认收起', s.open === false && s.expanded === 'false',
+          'open=' + s.open + ' expanded=' + s.expanded);
+        check('SPA 375px 无横向溢出', s.overflowX <= 1, 'overflowX=' + s.overflowX);
+
+        await toggle(page);
+        s = await menuState(page);
+        check('SPA 375px 点击展开', s.open === true && s.expanded === 'true' && s.navVisible);
+
+        await page.keyboard.press('Escape');
+        s = await menuState(page);
+        const active = await page.evaluate(() => document.activeElement ? document.activeElement.id : '');
+        check('SPA Esc 关闭菜单', s.open === false && s.expanded === 'false');
+        check('SPA Esc 后焦点回到菜单按钮', active === 'menuToggle', active);
+
+        await toggle(page);
+        await page.setViewportSize({ width: 1280, height: 800 });
+        await page.waitForTimeout(400);
+        s = await menuState(page);
+        check('SPA 375→1280 按钮隐藏', !s.btnVisible);
+        check('SPA 375→1280 残留 open 状态已清理', s.open === false && s.expanded === 'false',
+          'open=' + s.open + ' expanded=' + s.expanded);
+        check('SPA 1280px 导航内联可见', s.navVisible);
+
+        await page.setViewportSize({ width: 375, height: 812 });
+        await page.waitForTimeout(400);
+        s = await menuState(page);
+        check('SPA 1280→375 回到收起状态', s.btnVisible && s.open === false && !s.navVisible && s.expanded === 'false',
+          'open=' + s.open + ' visible=' + s.navVisible);
+        check('SPA 跨断点 console 无异常', errors.length === 0, errors.slice(0, 2).join(' | '));
+        await ctx.close();
+      });
+    }
   } finally {
     await browser.close();
     server.close();

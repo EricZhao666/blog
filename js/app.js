@@ -2654,6 +2654,20 @@ document.addEventListener('keydown', function (e) {
   if (nav && nav.classList.contains('open')) setMobileMenu(false, true);
 });
 
+// 跨断点复位：≥769px 导航本就内联常显，残留的 .open 会让回到窄屏时"自动展开"、
+// aria-expanded 与可见性不一致（静态笔记页用同一套处理，两端行为保持一致）
+const mobileNavQuery = window.matchMedia ? window.matchMedia('(max-width: 768px)') : null;
+function resetMenuOnDesktop() {
+  if (mobileNavQuery && mobileNavQuery.matches) return;
+  const nav = document.querySelector('.nav');
+  if (nav && nav.classList.contains('open')) setMobileMenu(false);
+}
+if (mobileNavQuery) {
+  if (mobileNavQuery.addEventListener) mobileNavQuery.addEventListener('change', resetMenuOnDesktop);
+  else if (mobileNavQuery.addListener) mobileNavQuery.addListener(resetMenuOnDesktop);
+}
+window.addEventListener('resize', resetMenuOnDesktop);
+
 // Back to top
 const backToTopBtn = document.getElementById('backToTop');
 window.addEventListener('scroll', () => {
