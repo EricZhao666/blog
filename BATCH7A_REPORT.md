@@ -330,7 +330,8 @@ git checkout batch7a-base -- notes gen_notes_pages.js
 |---|---|
 | `182e7fe` | 修复：静态笔记页补移动端菜单，课程异步加载后同步 SEO 元数据（B7A） |
 | `a6a97b6` | 文档：新增 `BATCH7A_REPORT.md` |
-| 本文件最后一次修订所在提交 | 分支重命名说明 + 本会话独立复核结果（`git log -1 --format=%h -- BATCH7A_REPORT.md`） |
+| `4ca99dd` | 修复：主站移动菜单补跨断点复位，用例新增 SPA 断点检查（11 项） |
+| 本文件最后一次修订所在提交 | 分支重命名说明 + 独立复核结果 + 风险记录（`git log -1 --format=%h -- BATCH7A_REPORT.md`） |
 
 基线与分支：
 
