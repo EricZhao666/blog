@@ -69,6 +69,10 @@ TESTS = [
      'desc': 'B6B1.1：版本一致性 / 慢网 / 离线 / HTTP 错误 / SW 重启'},
     {'name': 'sw-upgrade', 'file': 'tests/browser/sw-upgrade.spec.js', 'kind': 'browser',
      'desc': 'B6C：旧版安装 → 新版部署 / 安装失败回退 / 多标签页 / 混部'},
+    {'name': 'mobile-notes', 'file': 'tests/browser/mobile-notes.spec.js', 'kind': 'browser',
+     'desc': 'B7A：静态笔记移动端菜单 / 键盘 / 断点 / 深色 / 无溢出'},
+    {'name': 'course-seo', 'file': 'tests/browser/course-seo.spec.js', 'kind': 'browser',
+     'desc': 'B7A：课程 canonical / og:url / 异步竞态 / 静态 HTML SEO'},
 ]
 
 COUNT_RE = re.compile(r'共\s*(\d+)\s*项[，,]\s*PASS\s*(\d+)[，,]\s*FAIL\s*(\d+)')

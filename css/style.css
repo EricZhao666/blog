@@ -1340,6 +1340,12 @@ main {
     visibility: hidden;
     transition: all var(--transition);
     z-index: 99;
+    /* 下拉覆盖层：限高并允许自身滚动，长菜单也不会盖满整屏、挡住正文操作区 */
+    max-height: calc(100vh - var(--header-height));
+    max-height: calc(100dvh - var(--header-height));
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    box-shadow: 0 12px 24px var(--color-shadow);
   }
 
   .nav.open {

@@ -2313,9 +2313,8 @@ async function router() {
   // 上一个页面遗留的目录/进度条
   removeReadingTools();
 
-  // Close mobile menu
-  document.querySelector('.nav').classList.remove('open');
-  document.getElementById('menuToggle').classList.remove('active');
+  // Close mobile menu（路由切换必定收起，aria 状态同步复位）
+  setMobileMenu(false);
 
   // Show/hide search bar (only on home)
   if (hash === '/') {
@@ -2421,12 +2420,15 @@ async function router() {
       app.innerHTML = renderCourseDetail(id);
       if (!notesReady) {
         loadData('notes').then(function () {
-          if (token === _routeToken) {
-            app.innerHTML = renderCourseDetail(id);
-            enhanceCodeBlocks(app);
-            highlightIn(app);
-            buildReadingTools();
-          }
+          if (token !== _routeToken) return;                 // 路由已切换：不覆盖新页面
+          if ((location.hash.slice(1) || '/') !== hash) return;
+          app.innerHTML = renderCourseDetail(id);
+          enhanceCodeBlocks(app);
+          highlightIn(app);
+          buildReadingTools();
+          // 笔记映射（NOTE_PAGES）此时才到位：canonical / og:url 必须跟着重算，
+          // 否则首访课程页整次会话都指向站点根（见 Batch 7A-02）。
+          updateMetaForRoute(hash);
         });
       }
     } else if (hash === '/papers') {
@@ -2629,10 +2631,42 @@ document.addEventListener('click', function (e) {
 });
 
 // Mobile menu toggle
+// 与静态笔记页共用同一套约定：.nav.open + .menu-toggle.active + aria-expanded
+function setMobileMenu(open, focusBtn) {
+  const nav = document.querySelector('.nav');
+  const btn = document.getElementById('menuToggle');
+  if (!nav || !btn) return;
+  nav.classList.toggle('open', open);
+  btn.classList.toggle('active', open);
+  btn.setAttribute('aria-expanded', open ? 'true' : 'false');
+  if (!open && focusBtn) btn.focus();
+}
+
 document.getElementById('menuToggle').addEventListener('click', function () {
-  document.querySelector('.nav').classList.toggle('open');
-  this.classList.toggle('active');
+  const nav = document.querySelector('.nav');
+  setMobileMenu(!(nav && nav.classList.contains('open')));
 });
+
+// Esc 关闭菜单（只在菜单展开时生效，不影响搜索框已有的 Esc 行为）
+document.addEventListener('keydown', function (e) {
+  if (e.key !== 'Escape' && e.key !== 'Esc') return;
+  const nav = document.querySelector('.nav');
+  if (nav && nav.classList.contains('open')) setMobileMenu(false, true);
+});
+
+// 跨断点复位：≥769px 导航本就内联常显，残留的 .open 会让回到窄屏时"自动展开"、
+// aria-expanded 与可见性不一致（静态笔记页用同一套处理，两端行为保持一致）
+const mobileNavQuery = window.matchMedia ? window.matchMedia('(max-width: 768px)') : null;
+function resetMenuOnDesktop() {
+  if (mobileNavQuery && mobileNavQuery.matches) return;
+  const nav = document.querySelector('.nav');
+  if (nav && nav.classList.contains('open')) setMobileMenu(false);
+}
+if (mobileNavQuery) {
+  if (mobileNavQuery.addEventListener) mobileNavQuery.addEventListener('change', resetMenuOnDesktop);
+  else if (mobileNavQuery.addListener) mobileNavQuery.addListener(resetMenuOnDesktop);
+}
+window.addEventListener('resize', resetMenuOnDesktop);
 
 // Back to top
 const backToTopBtn = document.getElementById('backToTop');
