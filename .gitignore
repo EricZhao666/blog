@@ -14,6 +14,11 @@ desktop.ini
 *.tmp
 *.log
 
+# 学习资料持久 ID Registry（私有身份映射：id -> 本机相对路径）
+# 绝不入库：它记录了私人资料目录结构。公开产物 js/papers.js 只含不透明 ID。
+# 备份方式见 BATCH7B21_MIGRATION_REPORT.md「Registry 保存与备份」。
+.papers-id/
+
 # 测试报告（本地生成，不入库）
 tests/reports/
 tests/browser/artifacts/

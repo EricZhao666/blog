@@ -63,6 +63,8 @@ TESTS = [
      'desc': 'B6C：发布与搜索一致性（含按需加载与快速切换）'},
     {'name': 'test21', 'file': 'tests/test21_papers_id_registry.py', 'kind': 'python',
      'desc': 'B7B2：学习资料持久 ID Registry 生命周期（重排/删除/改名/迁移/损坏/冲突）'},
+    {'name': 'test22', 'file': 'tests/test22_registry_consistency.py', 'kind': 'python',
+     'desc': 'B7B2.1：真实 Registry 与 js/papers.js 一致性（74 条 / 无私人路径）'},
     {'name': 'feed-check', 'file': 'gen_feed.py', 'kind': 'python', 'args': ['--check'],
      'desc': 'B6C：RSS 产物与数据一致（--check）', 'pass_marker': 'OK:'},
     {'name': 'browser', 'file': 'tests/browser/sw.spec.js', 'kind': 'browser',

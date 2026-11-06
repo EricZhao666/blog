@@ -611,6 +611,99 @@ async function main() {
       state.delays = {};
       await ctx.close();
     }
+
+    // ============================================================ G 真实数据（B7B2.1）
+    // 用仓库里真实的 js/papers.js（74 条已迁移资料）验收，不再注入 Fixture：
+    // 深链必须落到"那一条"，旧 lgx: 链接必须仍然指向同一条，失效 ID 必须不串项。
+    {
+      delete state.overrides['/js/papers.js'];
+      const { ctx, page, errors } = await newSession(browser);
+      await page.goto(deep('/papers'));
+      await page.waitForTimeout(900);
+
+      const real = await page.evaluate(() => {
+        const mats = (typeof LEARNING_MATERIALS !== 'undefined' ? LEARNING_MATERIALS : []);
+        const papers = (typeof PAPERS !== 'undefined' ? PAPERS : []);
+        const cards = Array.prototype.slice.call(document.querySelectorAll('.paper-card'));
+        return {
+          count: mats.length,
+          ids: mats.map(m => m.id),
+          uniqueIds: new Set(mats.map(m => m.id)).size,
+          allOpaque: mats.every(m => /^lm-\d{6}$/.test(m.id || '')),
+          paperKey: cards.length ? cards[0].getAttribute('data-paper-key') : null,
+          paperCount: papers.length
+        };
+      });
+      await page.evaluate(() => window.setPaperTab('materials'));
+      await page.waitForTimeout(300);
+      const tabKeys = await page.evaluate(() => {
+        const nodes = Array.prototype.slice.call(document.querySelectorAll('.file-item'));
+        return {
+          count: nodes.length,
+          unique: new Set(nodes.map(n => n.getAttribute('data-material-key'))).size,
+          allLm: nodes.every(n => /^lm-\d{6}$/.test(n.getAttribute('data-material-key') || ''))
+        };
+      });
+      check('G1 真实数据 74 条且资料页签键唯一', real.count === 74 && real.uniqueIds === 74 &&
+        tabKeys.count === 74 && tabKeys.unique === 74,
+        JSON.stringify({ data: real.count, nodes: tabKeys.count, unique: tabKeys.unique }));
+      check('G2 真实数据键全部是不透明 lm- ID', real.allOpaque && tabKeys.allLm,
+        JSON.stringify({ data: real.allOpaque, dom: tabKeys.allLm }));
+
+      const keys = real.ids || [];
+      const sample = [keys[0], keys[Math.floor(keys.length / 2)], keys[keys.length - 1]];
+      let sampleHits = 0;
+      for (const id of sample) {
+        await page.goto(deep('/papers?kind=material&target=' + encodeURIComponent(id)));
+        await page.waitForTimeout(500);
+        const p = await probe(page, 'material', id);
+        if (p.keyMatched === 1 && p.markedKey === id && p.markedCount === 1) sampleHits++;
+      }
+      check('G3 真实 ID 深链首/中/尾三条都精确命中', sampleHits === 3, sampleHits + '/3');
+
+      // 旧链接兼容：迁移前的 lgx: 键必须仍然指向同一条资料
+      const legacyId = sample[1];
+      const legacyKey = await page.evaluate((id) => {
+        const mats = (typeof LEARNING_MATERIALS !== 'undefined' ? LEARNING_MATERIALS : []);
+        const m = mats.filter(x => x.id === id)[0];
+        if (!m) return null;
+        return 'lgx:' + JSON.stringify([m.name || '', m.category || '', m.subcategory || '']);
+      }, legacyId);
+      await page.goto(deep('/papers?kind=material&target=' + encodeURIComponent(legacyKey)));
+      await page.waitForTimeout(500);
+      const lp = await probe(page, 'material', legacyId);
+      check('G4 迁移前的 lgx: 旧链接仍指向同一条',
+        !!legacyKey && lp.keyMatched === 1 && lp.markedKey === legacyId && lp.markedCount === 1,
+        JSON.stringify({ matched: lp.keyMatched, marked: lp.markedKey }));
+
+      // 失效 ID：提示 + 不选中任何条目
+      await page.goto(deep('/papers?kind=material&target=lm-999999'));
+      await page.waitForTimeout(500);
+      const stale = await probe(page, 'material', 'lm-999999');
+      check('G5 失效 ID 不串项（无选中 + 有提示）',
+        stale.markedCount === 0 && stale.notices.length === 1 && stale.total === 74,
+        JSON.stringify({ marked: stale.markedCount, notices: stale.notices.length, total: stale.total }));
+
+      // 真实论文深链（paperKey 取自首屏论文页签，避免切页签后取不到）
+      const paperKey = real.paperKey;
+      await page.goto(deep('/papers?kind=paper&target=' + encodeURIComponent(paperKey)));
+      await page.waitForTimeout(600);
+      const pp = await probe(page, 'paper', paperKey);
+      check('G6 真实论文 ID 深链精确命中并自动展开',
+        !!paperKey && pp.keyMatched === 1 && pp.markedKey === paperKey && pp.expanded === true,
+        JSON.stringify({ matched: pp.keyMatched, marked: pp.markedKey, expanded: pp.expanded }));
+
+      // 页面 DOM 不含私人路径（排除 https:// 这类 scheme）
+      const leak = await page.evaluate(() => {
+        const html = document.documentElement.innerHTML;
+        const re = new RegExp('(?<![A-Za-z0-9])[A-Za-z]:[\\\\/]|/Users/|zotero\\.sqlite|杂项');
+        const m = html.match(re);
+        return m ? m[0] : null;
+      });
+      check('G7 真实页面不含私人路径', !leak, leak || '');
+      check('G8 真实数据流程无脚本异常', errors.length === 0, errors.slice(0, 2).join(' | '));
+      await ctx.close();
+    }
   } finally {
     await browser.close();
     server.close();
