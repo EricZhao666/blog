@@ -159,7 +159,13 @@ Set up job 1s | 检出代码 1s | 安装 Node.js 22 2s | 安装 Python 3.12 0s
 
 未出现的问题：不需要修改任何测试阈值、没有删除断言、没有跳过浏览器套件；本轮 CI 一次通过，没有做"最小修复"迭代。
 
-关于本文件自身：`BATCH7B22_PR_VALIDATION.md` 是纯 Markdown，不进入任何测试路径；按 `.github/workflows/tests.yml` 的 `on: push` 规则，它的提交会再触发一次相同 workflow，结论与上表一致。
+关于本文件自身：`BATCH7B22_PR_VALIDATION.md` 是纯 Markdown，不进入任何测试路径；按 `.github/workflows/tests.yml` 的 `on: push` 规则，它的提交会再触发一次相同 workflow。
+
+文档提交的实测结果（用于确认上面的推断）：
+
+| run | head | 内容 | 结论 |
+|---|---|---|---|
+| `42177435651` | `5362e49` | 仅新增本报告 | **success**（与代码提交一致） |
 
 ---
 
@@ -189,6 +195,7 @@ Set up job 1s | 检出代码 1s | 安装 Node.js 22 2s | 安装 Python 3.12 0s
 提交链（本地 = 远端）：
 
 ```
+5362e49 文档：新增 B7B2.2 克隆、Registry 恢复与 CI 验收报告（CI run 42177435651 success）
 f3379e3 文档：报告中改用具名占位符，修正首次迁移的提交范围
 dd20bc7 测试：隐私检测改为通用模式，新增 Registry 一级目录动态校验
 3c0e0b9 文档：B7B2.1 报告校正 blob 体积/同名统计并补充部署注意
