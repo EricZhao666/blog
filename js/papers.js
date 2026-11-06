@@ -510,6 +510,7 @@ const PAPER_CATEGORIES = {
 
 const LEARNING_MATERIALS = [
   {
+    "id": "lm-000002",
     "name": "带孔矩形板.x_t",
     "type": "Parasolid模型",
     "size": 5997,
@@ -518,6 +519,7 @@ const LEARNING_MATERIALS = [
     "subcategory": "第一课"
   },
   {
+    "id": "lm-000001",
     "name": "第一课.pdf",
     "type": "PDF",
     "size": 1625850,
@@ -526,6 +528,7 @@ const LEARNING_MATERIALS = [
     "subcategory": "第一课"
   },
   {
+    "id": "lm-000003",
     "name": "第七课.pdf",
     "type": "PDF",
     "size": 1162080,
@@ -534,6 +537,7 @@ const LEARNING_MATERIALS = [
     "subcategory": "第七课"
   },
   {
+    "id": "lm-000004",
     "name": "虎钳.x_t",
     "type": "Parasolid模型",
     "size": 34681,
@@ -542,6 +546,7 @@ const LEARNING_MATERIALS = [
     "subcategory": "第七课"
   },
   {
+    "id": "lm-000006",
     "name": "L bracket无圆角.x_t",
     "type": "Parasolid模型",
     "size": 7415,
@@ -550,6 +555,7 @@ const LEARNING_MATERIALS = [
     "subcategory": "第三课"
   },
   {
+    "id": "lm-000005",
     "name": "第三课.pdf",
     "type": "PDF",
     "size": 995278,
@@ -558,6 +564,7 @@ const LEARNING_MATERIALS = [
     "subcategory": "第三课"
   },
   {
+    "id": "lm-000007",
     "name": "第九课.pdf",
     "type": "PDF",
     "size": 1277041,
@@ -566,6 +573,7 @@ const LEARNING_MATERIALS = [
     "subcategory": "第九课"
   },
   {
+    "id": "lm-000008",
     "name": "虎钳.x_t",
     "type": "Parasolid模型",
     "size": 34681,
@@ -574,6 +582,7 @@ const LEARNING_MATERIALS = [
     "subcategory": "第九课"
   },
   {
+    "id": "lm-000009",
     "name": "梁完整.SLDPRT.x_t",
     "type": "Parasolid模型",
     "size": 18677,
@@ -582,6 +591,7 @@ const LEARNING_MATERIALS = [
     "subcategory": "第二十一课"
   },
   {
+    "id": "lm-000010",
     "name": "第二十一课.pdf",
     "type": "PDF",
     "size": 1115976,
@@ -590,6 +600,7 @@ const LEARNING_MATERIALS = [
     "subcategory": "第二十一课"
   },
   {
+    "id": "lm-000014",
     "name": "直齿轮装配原始.x_t",
     "type": "Parasolid模型",
     "size": 771114,
@@ -598,6 +609,7 @@ const LEARNING_MATERIALS = [
     "subcategory": "第二十七课"
   },
   {
+    "id": "lm-000015",
     "name": "直齿轮装配已分割.x_t",
     "type": "Parasolid模型",
     "size": 791540,
@@ -606,6 +618,7 @@ const LEARNING_MATERIALS = [
     "subcategory": "第二十七课"
   },
   {
+    "id": "lm-000016",
     "name": "第二十七课.pdf",
     "type": "PDF",
     "size": 4519816,
@@ -614,6 +627,7 @@ const LEARNING_MATERIALS = [
     "subcategory": "第二十七课"
   },
   {
+    "id": "lm-000011",
     "name": "直齿轮装配原始.x_t",
     "type": "Parasolid模型",
     "size": 771114,
@@ -622,6 +636,7 @@ const LEARNING_MATERIALS = [
     "subcategory": "第二十七课(1)"
   },
   {
+    "id": "lm-000012",
     "name": "直齿轮装配已分割.x_t",
     "type": "Parasolid模型",
     "size": 791540,
@@ -630,6 +645,7 @@ const LEARNING_MATERIALS = [
     "subcategory": "第二十七课(1)"
   },
   {
+    "id": "lm-000013",
     "name": "第二十七课.pdf",
     "type": "PDF",
     "size": 4519816,
@@ -638,6 +654,7 @@ const LEARNING_MATERIALS = [
     "subcategory": "第二十七课(1)"
   },
   {
+    "id": "lm-000017",
     "name": "第二十三课.pdf",
     "type": "PDF",
     "size": 840521,
@@ -646,6 +663,7 @@ const LEARNING_MATERIALS = [
     "subcategory": "第二十三课"
   },
   {
+    "id": "lm-000018",
     "name": "第二十二课.pdf",
     "type": "PDF",
     "size": 925343,
@@ -654,6 +672,7 @@ const LEARNING_MATERIALS = [
     "subcategory": "第二十二课"
   },
   {
+    "id": "lm-000019",
     "name": "平面接触无间隙.x_t",
     "type": "Parasolid模型",
     "size": 11495,
@@ -662,6 +681,7 @@ const LEARNING_MATERIALS = [
     "subcategory": "第二十五课"
   },
   {
+    "id": "lm-000020",
     "name": "平面接触有间隙.x_t",
     "type": "Parasolid模型",
     "size": 11513,
@@ -670,6 +690,7 @@ const LEARNING_MATERIALS = [
     "subcategory": "第二十五课"
   },
   {
+    "id": "lm-000021",
     "name": "曲面接触.x_t",
     "type": "Parasolid模型",
     "size": 9277,
@@ -678,6 +699,7 @@ const LEARNING_MATERIALS = [
     "subcategory": "第二十五课"
   },
   {
+    "id": "lm-000022",
     "name": "第二十五课.pdf",
     "type": "PDF",
     "size": 1120615,
@@ -686,6 +708,7 @@ const LEARNING_MATERIALS = [
     "subcategory": "第二十五课"
   },
   {
+    "id": "lm-000023",
     "name": "第二十六课.pdf",
     "type": "PDF",
     "size": 1096620,
@@ -694,6 +717,7 @@ const LEARNING_MATERIALS = [
     "subcategory": "第二十六课"
   },
   {
+    "id": "lm-000024",
     "name": "赫兹接触.x_t",
     "type": "Parasolid模型",
     "size": 11340,
@@ -702,6 +726,7 @@ const LEARNING_MATERIALS = [
     "subcategory": "第二十六课"
   },
   {
+    "id": "lm-000025",
     "name": "梁.x_t",
     "type": "Parasolid模型",
     "size": 12478,
@@ -710,6 +735,7 @@ const LEARNING_MATERIALS = [
     "subcategory": "第二十四课"
   },
   {
+    "id": "lm-000026",
     "name": "第二十四课.pdf",
     "type": "PDF",
     "size": 751489,
@@ -718,6 +744,7 @@ const LEARNING_MATERIALS = [
     "subcategory": "第二十四课"
   },
   {
+    "id": "lm-000028",
     "name": "桌子小物体.x_t",
     "type": "Parasolid模型",
     "size": 28412,
@@ -726,6 +753,7 @@ const LEARNING_MATERIALS = [
     "subcategory": "第二十课"
   },
   {
+    "id": "lm-000027",
     "name": "第二十课.pdf",
     "type": "PDF",
     "size": 1015691,
@@ -734,6 +762,7 @@ const LEARNING_MATERIALS = [
     "subcategory": "第二十课"
   },
   {
+    "id": "lm-000030",
     "name": "L bracket无圆角.x_t",
     "type": "Parasolid模型",
     "size": 7415,
@@ -742,6 +771,7 @@ const LEARNING_MATERIALS = [
     "subcategory": "第二课"
   },
   {
+    "id": "lm-000029",
     "name": "第二课.pdf",
     "type": "PDF",
     "size": 1058142,
@@ -750,6 +780,7 @@ const LEARNING_MATERIALS = [
     "subcategory": "第二课"
   },
   {
+    "id": "lm-000031",
     "name": "第五课.pdf",
     "type": "PDF",
     "size": 894001,
@@ -758,6 +789,7 @@ const LEARNING_MATERIALS = [
     "subcategory": "第五课"
   },
   {
+    "id": "lm-000033",
     "name": "带孔矩形板.x_t",
     "type": "Parasolid模型",
     "size": 5997,
@@ -766,6 +798,7 @@ const LEARNING_MATERIALS = [
     "subcategory": "第八课"
   },
   {
+    "id": "lm-000032",
     "name": "第八课.pdf",
     "type": "PDF",
     "size": 913113,
@@ -774,6 +807,7 @@ const LEARNING_MATERIALS = [
     "subcategory": "第八课"
   },
   {
+    "id": "lm-000035",
     "name": "支架.x_t",
     "type": "Parasolid模型",
     "size": 49478,
@@ -782,6 +816,7 @@ const LEARNING_MATERIALS = [
     "subcategory": "第六课"
   },
   {
+    "id": "lm-000034",
     "name": "第六课.pdf",
     "type": "PDF",
     "size": 833139,
@@ -790,6 +825,7 @@ const LEARNING_MATERIALS = [
     "subcategory": "第六课"
   },
   {
+    "id": "lm-000037",
     "name": "L型支架装配.x_t",
     "type": "Parasolid模型",
     "size": 28104,
@@ -798,6 +834,7 @@ const LEARNING_MATERIALS = [
     "subcategory": "第十一课"
   },
   {
+    "id": "lm-000038",
     "name": "带孔矩形板圣维南原理.x_t",
     "type": "Parasolid模型",
     "size": 23450,
@@ -806,6 +843,7 @@ const LEARNING_MATERIALS = [
     "subcategory": "第十一课"
   },
   {
+    "id": "lm-000036",
     "name": "第十一课.pdf",
     "type": "PDF",
     "size": 985611,
@@ -814,6 +852,7 @@ const LEARNING_MATERIALS = [
     "subcategory": "第十一课"
   },
   {
+    "id": "lm-000040",
     "name": "水杯带桌面.x_t",
     "type": "Parasolid模型",
     "size": 9337,
@@ -822,6 +861,7 @@ const LEARNING_MATERIALS = [
     "subcategory": "第十三课"
   },
   {
+    "id": "lm-000039",
     "name": "第十三课.pdf",
     "type": "PDF",
     "size": 946565,
@@ -830,6 +870,7 @@ const LEARNING_MATERIALS = [
     "subcategory": "第十三课"
   },
   {
+    "id": "lm-000042",
     "name": "桌子小物体.x_t",
     "type": "Parasolid模型",
     "size": 28412,
@@ -838,6 +879,7 @@ const LEARNING_MATERIALS = [
     "subcategory": "第十九课"
   },
   {
+    "id": "lm-000041",
     "name": "第十九课.pdf",
     "type": "PDF",
     "size": 2790827,
@@ -846,6 +888,7 @@ const LEARNING_MATERIALS = [
     "subcategory": "第十九课"
   },
   {
+    "id": "lm-000044",
     "name": "水杯带桌面.x_t",
     "type": "Parasolid模型",
     "size": 9337,
@@ -854,6 +897,7 @@ const LEARNING_MATERIALS = [
     "subcategory": "第十五课"
   },
   {
+    "id": "lm-000043",
     "name": "第十五课.pdf",
     "type": "PDF",
     "size": 928692,
@@ -862,6 +906,7 @@ const LEARNING_MATERIALS = [
     "subcategory": "第十五课"
   },
   {
+    "id": "lm-000046",
     "name": "桌子小物体.x_t",
     "type": "Parasolid模型",
     "size": 28412,
@@ -870,6 +915,7 @@ const LEARNING_MATERIALS = [
     "subcategory": "第十八课"
   },
   {
+    "id": "lm-000045",
     "name": "第十八课.pdf",
     "type": "PDF",
     "size": 895712,
@@ -878,6 +924,7 @@ const LEARNING_MATERIALS = [
     "subcategory": "第十八课"
   },
   {
+    "id": "lm-000048",
     "name": "L bracket圆角.x_t",
     "type": "Parasolid模型",
     "size": 8423,
@@ -886,6 +933,7 @@ const LEARNING_MATERIALS = [
     "subcategory": "第十六课"
   },
   {
+    "id": "lm-000049",
     "name": "带孔矩形板二分之一.x_t",
     "type": "Parasolid模型",
     "size": 7216,
@@ -894,6 +942,7 @@ const LEARNING_MATERIALS = [
     "subcategory": "第十六课"
   },
   {
+    "id": "lm-000047",
     "name": "第十六课.pdf",
     "type": "PDF",
     "size": 1089110,
@@ -902,6 +951,7 @@ const LEARNING_MATERIALS = [
     "subcategory": "第十六课"
   },
   {
+    "id": "lm-000051",
     "name": "水杯带桌面.x_t",
     "type": "Parasolid模型",
     "size": 9337,
@@ -910,6 +960,7 @@ const LEARNING_MATERIALS = [
     "subcategory": "第十四课"
   },
   {
+    "id": "lm-000050",
     "name": "第十四课.pdf",
     "type": "PDF",
     "size": 977316,
@@ -918,6 +969,7 @@ const LEARNING_MATERIALS = [
     "subcategory": "第十四课"
   },
   {
+    "id": "lm-000053",
     "name": "L型支架装配.x_t",
     "type": "Parasolid模型",
     "size": 28104,
@@ -926,6 +978,7 @@ const LEARNING_MATERIALS = [
     "subcategory": "第十课"
   },
   {
+    "id": "lm-000052",
     "name": "第十课.pdf",
     "type": "PDF",
     "size": 1278487,
@@ -934,6 +987,7 @@ const LEARNING_MATERIALS = [
     "subcategory": "第十课"
   },
   {
+    "id": "lm-000054",
     "name": "第四课.pdf",
     "type": "PDF",
     "size": 973809,
@@ -942,6 +996,7 @@ const LEARNING_MATERIALS = [
     "subcategory": "第四课"
   },
   {
+    "id": "lm-000055",
     "name": "小抽屉.SLDPRT",
     "type": "SolidWorks零件",
     "size": 52751,
@@ -950,6 +1005,7 @@ const LEARNING_MATERIALS = [
     "subcategory": "SolidWorks"
   },
   {
+    "id": "lm-000074",
     "name": "底座.SLDPRT",
     "type": "SolidWorks零件",
     "size": 101387,
@@ -958,6 +1014,7 @@ const LEARNING_MATERIALS = [
     "subcategory": "SolidWorks"
   },
   {
+    "id": "lm-000056",
     "name": "抽屉.SLDPRT",
     "type": "SolidWorks零件",
     "size": 178856,
@@ -966,6 +1023,7 @@ const LEARNING_MATERIALS = [
     "subcategory": "SolidWorks"
   },
   {
+    "id": "lm-000057",
     "name": "桌下抽屉.SLDASM",
     "type": "SolidWorks装配体",
     "size": 103787,
@@ -974,6 +1032,7 @@ const LEARNING_MATERIALS = [
     "subcategory": "SolidWorks"
   },
   {
+    "id": "lm-000058",
     "name": "零件2.SLDPRT",
     "type": "SolidWorks零件",
     "size": 60047,
@@ -982,6 +1041,7 @@ const LEARNING_MATERIALS = [
     "subcategory": "SolidWorks"
   },
   {
+    "id": "lm-000059",
     "name": "Assem1.JPG",
     "type": "图片",
     "size": 156287,
@@ -990,6 +1050,7 @@ const LEARNING_MATERIALS = [
     "subcategory": "SolidWorks"
   },
   {
+    "id": "lm-000060",
     "name": "Assem1.SLDASM",
     "type": "SolidWorks装配体",
     "size": 900851,
@@ -998,6 +1059,7 @@ const LEARNING_MATERIALS = [
     "subcategory": "SolidWorks"
   },
   {
+    "id": "lm-000061",
     "name": "BASE.SLDPRT",
     "type": "SolidWorks零件",
     "size": 911492,
@@ -1006,6 +1068,7 @@ const LEARNING_MATERIALS = [
     "subcategory": "SolidWorks"
   },
   {
+    "id": "lm-000062",
     "name": "BigHorn.SLDPRT",
     "type": "SolidWorks零件",
     "size": 122345,
@@ -1014,6 +1077,7 @@ const LEARNING_MATERIALS = [
     "subcategory": "SolidWorks"
   },
   {
+    "id": "lm-000063",
     "name": "BigServo.SLDPRT",
     "type": "SolidWorks零件",
     "size": 277186,
@@ -1022,6 +1086,7 @@ const LEARNING_MATERIALS = [
     "subcategory": "SolidWorks"
   },
   {
+    "id": "lm-000064",
     "name": "GripArm.SLDPRT",
     "type": "SolidWorks零件",
     "size": 663103,
@@ -1030,6 +1095,7 @@ const LEARNING_MATERIALS = [
     "subcategory": "SolidWorks"
   },
   {
+    "id": "lm-000065",
     "name": "Gripper.SLDPRT",
     "type": "SolidWorks零件",
     "size": 70598,
@@ -1038,6 +1104,7 @@ const LEARNING_MATERIALS = [
     "subcategory": "SolidWorks"
   },
   {
+    "id": "lm-000066",
     "name": "ISO.jpg",
     "type": "图片",
     "size": 1771296,
@@ -1046,6 +1113,7 @@ const LEARNING_MATERIALS = [
     "subcategory": "SolidWorks"
   },
   {
+    "id": "lm-000067",
     "name": "ISO2.jpg",
     "type": "图片",
     "size": 1600932,
@@ -1054,6 +1122,7 @@ const LEARNING_MATERIALS = [
     "subcategory": "SolidWorks"
   },
   {
+    "id": "lm-000068",
     "name": "ISO3.jpg",
     "type": "图片",
     "size": 1676423,
@@ -1062,6 +1131,7 @@ const LEARNING_MATERIALS = [
     "subcategory": "SolidWorks"
   },
   {
+    "id": "lm-000069",
     "name": "Project_Mass_and_Volume.JPG",
     "type": "图片",
     "size": 198296,
@@ -1070,6 +1140,7 @@ const LEARNING_MATERIALS = [
     "subcategory": "SolidWorks"
   },
   {
+    "id": "lm-000070",
     "name": "Robot_Arm.ino",
     "type": "Arduino代码",
     "size": 3281,
@@ -1078,6 +1149,7 @@ const LEARNING_MATERIALS = [
     "subcategory": "SolidWorks"
   },
   {
+    "id": "lm-000071",
     "name": "S3114_servo_CAD_Model.SLDPRT",
     "type": "SolidWorks零件",
     "size": 63274,
@@ -1086,6 +1158,7 @@ const LEARNING_MATERIALS = [
     "subcategory": "SolidWorks"
   },
   {
+    "id": "lm-000072",
     "name": "SecondArm.SLDPRT",
     "type": "SolidWorks零件",
     "size": 747131,
@@ -1094,6 +1167,7 @@ const LEARNING_MATERIALS = [
     "subcategory": "SolidWorks"
   },
   {
+    "id": "lm-000073",
     "name": "baseArm.SLDPRT",
     "type": "SolidWorks零件",
     "size": 398451,

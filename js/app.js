@@ -273,7 +273,10 @@ function updateMetaForRoute(hash) {
       return;
     }
   }
-  const m = STATIC_META[hash];
+  // 带查询串的深链（/papers?kind=..&target=..）按路径本身取元数据，
+  // 否则标题/描述会被重置成站点默认值
+  const metaKey = hash.indexOf('?') === -1 ? hash : hash.slice(0, hash.indexOf('?'));
+  const m = STATIC_META[metaKey];
   if (m) setMeta(m[0], m[1]);
   else setMeta('', '');
   setCanonical(null);
@@ -361,6 +364,7 @@ const DATA_GLOBALS = {
   codefiles: 'CODE_LIBS'
 };
 const _dataPromises = {};
+const _dataFailures = {};   // key -> 加载失败次数（>0 时重试用带 cache-buster 的 URL）
 let _routeToken = 0;
 
 // 顶层 const 不会挂到 window 上，用 eval 检测同名全局绑定是否存在
@@ -387,11 +391,16 @@ function loadData(key) {
   if (dataReady(key)) return Promise.resolve();
   if (_dataPromises[key]) return _dataPromises[key];
   const files = DATA_FILES[key];
+  // 失败后重试要绕开 HTTP 缓存里的坏响应（首次请求仍用规范 URL，保证 SW 快照一致）
+  const retry = _dataFailures[key] || 0;
   const chain = (Array.isArray(files) ? files : [files]).reduce(function (p, src) {
-    return p.then(function () { return loadScriptOnce(src); });
+    return p.then(function () {
+      return loadScriptOnce(retry ? src + (src.indexOf('?') === -1 ? '?' : '&') + 'retry=' + retry : src);
+    });
   }, Promise.resolve());
   _dataPromises[key] = chain.catch(function (err) {
     console.warn(err.message);
+    _dataFailures[key] = (_dataFailures[key] || 0) + 1;
     delete _dataPromises[key];
   });
   return _dataPromises[key];
@@ -401,11 +410,16 @@ function renderLoading(label) {
   return '<div class="empty-state"><div class="empty-state-icon">⏳</div><p>正在加载' + label + '…</p></div>';
 }
 
-// 按需脚本加载失败时给出可重试的提示，避免继续渲染导致 ReferenceError
-function renderLoadError(label) {
+// 按需脚本加载失败时给出可重试的提示，避免继续渲染导致 ReferenceError。
+// 带 dataKey 时给一个"原地重试"入口（重新拉取该数据后重跑当前路由），
+// 保留"刷新页面"作为兜底；深链场景重试后仍会定位到原目标。
+function renderLoadError(label, dataKey) {
+  const retry = dataKey
+    ? '<p><a href="#" data-retry-data="' + escapeHtml(dataKey) + '">点击重试</a>' +
+      ' · <a href="#" onclick="location.reload();return false;">刷新页面</a></p>'
+    : '<p><a href="#" onclick="location.reload();return false;">点击重试</a></p>';
   return '<div class="empty-state"><div class="empty-state-icon">⚠️</div>' +
-    '<p>' + escapeHtml(label) + '数据加载失败，请检查网络后重试</p>' +
-    '<p><a href="#" onclick="location.reload();return false;">点击重试</a></p></div>';
+    '<p>' + escapeHtml(label) + '数据加载失败，请检查网络后重试</p>' + retry + '</div>';
 }
 
 // ============================================
@@ -808,7 +822,7 @@ function renderGlobalSearch(query) {
   if (papers.length) {
     html += `<div class="search-section-title">📄 论文 (${papers.length})</div>`;
     html += papers.map(p => `
-      <div class="search-paper-item" data-href="#/papers" tabindex="0" role="link" onclick="location.hash='#/papers'">
+      <div class="search-paper-item" data-href="${escapeHtml(papersDeepLink('paper', paperTargetKey(p)))}" tabindex="0" role="link">
         <span class="search-item-icon">📄</span>
         <div class="search-item-main">
           <div class="search-item-title">${highlightMatch(p.title, query)}</div>
@@ -820,7 +834,7 @@ function renderGlobalSearch(query) {
   if (materials.length) {
     html += `<div class="search-section-title">📎 学习资料 (${materials.length})</div>`;
     html += materials.map(m => `
-      <div class="search-paper-item" data-href="#/papers" tabindex="0" role="link" onclick="location.hash='#/papers'">
+      <div class="search-paper-item" data-href="${escapeHtml(papersDeepLink('material', materialTargetKey(m)))}" tabindex="0" role="link">
         <span class="search-item-icon">📎</span>
         <div class="search-item-main">
           <div class="search-item-title">${escapeHtml(m.name || '')}</div>
@@ -1578,9 +1592,151 @@ window.loadMoreProjFiles = function(pi, from) {
 };
 
 // ============================================
+// 论文 / 学习资料深链（Batch 7B-2）
+// ============================================
+// 公开契约：#/papers?kind=paper|material&target=<目标键>
+//   - 论文目标键 = PAPERS[i].id（Zotero itemID，与标题/作者/分类无关）
+//   - 资料目标键 = LEARNING_MATERIALS[i].id（持久 ID Registry，形如 lm-000123）
+//   - 还没有 Registry ID 的旧数据回退到 lgx:<JSON 三元组>，只做精确匹配、绝不猜测
+// 旧路由 #/papers（不带参数）保持原样：普通列表页。
+const PAPERS_ROUTE = '/papers';
+const MATERIAL_LEGACY_PREFIX = 'lgx:';
+const TARGET_MAX_LEN = 2048;
+
+function paperTargetKey(paper) {
+  return paper && paper.id ? String(paper.id) : '';
+}
+
+function materialTargetKey(m) {
+  if (!m) return '';
+  if (m.id) return String(m.id);
+  return MATERIAL_LEGACY_PREFIX + JSON.stringify([m.name || '', m.category || '', m.subcategory || '']);
+}
+
+// 生成可复制/可刷新的原生链接（URLSearchParams 负责百分号编码，避免裸 & 截断）
+function papersDeepLink(kind, key) {
+  const k = kind === 'material' ? 'material' : 'paper';
+  const target = String(key == null ? '' : key);
+  try {
+    if (typeof URLSearchParams === 'function') {
+      return '#/papers?' + new URLSearchParams({ kind: k, target: target }).toString();
+    }
+  } catch (e) { /* 退回手写编码 */ }
+  return '#/papers?kind=' + encodeURIComponent(k) + '&target=' + encodeURIComponent(target);
+}
+
+// 非法百分号编码不能让脚本崩溃：URLSearchParams 容错解析 + try/catch 兜底
+function parsePapersRoute(hash) {
+  const q = hash.indexOf('?');
+  const pathPart = q === -1 ? hash : hash.slice(0, q);
+  if (pathPart !== PAPERS_ROUTE) return null;
+  const out = { kind: '', target: '' };
+  if (q === -1) return out;
+  try {
+    const params = new URLSearchParams(hash.slice(q + 1));
+    const kind = params.get('kind') || '';
+    out.kind = (kind === 'paper' || kind === 'material') ? kind : '';
+    out.target = params.get('target') || '';
+  } catch (e) {
+    out.kind = '';
+    out.target = '';
+  }
+  if (out.target.length > TARGET_MAX_LEN) out.target = '';
+  return out;
+}
+
+function findPaperByTarget(target) {
+  if (!target || typeof PAPERS === 'undefined') return null;
+  for (let i = 0; i < PAPERS.length; i++) {
+    if (paperTargetKey(PAPERS[i]) === target) return PAPERS[i];
+  }
+  return null;
+}
+
+function findMaterialByTarget(target) {
+  if (!target || typeof LEARNING_MATERIALS === 'undefined') return null;
+  for (let i = 0; i < LEARNING_MATERIALS.length; i++) {
+    const m = LEARNING_MATERIALS[i];
+    if (m.id && String(m.id) === target) return m;
+  }
+  if (target.indexOf(MATERIAL_LEGACY_PREFIX) !== 0) return null;
+  let parts;
+  try {
+    parts = JSON.parse(target.slice(MATERIAL_LEGACY_PREFIX.length));
+  } catch (e) {
+    return null;
+  }
+  if (!Array.isArray(parts) || parts.length !== 3) return null;
+  for (let i = 0; i < LEARNING_MATERIALS.length; i++) {
+    const m = LEARNING_MATERIALS[i];
+    if ((m.name || '') === parts[0] && (m.category || '') === parts[1] &&
+        (m.subcategory || '') === parts[2]) return m;
+  }
+  return null;
+}
+
+// 只给了 target 时：先按论文 ID 匹配，再按资料 ID 匹配（两个 ID 空间互不重叠）
+function resolvePapersTarget(deep) {
+  const target = deep ? deep.target : '';
+  if (!target) return null;
+  if (deep.kind === 'material') {
+    const m = findMaterialByTarget(target);
+    return m ? { kind: 'material', item: m } : null;
+  }
+  if (deep.kind === 'paper') {
+    const p = findPaperByTarget(target);
+    return p ? { kind: 'paper', item: p } : null;
+  }
+  const p = findPaperByTarget(target);
+  if (p) return { kind: 'paper', item: p };
+  const m = findMaterialByTarget(target);
+  return m ? { kind: 'material', item: m } : null;
+}
+
+function deeplinkMissingHtml(kind) {
+  const what = kind === 'material' ? '学习资料' : '论文';
+  return '<div class="deeplink-notice" role="status">' +
+    '🔗 找不到这条' + what + '：链接可能来自已删除或已重命名的条目。下面为你显示完整列表。' +
+    '</div>';
+}
+
+// 高亮 + 滚动进视口 + 键盘焦点；返回是否真的定位到节点
+function locatePapersTarget(app, kind, item, token) {
+  if (!app || !app.isConnected || token !== _routeToken) return false;
+  const isMaterial = kind === 'material';
+  const attr = isMaterial ? 'data-material-key' : 'data-paper-key';
+  const key = isMaterial ? materialTargetKey(item) : paperTargetKey(item);
+  if (!key) return false;
+  const nodes = app.querySelectorAll(isMaterial ? '.file-item' : '.paper-card');
+  let node = null;
+  for (let i = 0; i < nodes.length; i++) {
+    if (nodes[i].getAttribute(attr) === key) { node = nodes[i]; break; }
+  }
+  if (!node) return false;
+  node.classList.add('deeplink-target');
+  node.setAttribute('aria-current', 'true');
+  node.setAttribute('tabindex', '-1');
+  if (!isMaterial) node.classList.add('expanded');   // 论文自动展开摘要
+  if (typeof node.scrollIntoView === 'function') {
+    // 深链要"落点即到位"：优先 instant，避免 CSS scroll-behavior:smooth 的动画
+    // 让目标和视口最多差几百毫秒（截图/可访问性检查都会看到"没进视口"）。
+    try {
+      node.scrollIntoView({ block: 'center', behavior: 'instant' });
+    } catch (e) {
+      node.scrollIntoView({ block: 'center' });
+    }
+  }
+  try {
+    node.focus({ preventScroll: true });
+  } catch (e) {
+    try { node.focus(); } catch (e2) { /* 极老浏览器忽略 */ }
+  }
+  return true;
+}
+
+// ============================================
 // Papers & Learning Materials Renderers
 // ============================================
-
 function getPaperCategoryIcon(cat) {
   const icons = {
     '具身智能': '🧠',
@@ -1687,7 +1843,7 @@ function renderPapersTab() {
         const date = paper.date ? `<span class="meta-item">📅 ${escapeHtml(paper.date)}</span>` : '';
 
         html += `
-          <div class="paper-card" onclick="this.classList.toggle('expanded')">
+          <div class="paper-card" data-paper-key="${escapeHtml(paperTargetKey(paper))}" onclick="this.classList.toggle('expanded')">
             <div class="paper-card-title">${escapeHtml(paper.title)}</div>
             <div class="paper-card-authors">${escapeHtml(paper.authors)}</div>
             <div class="paper-card-meta">
@@ -1751,7 +1907,7 @@ function renderMaterialsTab() {
       for (const m of materials) {
         const typeClass = getFileTypeClass(m.type);
         html += `
-          <div class="file-item">
+          <div class="file-item" data-material-key="${escapeHtml(materialTargetKey(m))}">
             <span class="file-type-badge ${typeClass}">${escapeHtml(m.type)}</span>
             <span class="file-name">${escapeHtml(m.name)}</span>
             ${m.subcategory ? `<span class="file-path">${escapeHtml(m.subcategory)}</span>` : ''}
@@ -2303,12 +2459,24 @@ async function router() {
   const hash = location.hash.slice(1) || '/';
   const app = document.getElementById('app');
   const searchBar = document.getElementById('searchBar');
+  // 深链命中时要"落点即到位"，绝不能再用 scrollTo(0,0)：
+  // CSS 的 scroll-behavior:smooth 会让回顶动画在随后的 scrollIntoView 之后
+  // 继续跑到 0，把目标又甩出视口（B7B2 已复现）。
+  let hasDeepLinkTarget = false;
 
   // 离开编辑器：把待保存内容立即落盘（只 clearTimeout 会丢内容）
   if (_currentRoute === '/editor' && hash !== '/editor' && !_draftSuppressed) {
     flushDraft(true);
   }
   _currentRoute = hash;
+
+  // 搜索状态契约（Batch 7B-2，见 BATCH7B2_REPORT.md）：
+  //   1) 浏览器前进/后退 → 该历史条目记过关键词就恢复（后退能拿回原搜索上下文）；
+  //   2) 主动导航（点首页/导航、改地址栏）→ 新条目没有记录，关键词清空，避免旧结果残留；
+  //   3) 冻结 S01 的"回首页必须清空查询/结果"由第 2 条满足（它是一次新的导航）。
+  const savedSearch = readEntrySearch(hash);
+  if (savedSearch != null) searchQuery = savedSearch;
+  else if (hash === '/') searchQuery = '';
 
   // 上一个页面遗留的目录/进度条
   removeReadingTools();
@@ -2366,6 +2534,8 @@ async function router() {
   try {
     if (hash === '/' || hash === '') {
       app.innerHTML = renderHome();
+      // 后退恢复的搜索结果可能还缺跨区数据（课程/论文/正文语料）：补齐后再重绘一次
+      if (searchQuery.trim()) applyGlobalSearch(searchQuery);
     } else if (hash.startsWith('/post/')) {
       const id = hash.slice('/post/'.length);
       const post = getAllPosts().find(p => p.id === id);
@@ -2396,7 +2566,7 @@ async function router() {
         await Promise.all([loadData('courses'), loadData('notes')]);
         if (token !== _routeToken) return;
         if (!dataReady('courses') || !dataReady('notes')) {
-          app.innerHTML = renderLoadError('课程笔记');
+          app.innerHTML = renderLoadError('课程笔记', 'courses');
           return;
         }
       }
@@ -2412,7 +2582,7 @@ async function router() {
         await loadData('courses');
         if (token !== _routeToken) return;
         if (!dataReady('courses')) {
-          app.innerHTML = renderLoadError('课程资料');
+          app.innerHTML = renderLoadError('课程资料', 'courses');
           return;
         }
       }
@@ -2431,17 +2601,40 @@ async function router() {
           updateMetaForRoute(hash);
         });
       }
-    } else if (hash === '/papers') {
+    } else if (hash === PAPERS_ROUTE || hash.indexOf(PAPERS_ROUTE + '?') === 0) {
+      // /papers 与深链共用同一条渲染路径：深链只是多了"定位目标"这一步
+      const deep = parsePapersRoute(hash);
+      const wantTarget = deep && deep.target ? deep.target : '';
+      let resolved = null;
       if (!dataReady('papers')) {
         app.innerHTML = renderLoading('论文与学习资料');
         await loadData('papers');
         if (token !== _routeToken) return;
         if (!dataReady('papers')) {
-          app.innerHTML = renderLoadError('论文与学习资料');
+          app.innerHTML = renderLoadError('论文与学习资料', 'papers');
           return;
         }
       }
+      if (wantTarget) {
+        resolved = resolvePapersTarget(deep);
+        // 深链进入时清掉页内筛选，否则目标可能被过滤器藏起来（P02 场景）
+        paperTab = (resolved ? resolved.kind : (deep.kind || 'paper')) === 'material' ? 'materials' : 'papers';
+        paperSearchQuery = '';
+        activePaperCategory = null;
+      }
       app.innerHTML = renderPapers();
+      if (wantTarget && !resolved) {
+        app.insertAdjacentHTML('afterbegin', deeplinkMissingHtml(deep.kind));
+      }
+      if (resolved) {
+        hasDeepLinkTarget = true;
+        // 先同步落位（首帧就在目标处），首帧之后再校正一次：
+        // 字体/图片在首帧后才撑开布局，晚一步的校正能避免目标被挤出去。
+        locatePapersTarget(app, resolved.kind, resolved.item, token);
+        scheduleAfterPaint(function () {
+          locatePapersTarget(app, resolved.kind, resolved.item, token);
+        }, token, app);
+      }
       bindLiveSearch('paperSearchInput', (val) => {
         paperSearchQuery = val;
         app.innerHTML = renderPapers();
@@ -2458,7 +2651,7 @@ async function router() {
         await loadData('codefiles');
         if (token !== _routeToken) return;
         if (!dataReady('codefiles')) {
-          app.innerHTML = renderLoadError('代码与文件库');
+          app.innerHTML = renderLoadError('代码与文件库', 'codefiles');
           return;
         }
       }
@@ -2474,7 +2667,7 @@ async function router() {
         await loadData('codefiles');
         if (token !== _routeToken) return;
         if (!dataReady('codefiles')) {
-          app.innerHTML = renderLoadError('代码与文件库');
+          app.innerHTML = renderLoadError('代码与文件库', 'codefiles');
           return;
         }
       }
@@ -2507,6 +2700,8 @@ async function router() {
   // 标题/描述同步更新（便宜）；代码工具条/目录/高亮都属于"非首屏必需"，
   // 延后到首帧之后执行：先让第一段文字画出来，再做这些同步 DOM 重建。
   updateMetaForRoute(hash);
+  // 记录本条历史条目对应的关键词：后退回来时据此恢复搜索上下文
+  rememberEntryState(hash);
   perfMark('art:html-end');
   scheduleAfterPaint(function () {
     perfMark('art:post-start');
@@ -2516,8 +2711,8 @@ async function router() {
     perfMark('art:post-end');
   }, token, app);
 
-  // Scroll to top on navigation
-  window.scrollTo(0, 0);
+  // 普通导航回顶；深链命中时滚动位置由 locatePapersTarget 决定，不能再回顶
+  if (!hasDeepLinkTarget) window.scrollTo(0, 0);
 }
 
 // ============================================
@@ -2578,26 +2773,53 @@ function isHomeRoute() {
   return h === '' || h === '#' || h === '#/';
 }
 
+// 当前 hash 去掉 '#' 后的路径（和 router 里的 hash 完全同构）
+function routeHash() {
+  return location.hash.slice(1) || '/';
+}
+
+// 读取本条历史条目记录的关键词；没有记录返回 null（= 新导航，不是后退）
+// 用 history.state 而不是 popstate 事件：不依赖 popstate/hashchange 的触发顺序，
+// jsdom 等环境也不会因为 replaceState 抛错而中断路由。
+function readEntrySearch(hash) {
+  try {
+    const st = history.state;
+    if (st && typeof st === 'object' && st.blogHash === hash && typeof st.search === 'string') {
+      return st.search;
+    }
+  } catch (e) { /* 隐私模式 / 老浏览器：当作新导航 */ }
+  return null;
+}
+
+function rememberEntryState(hash) {
+  try {
+    history.replaceState({ blogHash: hash, search: searchQuery }, '');
+  } catch (e) { /* 仅影响后退恢复体验，不影响当前页面 */ }
+}
+
 function applyGlobalSearch(val) {
   searchQuery = val;
   if (!isHomeRoute()) return;
   document.getElementById('app').innerHTML = renderHome();
+  rememberEntryState(routeHash());
 
   const target = val.trim();
   if (!target) return;
   const needData = !dataReady('courses') || !dataReady('papers') || !dataReady('notes');
   const needBodies = !_searchDocsReady;
   if (!needData && !needBodies) return;
+  const token = _routeToken;   // 异步回调回来时路由若已切换，直接丢弃
 
   // 正文语料加载失败时降级为"仅标题/摘要/标签命中"，不阻断搜索
   Promise.all([
     loadData('courses'), loadData('papers'), loadData('notes'),
     ensureSearchDocs().catch(function () { return null; })
   ]).then(function () {
+    if (token !== _routeToken) return;          // 路由已切换过：旧回调一律丢弃
     if (!isHomeRoute()) return;                 // 已经离开首页：不能覆盖当前路由
     if (searchQuery.trim() !== target) return;  // 输入已变化：丢弃过时的异步结果
     const box = document.getElementById('app');
-    if (!box) return;
+    if (!box || !box.isConnected) return;
     box.innerHTML = renderHome();
     // 重绘会换掉输入框，必须重新绑定，否则后续输入不再生效
     bindLiveSearch('searchInput', applyGlobalSearch, 180);
@@ -2628,6 +2850,32 @@ document.addEventListener('click', function (e) {
   const id = btn.getAttribute('data-retry-post');
   delete _postBodyPromises[id];
   router();
+});
+
+// 按需数据加载失败后的"原地重试"：清掉失败缓存后重跑当前路由，
+// 深链会因此重新走到"加载 → 定位"的完整流程（不必整页刷新）。
+document.addEventListener('click', function (e) {
+  const btn = e.target && e.target.closest ? e.target.closest('[data-retry-data]') : null;
+  if (!btn) return;
+  e.preventDefault();
+  const key = btn.getAttribute('data-retry-data');
+  if (key) delete _dataPromises[key];
+  router();
+});
+
+// 卡片 / 搜索结果的原生跳转统一走 data-href 事件委托：
+// 不把 URL 拼进内联 onclick，目标键里的引号、&、中文都不会变成代码。
+document.addEventListener('click', function (e) {
+  const el = e.target && e.target.closest ? e.target.closest('[data-href]') : null;
+  if (!el) return;
+  const tag = el.tagName;
+  // 带 href 的 <a> 用浏览器原生跳转（可复制、可新窗口打开）
+  if ((tag === 'A' && el.hasAttribute('href')) || tag === 'BUTTON' || tag === 'INPUT' || tag === 'TEXTAREA') return;
+  const href = el.getAttribute('data-href');
+  if (!href) return;
+  e.preventDefault();
+  if (location.hash === href) return;
+  location.hash = href;
 });
 
 // Mobile menu toggle

@@ -1111,6 +1111,57 @@ main {
   max-height: 300px;
 }
 
+/* ============================================
+   深链目标（Batch 7B-2）
+   ============================================
+   从搜索结果点进 #/papers?...&target=... 后，目标必须"一眼可见"：
+   边框 + outline + 背景三重标记（不只依赖颜色，也便于色弱用户）。
+   scroll-margin 让顶部固定导航不遮挡目标。 */
+.paper-card.deeplink-target {
+  /* .paper-card 本来就有 1px 边框：只改颜色，不产生布局位移 */
+  border-color: var(--color-primary);
+}
+
+.paper-card.deeplink-target,
+.file-item.deeplink-target {
+  /* .file-item 没有边框：用 inset 阴影代替，避免高亮瞬间整行跳动 */
+  box-shadow: inset 0 0 0 1px var(--color-primary);
+  outline: 3px solid var(--color-primary);
+  outline-offset: 2px;
+  background: rgba(37, 99, 235, 0.08);
+  scroll-margin: calc(var(--header-height) + 24px);
+}
+
+.paper-card.deeplink-target:focus,
+.file-item.deeplink-target:focus {
+  outline: 3px solid var(--color-primary-dark);
+}
+
+/* 目标缺失时的提示条（role=status）：说明链接失效，但不假装选中任何条目 */
+.deeplink-notice {
+  margin: 0 0 16px;
+  padding: 12px 16px;
+  border: 1px solid #f59e0b;
+  border-radius: var(--radius-sm);
+  background: #fffbeb;
+  color: #92400e;
+  font-size: 0.9rem;
+  line-height: 1.6;
+}
+
+[data-theme="dark"] .paper-card.deeplink-target,
+[data-theme="dark"] .file-item.deeplink-target {
+  background: rgba(96, 165, 250, 0.16);
+  border-color: #60a5fa;
+  outline-color: #60a5fa;
+}
+
+[data-theme="dark"] .deeplink-notice {
+  background: #422006;
+  border-color: #b45309;
+  color: #fcd34d;
+}
+
 .learn-section {
   margin-top: 40px;
 }
