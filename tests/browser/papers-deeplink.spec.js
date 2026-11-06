@@ -696,7 +696,8 @@ async function main() {
       // 页面 DOM 不含私人路径（排除 https:// 这类 scheme）
       const leak = await page.evaluate(() => {
         const html = document.documentElement.innerHTML;
-        const re = new RegExp('(?<![A-Za-z0-9])[A-Za-z]:[\\\\/]|/Users/|zotero\\.sqlite|杂项');
+        // 只放通用模式：检测用的字面量也会进公开仓库，不能写死私人目录名
+        const re = new RegExp('(?<![A-Za-z0-9])[A-Za-z]:[\\\\/]|/Users/|/home/[A-Za-z]|zotero\\.sqlite');
         const m = html.match(re);
         return m ? m[0] : null;
       });

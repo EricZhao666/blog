@@ -65,8 +65,9 @@ PRIVATE_PATTERNS = [
     (r'/Users/', 'macOS 家目录'),
     (r'/home/[A-Za-z]', 'Linux 家目录'),
     (r'zotero\.sqlite|zotero[\\/]storage', 'Zotero 库路径'),
-    (r'杂项', '私人资料根目录'),
 ]
+# 注：这里刻意**不**写死任何私人目录名 —— 检测用的字面量本身也会进公开仓库。
+# "产物里不能出现私人目录结构" 改由 B11 用 Registry 里的一级目录名动态校验（仅本机）。
 
 
 def private_hits(text):
@@ -153,6 +154,13 @@ def main():
                   io.open(REGISTRY, encoding='utf-8').read())[:2])
         check('B10 与产物名称/分类逐条对应',
               all(any(m.get('id') == e['id'] for m in mats) for e in active))
+
+        # 产物里不能出现私人目录结构。用 Registry 的真实一级目录名动态比对，
+        # 这样公开代码里不需要写死任何私人名字。比对 "名字/" 而不是 "名字"，
+        # 避免把分类名（如"机械臂CAD模型"）里的子串误判成路径。
+        tops = sorted(set(e['source'].split('/')[0] for e in entries if e.get('source')))
+        leaked = [t for t in tops if (t + '/') in text]
+        check('B11 产物不含 Registry 的一级目录名（路径形态）', not leaked, leaked[:2] or tops[:2])
 
     total = passed[0] + failed[0]
     print('\n共 %d 项，PASS %d，FAIL %d，SKIP %d' % (total, passed[0], failed[0], skipped[0]))
