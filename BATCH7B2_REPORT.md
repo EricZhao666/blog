@@ -342,21 +342,23 @@ python scripts/run_tests.py
 提交记录（本轮）：
 
 ```
-<commit1> 功能：搜索深链持久 ID 与生产级定位（B7B2）
-<commit2> 文档：新增 BATCH7B2 交付报告与提交哈希
+84f55f0  功能：搜索深链持久 ID 与生产级定位（B7B2）      # 代码 + 两个新用例 + 本报告
+        文档：BATCH7B2 报告补记提交哈希与证据索引        # 仅本报告的后续补充
 ```
+
+未提交（按设计，等待第 3.2 节的首次迁移）：`.papers-id/registry.json` 与 `js/papers.js`。
 
 回退：
 
 ```bash
 # 只回退本次改动（保留分支）
-git revert --no-edit <commit1> <commit2>
+git revert --no-edit 84f55f0
 
 # 或整体丢弃分支
 git checkout main && git branch -D feature/batch7b-production-deeplink
 
 # 若已执行数据迁移，需要一并回退产物与 Registry（两者必须同进同退）
-git checkout <commit1>^ -- js/papers.js .papers-id/registry.json
+git checkout 84f55f0^ -- js/papers.js .papers-id/registry.json
 ```
 
 注意：**回退 `js/papers.js` 必须同时回退 `.papers-id/registry.json`**，否则产物里的 ID 与 Registry 不一致（生成器会因此中止，这是设计上的保护）。
