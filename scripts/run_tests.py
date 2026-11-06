@@ -61,6 +61,8 @@ TESTS = [
      'desc': 'B6C：文章数据生命周期（改/增/删/改 id/损坏）'},
     {'name': 'test20', 'file': 'tests/test20_publish_search.js', 'kind': 'jsdom',
      'desc': 'B6C：发布与搜索一致性（含按需加载与快速切换）'},
+    {'name': 'test21', 'file': 'tests/test21_papers_id_registry.py', 'kind': 'python',
+     'desc': 'B7B2：学习资料持久 ID Registry 生命周期（重排/删除/改名/迁移/损坏/冲突）'},
     {'name': 'feed-check', 'file': 'gen_feed.py', 'kind': 'python', 'args': ['--check'],
      'desc': 'B6C：RSS 产物与数据一致（--check）', 'pass_marker': 'OK:'},
     {'name': 'browser', 'file': 'tests/browser/sw.spec.js', 'kind': 'browser',
@@ -73,6 +75,8 @@ TESTS = [
      'desc': 'B7A：静态笔记移动端菜单 / 键盘 / 断点 / 深色 / 无溢出'},
     {'name': 'course-seo', 'file': 'tests/browser/course-seo.spec.js', 'kind': 'browser',
      'desc': 'B7A：课程 canonical / og:url / 异步竞态 / 静态 HTML SEO'},
+    {'name': 'papers-deeplink', 'file': 'tests/browser/papers-deeplink.spec.js', 'kind': 'browser',
+     'desc': 'B7B2：论文/学习资料深链（身份稳定/焦点/滚动/历史/降级/视口/慢网 SW）'},
 ]
 
 COUNT_RE = re.compile(r'共\s*(\d+)\s*项[，,]\s*PASS\s*(\d+)[，,]\s*FAIL\s*(\d+)')

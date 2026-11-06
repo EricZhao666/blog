@@ -27,7 +27,10 @@ function createServer(rootDir, prefix) {
     swBump: false,       // true 时给 sw.js 换一个 CACHE_VERSION，模拟发布新 SW
     faults: {},          // '/js/app.js': 500 | 'abort'
     delays: {},          // '/index.html': 1500
-    hits: {}             // 每个路径被请求次数（含 SW 发起的）
+    hits: {},            // 每个路径被请求次数（含 SW 发起的）
+    // 用内存内容替换磁盘文件（'/js/papers.js': 'const PAPERS=[...];'）：
+    // 深链用例需要一个可控的数据集，又不想改动仓库里的真实产物。
+    overrides: {}
   };
 
   const server = http.createServer((req, res) => {
@@ -50,6 +53,17 @@ function createServer(rootDir, prefix) {
     if (typeof fault === 'number') {
       res.writeHead(fault, { 'Content-Type': 'text/plain', 'Cache-Control': 'no-store' });
       return res.end('injected ' + fault);
+    }
+
+    // 内存覆盖：优先于磁盘文件，且总是 no-store（用例需要一个稳定可复现的数据集）
+    if (Object.prototype.hasOwnProperty.call(state.overrides, key)) {
+      const body = Buffer.from(String(state.overrides[key]), 'utf8');
+      res.writeHead(200, {
+        'Content-Type': MIME[path.extname(key)] || 'application/octet-stream',
+        'Cache-Control': 'no-store',
+        'Content-Length': body.length
+      });
+      return res.end(body);
     }
 
     // 合成资源：用于验证运行期缓存容量淘汰，无需真实文件
