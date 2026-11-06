@@ -1,7 +1,7 @@
 # Batch 7B-2：搜索深链持久化与生产级修复
 
 分支：`feature/batch7b-production-deeplink`（从 `origin/main` = `c6ebc12` 新建）
-范围：正式博客 `E:\work_funnycode\blog`。Benchmark `E:\work_funnycode\test_models\b7b_benchmark` **只读**，五份参赛结果、`admin/evaluations/**`、`frozen_v3.json`、`acceptance_v3/**` 全程未写入。
+范围：正式博客 `<repo>`。Benchmark `<benchmark 目录>` **只读**，五份参赛结果、`admin/evaluations/**`、`frozen_v3.json`、`acceptance_v3/**` 全程未写入。
 
 结论：**`B7B2_LOCAL_READY`**（身份迁移无歧义，理由见第 3 节）。
 
@@ -125,11 +125,13 @@
 ### 3.2 迁移步骤（一次性，由数据所有者在本机执行）
 
 ```bash
-cd E:\work_funnycode\blog
+cd <repo>
 python scripts/scan_papers.py            # 读取本机 Zotero 库 + 学习资料目录
-git add .papers-id/registry.json js/papers.js
+git add js/papers.js                     # 只提交公开产物
 git commit -m "数据：学习资料分配持久 ID（B7B2 首次迁移）"
 ```
+
+> 本节原有 `git add .papers-id/registry.json` 一句，已由 Batch 7B-2.1 修正：Registry 是**私有身份映射**（`id → 本机相对路径`），已在 `.gitignore` 中排除，不随产物提交。备份与恢复方式见 `BATCH7B21_MIGRATION_REPORT.md` 第 2.2 节。
 
 - 首次运行按**相对路径的字典序**分配 `lm-000001…`，顺序确定、可复现（同一份资料树在任何机器上得到同一套 ID）。
 - 生成器会打印：新分配 / 恢复 / 退役 / 自动迁移 / 显式迁移，并可用 `--report out.json` 留存。
@@ -170,8 +172,8 @@ git commit -m "数据：学习资料分配持久 ID（B7B2 首次迁移）"
 同一批用例，同一浏览器（Chrome `157.0.8103.38`），修复前后各跑一次。未修复版本用 `git worktree` 检出 `c6ebc12` 的干净副本，通过 `B7B2_SITE_ROOT` 指向副本执行，**不改动工作区、不改动用例**：
 
 ```bash
-git worktree add --detach E:\work_funnycode\blog_b7b2_baseline c6ebc12
-set B7B2_SITE_ROOT=E:\work_funnycode\blog_b7b2_baseline
+git worktree add --detach <baseline 副本> c6ebc12
+set B7B2_SITE_ROOT=<baseline 副本>
 set B7B2_EVIDENCE=papers-deeplink-baseline.json
 node tests/browser/papers-deeplink.spec.js     # 修复前
 node tests/browser/papers-deeplink.spec.js     # 修复后（不设环境变量）
@@ -366,7 +368,7 @@ git checkout 84f55f0^ -- js/papers.js .papers-id/registry.json
 清理本轮创建的临时检出：
 
 ```bash
-git worktree remove E:\work_funnycode\blog_b7b2_baseline --force
+git worktree remove <baseline 副本> --force
 ```
 
 ---

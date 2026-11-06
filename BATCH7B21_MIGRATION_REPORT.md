@@ -1,6 +1,6 @@
 # Batch 7B-2.1：持久 ID 真实迁移与发布前验收
 
-项目：`E:\work_funnycode\blog`
+项目：`<repo>`
 分支：`feature/batch7b-production-deeplink`
 基线：`1ab00bc`（B7B2 实现 + 25/25 回归）
 本轮：**只做迁移与验收**，不新增功能，不改 Benchmark 结果。
@@ -127,7 +127,7 @@ ID 区间检查（按路径字典序分配，因此**按分类看不一定连续
 
 ## 4. 数据完整性
 
-预演（隔离目录 `E:\work_funnycode\b7b21_migration_<ts>\preview`，未触碰真实 `js/papers.js`）：
+预演（隔离目录 `<隔离目录>\preview`，未触碰真实 `js/papers.js`）：
 
 ```
 python scripts/scan_papers.py --out <preview>\papers.js --registry <preview>\registry.json --report <preview>\report.json
@@ -219,7 +219,7 @@ python scripts/run_tests.py
 | `/Users/` | 1 | **唯一命中是新用例 G7 里的检测正则字面量本身**，不是路径 |
 | `C:\Users` | 0 | — |
 | `zotero.sqlite` / `zotero/storage` | 0 | — |
-| 私人资料根目录名 | 1 | 同上，出现在 G7 的检测正则里 |
+| 私人资料根目录名 | 1 | 同上，出现在 G7 的检测正则里（B7B2.2 起已改为通用模式 + 动态校验，公开代码不再写死任何私人目录名） |
 | `ghp_` / `github_pat_` / `AKIA` / `BEGIN RSA` / `PRIVATE KEY` / `client_secret` | 0 | 无凭证 |
 
 `.papers-id/` 已被 `.gitignore` 排除，`git status` 中不出现；`js/papers.js` 只多出 74 行 `"id"`。
@@ -240,7 +240,7 @@ python scripts/run_tests.py
    被忽略：.papers-id/（私有身份映射，按设计不入库）
 ```
 
-迁移工作区（隔离，位于仓库外）：`E:\work_funnycode\b7b21_migration_<ts>\`，含
+迁移工作区（隔离，位于仓库外）：`<隔离目录>\`，含
 `backup/papers.js.before`、`preview/`（预演产物 + 预演 Registry + 两次 report）、`before.json`、`mapping.preview.json`、`compare.py`、`snapshot.py`、`mapping.py`。**该目录是私有审计副本，不入库、不上传。**
 
 提交：`4ad19b7`（数据：74 条学习资料分配持久 ID 并接入真实一致性验收）。**不 push、不合并、不部署。**
@@ -273,7 +273,7 @@ git checkout <本轮提交>^ -- js/papers.js
 
 ```bash
 git checkout <本轮提交>^ -- js/papers.js
-move .papers-id E:\backup\papers-id-<日期>      # 或从上文 3 份备份之一恢复旧版本
+move .papers-id <备份目录>/papers-id-<日期>      # 或从上文 3 份备份之一恢复旧版本
 ```
 
 ### 9.3 彻底撤销本轮提交
