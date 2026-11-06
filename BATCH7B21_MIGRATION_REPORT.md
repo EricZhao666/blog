@@ -240,7 +240,18 @@ python scripts/run_tests.py
 迁移工作区（隔离，位于仓库外）：`E:\work_funnycode\b7b21_migration_<ts>\`，含
 `backup/papers.js.before`、`preview/`（预演产物 + 预演 Registry + 两次 report）、`before.json`、`mapping.preview.json`、`compare.py`、`snapshot.py`、`mapping.py`。**该目录是私有审计副本，不入库、不上传。**
 
-提交：本轮代码与数据在本地提交，**不 push、不合并、不部署**。
+提交：`4ad19b7`（数据：74 条学习资料分配持久 ID 并接入真实一致性验收）。**不 push、不合并、不部署。**
+
+分支提交链：
+
+```
+4ad19b7  数据：74 条学习资料分配持久 ID 并接入真实一致性验收（B7B2.1）
+1ab00bc  文档：BATCH7B2 报告补记提交哈希与证据索引
+84f55f0  功能：搜索深链持久 ID 与生产级定位（B7B2）
+c6ebc12  基线（= origin/main）
+```
+
+`.papers-id/registry.json` 确认**未被提交**（`git ls-files` 中不存在），仓库里只有它被忽略的记录。
 
 ---
 
