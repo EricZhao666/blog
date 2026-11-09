@@ -22,6 +22,7 @@ desktop.ini
 # 测试报告（本地生成，不入库）
 tests/reports/
 tests/browser/artifacts/
+tests/batch7c1/evidence/
 
 # 性能基线的临时产物与 Lighthouse 原始报告（体积大；精简汇总见 tests/perf/reports/lighthouse-summary.json）
 tests/perf/tmp/
