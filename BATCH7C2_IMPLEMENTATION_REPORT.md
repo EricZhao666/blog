@@ -193,7 +193,7 @@ B7C-1 的取证脚本 `tests/batch7c1/publish_scenarios.js` **原样保留**（�
 ## 11. Git Commit
 
 ```
-<commit>  构建：统一内容构建器与发布完整性保护（B7C2）
+336982d   构建：统一内容构建器与发布完整性保护（B7C2）
 8256680   审计：发布数据链契约与 16 个场景取证（B7C1）   ← 本轮基线
 9e996a3   main（Batch 7B squash 合并）
 ```
@@ -203,7 +203,7 @@ B7C-1 的取证脚本 `tests/batch7c1/publish_scenarios.js` **原样保留**（�
 回退：
 
 ```bash
-git revert --no-edit <commit>        # 只回退构建器与测试，运行时行为不变
+git revert --no-edit 336982d        # 只回退构建器与测试，运行时行为不变
 ```
 
 因为 `js/data.js`、`data/posts/*`、`feed.xml` 一个字节都没改，回退不影响线上任何页面与订阅。
