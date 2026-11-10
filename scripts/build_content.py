@@ -93,197 +93,71 @@ def _read_text(path):
         raise BuildError('不是合法 UTF-8：%s（%s）' % (path, e))
 
 
-def load_user_posts(path):
-    """读取旧编辑器的 js/user-posts.js（可为空数组；文件不存在等价于空）。"""
-    if not os.path.isfile(path):
-        return []
-    text = _read_text(path)
-    try:
-        start = g.find_assignment(text, 'USER_POSTS')
-    except Exception as e:                     # gen_feed 的扫描器抛的是 FeedError
-        raise BuildError('%s 中找不到 USER_POSTS：%s' % (USER_POSTS_LABEL, e))
-    if start >= len(text) or text[start] != '[':
-        raise BuildError('%s 中的 USER_POSTS 不是数组字面量' % USER_POSTS_LABEL)
-    end = g._skip_balanced(text, start)
-    try:
-        raw = json.loads(text[start:end])
-    except ValueError as e:
-        raise BuildError('%s 不是合法 JSON：%s' % (USER_POSTS_LABEL, e))
-    if not isinstance(raw, list):
-        raise BuildError('%s 中的 USER_POSTS 不是数组' % USER_POSTS_LABEL)
-    return [_legacy_post(item, i) for i, item in enumerate(raw)]
 
-
-def _legacy_post(raw, index):
-    """校验旧编辑器文章（含内联 content）。任何缺字段都直接失败，不静默跳过。"""
-    where = '%s 第 %d 条' % (USER_POSTS_LABEL, index + 1)
-    if not isinstance(raw, dict):
-        raise BuildError('%s 不是对象' % where)
-    pid = raw.get('id')
-    if not isinstance(pid, str) or not sp.SAFE_ID.match(pid or ''):
-        raise BuildError('%s 的 id 非法（只允许 [a-z0-9-]）：%r' % (where, pid))
-    post = _validate_fields(raw, where, pid)
-    content = raw.get('content')
-    if not isinstance(content, str) or not content.strip():
-        raise BuildError('%s（%s）缺少正文 content' % (where, pid))
-    post['content'] = content
-    post['origin'] = USER_POSTS_LABEL
-    post['readingMinutes'] = sp.reading_minutes(content)
-    return post
-
-
-def _validate_fields(raw, where, pid):
-    """title / date / tags / excerpt 的统一校验（内置与旧编辑器文章共用）。"""
-    title = raw.get('title')
-    if not isinstance(title, str) or not title.strip():
-        raise BuildError('%s（%s）的 title 不能为空' % (where, pid))
-    date = raw.get('date')
-    if not isinstance(date, str) or not sp.DATE_RE.match(date.strip()):
-        raise BuildError('%s（%s）的 date 必须是 YYYY-MM-DD：%r' % (where, pid, date))
-    date = date.strip()
+# --------------------------------------------------------------------- 装配
+def _ensure_real_date(pid, date, where):
     try:
         datetime.datetime.strptime(date, '%Y-%m-%d')
     except ValueError:
         raise BuildError('%s（%s）的 date 不是真实日期：%r' % (where, pid, date))
-    tags = raw.get('tags')
-    if not isinstance(tags, list) or not all(isinstance(t, str) and t for t in tags):
-        raise BuildError('%s（%s）的 tags 必须是非空字符串数组' % (where, pid))
-    excerpt = raw.get('excerpt')
-    if not isinstance(excerpt, str):
-        raise BuildError('%s（%s）的 excerpt 必须是字符串' % (where, pid))
-    post = {
-        'id': pid,
-        'title': title,
-        'date': date,
-        'tags': list(tags),
-        'excerpt': excerpt,
-    }
-    for key in sp.STANDARD_KEYS:
-        if key in ('id', 'title', 'date', 'tags', 'excerpt'):
-            continue
-        if key in raw:
-            post[key] = raw[key]
-    for key, val in raw.items():
-        if key in sp.STANDARD_KEYS or key in ('content', 'readingMinutes', 'origin', 'source'):
-            continue
-        post[key] = val
-    return post
 
 
-# --------------------------------------------------------------------- 装配
 def collect(p):
-    """读取全部权威源，返回生效文章集合（内置优先，随后旧编辑器文章）。"""
+    """读取全部权威源。
+
+    解析/校验复用 split_posts.collect（内置 + 兼容期旧编辑器文章），
+    这里只补两条它不管的规则：真实日期、跨源 id 唯一性（它在 sp 里已保证，
+    这里再给出统一的错误措辞）。
+    """
     try:
-        data_text, raw_posts, tag_order = sp.parse_js_file(p['data_js'])
+        metas, bodies, tag_order, source_info, orphans, legacy = sp.collect(p, 'check')
     except sp.SplitError as e:
         raise BuildError(str(e))
     except Exception as e:
-        raise BuildError('解析 js/data.js 失败：%s' % e)
-    if not isinstance(tag_order, list):
-        raise BuildError('TAG_ORDER 不是数组')
+        raise BuildError('解析权威源失败：%s' % e)
 
-    built_in, bodies = [], {}
-    for raw in raw_posts:
-        pid = raw.get('id')
-        where = 'js/data.js'
-        if not isinstance(pid, str) or not sp.SAFE_ID.match(pid or ''):
-            raise BuildError('%s 中存在非法 id（只允许 [a-z0-9-]）：%r' % (where, pid))
-        if 'content' in raw:
-            raise BuildError('%s（%s）仍带内联 content：请把正文放到 data/posts/%s.md'
-                             % (where, pid, pid))
-        try:
-            body = sp.load_body(p, pid)          # 缺正文 / 非法 UTF-8 都在这里报错
-        except sp.SplitError as e:
-            raise BuildError(str(e))
-        post = _validate_fields(raw, where, pid)
-        post['content'] = body
-        post['origin'] = 'data/posts/%s.md' % pid
-        post['readingMinutes'] = sp.reading_minutes(body)
-        built_in.append(post)
-        bodies[pid] = body
+    for meta in metas:
+        _ensure_real_date(meta['id'], str(meta.get('date')), 'js/data.js')
+    for post in legacy:
+        _ensure_real_date(post['id'], post['date'], USER_POSTS_LABEL)
 
-    legacy = load_user_posts(p['user_posts'])
+    origin = {m['id']: 'data/posts/%s.md' % m['id'] for m in metas}
+    for post in legacy:
+        origin[post['id']] = USER_POSTS_LABEL
 
-    # 全局唯一：内置 ↔ 旧编辑器、旧编辑器内部，任何重复都直接失败（P13b）
-    seen = {}
-    for post in built_in + legacy:
-        pid = post['id']
-        if pid in seen:
-            raise BuildError(
-                '文章 id 重复：%r 同时出现在 %s 与 %s（不会静默丢弃任何一边，'
-                '请先合并或改 id）' % (pid, seen[pid], post['origin']))
-        seen[pid] = post['origin']
+    built_in = [{
+        'id': m['id'],
+        'title': m['title'],
+        'date': m['date'],
+        'tags': list(m['tags']),
+        'excerpt': m['excerpt'],
+        'content': bodies[m['id']],
+        'origin': origin[m['id']],
+        'readingMinutes': m['readingMinutes'],
+    } for m in metas]
 
     return {
+        'metas': metas,
         'built_in': built_in,
         'legacy': legacy,
         'all': built_in + legacy,
         'bodies': bodies,
         'tag_order': tag_order,
-        'data_text': data_text,
+        'source_info': source_info,
+        'orphans': orphans,
+        'origin': origin,
     }
-
-
-def check_orphans(p, built_in_ids):
-    """正文文件必须在元数据里有引用；孤儿只报告、绝不自动删除。"""
-    if not os.path.isdir(p['posts_dir']):
-        return []
-    return sorted(n[:-3] for n in os.listdir(p['posts_dir'])
-                  if n.endswith('.md') and n[:-3] not in built_in_ids)
 
 
 # --------------------------------------------------------------------- 生成
 def build_artifacts(p, state, source_info):
-    built_in = state['built_in']
-    legacy = state['legacy']
-    bodies = state['bodies']
+    """3 份产物交给 split_posts.build（与 split_posts.py 逐字节一致），feed 由这里补。"""
+    artifacts, manifest = sp.build(p, state['metas'], state['bodies'],
+                                   state['tag_order'], source_info, state['legacy'])
 
-    # 只把"元数据字段"交给 normalize_meta；content/origin/readingMinutes 不是元数据，
-    # 带进去会被当作未知字段原样写进 js/data.js。
-    metas = [sp.normalize_meta(
-        {k: v for k, v in post.items() if k not in ('content', 'origin', 'readingMinutes')},
-        post['content']) for post in built_in]
-    artifacts, manifest = sp.build(p, metas, bodies, state['tag_order'], source_info)
-
-    # 搜索语料：内置 + 旧编辑器文章，同一个 id 集合
-    search = {m['id']: bodies[m['id']] for m in metas}
-    for post in legacy:
-        search[post['id']] = post['content']
-    search_json = json.dumps(search, ensure_ascii=False, sort_keys=True,
-                             separators=(',', ':')).encode('utf-8')
-    artifacts['data/search-index.json'] = search_json
-
-    manifest = dict(manifest)
-    manifest['searchIndex'] = {
-        'path': 'data/search-index.json',
-        'sha256': sp.sha256_bytes(search_json),
-        'bytes': len(search_json),
-    }
-    if legacy:
-        manifest['posts'] = list(manifest['posts']) + [{
-            'id': post['id'],
-            'file': None,
-            'origin': post['origin'],
-            'contentSha256': sp.sha256_bytes(post['content'].encode('utf-8')),
-            'contentBytes': len(post['content'].encode('utf-8')),
-            'contentChars': len(post['content']),
-            'metaSha256': sp.sha256_bytes(sp.meta_canonical(
-                {k: post[k] for k in ('id', 'title', 'date', 'tags', 'excerpt', 'readingMinutes')}
-            ).encode('utf-8')),
-            'readingMinutes': post['readingMinutes'],
-        } for post in legacy]
-        # 兼容期标记：告诉下游"还有多少篇没迁到 data/posts/*.md"
-        manifest['legacyUserPosts'] = {
-            'path': USER_POSTS_LABEL,
-            'count': len(legacy),
-            'ids': sorted(post['id'] for post in legacy),
-        }
-    artifacts['data/posts/manifest.json'] = json.dumps(
-        manifest, ensure_ascii=False, sort_keys=True, indent=2).encode('utf-8') + b'\n'
-
-    # 供 sp.build 的 data.js 之外，把 md 正文从 artifacts 里剔除（我们不重写 md）
-    for post in built_in:
-        artifacts.pop('data/posts/%s.md' % post['id'], None)
+    # 我们不重写正文文件（正文是权威源，不是产物）
+    for meta in state['metas']:
+        artifacts.pop('data/posts/%s.md' % meta['id'], None)
 
     feed_posts = sorted(
         ({'id': post['id'], 'title': post['title'], 'date': post['date'],
@@ -445,7 +319,7 @@ def main(argv=None):
         print('[FAIL] ' + str(e), file=sys.stderr)
         return 1
 
-    orphans = check_orphans(p, set(post['id'] for post in state['built_in']))
+    orphans = state['orphans']
     if orphans and not args.allow_orphans:
         print('[FAIL] 存在没有元数据引用的正文文件（不会被自动删除）：' +
               '、'.join('data/posts/%s.md' % o for o in orphans), file=sys.stderr)
@@ -453,14 +327,7 @@ def main(argv=None):
 
     # source 块：沿用磁盘上的那份（与 split_posts 保持一致，避免"改过 data.js 但没 --sync"时
     # 产生与 split-check 不一致的判定）
-    source_info = {
-        'mode': 'build_content',
-        'path': 'js/data.js',
-        'sha256': sp.sha256_bytes(state['data_text'].encode('utf-8')),
-        'bytes': len(state['data_text'].encode('utf-8')),
-        'posts': len(state['built_in']),
-        'contentChars': sum(len(state['bodies'][m['id']]) for m in state['built_in']),
-    }
+    source_info = state['source_info']
     if os.path.exists(p['manifest']):
         try:
             disk = json.loads(_read_text(p['manifest']))

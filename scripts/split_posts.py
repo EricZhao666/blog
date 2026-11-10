@@ -80,6 +80,7 @@ def paths(root):
         'posts_dir': os.path.join(root, 'data', 'posts'),
         'manifest': os.path.join(root, 'data', 'posts', 'manifest.json'),
         'search_index': os.path.join(root, 'data', 'search-index.json'),
+        'user_posts': os.path.join(root, 'js', 'user-posts.js'),
     }
 
 
@@ -124,6 +125,64 @@ def load_body(p, pid):
         return raw.decode('utf-8')
     except UnicodeDecodeError as e:
         raise SplitError('正文不是合法 UTF-8: data/posts/%s.md（%s）' % (pid, e))
+
+
+def load_legacy(p):
+    """读取兼容期的 js/user-posts.js（正文内联）。文件不存在/空数组都返回 []。
+
+    这批文章只进搜索语料与完整性清单，不会被写进 js/data.js，也不会生成 md。
+    """
+    path = p.get('user_posts')
+    if not path or not os.path.isfile(path):
+        return []
+    text = read_text(path)
+    try:
+        start = g.find_assignment(text, 'USER_POSTS')
+    except Exception as e:
+        raise SplitError('js/user-posts.js 中找不到 USER_POSTS：%s' % e)
+    if start >= len(text) or text[start] != '[':
+        raise SplitError('js/user-posts.js 中的 USER_POSTS 不是数组字面量')
+    end = g._skip_balanced(text, start)
+    try:
+        raw = json.loads(text[start:end])
+    except ValueError as e:
+        raise SplitError('js/user-posts.js 不是合法 JSON：%s' % e)
+    if not isinstance(raw, list):
+        raise SplitError('js/user-posts.js 中的 USER_POSTS 不是数组')
+    return [normalize_legacy(item, i) for i, item in enumerate(raw)]
+
+
+def normalize_legacy(raw, index):
+    """旧编辑器文章的字段校验（id/title/date/tags/excerpt/content 全部必填）。"""
+    where = 'js/user-posts.js 第 %d 条' % (index + 1)
+    if not isinstance(raw, dict):
+        raise SplitError('%s 不是对象' % where)
+    pid = raw.get('id')
+    if not isinstance(pid, str) or not SAFE_ID.match(pid or ''):
+        raise SplitError('%s 的 id 非法（只允许 [a-z0-9-]）：%r' % (where, pid))
+    title = raw.get('title')
+    if not isinstance(title, str) or not title.strip():
+        raise SplitError('%s（%s）缺少标题' % (where, pid))
+    date = raw.get('date')
+    if not isinstance(date, str) or not DATE_RE.match(date.strip()):
+        raise SplitError('%s（%s）的 date 必须是 YYYY-MM-DD：%r' % (where, pid, date))
+    tags = raw.get('tags')
+    if not isinstance(tags, list) or not all(isinstance(t, str) and t for t in tags):
+        raise SplitError('%s（%s）的 tags 必须是非空字符串数组' % (where, pid))
+    excerpt = raw.get('excerpt')
+    if not isinstance(excerpt, str):
+        raise SplitError('%s（%s）的 excerpt 必须是字符串' % (where, pid))
+    content = raw.get('content')
+    if not isinstance(content, str) or not content.strip():
+        raise SplitError('%s（%s）缺少正文 content' % (where, pid))
+    return {
+        'id': pid,
+        'title': title,
+        'date': date.strip(),
+        'tags': list(tags),
+        'excerpt': excerpt,
+        'content': content,
+    }
 
 
 def normalize_meta(post, content):
@@ -232,11 +291,19 @@ def render_data_js(metas, tag_order):
 
 
 # ---------------------------------------------------------------- 构建
-def build(p, metas, bodies, tag_order, source_info):
-    """返回 ({相对路径: bytes}, manifest)。所有校验失败都在写盘前抛出。"""
+def build(p, metas, bodies, tag_order, source_info, legacy=None):
+    """返回 ({相对路径: bytes}, manifest)。所有校验失败都在写盘前抛出。
+
+    ``legacy`` 是兼容期的旧编辑器文章（js/user-posts.js，正文内联）。
+    它们**只**进入搜索语料与完整性清单，不会写进 js/data.js，也不会生成 md
+    —— 迁移（换成 data/posts/<id>.md）必须显式做，构建器不替用户决定。
+    """
+    legacy = legacy or []
     data_js = render_data_js(metas, tag_order).encode('utf-8')
 
     search = {m['id']: bodies[m['id']] for m in metas}
+    for post in legacy:
+        search[post['id']] = post['content']
     search_json = json.dumps(search, ensure_ascii=False, sort_keys=True, separators=(',', ':')).encode('utf-8')
 
     manifest = {
@@ -256,6 +323,26 @@ def build(p, metas, bodies, tag_order, source_info):
             'readingMinutes': m['readingMinutes'],
         } for m in metas],
     }
+    if legacy:
+        manifest['posts'] = manifest['posts'] + [{
+            'id': post['id'],
+            'file': None,
+            'origin': 'js/user-posts.js',
+            'contentSha256': sha256_bytes(post['content'].encode('utf-8')),
+            'contentBytes': len(post['content'].encode('utf-8')),
+            'contentChars': len(post['content']),
+            'metaSha256': sha256_bytes(meta_canonical({
+                'id': post['id'], 'title': post['title'], 'date': post['date'],
+                'tags': post['tags'], 'excerpt': post['excerpt'],
+                'readingMinutes': reading_minutes(post['content']),
+            }).encode('utf-8')),
+            'readingMinutes': reading_minutes(post['content']),
+        } for post in legacy]
+        manifest['legacyUserPosts'] = {
+            'path': 'js/user-posts.js',
+            'count': len(legacy),
+            'ids': sorted(post['id'] for post in legacy),
+        }
     manifest_json = json.dumps(manifest, ensure_ascii=False, sort_keys=True, indent=2).encode('utf-8') + b'\n'
 
     artifacts = {'js/data.js': data_js, 'data/search-index.json': search_json, 'data/posts/manifest.json': manifest_json}
@@ -304,7 +391,10 @@ def atomic_write(root, artifacts, only=None):
 
 # ---------------------------------------------------------------- 输入装配
 def collect(p, mode):
-    """读取当前元数据 + 正文，返回 (metas, bodies, tag_order, source_info, orphans)。"""
+    """读取当前元数据 + 正文（+ 兼容期旧编辑器文章）。
+
+    返回 (metas, bodies, tag_order, source_info, orphans, legacy)。
+    """
     data_text, posts, tag_order = parse_js_file(p['data_js'])
     metas, bodies = [], {}
     seen = set()
@@ -327,6 +417,14 @@ def collect(p, mode):
     if os.path.isdir(p['posts_dir']):
         orphans = sorted(n[:-3] for n in os.listdir(p['posts_dir'])
                          if n.endswith('.md') and n[:-3] not in seen)
+    # 兼容期：旧编辑器文章（内联正文）也属于"有效文章集合"，必须参与全局唯一性检查
+    legacy = load_legacy(p)
+    for post in legacy:
+        if post['id'] in seen:
+            raise SplitError('重复文章 id: %s（同时出现在 data/posts/%s.md 与 js/user-posts.js）'
+                             % (post['id'], post['id']))
+        seen.add(post['id'])
+
     source_info = {
         'mode': mode,
         'path': 'js/data.js',
@@ -335,7 +433,7 @@ def collect(p, mode):
         'posts': len(metas),
         'contentChars': sum(len(bodies[m['id']]) for m in metas),
     }
-    return metas, bodies, tag_order, source_info, orphans
+    return metas, bodies, tag_order, source_info, orphans, legacy
 
 
 def describe_orphans(orphans):
@@ -351,7 +449,7 @@ def verify(p):
     manifest_disk = json.loads(read_text(p['manifest']))
 
     try:
-        metas, bodies, tag_order, source_info, orphans = collect(p, 'check')
+        metas, bodies, tag_order, source_info, orphans, legacy = collect(p, 'check')
     except SplitError as e:
         return manifest_disk, [str(e)]
 
@@ -362,7 +460,7 @@ def verify(p):
     # source 块记录的是"当初由哪次输入生成"（extract 时是含正文的旧文件），
     # 无法由当前输入还原，因此沿用磁盘上的那份再比较其余部分。
     source_info = manifest_disk.get('source', source_info)
-    expected, manifest_expected = build(p, metas, bodies, tag_order, source_info)
+    expected, manifest_expected = build(p, metas, bodies, tag_order, source_info, legacy)
 
     for rel in ['js/data.js', 'data/search-index.json', 'data/posts/manifest.json']:
         path = os.path.join(p['root'], rel.replace('/', os.sep))
@@ -381,17 +479,23 @@ def verify(p):
         for key in ['contentSha256', 'contentBytes', 'contentChars', 'metaSha256', 'readingMinutes', 'file']:
             if rec.get(key) != post.get(key):
                 problems.append('manifest.%s 与正文不一致: %s' % (key, post['id']))
-    if len(manifest_disk.get('posts', [])) != len(metas):
-        problems.append('manifest 文章数 %d 与元数据 %d 不一致' % (len(manifest_disk.get('posts', [])), len(metas)))
+    want_posts = len(metas) + len(legacy)
+    if len(manifest_disk.get('posts', [])) != want_posts:
+        problems.append('manifest 文章数 %d 与有效文章集合 %d 不一致（内置 %d + 兼容期 %d）'
+                        % (len(manifest_disk.get('posts', [])), want_posts, len(metas), len(legacy)))
 
-    # 搜索语料必须覆盖全部文章且与正文逐字一致（重建已保证，这里再给出显式证据）
+    # 搜索语料必须覆盖全部有效文章且与正文逐字一致（重建已保证，这里再给出显式证据）
     with open(p['search_index'], 'rb') as f:
         search = json.loads(f.read().decode('utf-8'))
-    if sorted(search.keys()) != sorted(m['id'] for m in metas):
-        problems.append('搜索索引覆盖的文章集合与元数据不一致')
+    want_ids = sorted([m['id'] for m in metas] + [x['id'] for x in legacy])
+    if sorted(search.keys()) != want_ids:
+        problems.append('搜索索引覆盖的文章集合与有效文章集合不一致')
     for m in metas:
         if search.get(m['id']) != bodies[m['id']]:
             problems.append('搜索索引与正文不一致: ' + m['id'])
+    for post in legacy:
+        if search.get(post['id']) != post['content']:
+            problems.append('搜索索引与兼容期正文不一致: ' + post['id'])
 
     return manifest_expected, problems
 
@@ -425,7 +529,7 @@ def main(argv=None):
         return 0
 
     try:
-        metas, bodies, tag_order, source_info, orphans = collect(p, mode)
+        metas, bodies, tag_order, source_info, orphans, legacy = collect(p, mode)
     except SplitError as e:
         print('[FAIL] ' + str(e))
         return 1
@@ -434,7 +538,7 @@ def main(argv=None):
         print('[FAIL] 存在没有元数据引用的正文文件（确认要删除请加 --prune）: ' + describe_orphans(orphans))
         return 1
 
-    artifacts, manifest = build(p, metas, bodies, tag_order, source_info)
+    artifacts, manifest = build(p, metas, bodies, tag_order, source_info, legacy)
     changed = []
     for rel, buf in sorted(artifacts.items()):
         path = os.path.join(p['root'], rel.replace('/', os.sep))

@@ -67,6 +67,10 @@ TESTS = [
      'desc': 'B7B2.1：真实 Registry 与 js/papers.js 一致性（74 条 / 无私人路径）'},
     {'name': 'test23', 'file': 'tests/test23_content_build.py', 'kind': 'python',
      'desc': 'B7C2：统一内容构建生命周期（增删改/重复 ID/并发/原子性/兼容）'},
+    {'name': 'test24', 'file': 'tests/test24_publish_queue.js', 'kind': 'jsdom',
+     'desc': 'B7C3A：发布队列 content/queue（分支/冲突/权限/草稿/Token 不外泄）'},
+    {'name': 'test25', 'file': 'tests/test25_release_pipeline.py', 'kind': 'python',
+     'desc': 'B7C3A：发布候选闸门（隔离重建 / 过期产物 / 失败即无标记）'},
     {'name': 'content-check', 'file': 'scripts/build_content.py', 'kind': 'python', 'args': ['--check'],
      'desc': 'B7C2：发布前内容一致性门禁（元数据/正文/搜索语料/清单/RSS）',
      'pass_marker': 'OK:'},
@@ -87,6 +91,18 @@ TESTS = [
 ]
 
 COUNT_RE = re.compile(r'共\s*(\d+)\s*项[，,]\s*PASS\s*(\d+)[，,]\s*FAIL\s*(\d+)')
+
+
+def _ensure_utf8_stdout():
+    """子进程输出里可能带 emoji（❌ 等），GBK 控制台会直接抛 UnicodeEncodeError，
+    把"某个用例失败"变成"运行器崩溃"。统一改成 utf-8 + 替换不可编码字符。"""
+    for stream in (sys.stdout, sys.stderr):
+        try:
+            stream.reconfigure(encoding='utf-8', errors='replace')
+        except Exception:
+            pass
+
+
 FAILED_RE = re.compile(r'^FAIL\s+(.*)$', re.M)
 
 
@@ -259,6 +275,8 @@ def write_report(path, payload):
 
 
 def main(argv=None):
+    _ensure_utf8_stdout()
+
     ap = argparse.ArgumentParser(description='博客统一测试入口')
     ap.add_argument('--only', nargs='+', help='只跑指定用例（名称或文件名）')
     ap.add_argument('--skip-syntax', action='store_true', help='跳过语法检查')

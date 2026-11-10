@@ -1,0 +1,60 @@
+name: content-gate
+
+# Batch 7C-3A 的**草案**工作流：只读校验，不写仓库、不提 PR、不部署。
+# 目标是把"源 + 派生数据一致"变成 PR 的硬门禁，而不是等 push 到 main 之后再补。
+#
+# 权限说明（对应 BATCH7C3A_REPORT.md 第 7 节）：
+#   * 只用内置 GITHUB_TOKEN，且只要 contents: read —— 不写任何文件；
+#   * 因此不存在"Actions 自动提交导致循环触发"的问题（本工作流没有 commit/push 步骤）；
+#   * 如果将来要做"队列 → 自动 PR"，需要 contents: write + pull-requests: write，
+#     并且用 GITHUB_TOKEN 提交的分支/PR 不会再次触发 push 类工作流（GitHub 既定行为），
+#     所以循环风险仍然可控；但那一版必须单独评审。
+on:
+  pull_request:
+    paths:
+      - 'js/data.js'
+      - 'js/user-posts.js'
+      - 'data/**'
+      - 'feed.xml'
+      - 'scripts/**'
+      - 'content/**'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: content-gate-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  gate:
+    name: content / python-3.12
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      # 1) 统一门禁：元数据 / 正文 / 搜索语料 / 完整性清单 / feed 必须自洽（只读）
+      - name: 内容一致性（build_content --check）
+        run: python scripts/build_content.py --check
+
+      # 2) Batch 6 的结构 / 哈希 / 正文校验仍然独立执行（不是被替代，而是叠加）
+      - name: 结构与哈希（split_posts --check）
+        run: python scripts/split_posts.py --check
+
+      # 3) RSS 单独校验（与 build_content 的 feed 判定互为交叉验证）
+      - name: RSS（gen_feed --check）
+        run: python gen_feed.py --check
+
+      # 4) 隔离构建：git archive 到临时目录重建，确认"仓库里的派生数据没有过期"
+      #    注意：这一步不写工作区、不提交；多文件写入成功 ≠ Git 提交成功
+      - name: 隔离重建（release_candidate）
+        run: python scripts/release_candidate.py --sha "${{ github.sha }}" --work-dir "$RUNNER_TEMP/rc"
+
+      # 5) 内容队列（content/queue）：7C-3B 才会实现 scripts/content_queue.py
+      #    在此之前，队列分支上的条目由人工按 BATCH7C3A_REPORT.md 第 8 节的流程处理。

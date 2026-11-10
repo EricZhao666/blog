@@ -423,6 +423,32 @@ r = sync(root11)
 check('C23 js/data.js 里仍有内联 content → 拒绝（Batch 6 约束不回退）',
       r.returncode != 0 and 'content' in (r.stderr or ''), (r.stderr or '').strip()[:60])
 
+print('\n== C24 非空 USER_POSTS：两个门禁必须同进同退 ==')
+
+
+def split_chk(root):
+    env = dict(os.environ, PYTHONIOENCODING='utf-8', PYTHONUTF8='1')
+    return subprocess.run([sys.executable, os.path.join(ROOT, 'scripts', 'split_posts.py'),
+                           '--check', '--root', root],
+                          cwd=ROOT, capture_output=True, text=True, encoding='utf-8',
+                          errors='replace', env=env).returncode
+
+
+root12 = make_fixture('gates')
+sync(root12)
+e1, e2 = split_chk(root12), chk(root12).returncode
+check('C24 空 USER_POSTS：split --check 与 build_content --check 同时通过', e1 == 0 and e2 == 0, (e1, e2))
+
+write(os.path.join(root12, 'js', 'user-posts.js'), user_posts_js(
+    [{'id': 'legacy-2', 'title': '旧文二', 'date': '2026-10-11',
+      'tags': ['旧'], 'excerpt': 'e', 'content': '# 旧2\n\n正文。\n'}]))
+u1, u2 = split_chk(root12), chk(root12).returncode
+check('C24b 新增旧文章但未同步：两个门禁同时失败', u1 != 0 and u2 != 0, (u1, u2))
+
+sync(root12)
+s1, s2 = split_chk(root12), chk(root12).returncode
+check('C24c 同步后两个门禁同时通过（不再出现语义分叉）', s1 == 0 and s2 == 0, (s1, s2))
+
 shutil.rmtree(TMP, ignore_errors=True)
 print('\n共 %d 项，PASS %d，FAIL %d' % (passed[0] + failed[0], passed[0], failed[0]))
 sys.exit(1 if failed[0] else 0)
