@@ -170,14 +170,35 @@ def item_sha(item):
     return sha256_text(json.dumps(payload, ensure_ascii=False, sort_keys=True))
 
 
-def ledger_keys(ledger):
-    return {(e.get('id'), e.get('op'), e.get('itemSha')) for e in ledger.get('entries', [])}
+def latest_by_id(ledger):
+    """每个 id 的**最后一条**记录（同一个 id 允许多条：删除后可以重新添加）。"""
+    last = {}
+    for entry in ledger.get('entries', []):
+        last[entry.get('id')] = entry
+    return last
 
 
-def append_entries(ledger, queue_sha, items, day):
+def already_applied(ledger, item):
+    """是否已经处理过这条队列内容。
+
+    只看该 id 的最后一条记录：
+      * 内容与操作都相同且状态是 candidate/published → 已生效，跳过（幂等）；
+      * 最后一条是 delete、或状态是 failed/closed → 说明上一轮没成功，允许重新处理
+        （所以"删除后再添加同样内容"不会被误判成重复）。
+    """
+    last = latest_by_id(ledger).get(item['id'])
+    if not last:
+        return False
+    if last.get('status') not in ('candidate', 'published'):
+        return False
+    return last.get('op') == item['op'] and last.get('itemSha') == item_sha(item)
+
+
+def append_entries(ledger, queue_sha, items, day, base_sha=''):
     for item in items:
         ledger['entries'].append({
             'queueSha': queue_sha,
+            'baseSha': base_sha,
             'id': item['id'],
             'op': item['op'],
             'itemSha': item_sha(item),
@@ -276,8 +297,7 @@ def process(args):
                              % (args.queue_sha[:8], ledger['lastQueueSha'][:8]))
 
     entries = load_queue(queue_dir)
-    done = ledger_keys(ledger)
-    pending = [it for _, it in entries if (it['id'], it['op'], item_sha(it)) not in done]
+    pending = [it for _, it in entries if not already_applied(ledger, it)]
     skipped = len(entries) - len(pending)
 
     report = {
@@ -323,7 +343,8 @@ def process(args):
         raise QueueError('候选自检失败：%s' % ((r.stdout or r.stderr or '').strip()[-300:]))
 
     if not args.dry_run:
-        append_entries(ledger, queue_sha, touched, args.today or _today())
+        append_entries(ledger, queue_sha, touched, args.today or _today(),
+                       args.base_sha or _head_sha(root))
         os.makedirs(os.path.dirname(ledger_path), exist_ok=True)
         with open(ledger_path, 'w', encoding='utf-8', newline='\n') as f:
             f.write(dump_ledger(ledger))
@@ -341,6 +362,11 @@ def process(args):
     print('候选目录: %s' % work)
     print('CANDIDATE_READY' if not args.dry_run else 'DRY_RUN_OK')
     return 0, report
+
+
+def _head_sha(root):
+    r = git(['rev-parse', 'HEAD'], root)
+    return r.stdout.strip() if r.returncode == 0 else ''
 
 
 def _today():
@@ -375,6 +401,7 @@ def main(argv=None):
     ap.add_argument('--work-dir', help='候选目录（必须是空目录；默认临时目录）')
     ap.add_argument('--now', default='2026-11-10T00:00:00Z', help='固定 feed 时间戳')
     ap.add_argument('--today', help='ledger 里的日期（默认今天，测试可固定）')
+    ap.add_argument('--base-sha', help='候选所基于的 main SHA（默认取 --root 的 HEAD）')
     ap.add_argument('--check', action='store_true', help='只读检查（不写 ledger、不建候选）')
     ap.add_argument('--dry-run', action='store_true', help='建候选但不写 ledger')
     ap.add_argument('--json', help='把报告写到这个路径')
