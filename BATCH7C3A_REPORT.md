@@ -247,7 +247,7 @@ A  scripts/release_candidate.py             隔离构建 + 过期产物检测 + 
 A  .github/workflows/content-gate.yml       只读门禁草案（不写仓库）
 ```
 
-提交：`<commit> 发布：内容队列与隔离构建闸门（B7C3A）`（本地，未 push）。
+提交：`0dd98ff 发布：内容队列与隔离构建闸门（B7C3A）`（本地，未 push）。
 基线链：`c47b671`（B7C2）→ `336982d`（B7C2）→ `8256680`（B7C1）→ `9e996a3`（main）。
 
 ---
@@ -256,7 +256,7 @@ A  .github/workflows/content-gate.yml       只读门禁草案（不写仓库）
 
 | 场景 | 操作 |
 |---|---|
-| 回退本轮全部 | `git revert --no-edit <commit>`（工作区数据零改动，回退不影响线上内容） |
+| 回退本轮全部 | `git revert --no-edit 0dd98ff`（工作区数据零改动，回退不影响线上内容） |
 | 只想让编辑器回到"直推 main" | 单独 `git revert` `js/app.js` 那部分改动即可（其余是测试/闸门，不影响运行时） |
 | 队列条目已提交但不想发布 | 删除 `content/queue/<id>.json`（或关闭对应 PR）；`main` 与线上完全不受影响 |
 | 闸门误报 | 不要改断言；用 `release_candidate.py --work-dir` 复现，定位是"源变了"还是"产物过期" |
