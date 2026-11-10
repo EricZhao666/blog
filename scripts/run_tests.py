@@ -77,6 +77,8 @@ TESTS = [
      'desc': 'B7C3B：候选 PR 与工作流契约（权限/复用/过期/完整性）'},
     {'name': 'test28', 'file': 'tests/test28_candidate_state.py', 'kind': 'python',
      'desc': 'B7C3B.1：候选状态机（candidate/merge/deploy 分离、幂等、过期、失败恢复）'},
+    {'name': 'test29', 'file': 'tests/test29_workflow_activation.py', 'kind': 'python',
+     'desc': 'B7C4A：发布工作流启用契约（默认只读/最小权限/不合并/队列缺失降级）'},
     {'name': 'content-check', 'file': 'scripts/build_content.py', 'kind': 'python', 'args': ['--check'],
      'desc': 'B7C2：发布前内容一致性门禁（元数据/正文/搜索语料/清单/RSS）',
      'pass_marker': 'OK:'},

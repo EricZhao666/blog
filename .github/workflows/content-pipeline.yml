@@ -26,7 +26,11 @@ on:
         required: false
         default: 'content/queue'
       dry_run:
-        description: '只验证不建 PR（true/false）'
+        description: '只验证不建 PR / 不推候选分支（默认 true）'
+        required: false
+        default: 'true'
+      allow_write:
+        description: '允许写候选分支与开 PR（默认 false；只有显式 true 才会写）'
         required: false
         default: 'false'
   push:
@@ -71,6 +75,17 @@ jobs:
           git fetch --depth=1 origin "$QUEUE_REF"
           echo "queue_sha=$(git rev-parse FETCH_HEAD)" >> "$GITHUB_OUTPUT"
 
+      - name: 运行模式（默认只读）
+        env:
+          ALLOW_WRITE: ${{ github.event.inputs.allow_write || 'false' }}
+          REPO_FLAG: ${{ vars.CONTENT_PIPELINE_WRITE || 'off' }}
+        run: |
+          if [ "$ALLOW_WRITE" = "true" ] || [ "$REPO_FLAG" = "enabled" ]; then
+            echo "本次模式: WRITE（会推候选分支并开 PR）"
+          else
+            echo "本次模式: READ-ONLY（只校验，不推分支、不开 PR）"
+          fi
+
       - name: 隔离队列内容（不在工作区里改任何东西）
         run: |
           mkdir -p "$RUNNER_TEMP/queue"
@@ -107,7 +122,9 @@ jobs:
   candidate:
     name: candidate / python-3.12
     needs: validate
-    if: needs.validate.outputs.items != ''
+    # 默认只读：只有显式 allow_write=true（人工触发）或仓库变量 CONTENT_PIPELINE_WRITE=enabled
+    # 才允许写候选分支。push 到 content/queue 的自动运行在开关打开前一律只做校验。
+    if: needs.validate.outputs.items != '' && (github.event.inputs.allow_write == 'true' || vars.CONTENT_PIPELINE_WRITE == 'enabled')
     runs-on: ubuntu-latest
     timeout-minutes: 30
     permissions:
