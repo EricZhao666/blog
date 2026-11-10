@@ -1,0 +1,224 @@
+name: content-pipeline
+
+# Batch 7C-3B：内容队列 → 候选提交 → 候选 PR（**不合并、不部署**）
+#
+# 触发：
+#   * workflow_dispatch：人工指定队列分支（推荐，最容易审计）
+#   * push 到 content/queue：入队即自动跑；注意下面"触发链"的说明
+#
+# 触发链（实测/文档依据）：
+#   1. 用仓库内置 GITHUB_TOKEN 推送的提交**不会**再次触发 push 类工作流
+#      → 候选分支的 push 不会引起二次运行，天然防循环；
+#   2. 用 GITHUB_TOKEN 创建的 PR **不会**自动触发 pull_request 工作流
+#      （GitHub 的既定行为：需要人工点 "Approve and run" 或使用 PAT/App）——
+#      所以本工作流自己在候选分支上跑完整回归，不依赖 PR 触发的另一个 workflow；
+#   3. 不使用个人 PAT 长期存储来绕过上述限制。
+#
+# 权限：全局置空，按 job 最小授权（禁止给所有步骤全局写权限）。
+
+permissions: {}
+
+on:
+  workflow_dispatch:
+    inputs:
+      queue_ref:
+        description: '队列分支（默认 content/queue）'
+        required: false
+        default: 'content/queue'
+      dry_run:
+        description: '只验证不建 PR（true/false）'
+        required: false
+        default: 'false'
+  push:
+    branches:
+      - content/queue
+    paths:
+      - 'content/queue/**'
+
+concurrency:
+  group: content-pipeline-${{ github.event.inputs.queue_ref || 'content/queue' }}
+  cancel-in-progress: true
+
+env:
+  QUEUE_REF: ${{ github.event.inputs.queue_ref || 'content/queue' }}
+  FEED_NOW: '2026-11-10T00:00:00Z'
+
+jobs:
+  # ---------------------------------------------------------------- 1. 只读验证
+  validate:
+    name: validate / python-3.12
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    permissions:
+      contents: read
+    outputs:
+      queue_sha: ${{ steps.q.outputs.queue_sha }}
+      items: ${{ steps.p.outputs.items }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 0          # 需要 history 来判定队列 SHA 的先后关系
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: 记录来源（main / 队列）
+        id: q
+        run: |
+          echo "main_sha=$(git rev-parse HEAD)" >> "$GITHUB_OUTPUT"
+          git fetch --depth=1 origin "$QUEUE_REF"
+          echo "queue_sha=$(git rev-parse FETCH_HEAD)" >> "$GITHUB_OUTPUT"
+
+      - name: 隔离队列内容（不在工作区里改任何东西）
+        run: |
+          mkdir -p "$RUNNER_TEMP/queue"
+          git archive "origin/$QUEUE_REF" content/queue | tar -x -C "$RUNNER_TEMP/queue"
+
+      # 先跑队列消费器的只读模式：schema / id / 操作类型全部校验一遍
+      - name: 队列校验（只读）
+        id: p
+        run: |
+          python scripts/process_content_queue.py \
+            --queue-dir "$RUNNER_TEMP/queue/content/queue" \
+            --queue-sha "${{ steps.q.outputs.queue_sha }}" \
+            --check --dry-run --json "$RUNNER_TEMP/queue-report.json" || exit 1
+          python - "$RUNNER_TEMP/queue-report.json" >> "$GITHUB_OUTPUT" <<'PY'
+          import json, sys
+          r = json.load(open(sys.argv[1], encoding='utf-8'))
+          print('items=' + ','.join('%s/%s' % (i['op'], i['id']) for i in r.get('processed', [])))
+          PY
+
+      - name: 现有派生数据一致性
+        run: |
+          python scripts/build_content.py --check
+          python scripts/split_posts.py --check
+          python gen_feed.py --check
+
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: queue-report
+          path: ${{ runner.temp }}/queue-report.json
+          retention-days: 14
+
+  # ---------------------------------------------------------------- 2. 生成候选提交
+  candidate:
+    name: candidate / python-3.12
+    needs: validate
+    if: needs.validate.outputs.items != ''
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    permissions:
+      contents: write           # 只在这一步需要写：推候选分支
+    outputs:
+      head: ${{ steps.push.outputs.head }}
+      candidate_sha: ${{ steps.push.outputs.candidate_sha }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 0
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: 记录来源 SHA
+        run: |
+          echo "MAIN_SHA=$(git rev-parse HEAD)" >> "$GITHUB_ENV"
+          git fetch --depth=1 origin "$QUEUE_REF"
+          echo "QUEUE_SHA=$(git rev-parse FETCH_HEAD)" >> "$GITHUB_ENV"
+
+      - name: 取队列内容
+        run: |
+          mkdir -p "$RUNNER_TEMP/queue"
+          git archive "origin/$QUEUE_REF" content/queue | tar -x -C "$RUNNER_TEMP/queue"
+
+      # 候选目录 = main 的完整副本 + 队列变更 + 重新生成的派生数据
+      - name: 生成候选（规范化 + 全量派生）
+        run: |
+          python scripts/process_content_queue.py \
+            --queue-dir "$RUNNER_TEMP/queue/content/queue" \
+            --queue-sha "$QUEUE_SHA" \
+            --work-dir "$RUNNER_TEMP/candidate" \
+            --now "$FEED_NOW" \
+            --json "$RUNNER_TEMP/candidate-report.json"
+
+      - name: 候选自检（只读）
+        run: |
+          python scripts/build_content.py --check --root "$RUNNER_TEMP/candidate"
+          python scripts/split_posts.py  --check --root "$RUNNER_TEMP/candidate"
+          python gen_feed.py --check \
+            --data "$RUNNER_TEMP/candidate/js/data.js" \
+            --user-posts "$RUNNER_TEMP/candidate/js/user-posts.js" \
+            --out "$RUNNER_TEMP/candidate/feed.xml"
+
+      - name: 完整回归（在候选目录里，确保候选本身可发布）
+        run: |
+          python scripts/run_tests.py --only content-check split-check feed-check test23 test26
+
+      - name: 从 main 切候选分支并提交
+        id: push
+        run: |
+          set -euo pipefail
+          HEAD_BRANCH="content/candidate-${QUEUE_SHA:0:8}"
+          git config user.name  "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          # 只把候选目录里"受版本控制"的文件写回工作区（不含 .git / node_modules）
+          rsync -a --delete --exclude '.git' --exclude 'node_modules' \
+            "$RUNNER_TEMP/candidate/" ./
+          git checkout -B "$HEAD_BRANCH"
+          git add -A js/data.js data feed.xml content/ledger.json
+          if git diff --cached --quiet; then
+            echo "没有变化：队列条目可能已被处理"
+            exit 0
+          fi
+          git commit -m "content: 候选批次 ${QUEUE_SHA:0:8}（来自 ${MAIN_SHA:0:8}）"
+          git push origin "$HEAD_BRANCH"
+          echo "head=$HEAD_BRANCH" >> "$GITHUB_OUTPUT"
+          echo "candidate_sha=$(git rev-parse HEAD)" >> "$GITHUB_OUTPUT"
+
+  # ---------------------------------------------------------------- 3. 开候选 PR
+  open-pr:
+    name: open-pr
+    needs: [validate, candidate]
+    if: needs.candidate.outputs.head != '' && github.event.inputs.dry_run != 'true'
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    permissions:
+      contents: read
+      pull-requests: write      # 只在这一步需要 PR 写权限
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: 创建/复用候选 PR（不合并）
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          python scripts/candidate_pr.py \
+            --head "${{ needs.candidate.outputs.head }}" \
+            --base main \
+            --title "内容候选：${{ needs.validate.outputs.items }}" \
+            --main-sha "${{ needs.validate.outputs.queue_sha }}（队列）/ ${{ github.sha }}（main）" \
+            --queue-sha "${{ needs.validate.outputs.queue_sha }}" \
+            --candidate-sha "${{ needs.candidate.outputs.candidate_sha }}" \
+            --items "${{ needs.validate.outputs.items }}" \
+            --repo "${{ github.repository }}"
+
+  # ---------------------------------------------------------------- 4. 失败可追踪
+  report-failure:
+    name: 记录失败（不发布）
+    needs: [validate, candidate]
+    if: failure()
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - run: |
+          echo "内容流水线失败：main 与生产站点均未被改动。"
+          echo "请查看 validate / candidate 的日志；修复后重新入队或手动 workflow_dispatch。"
+          exit 1
