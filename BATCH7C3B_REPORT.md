@@ -149,7 +149,7 @@ A tests/test27_content_workflow.py     19 项
 M scripts/run_tests.py                 30 → 32 套
 ```
 
-提交：`<commit> 发布：内容队列消费与候选 PR 门禁（B7C3B）`（本地，未 push）。
+提交：`e5d579b 发布：内容队列消费与候选 PR 门禁（B7C3B）`（本地，未 push）。
 
 ## 12. Batch 7C-4 上线门禁方案
 
