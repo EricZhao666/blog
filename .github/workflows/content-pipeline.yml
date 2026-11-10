@@ -45,7 +45,8 @@ concurrency:
 
 env:
   QUEUE_REF: ${{ github.event.inputs.queue_ref || 'content/queue' }}
-  FEED_NOW: '2026-11-10T00:00:00Z'
+  # FEED_NOW 不再写死历史日期：由队列提交的 committer date 决定
+  # （同一队列 SHA → 同一时间戳，可复现；不同批次 → 新时间戳，RSS 不会停在过去）。
 
 jobs:
   # ---------------------------------------------------------------- 1. 只读验证
@@ -122,16 +123,22 @@ jobs:
   candidate:
     name: candidate / python-3.12
     needs: validate
-    # 默认只读：只有显式 allow_write=true（人工触发）或仓库变量 CONTENT_PIPELINE_WRITE=enabled
-    # 才允许写候选分支。push 到 content/queue 的自动运行在开关打开前一律只做校验。
-    if: needs.validate.outputs.items != '' && (github.event.inputs.allow_write == 'true' || vars.CONTENT_PIPELINE_WRITE == 'enabled')
+    # 写入门控（严格）：必须**同时**满足
+    #   1) 不是显式 dry-run（dry_run='true' 时 allow_write / 仓库变量都不能放行）
+    #   2) 有队列条目
+    #   3) 写入被授权：手动 allow_write=true，或仓库变量 CONTENT_PIPELINE_WRITE=enabled
+    if: >-
+      github.event.inputs.dry_run != 'true'
+      && needs.validate.outputs.items != ''
+      && (github.event.inputs.allow_write == 'true' || vars.CONTENT_PIPELINE_WRITE == 'enabled')
     runs-on: ubuntu-latest
-    timeout-minutes: 30
+    timeout-minutes: 45
     permissions:
       contents: write           # 只在这一步需要写：推候选分支
     outputs:
       head: ${{ steps.push.outputs.head }}
       candidate_sha: ${{ steps.push.outputs.candidate_sha }}
+      base_main_sha: ${{ steps.src.outputs.main_sha }}
     steps:
       - uses: actions/checkout@v4
         with:
@@ -142,11 +149,30 @@ jobs:
         with:
           python-version: '3.12'
 
-      - name: 记录来源 SHA
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      - name: 记录来源 SHA（并核对与 validate 用的是同一个队列提交）
+        id: src
         run: |
-          echo "MAIN_SHA=$(git rev-parse HEAD)" >> "$GITHUB_ENV"
+          set -euo pipefail
+          MAIN_SHA=$(git rev-parse HEAD)
           git fetch --depth=1 origin "$QUEUE_REF"
-          echo "QUEUE_SHA=$(git rev-parse FETCH_HEAD)" >> "$GITHUB_ENV"
+          QUEUE_SHA=$(git rev-parse FETCH_HEAD)
+          # 绑定校验：validate 与 candidate 必须是同一个队列 SHA
+          if [ -n "${{ needs.validate.outputs.queue_sha }}" ] && [ "$QUEUE_SHA" != "${{ needs.validate.outputs.queue_sha }}" ]; then
+            echo "队列 SHA 不一致：validate=${{ needs.validate.outputs.queue_sha }} candidate=$QUEUE_SHA，中止"
+            exit 1
+          fi
+          echo "MAIN_SHA=$MAIN_SHA" >> "$GITHUB_ENV"
+          echo "QUEUE_SHA=$QUEUE_SHA" >> "$GITHUB_ENV"
+          echo "main_sha=$MAIN_SHA" >> "$GITHUB_OUTPUT"
+          echo "queue_sha=$QUEUE_SHA" >> "$GITHUB_OUTPUT"
+          # 确定性 + 不过期：用队列提交自身的 committer date 作为 feed 时间戳
+          FEED_NOW=$(git show -s --format=%cI FETCH_HEAD)
+          echo "FEED_NOW=$FEED_NOW" >> "$GITHUB_ENV"
+          echo "模式: WRITE  main=$MAIN_SHA  queue=$QUEUE_SHA  feedNow=$FEED_NOW"
 
       - name: 取队列内容
         run: |
@@ -160,6 +186,7 @@ jobs:
             --queue-dir "$RUNNER_TEMP/queue/content/queue" \
             --queue-sha "$QUEUE_SHA" \
             --work-dir "$RUNNER_TEMP/candidate" \
+            --base-sha "$MAIN_SHA" \
             --now "$FEED_NOW" \
             --json "$RUNNER_TEMP/candidate-report.json"
 
@@ -172,9 +199,37 @@ jobs:
             --user-posts "$RUNNER_TEMP/candidate/js/user-posts.js" \
             --out "$RUNNER_TEMP/candidate/feed.xml"
 
-      - name: 完整回归（在候选目录里，确保候选本身可发布）
+      # 完整回归必须**在候选副本里**跑（不是 main 工作区）：
+      # 依赖、浏览器、内容门禁、候选哈希都在 $RUNNER_TEMP/candidate 下。
+      - name: 候选目录安装依赖
+        working-directory: ${{ runner.temp }}/candidate
         run: |
-          python scripts/run_tests.py --only content-check split-check feed-check test23 test26
+          npm ci
+          npx playwright install --with-deps chromium
+
+      - name: 候选目录完整回归
+        working-directory: ${{ runner.temp }}/candidate
+        env:
+          PW_CHANNEL: chromium
+        run: |
+          python scripts/run_tests.py
+
+      - name: 候选产物哈希（留档，供 PR 正文与人工核对）
+        id: hashes
+        run: |
+          cd "$RUNNER_TEMP/candidate"
+          for f in js/data.js data/search-index.json data/posts/manifest.json feed.xml; do
+            printf '%s  %s\n' "$(sha256sum "$f" | cut -d' ' -f1)" "$f"
+          done | tee "$RUNNER_TEMP/candidate-hashes.txt"
+          echo "hashes=$(paste -sd',' "$RUNNER_TEMP/candidate-hashes.txt" | cut -c1-300)" >> "$GITHUB_OUTPUT"
+
+      - name: 推送前确认 main 未变化
+        run: |
+          CURRENT=$(git ls-remote origin refs/heads/main | cut -f1)
+          if [ "$CURRENT" != "$MAIN_SHA" ]; then
+            echo "main 已从 $MAIN_SHA 变为 $CURRENT：候选已过期，放弃推送（不会自动重试）"
+            exit 1
+          fi
 
       - name: 从 main 切候选分支并提交
         id: push
@@ -212,6 +267,19 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: '3.12'
+      - name: 开 PR 前确认 main 未变化
+        id: main
+        run: |
+          set -euo pipefail
+          BASE_MAIN="${{ needs.candidate.outputs.base_main_sha }}"
+          CURRENT=$(git ls-remote origin refs/heads/main | cut -f1)
+          if [ -n "$BASE_MAIN" ] && [ "$CURRENT" != "$BASE_MAIN" ]; then
+            echo "main 已从 $BASE_MAIN 变为 $CURRENT：候选过期，不开 PR（请重新触发流水线）"
+            exit 1
+          fi
+          echo "main=$CURRENT" >> "$GITHUB_OUTPUT"
+          echo "模式: WRITE(open-pr)  head=${{ needs.candidate.outputs.head }}  base main=$CURRENT"
+
       - name: 创建/复用候选 PR（不合并）
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -220,10 +288,12 @@ jobs:
             --head "${{ needs.candidate.outputs.head }}" \
             --base main \
             --title "内容候选：${{ needs.validate.outputs.items }}" \
-            --main-sha "${{ needs.validate.outputs.queue_sha }}（队列）/ ${{ github.sha }}（main）" \
+            --main-sha "${{ steps.main.outputs.main }}" \
             --queue-sha "${{ needs.validate.outputs.queue_sha }}" \
             --candidate-sha "${{ needs.candidate.outputs.candidate_sha }}" \
             --items "${{ needs.validate.outputs.items }}" \
+            --require-main-sha "${{ needs.candidate.outputs.base_main_sha }}" \
+            --current-main-sha "${{ steps.main.outputs.main }}" \
             --repo "${{ github.repository }}"
 
   # ---------------------------------------------------------------- 4. 失败可追踪
