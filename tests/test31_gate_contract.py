@@ -73,6 +73,26 @@ check('R2b 重活都有 relevant 条件',
       gate.count("if: steps.scope.outputs.relevant == 'true'") >= 4,
       gate.count("if: steps.scope.outputs.relevant == 'true'"))
 
+# R2c-R2e：diff 计算的失败语义（7C-4B.1 修复的关键点）
+check('R2c diff 命令不再带 || true',
+      'git diff --name-only "origin/$BASE...HEAD" || true' not in gate)
+check('R2d diff 失败必须失败，不得当成"无关文件"跳过',
+      'if ! CHANGED=$(git diff --name-only "origin/$BASE...HEAD"); then' in gate
+      and '按失败处理' in gate)
+check('R2e 采用白名单之外一律检查的保守策略（漏加路径不会静默跳过）',
+      'IGNORABLE=' in gate and 'grep -Ev' in gate and '含未知路径' in gate)
+check('R2f 覆盖根目录生成器（gen_feed / gen_notes_pages 不被白名单排除）',
+      'gen_feed' not in gate.split('IGNORABLE=')[1].split('\n')[0]
+      and 'gen_notes_pages' not in gate.split('IGNORABLE=')[1].split('\n')[0])
+check('R2g 覆盖管道自身工作流与测试（不在可忽略名单里）',
+      'workflows' not in gate.split('IGNORABLE=')[1].split('\n')[0])
+
+# R2h：必需检查策略 —— content-candidate 只由候选流水线产生，不能对所有 PR 设成必需
+check('R2h content-candidate 只在 content-pipeline 里产生（gate 不产）',
+      'content-candidate' in pipe and 'content-candidate' not in gate_code)
+check('R2i 文档写明检查策略（普通 PR 用 content-gate，候选 PR 用 content-candidate）',
+      'Branch Protection' in gate and 'content-candidate' in pipe)
+
 # R3：只读
 check('R3 content-gate 只读', 'contents: read' in gate_code
       and 'contents: write' not in gate_code
