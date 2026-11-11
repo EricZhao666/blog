@@ -81,6 +81,8 @@ TESTS = [
      'desc': 'B7C4A：发布工作流启用契约（默认只读/最小权限/不合并/队列缺失降级）'},
     {'name': 'test30', 'file': 'tests/test30_workflow_gating.py', 'kind': 'python',
      'desc': 'B7C4A.1：写入门控组合（dry_run×allow_write×仓库变量）+ 候选目录回归'},
+    {'name': 'test31', 'file': 'tests/test31_gate_contract.py', 'kind': 'python',
+     'desc': 'B7C4B：门禁触发契约（无 paths 过滤/内部判定/候选 commit status/最小权限）'},
     {'name': 'content-check', 'file': 'scripts/build_content.py', 'kind': 'python', 'args': ['--check'],
      'desc': 'B7C2：发布前内容一致性门禁（元数据/正文/搜索语料/清单/RSS）',
      'pass_marker': 'OK:'},

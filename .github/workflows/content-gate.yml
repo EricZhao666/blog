@@ -1,27 +1,22 @@
 name: content-gate
 
-# Batch 7C-3A 的**草案**工作流：只读校验，不写仓库、不提 PR、不部署。
-# 目标是把"源 + 派生数据一致"变成 PR 的硬门禁，而不是等 push 到 main 之后再补。
+# 内容一致性门禁（只读）。
 #
-# 权限说明（对应 BATCH7C3A_REPORT.md 第 7 节）：
-#   * 只用内置 GITHUB_TOKEN，且只要 contents: read —— 不写任何文件；
-#   * 因此不存在"Actions 自动提交导致循环触发"的问题（本工作流没有 commit/push 步骤）；
-#   * 如果将来要做"队列 → 自动 PR"，需要 contents: write + pull-requests: write，
-#     并且用 GITHUB_TOKEN 提交的分支/PR 不会再次触发 push 类工作流（GitHub 既定行为），
-#     所以循环风险仍然可控；但那一版必须单独评审。
+# 设计要点（Batch 7C-4B 修正）：
+#   * **不在 workflow 层加 paths 过滤**。一旦该检查被 Branch Protection 设为 required，
+#     带 paths 过滤的工作流在"只改了无关文件"的 PR 上根本不会创建 check run，
+#     结果是永久 "Expected — Waiting for status"，PR 永远合不了。
+#     这里改成"每次 PR 都跑"，但只有真正受影响的路径才执行重活；其余情况
+#     走一个明确的 skip 分支并让 job 成功结束（required check 依然有结论）。
+#   * 只用内置 GITHUB_TOKEN，且只要 contents: read —— 不写任何文件、不提 PR。
+#   * 因为 GITHUB_TOKEN 创建的 PR 不会自动触发 pull_request 工作流，
+#     候选提交的正式状态由 content-pipeline 自己用 commit status 发布
+#     （context: content-candidate），不依赖本工作流被自动触发。
 on:
   pull_request:
-    paths:
-      - 'js/data.js'
-      - 'js/user-posts.js'
-      - 'data/**'
-      - 'feed.xml'
-      - 'scripts/**'
-      - 'content/**'
   workflow_dispatch:
 
-permissions:
-  contents: read
+permissions: {}
 
 concurrency:
   group: content-gate-${{ github.ref }}
@@ -31,30 +26,59 @@ jobs:
   gate:
     name: content / python-3.12
     runs-on: ubuntu-latest
-    timeout-minutes: 10
+    timeout-minutes: 15
+    permissions:
+      contents: read
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0          # 需要 base 才能算 diff
 
       - uses: actions/setup-python@v5
         with:
           python-version: '3.12'
 
-      # 1) 统一门禁：元数据 / 正文 / 搜索语料 / 完整性清单 / feed 必须自洽（只读）
+      - name: 判定是否涉及内容/构建路径
+        id: scope
+        run: |
+          set -euo pipefail
+          BASE="${{ github.base_ref }}"
+          if [ -z "$BASE" ]; then
+            echo "非 PR 触发（workflow_dispatch），按受影响处理"
+            echo "relevant=true" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+          git fetch --depth=1 origin "$BASE"
+          CHANGED=$(git diff --name-only "origin/$BASE...HEAD" || true)
+          echo "变更文件："
+          echo "$CHANGED"
+          if echo "$CHANGED" | grep -Eq '^(js/data\.js|js/user-posts\.js|data/|feed\.xml|scripts/|content/)'; then
+            echo "relevant=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "relevant=false" >> "$GITHUB_OUTPUT"
+            echo "本次变更不涉及内容/构建路径，跳过重活（job 仍成功，required check 不会被挂住）"
+          fi
+
       - name: 内容一致性（build_content --check）
+        if: steps.scope.outputs.relevant == 'true'
         run: python scripts/build_content.py --check
 
-      # 2) Batch 6 的结构 / 哈希 / 正文校验仍然独立执行（不是被替代，而是叠加）
       - name: 结构与哈希（split_posts --check）
+        if: steps.scope.outputs.relevant == 'true'
         run: python scripts/split_posts.py --check
 
-      # 3) RSS 单独校验（与 build_content 的 feed 判定互为交叉验证）
       - name: RSS（gen_feed --check）
+        if: steps.scope.outputs.relevant == 'true'
         run: python gen_feed.py --check
 
-      # 4) 隔离构建：git archive 到临时目录重建，确认"仓库里的派生数据没有过期"
-      #    注意：这一步不写工作区、不提交；多文件写入成功 ≠ Git 提交成功
       - name: 隔离重建（release_candidate）
+        if: steps.scope.outputs.relevant == 'true'
         run: python scripts/release_candidate.py --sha "${{ github.sha }}" --work-dir "$RUNNER_TEMP/rc"
 
-      # 5) 内容队列（content/queue）：7C-3B 才会实现 scripts/content_queue.py
-      #    在此之前，队列分支上的条目由人工按 BATCH7C3A_REPORT.md 第 8 节的流程处理。
+      - name: 结论
+        run: |
+          if [ "${{ steps.scope.outputs.relevant }}" = "true" ]; then
+            echo "content-gate: 内容与派生数据一致"
+          else
+            echo "content-gate: 本次无内容变更（明确跳过，不是缺少检查）"
+          fi

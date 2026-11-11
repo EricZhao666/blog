@@ -135,6 +135,7 @@ jobs:
     timeout-minutes: 45
     permissions:
       contents: write           # 只在这一步需要写：推候选分支
+      statuses: write           # 给候选 SHA 发布正式 commit status（Branch Protection 可识别）
     outputs:
       head: ${{ steps.push.outputs.head }}
       candidate_sha: ${{ steps.push.outputs.candidate_sha }}
@@ -251,6 +252,23 @@ jobs:
           git push origin "$HEAD_BRANCH"
           echo "head=$HEAD_BRANCH" >> "$GITHUB_OUTPUT"
           echo "candidate_sha=$(git rev-parse HEAD)" >> "$GITHUB_OUTPUT"
+
+      # GITHUB_TOKEN 创建的 PR 不会自动触发 pull_request 工作流，
+      # 所以把"候选已通过完整回归"作为**正式 commit status** 挂在候选 SHA 上。
+      # Branch Protection 可以要求 context=content-candidate，这样要求不会永远挂起。
+      - name: 发布候选状态（供 Branch Protection 识别）
+        if: steps.push.outputs.candidate_sha != ''
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          set -euo pipefail
+          curl -sS -X POST \
+            -H "Authorization: Bearer $GH_TOKEN" \
+            -H "Accept: application/vnd.github+json" \
+            -H "X-GitHub-Api-Version: 2022-11-28" \
+            "https://api.github.com/repos/${{ github.repository }}/statuses/${{ steps.push.outputs.candidate_sha }}" \
+            -d '{"state":"success","context":"content-candidate","description":"内容候选：构建自检 + 完整回归通过"}'
+          echo "已为 ${{ steps.push.outputs.candidate_sha }} 发布 commit status: content-candidate=success"
 
   # ---------------------------------------------------------------- 3. 开候选 PR
   open-pr:
