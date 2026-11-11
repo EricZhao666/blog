@@ -65,6 +65,27 @@ TESTS = [
      'desc': 'B7B2：学习资料持久 ID Registry 生命周期（重排/删除/改名/迁移/损坏/冲突）'},
     {'name': 'test22', 'file': 'tests/test22_registry_consistency.py', 'kind': 'python',
      'desc': 'B7B2.1：真实 Registry 与 js/papers.js 一致性（74 条 / 无私人路径）'},
+    {'name': 'test23', 'file': 'tests/test23_content_build.py', 'kind': 'python',
+     'desc': 'B7C2：统一内容构建生命周期（增删改/重复 ID/并发/原子性/兼容）'},
+    {'name': 'test24', 'file': 'tests/test24_publish_queue.js', 'kind': 'jsdom',
+     'desc': 'B7C3A：发布队列 content/queue（分支/冲突/权限/草稿/Token 不外泄）'},
+    {'name': 'test25', 'file': 'tests/test25_release_pipeline.py', 'kind': 'python',
+     'desc': 'B7C3A：发布候选闸门（隔离重建 / 过期产物 / 失败即无标记）'},
+    {'name': 'test26', 'file': 'tests/test26_queue_processor.py', 'kind': 'python',
+     'desc': 'B7C3B：内容队列消费（schema/幂等/增删改/陈旧/失败恢复）'},
+    {'name': 'test27', 'file': 'tests/test27_content_workflow.py', 'kind': 'python',
+     'desc': 'B7C3B：候选 PR 与工作流契约（权限/复用/过期/完整性）'},
+    {'name': 'test28', 'file': 'tests/test28_candidate_state.py', 'kind': 'python',
+     'desc': 'B7C3B.1：候选状态机（candidate/merge/deploy 分离、幂等、过期、失败恢复）'},
+    {'name': 'test29', 'file': 'tests/test29_workflow_activation.py', 'kind': 'python',
+     'desc': 'B7C4A：发布工作流启用契约（默认只读/最小权限/不合并/队列缺失降级）'},
+    {'name': 'test30', 'file': 'tests/test30_workflow_gating.py', 'kind': 'python',
+     'desc': 'B7C4A.1：写入门控组合（dry_run×allow_write×仓库变量）+ 候选目录回归'},
+    {'name': 'test31', 'file': 'tests/test31_gate_contract.py', 'kind': 'python',
+     'desc': 'B7C4B：门禁触发契约（无 paths 过滤/内部判定/候选 commit status/最小权限）'},
+    {'name': 'content-check', 'file': 'scripts/build_content.py', 'kind': 'python', 'args': ['--check'],
+     'desc': 'B7C2：发布前内容一致性门禁（元数据/正文/搜索语料/清单/RSS）',
+     'pass_marker': 'OK:'},
     {'name': 'feed-check', 'file': 'gen_feed.py', 'kind': 'python', 'args': ['--check'],
      'desc': 'B6C：RSS 产物与数据一致（--check）', 'pass_marker': 'OK:'},
     {'name': 'browser', 'file': 'tests/browser/sw.spec.js', 'kind': 'browser',
@@ -82,6 +103,18 @@ TESTS = [
 ]
 
 COUNT_RE = re.compile(r'共\s*(\d+)\s*项[，,]\s*PASS\s*(\d+)[，,]\s*FAIL\s*(\d+)')
+
+
+def _ensure_utf8_stdout():
+    """子进程输出里可能带 emoji（❌ 等），GBK 控制台会直接抛 UnicodeEncodeError，
+    把"某个用例失败"变成"运行器崩溃"。统一改成 utf-8 + 替换不可编码字符。"""
+    for stream in (sys.stdout, sys.stderr):
+        try:
+            stream.reconfigure(encoding='utf-8', errors='replace')
+        except Exception:
+            pass
+
+
 FAILED_RE = re.compile(r'^FAIL\s+(.*)$', re.M)
 
 
@@ -254,6 +287,8 @@ def write_report(path, payload):
 
 
 def main(argv=None):
+    _ensure_utf8_stdout()
+
     ap = argparse.ArgumentParser(description='博客统一测试入口')
     ap.add_argument('--only', nargs='+', help='只跑指定用例（名称或文件名）')
     ap.add_argument('--skip-syntax', action='store_true', help='跳过语法检查')

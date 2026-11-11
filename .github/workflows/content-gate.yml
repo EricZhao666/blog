@@ -1,0 +1,97 @@
+name: content-gate
+
+# 内容一致性门禁（只读）。
+#
+# 设计要点（Batch 7C-4B 修正）：
+#   * **不在 workflow 层加 paths 过滤**。一旦该检查被 Branch Protection 设为 required，
+#     带 paths 过滤的工作流在"只改了无关文件"的 PR 上根本不会创建 check run，
+#     结果是永久 "Expected — Waiting for status"，PR 永远合不了。
+#     这里改成"每次 PR 都跑"，但只有真正受影响的路径才执行重活；其余情况
+#     走一个明确的 skip 分支并让 job 成功结束（required check 依然有结论）。
+#   * 只用内置 GITHUB_TOKEN，且只要 contents: read —— 不写任何文件、不提 PR。
+#   * 因为 GITHUB_TOKEN 创建的 PR 不会自动触发 pull_request 工作流，
+#     候选提交的正式状态由 content-pipeline 自己用 commit status 发布
+#     （context: content-candidate），不依赖本工作流被自动触发。
+on:
+  pull_request:
+  workflow_dispatch:
+
+permissions: {}
+
+concurrency:
+  group: content-gate-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  gate:
+    name: content / python-3.12
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0          # 需要 base 才能算 diff
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: 判定是否涉及内容/构建路径
+        id: scope
+        run: |
+          set -euo pipefail
+          BASE="${{ github.base_ref }}"
+          if [ -z "$BASE" ]; then
+            echo "非 PR 触发（workflow_dispatch），一律按受影响处理"
+            echo "relevant=true" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+          git fetch --depth=1 origin "$BASE"
+          # 计算 diff 失败时必须失败：绝不能用 `|| true` 把"算不出来"当成"无关文件"跳过，
+          # 否则 base 分支改名、浅克隆异常等情况会让门禁静默放行。
+          if ! CHANGED=$(git diff --name-only "origin/$BASE...HEAD"); then
+            echo "无法计算 diff（base=$BASE）：按失败处理，不跳过任何检查"
+            exit 1
+          fi
+          echo "变更文件："
+          echo "$CHANGED"
+
+          # 已知可以跳过重活的路径（文档 / 样式 / 与派生数据无关的前端资源）。
+          # 判定采用"白名单之外一律检查"的保守策略：新增任何未知路径都会触发重活，
+          # 避免因为忘记把 gen_feed.py、工作流自身或管道测试加进名单而漏检。
+          IGNORABLE='^(docs/|.*\.md$|css/|vendor/|js/(app|projects|courses|course-notes|note-slugs)\.js|index\.html|sw\.js|manifest\.json|sitemap\.xml|notes/|tests/browser/|README)'
+          OTHER=$(echo "$CHANGED" | grep -Ev "$IGNORABLE" || true)
+          if [ -n "$OTHER" ]; then
+            echo "涉及内容/构建相关文件（含未知路径，按保守策略检查）："
+            echo "$OTHER"
+            echo "relevant=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "relevant=false" >> "$GITHUB_OUTPUT"
+            echo "本次变更仅涉及文档/样式/无关前端资源，跳过重活（job 仍成功，required check 不会被挂住）"
+          fi
+
+      - name: 内容一致性（build_content --check）
+        if: steps.scope.outputs.relevant == 'true'
+        run: python scripts/build_content.py --check
+
+      - name: 结构与哈希（split_posts --check）
+        if: steps.scope.outputs.relevant == 'true'
+        run: python scripts/split_posts.py --check
+
+      - name: RSS（gen_feed --check）
+        if: steps.scope.outputs.relevant == 'true'
+        run: python gen_feed.py --check
+
+      - name: 隔离重建（release_candidate）
+        if: steps.scope.outputs.relevant == 'true'
+        run: python scripts/release_candidate.py --sha "${{ github.sha }}" --work-dir "$RUNNER_TEMP/rc"
+
+      - name: 结论
+        run: |
+          if [ "${{ steps.scope.outputs.relevant }}" = "true" ]; then
+            echo "content-gate: 内容与派生数据一致"
+          else
+            echo "content-gate: 本次无内容变更（明确跳过，不是缺少检查）"
+          fi

@@ -121,6 +121,27 @@ function makeFetch(mock, window) {
   };
 }
 
+// Batch 7C-3A 的队列 API 最小 mock：分支存在、队列文件不存在、PUT 成功
+function queueFetch(mock) {
+  const json = (status, body) => Promise.resolve({
+    ok: status >= 200 && status < 300,
+    status,
+    json: () => Promise.resolve(body)
+  });
+  return function (url, init) {
+    const u = String(url);
+    const method = ((init && init.method) || 'GET').toUpperCase();
+    if (u.indexOf('/branches/') !== -1) return json(200, { name: 'content/queue' });
+    if (method === 'PUT') {
+      const p = u.split('/contents/')[1] || '';
+      mock.puts.push(decodeURIComponent(p.split('?')[0]));
+      return json(201, { content: { path: p } });
+    }
+    if (u.indexOf('/contents/') !== -1) return json(404, { message: 'Not Found' });
+    return json(200, {});
+  };
+}
+
 async function openPage(hash) {
   const errors = [];
   const vc = new VirtualConsole();
@@ -171,18 +192,30 @@ async function typeSearch(doc, window, text, waitMs) {
   server.listen(PORT, async () => {
     try {
       // ------------------------------------------------ P1/P2/P3 发布 → 搜索 → 修改 → 删除
+      // Batch 7C-3A 起：编辑器把文章写进 content/queue（受控分支），不再改 USER_POSTS；
+      // 这里验证"提交 ≠ 上线"，再用直接注入 USER_POSTS 的方式模拟"已合并"后的表现。
       {
         const mock = { getMode: 'ok', posts: [], puts: [] };
         const { dom, window, doc, errors, loader } = await openPage('#/editor');
-        window.fetch = makeFetch(mock, window);
+        window.fetch = queueFetch(mock);
 
         await publish(window, doc, '发布一致性测试文章', '# 发布一致性测试\n\n正文里有唯一词：蓝鲸螺栓校准。\n');
-        check('P1 发布后 USER_POSTS 增加一篇', window.eval('USER_POSTS.length') === 1, window.eval('USER_POSTS.length'));
-        check('P1 发布请求只 PUT 一次', (mock.puts || []).length === 1);
+        check('P1 提交队列后 USER_POSTS 不变（尚未上线）',
+          window.eval('USER_POSTS.length') === 0, window.eval('USER_POSTS.length'));
+        check('P1 不再向 js/user-posts.js 写任何东西',
+          (mock.puts || []).filter(p => p === 'js/user-posts.js').length === 0,
+          (mock.puts || []).join(',') || '0 次');
+        check('P1 提示明确区分"已提交队列"与"已上线"',
+          /队列/.test(doc.getElementById('editorStatus').textContent) &&
+          !/发布成功/.test(doc.getElementById('editorStatus').textContent),
+          doc.getElementById('editorStatus').textContent.slice(0, 40));
+
+        // 模拟"队列已被构建合并进 USER_POSTS"
+        window.eval("USER_POSTS.push({ id: 'e2e-publish-1', title: '发布一致性测试文章', date: '2026-11-10', tags: ['测试'], excerpt: '摘要与正文关键词无关', content: '# 发布一致性测试\\n\\n正文里有唯一词：蓝鲸螺栓校准。\\n' });");
 
         window.location.hash = '#/';
         await wait(300);
-        check('P1 首页出现新文章标题', /发布一致性测试文章/.test(appText(doc)));
+        check('P1 合并后首页出现新文章标题', /发布一致性测试文章/.test(appText(doc)));
 
         // 全文搜索：首次搜索会加载 search-index.json（静态文章正文语料）
         await typeSearch(doc, window, '蓝鲸螺栓校准', 1200);
@@ -221,9 +254,9 @@ async function typeSearch(doc, window, text, waitMs) {
         window.fetch = makeFetch(mock, window);
         await publish(window, doc, '会失败的发布', '# 失败也要保住草稿\n\n这段内容不能丢。\n');
         const draftRaw = window.localStorage.getItem('blog_draft');
-        check('P4 发布失败时未发出 PUT', (mock.puts || []).length === 0);
-        check('P4 发布失败后草稿仍在', !!draftRaw && /失败也要保住草稿/.test(draftRaw || ''), draftRaw ? draftRaw.slice(0, 40) : 'null');
-        check('P4 发布失败提示可见', /发布失败/.test(doc.getElementById('editorStatus').textContent));
+        check('P4 提交失败时未发出 PUT', (mock.puts || []).length === 0);
+        check('P4 提交失败后草稿仍在', !!draftRaw && /失败也要保住草稿/.test(draftRaw || ''), draftRaw ? draftRaw.slice(0, 40) : 'null');
+        check('P4 提交失败提示可见', /提交失败|发布失败/.test(doc.getElementById('editorStatus').textContent));
         dom.window.close();
       }
 

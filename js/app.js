@@ -2324,15 +2324,71 @@ function parseUserPostsText(text) {
   return { ok: true, posts: posts };
 }
 
-window.publishPost = async function() {
+// --- 发布到内容队列（Batch 7C-3A）---
+// 编辑器**不再**直接写 main，也不再改 js/user-posts.js：
+//   每次发布只往 content/queue/<id>.json 写**一个**文件 —— 单文件写入才是真原子，
+//   Contents API 一次只能写一个文件，多次 PUT 不能假装成一次事务。
+// 之后由 CI/本地跑 scripts/build_content.py 把它编译成 data/posts/<id>.md + 派生数据。
+var QUEUE_BRANCH = 'content/queue';
+var QUEUE_DIR = 'content/queue';
+var GH_API = 'https://api.github.com';
+
+function repoApi() {
+  var owner = localStorage.getItem('gh_owner') || 'EricZhao666';
+  var repo = localStorage.getItem('gh_repo') || 'blog';
+  return GH_API + '/repos/' + encodeURIComponent(owner) + '/' + encodeURIComponent(repo);
+}
+
+function ghHeaders(token) {
+  return {
+    'Authorization': 'Bearer ' + token,
+    'Accept': 'application/vnd.github+json'
+  };
+}
+
+// 统一的响应读取：永远不把 token 写进 URL / 日志
+function ghRead(resp) {
+  return resp.json().catch(function() { return null; });
+}
+
+// 404 时区分"资源不存在"与"仓库访问异常"
+async function explain404(token) {
+  var probe = await fetch(repoApi(), { headers: ghHeaders(token) });
+  if (probe.status === 200) return 'resource';
+  if (probe.status === 401 || probe.status === 403) return 'auth';
+  return 'repo';
+}
+
+function collectEditorInput() {
   var title = document.getElementById('editorTitle').value.trim();
   var tagsStr = document.getElementById('editorTags').value.trim();
   var excerpt = document.getElementById('editorExcerpt').value.trim();
   var content = document.getElementById('editorContent').value.trim();
+  var tags = tagsStr.split(/[,，]/).map(function(t) { return t.trim(); }).filter(function(t) { return t; });
+  var id = generatePostId(title);
+  return {
+    id: id,
+    title: title,
+    date: new Date().toISOString().slice(0, 10),
+    tags: tags.length ? tags : ['未分类'],
+    excerpt: excerpt || content.replace(/[#*`>\-\[\]]/g, '').slice(0, 120) + '...',
+    content: content
+  };
+}
 
-  if (!title) { showEditorStatus('\u274C \u6807\u9898\u4E0D\u80FD\u4E3A\u7A7A', 'error'); return; }
-  if (!content) { showEditorStatus('\u274C \u5185\u5BB9\u4E0D\u80FD\u4E3A\u7A7A', 'error'); return; }
+// 提交前的本地校验：明显的数据错误不往远端发
+function validateNewPost(post) {
+  if (!post.title) return '标题不能为空';
+  if (!post.content) return '正文不能为空';
+  if (!/^[a-z0-9][a-z0-9-]*$/.test(post.id || '')) return '生成的 id 非法（只允许小写字母/数字/连字符）';
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(post.date || '')) return '日期格式非法';
+  if (!Array.isArray(post.tags) || !post.tags.length) return '至少需要一个标签';
+  var exists = getAllPosts().some(function(p) { return p.id === post.id; });
+  if (exists) return 'id 冲突：已存在同 id 的文章（' + post.id + '），不会覆盖';
+  return '';
+}
 
+window.publishPost = async function() {
   var token = getStoredToken();
   if (!token) {
     showEditorStatus('\u274C \u8BF7\u5148\u70B9\u51FB\u201C\u8BBE\u7F6E\u201D\u914D\u7F6E GitHub Token', 'error');
@@ -2340,112 +2396,86 @@ window.publishPost = async function() {
     return;
   }
 
-  var owner = localStorage.getItem('gh_owner') || 'EricZhao666';
-  var repo = localStorage.getItem('gh_repo') || 'blog';
-  var filePath = 'js/user-posts.js';
-  var apiUrl = 'https://api.github.com/repos/' + owner + '/' + repo + '/contents/' + filePath;
+  var post = collectEditorInput();
+  var problem = validateNewPost(post);
+  if (problem) { showEditorStatus('\u274C ' + escapeHtml(problem), 'error'); return; }
 
-  showEditorStatus('\u23F3 \u6B63\u5728\u53D1\u5E03...', 'loading');
+  var queuePath = QUEUE_DIR + '/' + post.id + '.json';
+  var contentsUrl = repoApi() + '/contents/' + queuePath;
+
+  showEditorStatus('\u23F3 \u6B63\u5728\u63D0\u4EA4\u5230\u53D1\u5E03\u961F\u5217...', 'loading');
 
   try {
-    // 1. 读取远端文件：必须能完整还原历史文章，否则一律中止（避免覆盖）
-    var sha = null;
-    var currentPosts = [];
+    // 1) 队列分支必须已存在（不静默创建不确定的分支）
+    var brResp = await fetch(repoApi() + '/branches/' + encodeURIComponent(QUEUE_BRANCH),
+      { headers: ghHeaders(token) });
+    if (brResp.status === 404) {
+      var why = await explain404(token);
+      if (why === 'auth') throw new Error('无权访问仓库（Token 缺少 Contents 读权限），已中止');
+      if (why === 'repo') throw new Error('仓库不存在或无权访问，已中止');
+      throw new Error('发布队列分支 ' + QUEUE_BRANCH + ' 不存在。请先在 GitHub 上创建该分支'
+        + '（或运行 scripts/init_content_queue.sh），编辑器不会自动创建');
+    }
+    if (brResp.status === 401 || brResp.status === 403) {
+      throw new Error('无权访问仓库（Token 缺少 Contents 读权限），已中止');
+    }
+    if (!brResp.ok) throw new Error('读取队列分支失败：HTTP ' + brResp.status + '，已中止');
 
-    var getResp = await fetch(apiUrl, {
-      headers: { 'Authorization': 'Bearer ' + token, 'Accept': 'application/vnd.github+json' }
-    });
-
-    if (getResp.status === 200) {
-      var data = await getResp.json().catch(function() { return null; });
-      if (!data || typeof data !== 'object') throw new Error('无法解析 GitHub 返回的文件信息，已中止发布');
-      if (!data.sha) throw new Error('GitHub 未返回文件版本号（sha），已中止发布');
-      sha = data.sha;
-      // Contents API 对 >1MB 文件返回 encoding=none / content 为空，此时无法确认历史内容
-      if (data.encoding === 'none' || typeof data.content !== 'string' ||
-          (data.content === '' && Number(data.size) > 0)) {
-        throw new Error('现有文章文件无法完整读取（可能超过 Contents API 1MB 限制），已中止发布以免覆盖历史文章');
+    // 2) 同 ID 已存在 → 绝不覆盖
+    var dupResp = await fetch(contentsUrl + '?ref=' + encodeURIComponent(QUEUE_BRANCH),
+      { headers: ghHeaders(token) });
+    if (dupResp.status === 200) {
+      throw new Error('队列里已有同 id 的文章（' + post.id + '）；不会覆盖，请改标题或先清理队列');
+    }
+    if (dupResp.status !== 404) {
+      if (dupResp.status === 401 || dupResp.status === 403) {
+        throw new Error('无权读取队列目录（Token 缺少 Contents 读权限），已中止');
       }
-      var decoded;
-      try {
-        decoded = base64ToUtf8(data.content);
-      } catch (e) {
-        throw new Error('现有文章文件 Base64 解码失败，已中止发布以免覆盖历史文章');
-      }
-      var parsed = parseUserPostsText(decoded);
-      if (!parsed.ok) {
-        throw new Error('现有文章文件解析失败（' + parsed.reason + '），已中止发布以免覆盖历史文章');
-      }
-      currentPosts = parsed.posts;
-    } else if (getResp.status === 404) {
-      // 只有明确 404 才允许按“新建文件”处理
-      sha = null;
-      currentPosts = [];
-    } else {
-      var errBody = await getResp.json().catch(function() { return {}; });
-      throw new Error('GitHub API: ' + ((errBody && errBody.message) || 'HTTP ' + getResp.status));
+      throw new Error('检查队列条目失败：HTTP ' + dupResp.status + '，已中止');
     }
 
-    // 2. Build new post object
-    var tags = tagsStr.split(/[,，]/).map(function(t) { return t.trim(); }).filter(function(t) { return t; });
-    var newPost = {
-      id: generatePostId(title),
-      title: title,
-      date: new Date().toISOString().slice(0, 10),
-      tags: tags.length ? tags : ['未分类'],
-      excerpt: excerpt || content.replace(/[#*`>\-\[\]]/g, '').slice(0, 120) + '...',
-      content: content
-    };
-
-    // Prepend (newest first)
-    currentPosts.unshift(newPost);
-
-    // 3. Generate new file content
-    var newFileContent = 'const USER_POSTS = ' + JSON.stringify(currentPosts, null, 2) + ';\n';
-    var base64Content = utf8ToBase64(newFileContent);
-
-    // 4. Commit via PUT（保留 sha 版本校验；新建文件不发送 sha）
-    var payload = { message: 'Add post: ' + title, content: base64Content };
-    if (sha) payload.sha = sha;
-    var putResp = await fetch(apiUrl, {
+    // 3) 单文件写入（真正的原子单位）
+    var payloadText = JSON.stringify(post, null, 2) + '\n';
+    var putResp = await fetch(contentsUrl, {
       method: 'PUT',
       headers: {
         'Authorization': 'Bearer ' + token,
         'Accept': 'application/vnd.github+json',
         'Content-Type': 'application/json'
       },
-      body: JSON.stringify(payload)
+      body: JSON.stringify({
+        message: 'queue: ' + post.title + ' (' + post.id + ')',
+        content: utf8ToBase64(payloadText),
+        branch: QUEUE_BRANCH
+      })
     });
 
+    if (putResp.status === 409 || putResp.status === 422) {
+      throw new Error('队列写入冲突（HTTP ' + putResp.status
+        + '）：文件已被其他人改动，未覆盖任何内容；请刷新后重试');
+    }
+    if (putResp.status === 401 || putResp.status === 403) {
+      throw new Error('Token 权限不足（需要 Contents: Read and write），已中止');
+    }
     if (!putResp.ok) {
-      var putErr = await putResp.json().catch(function() { return {}; });
-      if (putResp.status === 409) {
-        throw new Error('文件已被其他人修改（版本冲突），请刷新后重试；历史文章未被改动');
-      }
-      throw new Error((putErr && putErr.message) || ('HTTP ' + putResp.status));
+      var errBody = await ghRead(putResp);
+      throw new Error('队列写入失败：' + ((errBody && errBody.message) || ('HTTP ' + putResp.status)));
     }
 
-    // 5. Update in-memory array
-    if (typeof USER_POSTS !== 'undefined') {
-      USER_POSTS.unshift(newPost);
-    }
-
-    // 6. 清空草稿：同时清掉待触发的自动保存，避免旧内容被写回
+    // 4) 已提交 ≠ 已上线：明确区分这两个状态
     clearDraft();
     if (_draftTimer) { clearTimeout(_draftTimer); _draftTimer = null; }
     _draftSuppressed = true;
-
-    showEditorStatus('\u2705 \u53D1\u5E03\u6210\u529F\uFF01GitHub Pages \u5C06\u5728 1-2 \u5206\u949F\u5185\u66F4\u65B0\uFF0C\u5373\u5C06\u8DF3\u8F6C\u5230\u9996\u9875...', 'success');
-
-    // Redirect to home after 2 seconds
-    setTimeout(function() { location.hash = '#/'; }, 2000);
+    showEditorStatus('\u2705 \u5DF2\u63D0\u4EA4\u5230\u53D1\u5E03\u961F\u5217 ' + escapeHtml(queuePath)
+      + '\uFF08<b>\u5C1A\u672A\u4E0A\u7EBF</b>\uFF09\u3002\u8BE5\u6587\u7AE0\u8981\u7B49'
+      + '\u300C\u6784\u5EFA + \u5408\u5E76\u300D\u540E\u624D\u4F1A\u51FA\u73B0\u5728\u6B63\u5F0F\u7AD9\u70B9\u3002', 'success');
 
   } catch (err) {
     var failMsg = (err && err.message) || String(err);
     if (/failed to fetch|networkerror|load failed|network request failed|fetch failed/i.test(failMsg)) {
-      failMsg = '网络请求失败，请检查网络后重试（历史文章未被改动）';
+      failMsg = '网络请求失败，请检查网络后重试（草稿与历史文章都未被改动）';
     }
-    showEditorStatus('\u274C \u53D1\u5E03\u5931\u8D25: ' + escapeHtml(failMsg), 'error');
+    showEditorStatus('\u274C \u63D0\u4EA4\u5931\u8D25: ' + escapeHtml(failMsg), 'error');
     // 失败时把当前编辑内容落盘，刷新或离开后仍可恢复
     flushDraft(true);
   }

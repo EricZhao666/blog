@@ -95,15 +95,16 @@ function readDraft(window) {
 function resp(status, body) {
   return { ok: status >= 200 && status < 300, status: status, json: () => Promise.resolve(body) };
 }
+// Batch 7C-3A：发布改为写 content/queue/<id>.json，桩要按新契约应答
 function stubGithub(window, mode) {
   window.fetch = function (url, init) {
     init = init || {};
     const method = (init.method || 'GET').toUpperCase();
-    if (method === 'GET') {
-      if (mode === 'fail') return Promise.resolve(resp(500, { message: 'boom' }));
-      return Promise.resolve(resp(404, { message: 'Not Found' }));
-    }
-    return Promise.resolve(resp(200, { content: { sha: 'x' } }));
+    const u = String(url);
+    if (mode === 'fail') return Promise.resolve(resp(500, { message: 'boom' }));
+    if (u.indexOf('/branches/') !== -1) return Promise.resolve(resp(200, { name: 'content/queue' }));
+    if (method === 'PUT') return Promise.resolve(resp(201, { content: { sha: 'x' } }));
+    return Promise.resolve(resp(404, { message: 'Not Found' }));
   };
 }
 
@@ -196,7 +197,7 @@ server.listen(PORT, async () => {
       await window.publishPost();
       await wait(50);
       const status = doc.getElementById('editorStatus').textContent;
-      check('S7 发布失败有明确提示', /发布失败/.test(status), status.trim().slice(0, 30));
+      check('S7 提交失败有明确提示', /提交失败|发布失败/.test(status), status.trim().slice(0, 30));
       window.location.hash = '#/';
       await wait(300);
       window.location.hash = '#/editor';
