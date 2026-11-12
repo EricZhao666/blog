@@ -308,6 +308,11 @@ python scripts/import_post.py --file <id>.update.json --mode update --apply
 
 `.github/workflows/tests.yml`：`push` / `pull_request` / 手动触发，`ubuntu-latest` + Node 22 + Python 3.12，`npm ci` 装依赖后跑 `python scripts/run_tests.py`，报告作为 Artifact 上传，失败即 job 失败。权限仅 `contents: read`，不需要任何 Secrets。
 
+> **Action 运行时**：三个工作流统一使用 Node.js 24 运行时的 Action 版本 ——
+> `actions/checkout@v5`、`actions/setup-node@v5`、`actions/setup-python@v6`、`actions/upload-artifact@v6`
+> （v4/v5 系列仍声明 `node20`，会触发 `Node.js 20 is deprecated` 警告）。
+> 注意区分：**Action 自身的运行时**是 Node 24，**被测项目**仍在 Node 22 + Python 3.12 上运行。
+
 > **注意**：CI 只是“事后检查”，不能阻止直接推 `main` 触发 Pages 发布。若要真正拦截，需要：
 > 1. 仓库 Settings → Branches 给 `main` 加保护：Require a pull request before merging + Require status checks to pass（勾选 `tests`）；
 > 2. 日常改动走 `feature/*` 分支 → PR → 绿了再合并；

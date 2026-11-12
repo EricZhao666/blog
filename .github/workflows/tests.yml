@@ -1,5 +1,7 @@
 name: tests
 
+# Action 版本均为 Node.js 24 运行时（消除 "Node.js 20 is deprecated" 警告）。
+# 注意：这里升级的是 **Action 自身的运行时**，测试运行时仍是 Node.js 22 + Python 3.12。
 # 推送与 PR 都跑；也可在 Actions 页面手动触发
 on:
   push:
@@ -23,16 +25,16 @@ jobs:
 
     steps:
       - name: 检出代码
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
       - name: 安装 Node.js 22
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v5
         with:
           node-version: '22'
           cache: npm
 
       - name: 安装 Python 3.12
-        uses: actions/setup-python@v5
+        uses: actions/setup-python@v6
         with:
           python-version: '3.12'
 
@@ -62,7 +64,7 @@ jobs:
 
       - name: 上传测试报告
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v6
         with:
           name: test-report
           path: |

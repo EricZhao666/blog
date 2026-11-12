@@ -2,6 +2,9 @@ name: content-gate
 
 # 内容一致性门禁（只读）。
 #
+# Action 版本均为 Node.js 24 运行时（消除 "Node.js 20 is deprecated" 警告）；
+# 只换了 checkout / setup-python 的大版本，触发条件、权限与命令一律未动。
+#
 # 设计要点（Batch 7C-4B 修正）：
 #   * **不在 workflow 层加 paths 过滤**。一旦该检查被 Branch Protection 设为 required，
 #     带 paths 过滤的工作流在"只改了无关文件"的 PR 上根本不会创建 check run，
@@ -30,11 +33,11 @@ jobs:
     permissions:
       contents: read
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
         with:
           fetch-depth: 0          # 需要 base 才能算 diff
 
-      - uses: actions/setup-python@v5
+      - uses: actions/setup-python@v6
         with:
           python-version: '3.12'
 

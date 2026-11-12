@@ -1,5 +1,8 @@
 name: content-pipeline
 
+# Action 版本均为 Node.js 24 运行时（消除 "Node.js 20 is deprecated" 警告）；
+# 只换大版本，触发条件、权限、写入门控与命令一律未动。
+#
 # Batch 8A：**已停用自动触发**，仅保留人工 workflow_dispatch 作为历史运维入口。
 #
 # 背景：发布流程已改为「本地导出 JSON → scripts/import_post.py 导入 → 手动 PR」，
@@ -57,12 +60,12 @@ jobs:
       queue_sha: ${{ steps.q.outputs.queue_sha }}
       items: ${{ steps.p.outputs.items }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
         with:
           ref: main
           fetch-depth: 0          # 需要 history 来判定队列 SHA 的先后关系
 
-      - uses: actions/setup-python@v5
+      - uses: actions/setup-python@v6
         with:
           python-version: '3.12'
 
@@ -109,7 +112,7 @@ jobs:
           python scripts/split_posts.py --check
           python gen_feed.py --check
 
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v6
         if: always()
         with:
           name: queue-report
@@ -138,16 +141,16 @@ jobs:
       candidate_sha: ${{ steps.push.outputs.candidate_sha }}
       base_main_sha: ${{ steps.src.outputs.main_sha }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
         with:
           ref: main
           fetch-depth: 0
 
-      - uses: actions/setup-python@v5
+      - uses: actions/setup-python@v6
         with:
           python-version: '3.12'
 
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@v5
         with:
           node-version: '22'
 
@@ -278,8 +281,8 @@ jobs:
       contents: read
       pull-requests: write      # 只在这一步需要 PR 写权限
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
+      - uses: actions/checkout@v5
+      - uses: actions/setup-python@v6
         with:
           python-version: '3.12'
       - name: 开 PR 前确认 main 未变化
