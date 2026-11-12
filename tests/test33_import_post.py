@@ -248,9 +248,12 @@ try:
     rc, out = run_cli(['--file', gbk_path, '--dry-run', '--root', root])
     check('I6 非 UTF-8 文件 → 明确拒绝', rc == 1 and 'UTF-8' in out, out.strip()[-60:])
 
+    # 阈值跟随模块常量：Batch 8B-1 把上限从 1 MiB 提到 4 MiB（更新稿要内联原正文快照），
+    # 断言本身不变 —— 超限文件必须被拒绝，只是夹具按新上限来构造。
+    import import_post as _ip
     big_path = os.path.join(tmpdir, 'big.json')
     with open(big_path, 'wb') as f:
-        f.write(b'{"id":"big","pad":"' + b'a' * (1024 * 1024 + 10) + b'"}')
+        f.write(b'{"id":"big","pad":"' + b'a' * (_ip.MAX_FILE_BYTES + 10) + b'"}')
     rc, out = run_cli(['--file', big_path, '--dry-run', '--root', root])
     check('I6 超大文件 → 拒绝（防止误喂大文件）', rc == 1 and '过大' in out, out.strip()[-50:])
 

@@ -201,6 +201,8 @@ python scripts/run_tests.py --report /tmp/r.md --json /tmp/r.json
 | `test24_publish_queue.js` | B8A：旧发布队列入口下线（零网络/零队列/零 Token） |
 | `test32_editor_export.js` | B8A：导出契约（UTF-8/代码块/特殊字符/空正文/重复 ID/文件名） |
 | `test33_import_post.py` | B8A：本地导入器（冲突/恶意路径/非法 JSON/中断回滚/RSS 与搜索索引） |
+| `test34_post_update.py` | B8B1：更新已有文章（原版本校验/锁/回滚/id 不变/其他文章不变） |
+| `test35_editor_update.js` | B8B1：编辑器编辑模式（回填/固定 id/更新稿/草稿隔离/前进后退/深链不变） |
 | `test12.py` | `scan_codefiles.py` 描述保护（合成 fixture） |
 | `test13.py` | `gen_feed.py` 解析、失败策略、路径（合成 fixture） |
 | `test14.js` | 排序一致性 + 日期时区（Asia/Shanghai、America/New_York、Europe/London） |
@@ -279,6 +281,20 @@ git commit -m "post: <标题>"
 git push -u origin feature/post-<id>
 ```
 
+改已有文章走「编辑器打开 → 导出更新稿 → 本地更新 → 手动 PR」（Batch 8B-1）：
+
+```bash
+# 1) 编辑器里用「打开已有文章」下拉选择（或直接访问 #/editor/<id>）
+#    id 固定、文章链接不变；改完点「📤 导出更新稿」得到 <id>.update.json
+# 2) 本地校验并更新（会核对原版本，过期稿件直接拒绝）
+python scripts/import_post.py --file <id>.update.json --mode update --dry-run
+python scripts/import_post.py --file <id>.update.json --mode update --apply
+# 3) 同上：--check → 完整测试 → 手动提交 PR
+```
+
+> 更新稿里带 `original` 原版本快照（原文全文 + 原元数据）；导入器把它与仓库当前内容逐字段比对，
+> 不一致就拒绝（退出码 2），不会把旧版本覆盖到别人的新改动上。
+
 合并到 `main` 后 GitHub Pages 自动构建（约 30 秒 ~ 2 分钟）。
 
 发布后可按下面方式自检（注意加 cache-buster，边缘缓存会有延迟）：
@@ -339,7 +355,9 @@ git push -u origin feature/post-<id>
 
 - 编辑器只做「导出文章」：不调用 GitHub API，也没有 Token 输入框；导出物是本地 JSON，不发往任何服务器。
 - 8A 之前保存过 Token 的老用户：编辑器「⚙️ 设置 → 🧹 清除旧版 GitHub Token」可一次性删掉 `gh_token` / `gh_owner` / `gh_repo`（代码只允许删除，不再读取或写入）。
-- 发布改由本地 `scripts/import_post.py` 完成：它只接受 JSON、只新增、不覆盖历史正文，失败自动回滚。
+- 发布改由本地 `scripts/import_post.py` 完成：只接受 JSON，新增不覆盖历史正文、更新要过原版本校验，失败自动回滚。
+- Batch 8B-1 起编辑器可以打开**已有文章**改标题/标签/摘要/正文，但 id 与链接固定，且只导出「更新稿」，仍然不写仓库。
+- **兼容期文章（`js/user-posts.js`）在编辑器里是只读的**：正文内联在 JSON 数组里、导入器不写该文件，所以不提供在线编辑；要用编辑器改，先把它们迁移到 `data/posts/<id>.md`。
 - **这不等于 XSS 防护**：Markdown 输出统一过 DOMPurify、动态内容不拼内联事件，仍然是为「别让不可信内容变成脚本」。
 
 ---
