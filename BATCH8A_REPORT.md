@@ -173,7 +173,7 @@ git add / commit / push feature 分支 → 手动开 PR → 人工确认合并
 
 | 分组 | 用例 | 结果 |
 | --- | --- | --- |
-| 语法 | 55 个 js/py 文件 | 全 OK |
+| 语法 | 56 个 js/py 文件 | 全 OK |
 | 前端/编辑器 | audit, test6, test7, **test8**, test9, **test10**, test11, test14, test16, **test20**, **test24**, **test32** | 全 PASS（test20 24/24、test24 22/22、test32 42/42） |
 | 生成器/内容 | test12, test13, test15, test17, test18, split-check, test19, test21, test22, test23, **test33**, content-check, feed-check | 全 PASS（test33 68/68） |
 | 历史自动化（已停用但仍有代码） | test25, test26, test27, test28, test29, test30, test31 | 全 PASS（未删除任何断言） |
