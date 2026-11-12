@@ -1457,6 +1457,78 @@ main {
   margin-top: 8px;
 }
 
+/* 模式栏（Batch 8B-1）：选择已有文章 / 区分新增与编辑 */
+.editor-mode-bar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+  padding-bottom: 14px;
+  margin-bottom: 16px;
+  border-bottom: 1px dashed var(--color-border);
+}
+
+.editor-mode-label {
+  font-size: 0.82rem;
+  color: var(--color-text-secondary);
+  white-space: nowrap;
+}
+
+.editor-post-select {
+  max-width: 340px;
+  margin-bottom: 0;
+  font-size: 0.9rem;
+}
+
+.editor-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 0.76rem;
+  line-height: 1.6;
+  padding: 2px 10px;
+  border-radius: 999px;
+  background: var(--color-tag-bg);
+  color: var(--color-tag-text);
+  white-space: nowrap;
+}
+
+.editor-badge-edit {
+  background: transparent;
+  border: 1px solid var(--color-accent);
+  color: var(--color-accent);
+}
+
+.editor-badge code {
+  font-size: 0.74rem;
+  background: transparent;
+  color: inherit;
+}
+
+.editor-date-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 14px;
+}
+
+.editor-date-row > span:first-child {
+  font-size: 0.82rem;
+  color: var(--color-text-secondary);
+  white-space: nowrap;
+}
+
+.editor-input-date {
+  max-width: 170px;
+  margin-bottom: 0;
+}
+
+.editor-date-hint {
+  font-size: 0.76rem;
+  color: var(--color-text-muted);
+}
+
 .editor-input {
   width: 100%;
   padding: 10px 14px;

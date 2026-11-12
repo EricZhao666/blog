@@ -2059,28 +2059,77 @@ function renderLinks() {
 
 // ============================================
 // Editor
+// Batch 8A   ：编辑器只导出本地 JSON（不联网、不写仓库、不需要 Token）
+// Batch 8B-1 ：新增「编辑已有文章」模式（id 固定、链接不变、导出更新稿）
 // ============================================
 
-function renderEditor() {
-  var draft = {};
-  try { draft = JSON.parse(localStorage.getItem('blog_draft') || '{}'); } catch (e) {}
-  // 重新进入编辑器：以已存草稿作为内存快照起点（导出不会清空草稿，草稿始终可继续编辑）
-  _draftState = (draft && (draft.title || draft.tags || draft.excerpt || draft.content))
-    ? { title: draft.title || '', tags: draft.tags || '', excerpt: draft.excerpt || '', content: draft.content || '' }
-    : null;
+var EDIT_DRAFT_PREFIX = 'blog_draft_edit::';
+var _editorMode = 'new';      // 'new' | 'edit'
+var _editCtx = null;          // 编辑模式的原文快照 { id, title, date, tags, excerpt, content }
+
+function isEditorRoute(hash) {
+  return hash === '/editor' || String(hash || '').indexOf('/editor/') === 0;
+}
+
+// 兼容期文章（js/user-posts.js）正文内联在 JSON 数组里，导入器不会写这个文件，
+// 因此它们在编辑器里是**只读**的：绝不假装能改，也绝不覆盖。
+function isLegacyPost(post) {
+  if (!post || typeof USER_POSTS === 'undefined') return false;
+  return USER_POSTS.some(function (u) { return u.id === post.id; });
+}
+
+function editorPostOptions(selectedId) {
+  return getAllPosts().map(function (p) {
+    var legacy = isLegacyPost(p);
+    var label = p.title + '（' + p.date + '）' + (legacy ? ' · 只读' : '');
+    return '<option value="' + escapeHtml(p.id) + '"' +
+      (p.id === selectedId ? ' selected' : '') +
+      (legacy ? ' data-legacy="1"' : '') + '>' + escapeHtml(label) + '</option>';
+  }).join('');
+}
+
+function renderEditor(editId) {
+  var isEdit = !!editId;
+  _editorMode = isEdit ? 'edit' : 'new';
+  if (!isEdit) _editCtx = null;
+
+  // 两种模式各有独立草稿（新增 = blog_draft；编辑 = blog_draft_edit::<id>），互不覆盖
+  var state = isEdit ? loadEditDraftState(editId) : loadNewDraftState();
+  var dateValue = isEdit ? (state.date || '') : '';
 
   return '' +
     '<div class="editor-page">' +
-    '  <h1 class="page-title">\u270F\uFE0F \u65B0\u5EFA\u6587\u7AE0</h1>' +
-    '  <p class="page-desc">\u5728\u6D4F\u89C8\u5668\u91CC\u5199 Markdown \u5E76\u5B9E\u65F6\u9884\u89C8\uFF0C\u7136\u540E<b>\u5BFC\u51FA\u6587\u7AE0 JSON</b>\uFF1B\u53D1\u5E03\u8D70\u672C\u5730\u5BFC\u5165\u811A\u672C + \u624B\u52A8 PR\uFF0C\u7F16\u8F91\u5668\u4E0D\u518D\u76F4\u63A5\u5199\u5165\u4ED3\u5E93\u3002</p>' +
+    (isEdit
+      ? '  <h1 class="page-title">\u{1F4DD} \u7F16\u8F91\u6587\u7AE0</h1>' +
+        '  <p class="page-desc">\u6B63\u5728\u7F16\u8F91\u5DF2\u53D1\u5E03\u7684\u6587\u7AE0\uFF08id \u56FA\u5B9A\uFF0C\u94FE\u63A5\u4E0D\u53D8\uFF09\u3002\u6539\u5B8C\u5BFC\u51FA<b>\u66F4\u65B0\u7A3F JSON</b>\uFF0C\u518D\u7528 <code>scripts/import_post.py --mode update</code> \u66F4\u65B0\u672C\u5730\u4ED3\u5E93\uFF1B\u7F16\u8F91\u5668\u4E0D\u4F1A\u76F4\u63A5\u6539\u7AD9\u70B9\u3002</p>'
+      : '  <h1 class="page-title">\u270F\uFE0F \u65B0\u5EFA\u6587\u7AE0</h1>' +
+        '  <p class="page-desc">\u5728\u6D4F\u89C8\u5668\u91CC\u5199 Markdown \u5E76\u5B9E\u65F6\u9884\u89C8\uFF0C\u7136\u540E<b>\u5BFC\u51FA\u6587\u7AE0 JSON</b>\uFF1B\u53D1\u5E03\u8D70\u672C\u5730\u5BFC\u5165\u811A\u672C + \u624B\u52A8 PR\uFF0C\u7F16\u8F91\u5668\u4E0D\u518D\u76F4\u63A5\u5199\u5165\u4ED3\u5E93\u3002</p>') +
     '  <div class="editor-form">' +
-    '    <input type="text" id="editorTitle" class="editor-input editor-input-title" placeholder="\u6587\u7AE0\u6807\u9898" value="' + escapeHtml(draft.title || '') + '">' +
-    '    <input type="text" id="editorTags" class="editor-input editor-input-tags" placeholder="\u6807\u7B7E\uFF08\u9017\u53F7\u5206\u9694\uFF09\uFF0C\u5982\uFF1A\u673A\u68B0\u81C2, VLA, \u6280\u672F\u7B14\u8BB0" value="' + escapeHtml(draft.tags || '') + '">' +
-    '    <textarea id="editorExcerpt" class="editor-input editor-textarea-excerpt" placeholder="\u6458\u8981\uFF08\u53EF\u9009\uFF0C\u7559\u7A7A\u81EA\u52A8\u751F\u6210\uFF09" rows="2">' + escapeHtml(draft.excerpt || '') + '</textarea>' +
+    '    <div class="editor-mode-bar">' +
+    '      <label class="editor-mode-label" for="editorPostPicker">\u6253\u5F00\u5DF2\u6709\u6587\u7AE0</label>' +
+    '      <select id="editorPostPicker" class="editor-input editor-post-select" onchange="openEditorPost(this.value)">' +
+    '        <option value="">\u2014 \u9009\u62E9\u4E00\u7BC7\u5DF2\u53D1\u5E03\u6587\u7AE0 \u2014</option>' +
+    editorPostOptions(isEdit ? editId : '') +
+    '      </select>' +
+    (isEdit
+      ? '<span class="editor-badge editor-badge-edit">\u7F16\u8F91\u6A21\u5F0F \u00B7 id: <code>' + escapeHtml(editId) + '</code>\uFF08\u56FA\u5B9A\uFF09</span>' +
+        '<button class="editor-btn editor-btn-ghost" onclick="exitEditorEdit()">\u2716 \u9000\u51FA\u7F16\u8F91</button>'
+      : '<span class="editor-badge">\u65B0\u589E\u6A21\u5F0F</span>') +
+    '    </div>' +
+    '    <input type="text" id="editorTitle" class="editor-input editor-input-title" placeholder="\u6587\u7AE0\u6807\u9898" value="' + escapeHtml(state.title || '') + '">' +
+    '    <input type="text" id="editorTags" class="editor-input editor-input-tags" placeholder="\u6807\u7B7E\uFF08\u9017\u53F7\u5206\u9694\uFF09\uFF0C\u5982\uFF1A\u673A\u68B0\u81C2, VLA, \u6280\u672F\u7B14\u8BB0" value="' + escapeHtml(state.tags || '') + '">' +
+    '    <textarea id="editorExcerpt" class="editor-input editor-textarea-excerpt" placeholder="\u6458\u8981\uFF08\u53EF\u9009\uFF0C\u7559\u7A7A\u81EA\u52A8\u751F\u6210\uFF09" rows="2">' + escapeHtml(state.excerpt || '') + '</textarea>' +
+    (isEdit
+      ? '    <div class="editor-date-row">' +
+        '      <span>\u53D1\u5E03\u65E5\u671F</span>' +
+        '      <input type="text" id="editorDate" class="editor-input editor-input-date" value="' + escapeHtml(dateValue) + '" placeholder="YYYY-MM-DD">' +
+        '      <span class="editor-date-hint">\u9ED8\u8BA4\u4FDD\u7559\u539F\u6587\u7AE0\u65E5\u671F\uFF0C\u4E0D\u6539\u5C31\u4E0D\u4F1A\u53D8</span>' +
+        '    </div>'
+      : '') +
     '    <div class="editor-split">' +
     '      <div class="editor-pane">' +
     '        <div class="editor-pane-label">Markdown \u7F16\u8F91</div>' +
-    '        <textarea id="editorContent" class="editor-textarea-content" placeholder="\u5728\u8FD9\u91CC\u8F93\u5165 Markdown \u5185\u5BB9...\n\n# \u6807\u9898\n\n\u6B63\u6587...\n\n```python\nprint(\"hello\")\n```">' + escapeHtml(draft.content || '') + '</textarea>' +
+    '        <textarea id="editorContent" class="editor-textarea-content" placeholder="\u5728\u8FD9\u91CC\u8F93\u5165 Markdown \u5185\u5BB9...\n\n# \u6807\u9898\n\n\u6B63\u6587...\n\n```python\nprint(\"hello\")\n```">' + escapeHtml(state.content || '') + '</textarea>' +
     '      </div>' +
     '      <div class="editor-pane">' +
     '        <div class="editor-pane-label">\u5B9E\u65F6\u9884\u89C8</div>' +
@@ -2089,15 +2138,17 @@ function renderEditor() {
     '    </div>' +
     '    <div class="editor-actions">' +
     '      <button class="editor-btn editor-btn-secondary" onclick="saveDraft()">\u{1F4BE} \u4FDD\u5B58\u8349\u7A3F</button>' +
-    '      <button class="editor-btn editor-btn-primary" onclick="exportPost()">\u{1F4E4} \u5BFC\u51FA\u6587\u7AE0</button>' +
+    '      <button class="editor-btn editor-btn-primary" onclick="exportPost()">' +
+    (isEdit ? '\u{1F4E4} \u5BFC\u51FA\u66F4\u65B0\u7A3F' : '\u{1F4E4} \u5BFC\u51FA\u6587\u7AE0') + '</button>' +
     '      <button class="editor-btn editor-btn-ghost" onclick="toggleEditorSettings()">\u2699\uFE0F \u8BBE\u7F6E</button>' +
     '    </div>' +
     '    <div id="editorStatus" class="editor-status"></div>' +
     '    <div id="editorSettings" class="editor-settings" style="display:none;">' +
     '      <h3>\u65E7\u7248\u53D1\u5E03\u8BBE\u7F6E\uFF08\u5DF2\u505C\u7528\uFF09</h3>' +
     '      <div class="editor-settings-hint">' +
-    '        <p>\u7F16\u8F91\u5668\u73B0\u5728\u53EA\u8D1F\u8D23\u300C\u5BFC\u51FA\u6587\u7AE0\u300D\uFF1A\u4E0D\u518D\u5411 GitHub \u63D0\u4EA4\uFF0C\u4E5F\u4E0D\u518D\u9700\u8981 GitHub Token\u3002</p>' +
-    '        <p>\u53D1\u5E03\u6D41\u7A0B\uFF1A\u5BFC\u51FA JSON \u2192 \u672C\u5730 <code>python scripts/import_post.py --file &lt;id&gt;.json --dry-run</code> \u2192 <code>--apply</code> \u2192 \u624B\u52A8\u5EFA\u7ACB PR\u3002</p>' +
+    '        <p>\u7F16\u8F91\u5668\u73B0\u5728\u53EA\u8D1F\u8D23\u300C\u5BFC\u51FA\u300D\uFF1A\u4E0D\u518D\u5411 GitHub \u63D0\u4EA4\uFF0C\u4E5F\u4E0D\u518D\u9700\u8981 GitHub Token\u3002</p>' +
+    '        <p>\u65B0\u589E\uFF1A\u5BFC\u51FA JSON \u2192 <code>python scripts/import_post.py --file &lt;id&gt;.json --dry-run</code> \u2192 <code>--apply</code>\u3002</p>' +
+    '        <p>\u66F4\u65B0\uFF1A\u5BFC\u51FA\u66F4\u65B0\u7A3F \u2192 <code>python scripts/import_post.py --file &lt;id&gt;.update.json --mode update --dry-run</code> \u2192 <code>--apply</code>\u3002</p>' +
     '        <p>\u82E5\u4F60\u4EE5\u524D\u5728\u672C\u673A\u4FDD\u5B58\u8FC7 GitHub Token\uFF0C\u53EF\u4EE5\u5728\u8FD9\u91CC\u4E00\u6B21\u6027\u6E05\u9664\uFF08\u4E0D\u4F1A\u518D\u88AB\u4EFB\u4F55\u4EE3\u7801\u4F7F\u7528\uFF09\u3002</p>' +
     '        <p id="legacyPublishState">' + legacyPublishStateText() + '</p>' +
     '      </div>' +
@@ -2106,6 +2157,81 @@ function renderEditor() {
     '  </div>' +
     '</div>';
 }
+
+// 加载/只读/不存在的兜底页：只提示，不碰任何草稿
+function renderEditorBlocked(editId, prepared) {
+  _editorMode = 'blocked';     // 没有可用表单：draftStorageKey() 返回 null，任何情况下都不写草稿
+  _editCtx = null;
+  var title, detail;
+  if (prepared.kind === 'missing') {
+    title = '\u6587\u7AE0\u4E0D\u5B58\u5728';
+    detail = '\u4ED3\u5E93\u91CC\u6CA1\u6709 id \u4E3A <code>' + escapeHtml(editId) +
+      '</code> \u7684\u6587\u7AE0\uFF08\u53EF\u80FD\u5DF2\u88AB\u91CD\u547D\u540D\u6216\u5220\u9664\uFF09\u3002';
+  } else if (prepared.kind === 'legacy') {
+    title = '\u8BE5\u6587\u7AE0\u4E3A\u53EA\u8BFB\u6765\u6E90';
+    detail = '\u8FD9\u7BC7\u6587\u7AE0\u6765\u81EA\u517C\u5BB9\u671F\u7684 <code>js/user-posts.js</code>' +
+      '\uFF08\u6B63\u6587\u5185\u8054\u5728 JSON \u6570\u7EC4\u91CC\uFF09\u3002\u5BFC\u5165\u5668\u4E0D\u4F1A\u5199\u8FD9\u4E2A\u6587\u4EF6\uFF0C' +
+      '\u56E0\u6B64\u7F16\u8F91\u5668\u4E0D\u63D0\u4F9B\u5728\u7EBF\u7F16\u8F91\uFF0C\u4E5F\u4E0D\u4F1A\u8986\u76D6\u5B83\u3002' +
+      '\u5982\u9700\u4FEE\u6539\uFF0C\u8BF7\u5148\u628A\u5B83\u8FC1\u79FB\u5230 <code>data/posts/' + escapeHtml(editId) + '.md</code>' +
+      '\uFF08\u53C2\u89C1 BATCH8B1_REPORT.md\u300C\u5DF2\u77E5\u9650\u5236\u300D\uFF09\u3002';
+  } else {
+    title = '\u6B63\u6587\u52A0\u8F7D\u5931\u8D25';
+    detail = '\u65E0\u6CD5\u8BFB\u53D6 <code>data/posts/' + escapeHtml(editId) + '.md</code>\uFF1A' +
+      escapeHtml(prepared.message || '\u672A\u77E5\u9519\u8BEF') +
+      '\u3002\u5F53\u524D\u8349\u7A3F\u88AB\u4FDD\u7559\uFF0C\u672A\u88AB\u6E05\u9664\u3002';
+  }
+  return '' +
+    '<div class="editor-page">' +
+    '  <h1 class="page-title">\u26A0\uFE0F ' + title + '</h1>' +
+    '  <p class="page-desc">' + detail + '</p>' +
+    '  <p>' +
+    '    <a class="editor-btn editor-btn-ghost" href="#/editor">\u2190 \u56DE\u5230\u7F16\u8F91\u5668</a>' +
+    (prepared.kind === 'missing' ? '' : ' <a class="editor-btn editor-btn-ghost" href="#/post/' + escapeHtml(editId) + '">\u67E5\u770B\u6587\u7AE0</a>') +
+    '  </p>' +
+    '</div>';
+}
+
+// 进入编辑模式前的准备：定位文章 + 取回正文，失败时**不动**任何草稿
+async function prepareEditorEdit(id) {
+  var post = getAllPosts().find(function (p) { return p.id === id; });
+  if (!post) return { ok: false, kind: 'missing' };
+  if (isLegacyPost(post)) return { ok: false, kind: 'legacy' };
+  if (_editCtx && _editCtx.id === id) return { ok: true, cached: true };
+
+  var body;
+  try {
+    body = await loadPostBody(id);
+  } catch (err) {
+    return { ok: false, kind: 'load-failed', message: (err && err.message) || String(err) };
+  }
+  if (typeof body !== 'string') return { ok: false, kind: 'load-failed', message: 'body is not text' };
+
+  _editCtx = {
+    id: id,
+    title: post.title || '',
+    date: post.date || '',
+    tags: (post.tags || []).slice(),
+    excerpt: post.excerpt || '',
+    content: body                       // 原文快照：导出更新稿时原样带上，供导入器做版本校验
+  };
+  return { ok: true };
+}
+
+window.openEditorPost = function (id) {
+  if (!id) return;
+  flushDraft(true);                       // 先把当前模式的草稿落盘，再切换（两个草稿互不覆盖）
+  location.hash = '#/editor/' + encodeURIComponent(id);
+};
+
+window.exitEditorEdit = function () {
+  flushDraft(true);
+  location.hash = '#/editor';
+};
+
+// 供测试与调试使用：当前是哪个模式、编辑的是哪一篇
+window.editorContext = function () {
+  return { mode: _editorMode, id: _editCtx ? _editCtx.id : null };
+};
 
 // --- 文章 id 生成 ---
 // 只用 ASCII 字符，保证与 scripts/split_posts.py 的 SAFE_ID（^[a-z0-9][a-z0-9-]*$）一致。
@@ -2143,8 +2269,10 @@ function readEditorForm() {
   var g = document.getElementById('editorTags');
   var e = document.getElementById('editorExcerpt');
   var c = document.getElementById('editorContent');
+  var d = document.getElementById('editorDate');     // 只有编辑模式才有日期输入
   if (!t || !g || !e || !c) return null;   // 编辑器已卸载，不能再读 DOM
-  return { title: t.value, tags: g.value, excerpt: e.value, content: c.value };
+  return { title: t.value, tags: g.value, excerpt: e.value, content: c.value,
+           date: d ? d.value : '' };
 }
 
 function hasDraftContent(state) {
@@ -2152,17 +2280,69 @@ function hasDraftContent(state) {
   return !!(state.title || state.tags || state.excerpt || state.content);
 }
 
+function readDraftJson(key) {
+  try { return JSON.parse(localStorage.getItem(key) || 'null'); } catch (e) { return null; }
+}
+
+// 新增模式草稿：沿用 8A 的 blog_draft（老草稿没有 mode 字段，视为新增模式）
+function loadNewDraftState() {
+  var d = readDraftJson('blog_draft');
+  var usable = d && (!d.mode || d.mode === 'new') &&
+    (d.title || d.tags || d.excerpt || d.content);
+  _draftState = usable
+    ? { title: d.title || '', tags: d.tags || '', excerpt: d.excerpt || '',
+        content: d.content || '', date: '' }
+    : null;
+  return _draftState || { title: '', tags: '', excerpt: '', content: '', date: '' };
+}
+
+// 编辑模式草稿：每篇文章一个键，和新增模式完全分开（互不覆盖）
+function loadEditDraftState(id) {
+  var base = {
+    title: (_editCtx && _editCtx.title) || '',
+    date: (_editCtx && _editCtx.date) || '',
+    tags: ((_editCtx && _editCtx.tags) || []).join(', '),
+    excerpt: (_editCtx && _editCtx.excerpt) || '',
+    content: (_editCtx && _editCtx.content) || ''
+  };
+  var d = readDraftJson(EDIT_DRAFT_PREFIX + id);
+  var usable = d && d.id === id && d.mode === 'edit' &&
+    (d.title || d.tags || d.excerpt || d.content || d.date);
+  _draftState = usable
+    ? {
+        title: d.title == null ? base.title : d.title,
+        date: d.date || base.date,
+        tags: d.tags == null ? base.tags : d.tags,
+        excerpt: d.excerpt == null ? base.excerpt : d.excerpt,
+        content: d.content == null ? base.content : d.content
+      }
+    : base;
+  return _draftState;
+}
+
+function draftStorageKey() {
+  if (_editorMode === 'edit' && _editCtx) return EDIT_DRAFT_PREFIX + _editCtx.id;
+  if (_editorMode === 'new') return 'blog_draft';
+  return null;              // blocked：没有表单，不写任何草稿键
+}
+
 function writeDraft(state, silent) {
-  if (!hasDraftContent(state)) return false;
+  if (!hasDraftContent(state) && _editorMode !== 'edit') return false;
+  if (!state) return false;
+  var key = draftStorageKey();
+  if (!key) return false;
   var payload = {
+    mode: _editorMode,
+    id: (_editorMode === 'edit' && _editCtx) ? _editCtx.id : '',
     title: state.title || '',
+    date: state.date || '',
     tags: state.tags || '',
     excerpt: state.excerpt || '',
     content: state.content || '',
     savedAt: new Date().toISOString()
   };
   try {
-    localStorage.setItem('blog_draft', JSON.stringify(payload));
+    localStorage.setItem(key, JSON.stringify(payload));
   } catch (err) {
     return false;
   }
@@ -2349,6 +2529,103 @@ function buildExportPayload() {
 }
 window.buildExportPayload = buildExportPayload;
 
+// --- 编辑模式：更新稿（Batch 8B-1）---
+// 更新稿 = 修改后的完整文章 + 原文快照（original）。快照用于让导入器确认
+// "这份更新稿基于仓库里的哪一版"：Python 侧把快照与磁盘上的当前文章逐字段比对，
+// 不一致就拒绝（不会把旧版本覆盖到别人的新修改上）。
+// 规范化规则与 scripts/import_post.py 保持一致：只统一换行为 LF，**不**裁剪空白。
+function normalizeBodyText(text) {
+  return String(text == null ? '' : text).replace(/\r\n/g, '\n').replace(/\r/g, '\n');
+}
+
+function readEditForm() {
+  var title = document.getElementById('editorTitle').value.trim();
+  var tagsStr = document.getElementById('editorTags').value.trim();
+  var excerpt = document.getElementById('editorExcerpt').value.trim();
+  var content = document.getElementById('editorContent').value.trim();
+  var dateEl = document.getElementById('editorDate');
+  var date = (dateEl && dateEl.value ? dateEl.value : '').trim();
+  var tags = tagsStr.split(/[,，]/).map(function (t) { return t.trim(); })
+    .filter(function (t) { return t; });
+  return {
+    id: (_editCtx && _editCtx.id) || '',
+    title: title,
+    date: date,
+    tags: tags,
+    excerpt: excerpt,
+    content: content
+  };
+}
+
+function isRealDate(str) {
+  var m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(str || '');
+  if (!m) return false;
+  var d = new Date(+m[1], +m[2] - 1, +m[3]);
+  return d.getFullYear() === +m[1] && d.getMonth() === +m[2] - 1 && d.getDate() === +m[3];
+}
+
+function validateUpdatePost(cur) {
+  if (_editorMode !== 'edit' || !_editCtx) return '当前不是编辑模式';
+  if (!cur.title) return '标题不能为空';
+  if (!cur.content) return '正文不能为空';
+  if (!isRealDate(cur.date)) return '日期必须是合法的 YYYY-MM-DD';
+  if (!cur.tags.length) return '至少需要一个标签';
+  if (!/^[a-z0-9][a-z0-9-]*$/.test(cur.id)) return 'id 非法（只允许小写字母/数字/连字符）';
+  var exists = getAllPosts().some(function (p) { return p.id === cur.id; });
+  if (!exists) return '找不到 id 为 ' + cur.id + ' 的文章（更新稿不允许当作新增）';
+  return '';
+}
+
+function editHasChanges(cur) {
+  if (!_editCtx) return false;
+  var o = _editCtx;
+  if (cur.title !== String(o.title || '').trim()) return true;
+  if (cur.date !== String(o.date || '').trim()) return true;
+  if (cur.excerpt !== String(o.excerpt || '').trim()) return true;
+  if (cur.content !== normalizeBodyText(o.content).trim()) return true;
+  return cur.tags.join('\u0000') !== (o.tags || []).join('\u0000');
+}
+
+// 字段顺序固定 → 同样的修改重复导出，得到的字节完全一致（可 diff、可复现）
+function buildUpdatePayload() {
+  if (_editorMode !== 'edit' || !_editCtx) return { ok: false, error: '当前不是编辑模式' };
+
+  var cur = readEditForm();
+  var problem = validateUpdatePost(cur);
+  if (problem) return { ok: false, error: problem };
+  if (!editHasChanges(cur)) {
+    return { ok: false, unchanged: true, error: '内容没有变化（与线上版本一致），无需导出更新稿' };
+  }
+
+  var payload = {
+    op: 'update',
+    id: _editCtx.id,
+    original: {
+      title: _editCtx.title,
+      date: _editCtx.date,
+      tags: (_editCtx.tags || []).slice(),
+      excerpt: _editCtx.excerpt || '',
+      content: _editCtx.content
+    },
+    post: {
+      id: _editCtx.id,
+      title: cur.title,
+      date: cur.date,
+      tags: cur.tags,
+      excerpt: cur.excerpt,
+      content: cur.content
+    }
+  };
+  return {
+    ok: true,
+    post: payload.post,
+    payload: payload,
+    filename: _editCtx.id + '.update.json',
+    text: JSON.stringify(payload, null, 2) + '\n'
+  };
+}
+window.buildUpdatePayload = buildUpdatePayload;
+
 // 真正触发下载。测试通过替换 window.__downloadText 拿到内容，避免依赖真实浏览器下载行为。
 function downloadText(text, filename) {
   var blob = new Blob([text], { type: 'application/json;charset=utf-8' });
@@ -2371,11 +2648,16 @@ function downloadText(text, filename) {
 window.__downloadText = downloadText;
 
 window.exportPost = function() {
-  var payload = buildExportPayload();
+  var mode = _editorMode;
+  var payload = (mode === 'edit') ? buildUpdatePayload() : buildExportPayload();
 
   if (!payload.ok) {
     // 校验不通过：不产出文件，但草稿必须留下
-    showEditorStatus('\u274C \u65E0\u6CD5\u5BFC\u51FA\uFF1A' + escapeHtml(payload.error) + '\uFF08\u8349\u7A3F\u5DF2\u4FDD\u7559\uFF09', 'error');
+    if (payload.unchanged) {
+      showEditorStatus('\u26A0\uFE0F ' + escapeHtml(payload.error) + '\uFF08\u8349\u7A3F\u5DF2\u4FDD\u7559\uFF09', 'loading');
+    } else {
+      showEditorStatus('\u274C \u65E0\u6CD5\u5BFC\u51FA\uFF1A' + escapeHtml(payload.error) + '\uFF08\u8349\u7A3F\u5DF2\u4FDD\u7559\uFF09', 'error');
+    }
     flushDraft(true);
     return false;
   }
@@ -2392,10 +2674,17 @@ window.exportPost = function() {
 
   // 导出成功 ≠ 文章已上线：草稿继续保留，方便接着改、再导出
   flushDraft(true);
-  showEditorStatus('\u2705 \u5DF2\u5BFC\u51FA <b>' + escapeHtml(payload.filename)
-    + '</b>\uFF08\u672C\u5730\u6587\u4EF6\uFF0C<b>\u5C1A\u672A\u4E0A\u7EBF</b>\uFF09\u3002\u4E0B\u4E00\u6B65\uFF1A\u5728\u4ED3\u5E93\u6839\u76EE\u5F55\u8FD0\u884C '
-    + '<code>python scripts/import_post.py --file ' + escapeHtml(payload.filename) + ' --dry-run</code>'
-    + '\u68C0\u67E5\uFF0C\u518D <code>--apply</code>\uFF0C\u6700\u540E\u624B\u52A8\u63D0\u4EA4 PR\u3002', 'success');
+  if (mode === 'edit') {
+    showEditorStatus('\u2705 \u5DF2\u5BFC\u51FA\u66F4\u65B0\u7A3F <b>' + escapeHtml(payload.filename)
+      + '</b>\uFF08\u672C\u5730\u6587\u4EF6\uFF0C<b>\u7AD9\u70B9\u5C1A\u672A\u66F4\u65B0</b>\uFF09\u3002\u4E0B\u4E00\u6B65\uFF1A'
+      + '<code>python scripts/import_post.py --file ' + escapeHtml(payload.filename) + ' --mode update --dry-run</code>'
+      + '\u68C0\u67E5\uFF0C\u518D <code>--apply</code>\uFF0C\u6700\u540E\u624B\u52A8\u63D0\u4EA4 PR\u3002', 'success');
+  } else {
+    showEditorStatus('\u2705 \u5DF2\u5BFC\u51FA <b>' + escapeHtml(payload.filename)
+      + '</b>\uFF08\u672C\u5730\u6587\u4EF6\uFF0C<b>\u5C1A\u672A\u4E0A\u7EBF</b>\uFF09\u3002\u4E0B\u4E00\u6B65\uFF1A\u5728\u4ED3\u5E93\u6839\u76EE\u5F55\u8FD0\u884C '
+      + '<code>python scripts/import_post.py --file ' + escapeHtml(payload.filename) + ' --dry-run</code>'
+      + '\u68C0\u67E5\uFF0C\u518D <code>--apply</code>\uFF0C\u6700\u540E\u624B\u52A8\u63D0\u4EA4 PR\u3002', 'success');
+  }
   return true;
 };
 
@@ -2413,7 +2702,8 @@ async function router() {
   let hasDeepLinkTarget = false;
 
   // 离开编辑器：把待保存内容立即落盘（只 clearTimeout 会丢内容）
-  if (_currentRoute === '/editor' && hash !== '/editor') {
+  // Batch 8B-1：编辑模式与新增模式各有草稿键，切换文章 / 退出编辑同样要先落盘
+  if (isEditorRoute(_currentRoute) && _currentRoute !== hash) {
     flushDraft(true);
   }
   _currentRoute = hash;
@@ -2623,8 +2913,19 @@ async function router() {
     } else if (hash === '/links') {
       app.innerHTML = renderLinks();
     } else if (hash === '/editor') {
-      app.innerHTML = renderEditor();
+      app.innerHTML = renderEditor(null);
       setupEditorListeners();
+    } else if (hash.indexOf('/editor/') === 0) {
+      // 编辑已有文章：#/editor/<id>（可深链、可用浏览器前进后退）
+      const editId = decodeURIComponent(hash.slice('/editor/'.length));
+      const prepared = await prepareEditorEdit(editId);
+      if (token !== _routeToken) return;        // 快速切换路由：丢弃过期结果
+      if (!prepared.ok) {
+        app.innerHTML = renderEditorBlocked(editId, prepared);
+      } else {
+        app.innerHTML = renderEditor(editId);
+        setupEditorListeners();
+      }
     } else {
       app.innerHTML = `
         <div class="empty-state">
@@ -2882,7 +3183,7 @@ window.addEventListener('hashchange', router);
 
 // 关闭/刷新页面前把编辑器内容落盘
 window.addEventListener('beforeunload', function () {
-  if (_currentRoute === '/editor') flushDraft(true);
+  if (isEditorRoute(_currentRoute)) flushDraft(true);
 });
 
 // ============================================
