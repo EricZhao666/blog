@@ -102,25 +102,13 @@ def _ensure_real_date(pid, date, where):
         raise BuildError('%s（%s）的 date 不是真实日期：%r' % (where, pid, date))
 
 
-def collect(p):
-    """读取全部权威源。
+def assemble(metas, bodies, tag_order, legacy=None):
+    """把「元数据 + 正文 + 兼容期文章」装配成构建所需的统一视图。
 
-    解析/校验复用 split_posts.collect（内置 + 兼容期旧编辑器文章），
-    这里只补两条它不管的规则：真实日期、跨源 id 唯一性（它在 sp 里已保证，
-    这里再给出统一的错误措辞）。
+    抽出来是为了让 scripts/import_post.py 复用**同一套**装配/派生逻辑：
+    导入器不允许另写一套 data.js / 搜索语料 / feed 生成器。
     """
-    try:
-        metas, bodies, tag_order, source_info, orphans, legacy = sp.collect(p, 'check')
-    except sp.SplitError as e:
-        raise BuildError(str(e))
-    except Exception as e:
-        raise BuildError('解析权威源失败：%s' % e)
-
-    for meta in metas:
-        _ensure_real_date(meta['id'], str(meta.get('date')), 'js/data.js')
-    for post in legacy:
-        _ensure_real_date(post['id'], post['date'], USER_POSTS_LABEL)
-
+    legacy = legacy or []
     origin = {m['id']: 'data/posts/%s.md' % m['id'] for m in metas}
     for post in legacy:
         origin[post['id']] = USER_POSTS_LABEL
@@ -143,10 +131,48 @@ def collect(p):
         'all': built_in + legacy,
         'bodies': bodies,
         'tag_order': tag_order,
-        'source_info': source_info,
-        'orphans': orphans,
         'origin': origin,
     }
+
+
+def collect(p):
+    """读取全部权威源。
+
+    解析/校验复用 split_posts.collect（内置 + 兼容期旧编辑器文章），
+    这里只补两条它不管的规则：真实日期、跨源 id 唯一性（它在 sp 里已保证，
+    这里再给出统一的错误措辞）。
+    """
+    try:
+        metas, bodies, tag_order, source_info, orphans, legacy = sp.collect(p, 'check')
+    except sp.SplitError as e:
+        raise BuildError(str(e))
+    except Exception as e:
+        raise BuildError('解析权威源失败：%s' % e)
+
+    for meta in metas:
+        _ensure_real_date(meta['id'], str(meta.get('date')), 'js/data.js')
+    for post in legacy:
+        _ensure_real_date(post['id'], post['date'], USER_POSTS_LABEL)
+
+    state = assemble(metas, bodies, tag_order, legacy)
+    state['source_info'] = source_info
+    state['orphans'] = orphans
+    return state
+
+
+def resolve_source_info(p, fallback):
+    """manifest 里的 source 块记录"当初由哪次输入生成"，沿用磁盘上的那份。
+
+    否则"改过 data.js 但没 --sync"时，生成的 source 块会和 split-check 的判定不一致。
+    """
+    if os.path.exists(p['manifest']):
+        try:
+            disk = json.loads(_read_text(p['manifest']))
+            if isinstance(disk.get('source'), dict):
+                return disk['source']
+        except Exception:
+            pass
+    return fallback
 
 
 # --------------------------------------------------------------------- 生成
@@ -327,14 +353,7 @@ def main(argv=None):
 
     # source 块：沿用磁盘上的那份（与 split_posts 保持一致，避免"改过 data.js 但没 --sync"时
     # 产生与 split-check 不一致的判定）
-    source_info = state['source_info']
-    if os.path.exists(p['manifest']):
-        try:
-            disk = json.loads(_read_text(p['manifest']))
-            if isinstance(disk.get('source'), dict):
-                source_info = disk['source']
-        except Exception:
-            pass
+    source_info = resolve_source_info(p, state['source_info'])
 
     try:
         artifacts, manifest = build_artifacts(p, state, source_info)

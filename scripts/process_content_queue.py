@@ -1,6 +1,13 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-"""内容队列消费器（Batch 7C-3B）。
+"""内容队列消费器（Batch 7C-3B）—— Batch 8A 起为**历史/停用**代码。
+
+状态（Batch 8A）：
+    * 已没有自动触发链：content-pipeline.yml 只保留 workflow_dispatch，
+      `on.push: content/queue` 已删除；
+    * 编辑器不再写 content/queue，改用「导出 JSON + scripts/import_post.py」；
+    * 本文件暂不删除，原因：仍有测试覆盖、且需要确认无人依赖后再移除
+      （决策见 BATCH8A_REPORT.md 第 7 节）。**不要**把它当成发布链路的一部分。
 
 把 `content/queue/<id>.json` 规范化成统一权威格式（`data/posts/<id>.md` + `js/data.js` 元数据），
 再调用 `build_content.py --sync` 生成派生数据 —— 全程在**隔离目录**里做，不动工作区。

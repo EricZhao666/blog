@@ -2064,20 +2064,15 @@ function renderLinks() {
 function renderEditor() {
   var draft = {};
   try { draft = JSON.parse(localStorage.getItem('blog_draft') || '{}'); } catch (e) {}
-  // 重新进入编辑器：恢复可自动保存状态，并以已存草稿作为内存快照起点
-  _draftSuppressed = false;
+  // 重新进入编辑器：以已存草稿作为内存快照起点（导出不会清空草稿，草稿始终可继续编辑）
   _draftState = (draft && (draft.title || draft.tags || draft.excerpt || draft.content))
     ? { title: draft.title || '', tags: draft.tags || '', excerpt: draft.excerpt || '', content: draft.content || '' }
     : null;
-  var token = getStoredToken();
-  var remember = !!localStorage.getItem('gh_token');
-  var owner = localStorage.getItem('gh_owner') || 'EricZhao666';
-  var repo = localStorage.getItem('gh_repo') || 'blog';
 
   return '' +
     '<div class="editor-page">' +
     '  <h1 class="page-title">\u270F\uFE0F \u65B0\u5EFA\u6587\u7AE0</h1>' +
-    '  <p class="page-desc">\u5728\u6D4F\u89C8\u5668\u4E2D\u7F16\u5199 Markdown\uFF0C\u4E00\u952E\u53D1\u5E03\u5230 GitHub\uFF0CGitHub Pages \u81EA\u52A8\u66F4\u65B0</p>' +
+    '  <p class="page-desc">\u5728\u6D4F\u89C8\u5668\u91CC\u5199 Markdown \u5E76\u5B9E\u65F6\u9884\u89C8\uFF0C\u7136\u540E<b>\u5BFC\u51FA\u6587\u7AE0 JSON</b>\uFF1B\u53D1\u5E03\u8D70\u672C\u5730\u5BFC\u5165\u811A\u672C + \u624B\u52A8 PR\uFF0C\u7F16\u8F91\u5668\u4E0D\u518D\u76F4\u63A5\u5199\u5165\u4ED3\u5E93\u3002</p>' +
     '  <div class="editor-form">' +
     '    <input type="text" id="editorTitle" class="editor-input editor-input-title" placeholder="\u6587\u7AE0\u6807\u9898" value="' + escapeHtml(draft.title || '') + '">' +
     '    <input type="text" id="editorTags" class="editor-input editor-input-tags" placeholder="\u6807\u7B7E\uFF08\u9017\u53F7\u5206\u9694\uFF09\uFF0C\u5982\uFF1A\u673A\u68B0\u81C2, VLA, \u6280\u672F\u7B14\u8BB0" value="' + escapeHtml(draft.tags || '') + '">' +
@@ -2094,58 +2089,45 @@ function renderEditor() {
     '    </div>' +
     '    <div class="editor-actions">' +
     '      <button class="editor-btn editor-btn-secondary" onclick="saveDraft()">\u{1F4BE} \u4FDD\u5B58\u8349\u7A3F</button>' +
-    '      <button class="editor-btn editor-btn-primary" onclick="publishPost()">\u{1F680} \u53D1\u5E03\u5230 GitHub</button>' +
+    '      <button class="editor-btn editor-btn-primary" onclick="exportPost()">\u{1F4E4} \u5BFC\u51FA\u6587\u7AE0</button>' +
     '      <button class="editor-btn editor-btn-ghost" onclick="toggleEditorSettings()">\u2699\uFE0F \u8BBE\u7F6E</button>' +
     '    </div>' +
     '    <div id="editorStatus" class="editor-status"></div>' +
     '    <div id="editorSettings" class="editor-settings" style="display:none;">' +
-    '      <h3>GitHub \u53D1\u5E03\u8BBE\u7F6E</h3>' +
+    '      <h3>\u65E7\u7248\u53D1\u5E03\u8BBE\u7F6E\uFF08\u5DF2\u505C\u7528\uFF09</h3>' +
     '      <div class="editor-settings-hint">' +
-    '        <p>\u9700\u8981\u5728 GitHub \u521B\u5EFA Personal Access Token\uFF1A</p>' +
-    '        <p>1. \u8FDB\u5165 GitHub \u2192 Settings \u2192 Developer settings \u2192 Personal access tokens \u2192 Fine-grained tokens</p>' +
-    '        <p>2. \u65B0\u5EFA token\uFF0C\u9009\u62E9\u4ED3\u5E93 blog\uFF0C\u6743\u9650\u9009 Contents: Read and Write</p>' +
-    '        <p>3. \u590D\u5236 token \u7C98\u8D34\u5230\u4E0B\u65B9\u8F93\u5165\u6846\uFF08\u9ED8\u8BA4\u4EC5\u4FDD\u7559\u5728\u5F53\u524D\u6807\u7B7E\u9875\u7684 sessionStorage\uFF0C\u5173\u95ED\u9875\u9762\u5373\u5931\u6548\uFF1B\u82E5\u52FE\u9009\u201C\u8BB0\u4F4F\u6211\u201D\u5219\u540C\u65F6\u5199\u5165 localStorage\uFF09</p>' +
+    '        <p>\u7F16\u8F91\u5668\u73B0\u5728\u53EA\u8D1F\u8D23\u300C\u5BFC\u51FA\u6587\u7AE0\u300D\uFF1A\u4E0D\u518D\u5411 GitHub \u63D0\u4EA4\uFF0C\u4E5F\u4E0D\u518D\u9700\u8981 GitHub Token\u3002</p>' +
+    '        <p>\u53D1\u5E03\u6D41\u7A0B\uFF1A\u5BFC\u51FA JSON \u2192 \u672C\u5730 <code>python scripts/import_post.py --file &lt;id&gt;.json --dry-run</code> \u2192 <code>--apply</code> \u2192 \u624B\u52A8\u5EFA\u7ACB PR\u3002</p>' +
+    '        <p>\u82E5\u4F60\u4EE5\u524D\u5728\u672C\u673A\u4FDD\u5B58\u8FC7 GitHub Token\uFF0C\u53EF\u4EE5\u5728\u8FD9\u91CC\u4E00\u6B21\u6027\u6E05\u9664\uFF08\u4E0D\u4F1A\u518D\u88AB\u4EFB\u4F55\u4EE3\u7801\u4F7F\u7528\uFF09\u3002</p>' +
+    '        <p id="legacyPublishState">' + legacyPublishStateText() + '</p>' +
     '      </div>' +
-    '      <label class="editor-label">GitHub Token</label>' +
-    '      <input type="password" id="ghToken" class="editor-input" placeholder="github_pat_..." value="' + escapeHtml(token) + '">' +
-    '      <label class="editor-label checkbox-label">' +
-    '        <input type="checkbox" id="ghRemember" ' + (remember ? 'checked' : '') + '> ' +
-    '        \u8BB0\u4F4F\u6211\uff08\u957F\u671F\u4FDD\u5B58\u5230\u672C\u673A localStorage\uff0C\u8BF7\u52FF\u5728\u516C\u5171\u7535\u8111\u4E0A\u52FE\u9009\uff09' +
-    '      </label>' +
-    '      <button class="editor-btn editor-btn-ghost" onclick="clearEditorToken()">\u{1F512} \u6E05\u9664 Token</button>' +
-    '      <label class="editor-label">\u4ED3\u5E93\u6240\u6709\u8005</label>' +
-    '      <input type="text" id="ghOwner" class="editor-input" value="' + escapeHtml(owner) + '">' +
-    '      <label class="editor-label">\u4ED3\u5E93\u540D\u79F0</label>' +
-    '      <input type="text" id="ghRepo" class="editor-input" value="' + escapeHtml(repo) + '">' +
-    '      <button class="editor-btn editor-btn-primary" onclick="saveEditorSettings()">\u4FDD\u5B58\u8BBE\u7F6E</button>' +
+    '      <button class="editor-btn editor-btn-ghost" onclick="clearLegacyPublishData()">\u{1F9F9} \u6E05\u9664\u65E7\u7248 GitHub Token</button>' +
     '    </div>' +
     '  </div>' +
     '</div>';
 }
 
-// --- Base64 helpers (UTF-8 safe) ---
-function utf8ToBase64(str) {
-  var bytes = new TextEncoder().encode(str);
-  var binary = '';
-  for (var i = 0; i < bytes.length; i++) binary += String.fromCharCode(bytes[i]);
-  return btoa(binary);
-}
-
-function base64ToUtf8(b64) {
-  var binary = atob(b64.replace(/\s/g, ''));
-  var bytes = new Uint8Array(binary.length);
-  for (var i = 0; i < binary.length; i++) bytes[i] = binary.charCodeAt(i);
-  return new TextDecoder().decode(bytes);
-}
-
+// --- 文章 id 生成 ---
+// 只用 ASCII 字符，保证与 scripts/split_posts.py 的 SAFE_ID（^[a-z0-9][a-z0-9-]*$）一致。
+// 刻意做成**确定性**的（标题 → id，冲突时加 -2/-3）：
+//   * 同一篇文章改完正文再导出，文件名与 id 不变，不会在 data/posts 里留下两份；
+//   * 中文标题无法生成 slug 时退化成 post / post-2 / post-3…（导入器会原样当作文件名）。
 function generatePostId(title) {
-  var slug = title.toLowerCase()
+  var slug = String(title || '').toLowerCase()
     .replace(/[^\w\s-]/g, '')
     .replace(/[\s_]+/g, '-')
     .replace(/^-+|-+$/g, '')
     .substring(0, 40);
   var base = slug.length > 3 ? slug : 'post';
-  return base + '-' + Date.now().toString(36);
+  var taken = {};
+  getAllPosts().forEach(function (p) { taken[p.id] = true; });
+  var id = base;
+  var n = 1;
+  while (taken[id]) {
+    n += 1;
+    id = base + '-' + n;
+  }
+  return id;
 }
 
 // --- Draft management ---
@@ -2154,7 +2136,6 @@ function generatePostId(title) {
 //   localStorage：真正持久化的草稿
 var _draftTimer = null;
 var _draftState = null;
-var _draftSuppressed = false;   // 发布成功后抑制“离开时保存”，避免产生幽灵草稿
 var _currentRoute = null;
 
 function readEditorForm() {
@@ -2200,8 +2181,6 @@ function flushDraft(silent) {
 
 // 输入时调用：先更新内存快照，再重置防抖定时器
 function scheduleDraftSave() {
-  // 刚发布成功、页面即将跳转：不再产生新草稿
-  if (_draftSuppressed) return;
   var state = readEditorForm();
   if (state) _draftState = state;
   if (_draftTimer) clearTimeout(_draftTimer);
@@ -2217,11 +2196,6 @@ window.saveDraft = function() {
   if (!flushDraft(false)) showEditorStatus('\u26A0\uFE0F \u6CA1\u6709\u53EF\u4FDD\u5B58\u7684\u5185\u5BB9', 'error');
 };
 
-function clearDraft() {
-  localStorage.removeItem('blog_draft');
-  _draftState = null;
-}
-
 function showEditorStatus(msg, type) {
   var el = document.getElementById('editorStatus');
   if (el) {
@@ -2235,39 +2209,47 @@ window.toggleEditorSettings = function() {
   if (el) el.style.display = el.style.display === 'none' ? 'block' : 'none';
 };
 
-// --- GitHub Token 存储策略 ---
-// 默认只存在 sessionStorage（关闭标签页即失效），避免长期驻留在磁盘；
-// 显式勾选「记住我」才落到 localStorage。
-function getStoredToken() {
-  return sessionStorage.getItem('gh_token') || localStorage.getItem('gh_token') || '';
-}
-function storeToken(token, remember) {
-  sessionStorage.setItem('gh_token', token);
-  if (remember) localStorage.setItem('gh_token', token);
-  else localStorage.removeItem('gh_token');
-}
-window.getStoredToken = getStoredToken;
+// --- 旧版 GitHub 发布数据清理（Batch 8A 迁移能力）---
+// 8A 之前编辑器会把 GitHub PAT 写进 sessionStorage/localStorage，并记住 owner/repo。
+// 现在整条链路已下线：代码不再读取这些键（只允许清除），旧用户仍可一键删干净。
+var LEGACY_PUBLISH_KEYS = ['gh_token', 'gh_owner', 'gh_repo'];
 
-window.saveEditorSettings = function() {
-  var token = document.getElementById('ghToken').value.trim();
-  var remember = document.getElementById('ghRemember') && document.getElementById('ghRemember').checked;
-  storeToken(token, remember);
-  localStorage.setItem('gh_owner', document.getElementById('ghOwner').value.trim());
-  localStorage.setItem('gh_repo', document.getElementById('ghRepo').value.trim());
-  showEditorStatus(remember
-    ? '✅ 设置已保存（Token 已记住到本机）'
-    : '✅ 设置已保存（Token 仅保留到关闭本标签页）', 'success');
+function readStorage(store, key) {
+  try { return store.getItem(key); } catch (e) { return null; }
+}
+
+function hasLegacyPublishData() {
+  return LEGACY_PUBLISH_KEYS.some(function (key) {
+    return readStorage(sessionStorage, key) !== null || readStorage(localStorage, key) !== null;
+  });
+}
+
+function legacyPublishStateText() {
+  if (!hasLegacyPublishData()) return '本机没有发现旧版发布数据。';
+  var hasToken = readStorage(sessionStorage, 'gh_token') !== null ||
+    readStorage(localStorage, 'gh_token') !== null;
+  return hasToken
+    ? '本机仍残留旧版 GitHub Token（本次不会被读取），建议立即清除。'
+    : '本机仍残留旧版仓库设置（owner/repo），可以清除。';
+}
+
+function updateLegacyPublishState() {
+  var el = document.getElementById('legacyPublishState');
+  if (el) el.textContent = legacyPublishStateText();
+}
+
+// 只删键、不回显：任何情况下都不把 Token 写进 DOM
+window.clearLegacyPublishData = function() {
+  LEGACY_PUBLISH_KEYS.forEach(function (key) {
+    try { sessionStorage.removeItem(key); } catch (e) {}
+    try { localStorage.removeItem(key); } catch (e) {}
+  });
+  updateLegacyPublishState();
+  showEditorStatus('🔒 已清除本机保存的旧版 GitHub 发布数据（含 Token）', 'success');
 };
 
-window.clearEditorToken = function() {
-  sessionStorage.removeItem('gh_token');
-  localStorage.removeItem('gh_token');
-  var input = document.getElementById('ghToken');
-  if (input) input.value = '';
-  var remember = document.getElementById('ghRemember');
-  if (remember) remember.checked = false;
-  showEditorStatus('🔒 Token 已从浏览器中清除', 'success');
-};
+// 兼容旧页面/旧测试里的入口名，行为完全一致（仅清理，不再保存）
+window.clearEditorToken = window.clearLegacyPublishData;
 
 function updateEditorPreview() {
   var content = document.getElementById('editorContent');
@@ -2299,64 +2281,16 @@ function setupEditorListeners() {
   updateEditorPreview();
 }
 
-// --- Publish to GitHub via Contents API ---
-// 解析远端 user-posts.js：任何“读不懂”的情况都必须失败。
-// 绝不能退化成空数组，否则一次发布会把历史文章整体覆盖。
-function parseUserPostsText(text) {
-  if (typeof text !== 'string') return { ok: false, reason: '文件内容无法读取' };
-  var trimmed = text.replace(/^\uFEFF/, '').trim();
-  if (!trimmed) return { ok: true, posts: [] };
-  var match = trimmed.match(/(?:const|let|var)\s+USER_POSTS\s*=\s*(\[[\s\S]*\])\s*;?/);
-  if (!match) return { ok: false, reason: '未找到 USER_POSTS 数据段，文件格式可能已变更' };
-  var posts;
-  try {
-    posts = JSON.parse(match[1]);
-  } catch (e) {
-    return { ok: false, reason: 'USER_POSTS 不是合法 JSON' };
-  }
-  if (!Array.isArray(posts)) return { ok: false, reason: 'USER_POSTS 不是数组' };
-  for (var i = 0; i < posts.length; i++) {
-    var p = posts[i];
-    if (!p || typeof p !== 'object' || Array.isArray(p) || typeof p.id !== 'string' || !p.id) {
-      return { ok: false, reason: '第 ' + (i + 1) + ' 篇文章缺少有效 id' };
-    }
-  }
-  return { ok: true, posts: posts };
-}
-
-// --- 发布到内容队列（Batch 7C-3A）---
-// 编辑器**不再**直接写 main，也不再改 js/user-posts.js：
-//   每次发布只往 content/queue/<id>.json 写**一个**文件 —— 单文件写入才是真原子，
-//   Contents API 一次只能写一个文件，多次 PUT 不能假装成一次事务。
-// 之后由 CI/本地跑 scripts/build_content.py 把它编译成 data/posts/<id>.md + 派生数据。
-var QUEUE_BRANCH = 'content/queue';
-var QUEUE_DIR = 'content/queue';
-var GH_API = 'https://api.github.com';
-
-function repoApi() {
-  var owner = localStorage.getItem('gh_owner') || 'EricZhao666';
-  var repo = localStorage.getItem('gh_repo') || 'blog';
-  return GH_API + '/repos/' + encodeURIComponent(owner) + '/' + encodeURIComponent(repo);
-}
-
-function ghHeaders(token) {
-  return {
-    'Authorization': 'Bearer ' + token,
-    'Accept': 'application/vnd.github+json'
-  };
-}
-
-// 统一的响应读取：永远不把 token 写进 URL / 日志
-function ghRead(resp) {
-  return resp.json().catch(function() { return null; });
-}
-
-// 404 时区分"资源不存在"与"仓库访问异常"
-async function explain404(token) {
-  var probe = await fetch(repoApi(), { headers: ghHeaders(token) });
-  if (probe.status === 200) return 'resource';
-  if (probe.status === 401 || probe.status === 403) return 'auth';
-  return 'repo';
+// --- 导出文章（Batch 8A）---
+// 编辑器是**纯本地**的：不读 Token、不调用 GitHub API、不写任何分支。
+// 导出物是一份 UTF-8 JSON，交给 scripts/import_post.py 在本地校验并落盘，
+// 之后由人手动提交、手动开 PR（见 BATCH8A_REPORT.md「手动 PR 操作说明」）。
+// 目的：彻底消灭“网页一键直写仓库”这条会把历史文章一起覆盖的高风险路径。
+function todayLocalISO() {
+  var d = new Date();
+  var mm = d.getMonth() + 1;
+  var dd = d.getDate();
+  return d.getFullYear() + '-' + (mm < 10 ? '0' + mm : mm) + '-' + (dd < 10 ? '0' + dd : dd);
 }
 
 function collectEditorInput() {
@@ -2369,116 +2303,100 @@ function collectEditorInput() {
   return {
     id: id,
     title: title,
-    date: new Date().toISOString().slice(0, 10),
+    // 用本机时区的日期：toISOString() 是 UTC，东八区早上 8 点前会写成"昨天"
+    date: todayLocalISO(),
     tags: tags.length ? tags : ['未分类'],
     excerpt: excerpt || content.replace(/[#*`>\-\[\]]/g, '').slice(0, 120) + '...',
     content: content
   };
 }
 
-// 提交前的本地校验：明显的数据错误不往远端发
+// 导出前的本地校验：明显的数据错误不产出文件（真正的强校验在导入器里，不可绕过）
 function validateNewPost(post) {
   if (!post.title) return '标题不能为空';
   if (!post.content) return '正文不能为空';
   if (!/^[a-z0-9][a-z0-9-]*$/.test(post.id || '')) return '生成的 id 非法（只允许小写字母/数字/连字符）';
+  if (post.id.length > 64) return '生成的 id 过长（最多 64 字符）';
   if (!/^\d{4}-\d{2}-\d{2}$/.test(post.date || '')) return '日期格式非法';
   if (!Array.isArray(post.tags) || !post.tags.length) return '至少需要一个标签';
   var exists = getAllPosts().some(function(p) { return p.id === post.id; });
-  if (exists) return 'id 冲突：已存在同 id 的文章（' + post.id + '），不会覆盖';
+  if (exists) return 'id 冲突：已存在同 id 的文章（' + post.id + '），请换一个标题';
   return '';
 }
 
-window.publishPost = async function() {
-  var token = getStoredToken();
-  if (!token) {
-    showEditorStatus('\u274C \u8BF7\u5148\u70B9\u51FB\u201C\u8BBE\u7F6E\u201D\u914D\u7F6E GitHub Token', 'error');
-    toggleEditorSettings();
-    return;
-  }
-
+// 导出物：纯数据，不联网、不执行任何远端脚本
+// 字段顺序固定为 id/title/date/tags/excerpt/content，与导入器的逐字段校验一一对应
+function buildExportPayload() {
   var post = collectEditorInput();
   var problem = validateNewPost(post);
-  if (problem) { showEditorStatus('\u274C ' + escapeHtml(problem), 'error'); return; }
+  if (problem) return { ok: false, error: problem };
 
-  var queuePath = QUEUE_DIR + '/' + post.id + '.json';
-  var contentsUrl = repoApi() + '/contents/' + queuePath;
+  var payload = {
+    id: post.id,
+    title: post.title,
+    date: post.date,
+    tags: post.tags,
+    excerpt: post.excerpt,
+    content: post.content
+  };
+  return {
+    ok: true,
+    post: payload,
+    filename: post.id + '.json',
+    // 不写 BOM：BOM 会让部分工具（含 Python json）直接解析失败；UTF-8 本身就够表达中文
+    text: JSON.stringify(payload, null, 2) + '\n'
+  };
+}
+window.buildExportPayload = buildExportPayload;
 
-  showEditorStatus('\u23F3 \u6B63\u5728\u63D0\u4EA4\u5230\u53D1\u5E03\u961F\u5217...', 'loading');
+// 真正触发下载。测试通过替换 window.__downloadText 拿到内容，避免依赖真实浏览器下载行为。
+function downloadText(text, filename) {
+  var blob = new Blob([text], { type: 'application/json;charset=utf-8' });
+  var url = (typeof URL !== 'undefined' && URL.createObjectURL)
+    ? URL.createObjectURL(blob)
+    : 'data:application/json;charset=utf-8,' + encodeURIComponent(text);
+  var a = document.createElement('a');
+  a.href = url;
+  a.download = filename;
+  a.rel = 'noopener';
+  a.style.display = 'none';
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  // 立即 revoke 会让部分浏览器的下载中断，推迟到下一个事件循环
+  if (url.indexOf('blob:') === 0 && typeof URL.revokeObjectURL === 'function') {
+    setTimeout(function () { try { URL.revokeObjectURL(url); } catch (e) {} }, 0);
+  }
+}
+window.__downloadText = downloadText;
+
+window.exportPost = function() {
+  var payload = buildExportPayload();
+
+  if (!payload.ok) {
+    // 校验不通过：不产出文件，但草稿必须留下
+    showEditorStatus('\u274C \u65E0\u6CD5\u5BFC\u51FA\uFF1A' + escapeHtml(payload.error) + '\uFF08\u8349\u7A3F\u5DF2\u4FDD\u7559\uFF09', 'error');
+    flushDraft(true);
+    return false;
+  }
 
   try {
-    // 1) 队列分支必须已存在（不静默创建不确定的分支）
-    var brResp = await fetch(repoApi() + '/branches/' + encodeURIComponent(QUEUE_BRANCH),
-      { headers: ghHeaders(token) });
-    if (brResp.status === 404) {
-      var why = await explain404(token);
-      if (why === 'auth') throw new Error('无权访问仓库（Token 缺少 Contents 读权限），已中止');
-      if (why === 'repo') throw new Error('仓库不存在或无权访问，已中止');
-      throw new Error('发布队列分支 ' + QUEUE_BRANCH + ' 不存在。请先在 GitHub 上创建该分支'
-        + '（或运行 scripts/init_content_queue.sh），编辑器不会自动创建');
-    }
-    if (brResp.status === 401 || brResp.status === 403) {
-      throw new Error('无权访问仓库（Token 缺少 Contents 读权限），已中止');
-    }
-    if (!brResp.ok) throw new Error('读取队列分支失败：HTTP ' + brResp.status + '，已中止');
-
-    // 2) 同 ID 已存在 → 绝不覆盖
-    var dupResp = await fetch(contentsUrl + '?ref=' + encodeURIComponent(QUEUE_BRANCH),
-      { headers: ghHeaders(token) });
-    if (dupResp.status === 200) {
-      throw new Error('队列里已有同 id 的文章（' + post.id + '）；不会覆盖，请改标题或先清理队列');
-    }
-    if (dupResp.status !== 404) {
-      if (dupResp.status === 401 || dupResp.status === 403) {
-        throw new Error('无权读取队列目录（Token 缺少 Contents 读权限），已中止');
-      }
-      throw new Error('检查队列条目失败：HTTP ' + dupResp.status + '，已中止');
-    }
-
-    // 3) 单文件写入（真正的原子单位）
-    var payloadText = JSON.stringify(post, null, 2) + '\n';
-    var putResp = await fetch(contentsUrl, {
-      method: 'PUT',
-      headers: {
-        'Authorization': 'Bearer ' + token,
-        'Accept': 'application/vnd.github+json',
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({
-        message: 'queue: ' + post.title + ' (' + post.id + ')',
-        content: utf8ToBase64(payloadText),
-        branch: QUEUE_BRANCH
-      })
-    });
-
-    if (putResp.status === 409 || putResp.status === 422) {
-      throw new Error('队列写入冲突（HTTP ' + putResp.status
-        + '）：文件已被其他人改动，未覆盖任何内容；请刷新后重试');
-    }
-    if (putResp.status === 401 || putResp.status === 403) {
-      throw new Error('Token 权限不足（需要 Contents: Read and write），已中止');
-    }
-    if (!putResp.ok) {
-      var errBody = await ghRead(putResp);
-      throw new Error('队列写入失败：' + ((errBody && errBody.message) || ('HTTP ' + putResp.status)));
-    }
-
-    // 4) 已提交 ≠ 已上线：明确区分这两个状态
-    clearDraft();
-    if (_draftTimer) { clearTimeout(_draftTimer); _draftTimer = null; }
-    _draftSuppressed = true;
-    showEditorStatus('\u2705 \u5DF2\u63D0\u4EA4\u5230\u53D1\u5E03\u961F\u5217 ' + escapeHtml(queuePath)
-      + '\uFF08<b>\u5C1A\u672A\u4E0A\u7EBF</b>\uFF09\u3002\u8BE5\u6587\u7AE0\u8981\u7B49'
-      + '\u300C\u6784\u5EFA + \u5408\u5E76\u300D\u540E\u624D\u4F1A\u51FA\u73B0\u5728\u6B63\u5F0F\u7AD9\u70B9\u3002', 'success');
-
+    window.__downloadText(payload.text, payload.filename);
   } catch (err) {
     var failMsg = (err && err.message) || String(err);
-    if (/failed to fetch|networkerror|load failed|network request failed|fetch failed/i.test(failMsg)) {
-      failMsg = '网络请求失败，请检查网络后重试（草稿与历史文章都未被改动）';
-    }
-    showEditorStatus('\u274C \u63D0\u4EA4\u5931\u8D25: ' + escapeHtml(failMsg), 'error');
-    // 失败时把当前编辑内容落盘，刷新或离开后仍可恢复
+    showEditorStatus('\u274C \u5BFC\u51FA\u5931\u8D25: ' + escapeHtml(failMsg)
+      + '\uFF08\u8349\u7A3F\u5DF2\u4FDD\u7559\uFF0C\u53EF\u91CD\u8BD5\uFF09', 'error');
     flushDraft(true);
+    return false;
   }
+
+  // 导出成功 ≠ 文章已上线：草稿继续保留，方便接着改、再导出
+  flushDraft(true);
+  showEditorStatus('\u2705 \u5DF2\u5BFC\u51FA <b>' + escapeHtml(payload.filename)
+    + '</b>\uFF08\u672C\u5730\u6587\u4EF6\uFF0C<b>\u5C1A\u672A\u4E0A\u7EBF</b>\uFF09\u3002\u4E0B\u4E00\u6B65\uFF1A\u5728\u4ED3\u5E93\u6839\u76EE\u5F55\u8FD0\u884C '
+    + '<code>python scripts/import_post.py --file ' + escapeHtml(payload.filename) + ' --dry-run</code>'
+    + '\u68C0\u67E5\uFF0C\u518D <code>--apply</code>\uFF0C\u6700\u540E\u624B\u52A8\u63D0\u4EA4 PR\u3002', 'success');
+  return true;
 };
 
 // ============================================
@@ -2495,7 +2413,7 @@ async function router() {
   let hasDeepLinkTarget = false;
 
   // 离开编辑器：把待保存内容立即落盘（只 clearTimeout 会丢内容）
-  if (_currentRoute === '/editor' && hash !== '/editor' && !_draftSuppressed) {
+  if (_currentRoute === '/editor' && hash !== '/editor') {
     flushDraft(true);
   }
   _currentRoute = hash;
@@ -2964,7 +2882,7 @@ window.addEventListener('hashchange', router);
 
 // 关闭/刷新页面前把编辑器内容落盘
 window.addEventListener('beforeunload', function () {
-  if (_currentRoute === '/editor' && !_draftSuppressed) flushDraft(true);
+  if (_currentRoute === '/editor') flushDraft(true);
 });
 
 // ============================================

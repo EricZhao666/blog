@@ -1,6 +1,12 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-"""候选分支 → PR（Batch 7C-3B）。
+"""候选分支 → PR（Batch 7C-3B）—— Batch 8A 起为**历史/停用**代码。
+
+状态（Batch 8A）：
+    * 自动生产候选 PR 的触发链已删除（content-pipeline.yml 只剩 workflow_dispatch）；
+    * 新发布流程是「本地导入 + 手动 PR」，本脚本不再被任何自动流程调用；
+    * 保留是为了不破坏既有测试与历史审计记录，移除需单独决策
+      （见 BATCH8A_REPORT.md 第 7 节）。
 
 只做三件事：查重、创建、报告。**不合并、不发布、不碰 main**。
 

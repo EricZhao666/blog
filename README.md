@@ -19,9 +19,9 @@ blog/
 ├── icons/                    # PWA 图标
 │
 ├── js/
-│   ├── app.js                # 路由、渲染、搜索、编辑器、草稿、发布（核心逻辑）
-│   ├── data.js               # 文章数据（手写维护）
-│   ├── user-posts.js         # 网页编辑器发布的文章（JSON 数组）
+│   ├── app.js                # 路由、渲染、搜索、编辑器、草稿、导出（核心逻辑）
+│   ├── data.js               # 文章元数据（生成器渲染，勿手改）
+│   ├── user-posts.js         # 兼容期旧编辑器文章（JSON 数组，可留空）
 │   ├── courses.js            # 课程索引（脚本生成）
 │   ├── course-notes.js       # 课程笔记正文（手写维护）
 │   ├── note-slugs.js         # 课程 id → 静态页路径（脚本生成）
@@ -30,6 +30,9 @@ blog/
 │   └── projects.js           # 项目卡片（手写维护）
 │
 ├── data/
+│   ├── posts/<id>.md         # 文章正文（权威源，按需加载）
+│   ├── posts/manifest.json   # 完整性锚点（哈希/字节/字符数，生成）
+│   ├── search-index.json     # 全文搜索语料（生成）
 │   └── course_descriptions.json  # 课程描述唯一真源（人工撰写，按课程名匹配）
 │
 ├── notes/                    # 预渲染的课程笔记静态页（脚本生成）+ index.html
@@ -42,6 +45,8 @@ blog/
 │
 └── scripts/
     ├── run_tests.py          # 统一测试入口
+    ├── build_content.py      # 统一内容构建（元数据/正文/搜索语料/清单/RSS）
+    ├── import_post.py        # 编辑器导出的 JSON → data/posts/<id>.md（只新增）
     ├── scan_courses.py       # 课程目录 → js/courses.js
     ├── scan_papers.py        # Zotero + 学习资料 → js/papers.js
     └── add_descriptions.js   # 人工描述 → data/course_descriptions.json
@@ -189,10 +194,13 @@ python scripts/run_tests.py --report /tmp/r.md --json /tmp/r.json
 | `audit.js` | 路由渲染、站内死链、重复 id、静态页与 404 资源一致性 |
 | `test6.js` | 课程区：笔记视图、分类切换、搜索 |
 | `test7.js` | 全文搜索、主题切换、静态笔记页、SW 策略、RSS |
-| `test8.js` | 编辑器 GitHub Token 存储策略（sessionStorage / 记住我 / 清除） |
+| `test8.js` | B8A：编辑器不再收集/存储 Token，旧 Token 可一键清除 |
 | `test9.js` | 路由冷加载、搜索重绘覆盖路由、搜索框重绑、懒加载失败态（`BLOCK=js/courses.js` 另跑一次） |
-| `test10.js` | 发布数据完整性（模拟 Contents API 的 10 种异常分支） |
+| `test10.js` | B8A：导出不联网、不写历史文章，失败保留草稿 |
 | `test11.js` | 草稿自动保存竞态（Fake Timers，9 组场景） |
+| `test24_publish_queue.js` | B8A：旧发布队列入口下线（零网络/零队列/零 Token） |
+| `test32_editor_export.js` | B8A：导出契约（UTF-8/代码块/特殊字符/空正文/重复 ID/文件名） |
+| `test33_import_post.py` | B8A：本地导入器（冲突/恶意路径/非法 JSON/中断回滚/RSS 与搜索索引） |
 | `test12.py` | `scan_codefiles.py` 描述保护（合成 fixture） |
 | `test13.py` | `gen_feed.py` 解析、失败策略、路径（合成 fixture） |
 | `test14.js` | 排序一致性 + 日期时区（Asia/Shanghai、America/New_York、Europe/London） |
@@ -254,12 +262,24 @@ const CACHE_VERSION = '2026-10-23-3';   // 改成新日期-序号
 
 ## 7. 提交与发布
 
+写文章走「编辑器导出 → 本地导入 → 手动 PR」（Batch 8A 起，不再有自动队列/自动 PR）：
+
 ```bash
-git status
-git add <files>
-git commit -m "..."
-git push origin main          # GitHub Pages 自动构建，约 30 秒 ~ 2 分钟
+# 1) 网页编辑器（#/editor）写完 → 点「📤 导出文章」得到 <id>.json
+# 2) 本地校验并导入（只新增，不覆盖历史正文）
+python scripts/import_post.py --file <id>.json --dry-run
+python scripts/import_post.py --file <id>.json --apply
+# 3) 重建派生数据并自检
+python scripts/build_content.py --check
+python scripts/run_tests.py
+# 4) 手动提交 + 手动开 PR
+git checkout -b feature/post-<id>
+git add data/posts/<id>.md js/data.js data/search-index.json data/posts/manifest.json feed.xml
+git commit -m "post: <标题>"
+git push -u origin feature/post-<id>
 ```
+
+合并到 `main` 后 GitHub Pages 自动构建（约 30 秒 ~ 2 分钟）。
 
 发布后可按下面方式自检（注意加 cache-buster，边缘缓存会有延迟）：
 
@@ -287,6 +307,8 @@ git push origin main          # GitHub Pages 自动构建，约 30 秒 ~ 2 分�
 | `scripts/scan_papers.py` | `js/papers.js` | 缺库 / 0 篇时中止，不写 |
 | `scan_codefiles.py` | `js/codefiles.js` | 既有产物不可解析时中止，不写 |
 | `gen_feed.py` | `feed.xml` | 先构建后原子替换，异常不写 |
+| `scripts/build_content.py --sync` | `js/data.js`、`data/search-index.json`、`data/posts/manifest.json`、`feed.xml` | 全量校验后才写，异常不写 |
+| `scripts/import_post.py --apply` | 上述 4 个派生文件 + 新增 `data/posts/<id>.md` | 冲突即拒绝；失败自动回滚 |
 | `gen_notes_pages.js` | `notes/*.html`、`notes/index.html`、`js/note-slugs.js`、`sitemap.xml` | 直接覆盖（无守卫） |
 | `scripts/add_descriptions.js` | `data/course_descriptions.json` | 直接覆盖 |
 
@@ -308,17 +330,17 @@ git push origin main          # GitHub Pages 自动构建，约 30 秒 ~ 2 分�
 
 - Zotero 数据库与附件目录、个人学习资料目录；
 - 课程资料原始目录、本机代码仓库目录；
-- 任何 GitHub Token（编辑器 Token 只存浏览器 `sessionStorage`/`localStorage`，不上传）；
+- 任何 GitHub Token（Batch 8A 起编辑器根本不接触 Token，见 10.1）；
 - 测试用的真实扫描结果（测试一律使用合成 fixture）。
 
 `scan_courses.py` / `scan_papers.py` / `scan_codefiles.py` 里的绝对路径只是**本机默认值**，目录不存在会自动跳过；换机器请用 `--roots` / `--zotero-db` / `--learn-dir` 指定，测试则完全走合成 fixture。
 
-### 10.1 编辑器 Token 的边界（不要误解）
+### 10.1 编辑器不再接触 Token（Batch 8A）
 
-- 默认只写 `sessionStorage`，关标签页即失效；勾选「记住我」才写 `localStorage`，并有「🔒 清除 Token」按钮。
-- **这不等于 XSS 防护**：同源脚本可以读 `sessionStorage` 和 `localStorage`，只要能执行脚本就能拿到 Token。真正的边界是「别让不可信内容变成脚本」——Markdown 输出统一过 DOMPurify、动态内容不拼内联事件，都是为了这个目标。
-- 建议使用 **fine-grained PAT**，只授权 `repo` → `Contents: Read and write` 这一个仓库、这一项权限，并设置较短有效期；泄露后损失可控。
-- Token 只存在浏览器本地，不写日志、不进页面 HTML、不随请求外发（除 `Authorization` 头调用 GitHub API 外）。
+- 编辑器只做「导出文章」：不调用 GitHub API，也没有 Token 输入框；导出物是本地 JSON，不发往任何服务器。
+- 8A 之前保存过 Token 的老用户：编辑器「⚙️ 设置 → 🧹 清除旧版 GitHub Token」可一次性删掉 `gh_token` / `gh_owner` / `gh_repo`（代码只允许删除，不再读取或写入）。
+- 发布改由本地 `scripts/import_post.py` 完成：它只接受 JSON、只新增、不覆盖历史正文，失败自动回滚。
+- **这不等于 XSS 防护**：Markdown 输出统一过 DOMPurify、动态内容不拼内联事件，仍然是为「别让不可信内容变成脚本」。
 
 ---
 
