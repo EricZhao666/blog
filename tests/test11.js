@@ -1,5 +1,6 @@
-// B2-02 编辑器草稿自动保存 / 竞态回归测试
+// B2-02 编辑器草稿自动保存 / 竞态回归测试（Batch 8A：发布动作换成导出）
 // 使用可编程的 Fake Timers（接管 window.setTimeout/clearTimeout），不依赖真实等待。
+// 8A 变更：导出不再清空草稿（草稿要留给用户继续改），所以 S6/S7 断言"草稿保留且不被旧定时器覆盖"。
 const http = require('http');
 const fs = require('fs');
 const path = require('path');
@@ -76,9 +77,6 @@ async function openEditor() {
   await new Promise(r => window.addEventListener('load', r));
   await wait(500);
   window.localStorage.removeItem('blog_draft');
-  window.sessionStorage.setItem('gh_token', 'fake-token');
-  window.localStorage.setItem('gh_owner', 'demo');
-  window.localStorage.setItem('gh_repo', 'demo-blog');
   installFakeTimers(window);
   return { dom, window, doc, vcErrors };
 }
@@ -92,19 +90,11 @@ function readDraft(window) {
   try { return JSON.parse(window.localStorage.getItem('blog_draft') || 'null'); } catch (e) { return null; }
 }
 
-function resp(status, body) {
-  return { ok: status >= 200 && status < 300, status: status, json: () => Promise.resolve(body) };
-}
-// Batch 7C-3A：发布改为写 content/queue/<id>.json，桩要按新契约应答
-function stubGithub(window, mode) {
-  window.fetch = function (url, init) {
-    init = init || {};
-    const method = (init.method || 'GET').toUpperCase();
-    const u = String(url);
-    if (mode === 'fail') return Promise.resolve(resp(500, { message: 'boom' }));
-    if (u.indexOf('/branches/') !== -1) return Promise.resolve(resp(200, { name: 'content/queue' }));
-    if (method === 'PUT') return Promise.resolve(resp(201, { content: { sha: 'x' } }));
-    return Promise.resolve(resp(404, { message: 'Not Found' }));
+// Batch 8A：编辑器只导出本地文件，不再有任何网络调用。
+// 这里用「下载成功 / 下载失败」两种桩模拟导出成功与导出失败。
+function stubDownload(window, mode) {
+  window.__downloadText = function () {
+    if (mode === 'fail') throw new Error('download blocked');
   };
 }
 
@@ -172,39 +162,43 @@ server.listen(PORT, async () => {
       dom.window.close();
     }
 
-    // S6 发布成功后残留定时器不得写回旧草稿
+    // S6 导出成功后：草稿保留最新内容，且不残留会把旧内容写回的定时器
     {
       const { dom, window, doc } = await openEditor();
-      stubGithub(window, 'ok');
-      type(window, doc.getElementById('editorContent'), '# 已发布的内容');
-      doc.getElementById('editorTitle').value = '已发布文章';
-      await window.publishPost();
+      stubDownload(window, 'ok');
+      type(window, doc.getElementById('editorContent'), '# 已导出的内容');
+      doc.getElementById('editorTitle').value = '已导出文章';
+      window.exportPost();
       await wait(50);
-      window.__advance(2500);   // 让 2s 跳转与可能残留的草稿定时器都触发
-      await wait(400);
+      check('S6 导出后立即落盘草稿（不留待 2s 防抖）', window.__pending() === 0, window.__pending());
       const d = readDraft(window);
-      check('S6 发布成功后不残留旧草稿', d === null, JSON.stringify(d));
+      check('S6 导出后草稿是最新内容', d && d.content === '# 已导出的内容', d && d.content);
+      window.__advance(2500);   // 若有残留定时器，会在这里把旧内容写回
+      await wait(200);
+      const later = readDraft(window);
+      check('S6 残留定时器不会把草稿改回旧内容', later && later.content === '# 已导出的内容',
+        later && later.content);
       check('S6 无定时器异常', window.__timerErrors.length === 0, window.__timerErrors.join('|'));
       dom.window.close();
     }
 
-    // S7 发布失败后重新进入编辑器，草稿可恢复
+    // S7 导出失败后重新进入编辑器，草稿可恢复
     {
       const { dom, window, doc } = await openEditor();
-      stubGithub(window, 'fail');
-      type(window, doc.getElementById('editorContent'), '# 发布失败要保住的草稿');
+      stubDownload(window, 'fail');
+      type(window, doc.getElementById('editorContent'), '# 导出失败要保住的草稿');
       doc.getElementById('editorTitle').value = '失败的文章';
-      await window.publishPost();
+      window.exportPost();
       await wait(50);
       const status = doc.getElementById('editorStatus').textContent;
-      check('S7 提交失败有明确提示', /提交失败|发布失败/.test(status), status.trim().slice(0, 30));
+      check('S7 导出失败有明确提示', /导出失败/.test(status), status.trim().slice(0, 30));
       window.location.hash = '#/';
       await wait(300);
       window.location.hash = '#/editor';
       await wait(500);
       const restored = doc.getElementById('editorContent');
       check('S7 重新进入编辑器可恢复草稿',
-        !!restored && restored.value.indexOf('发布失败要保住的草稿') !== -1,
+        !!restored && restored.value.indexOf('导出失败要保住的草稿') !== -1,
         restored && restored.value.slice(0, 30));
       check('S7 无定时器异常', window.__timerErrors.length === 0, window.__timerErrors.join('|'));
       dom.window.close();

@@ -1,6 +1,10 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-"""内容候选状态机（Batch 7C-3B.1）。
+"""内容候选状态机（Batch 7C-3B.1）—— Batch 8A 起为**历史/停用**代码。
+
+状态（Batch 8A）：自动候选 PR 链已停用（content-pipeline.yml 只保留 workflow_dispatch），
+新流程不再经过 content/queue / candidate / ledger。本文件保留用于审计与既有测试，
+不参与手动 PR 发布路径。
 
 把三件**不同**的事分开记录，任何一件都不能冒充另一件：
 

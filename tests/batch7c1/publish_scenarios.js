@@ -1,5 +1,10 @@
 /**
- * Batch 7C-1：发布链路专项复现（P1–P16）
+ * Batch 7C-1：发布链路专项复现（P1–P16）—— Batch 8A 起为**历史取证脚本**
+ *
+ * 状态（Batch 8A）：编辑器已删除 publishPost() 与整条 GitHub Contents API 直写链路，
+ * 因此本脚本的 A 部分（P1–P9）**无法再运行**，也不会被 scripts/run_tests.py 收录。
+ * 保留原因：它是 BATCH7C1_REPRODUCTION.md 的取证材料，删除会让历史报告失去可追溯性。
+ * 新契约的等价保障见 tests/test24_publish_queue.js（入口下线）与 tests/test32_editor_export.js（导出契约）。
  *
  * 这是一份**审计取证**脚本，不是回归门禁：它按现状跑真实代码，把"能复现/不能复现"打印出来，
  * 供 BATCH7C1_REPRODUCTION.md 引用。因此它不会被 scripts/run_tests.py 收录

@@ -1,18 +1,20 @@
 name: content-pipeline
 
-# Batch 7C-3B：内容队列 → 候选提交 → 候选 PR（**不合并、不部署**）
+# Batch 8A：**已停用自动触发**，仅保留人工 workflow_dispatch 作为历史运维入口。
 #
-# 触发：
-#   * workflow_dispatch：人工指定队列分支（推荐，最容易审计）
-#   * push 到 content/queue：入队即自动跑；注意下面"触发链"的说明
+# 背景：发布流程已改为「本地导出 JSON → scripts/import_post.py 导入 → 手动 PR」，
+# 编辑器不再写 content/queue，也**不再有任何 push 触发的候选 PR 生产链**。
+# 因此这里删掉了 `on.push: content/queue`：
+#   * 入队不再自动建候选分支、自动跑回归、自动开 PR；
+#   * 本文件保留的原因：内容校验（build_content --check）仍有价值，
+#     且相关脚本/状态机在确认无人依赖前不直接删除（见 BATCH8A_REPORT.md 第 7 节）。
 #
-# 触发链（实测/文档依据）：
+# 原有触发链（历史记录）：
 #   1. 用仓库内置 GITHUB_TOKEN 推送的提交**不会**再次触发 push 类工作流
 #      → 候选分支的 push 不会引起二次运行，天然防循环；
-#   2. 用 GITHUB_TOKEN 创建的 PR **不会**自动触发 pull_request 工作流
-#      （GitHub 的既定行为：需要人工点 "Approve and run" 或使用 PAT/App）——
-#      所以本工作流自己在候选分支上跑完整回归，不依赖 PR 触发的另一个 workflow；
-#   3. 不使用个人 PAT 长期存储来绕过上述限制。
+#   2. 用 GITHUB_TOKEN 创建的 PR **不会**自动触发 pull_request 工作流，
+#      所以工作流自己在候选分支上跑完整回归；
+#   3. 不使用个人 Token 长期存储来绕过上述限制。
 #
 # 权限：全局置空，按 job 最小授权（禁止给所有步骤全局写权限）。
 
@@ -33,11 +35,6 @@ on:
         description: '允许写候选分支与开 PR（默认 false；只有显式 true 才会写）'
         required: false
         default: 'false'
-  push:
-    branches:
-      - content/queue
-    paths:
-      - 'content/queue/**'
 
 concurrency:
   group: content-pipeline-${{ github.event.inputs.queue_ref || 'content/queue' }}

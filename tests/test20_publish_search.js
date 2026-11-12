@@ -1,13 +1,14 @@
 // Batch 6C：文章发布 / 搜索 / 正文按需加载的一致性回归
 //
-// 覆盖：
-//   P1 正常发布新文章 → 首页与全文搜索都能发现
+// Batch 8A：发布改为「导出 JSON → 本地导入」，编辑器不再联网。
+// 因此 P1/P4 改成验证新契约下的等价保证：
+//   P1 导出的文章（模拟导入合并后）→ 首页与全文搜索都能发现
 //   P2 修改文章正文 → 搜索结果跟着更新（旧关键词不再命中）
 //   P3 删除文章 → 首页/搜索不再出现（不长期保留过期结果）
-//   P4 发布失败 → 编辑内容留在草稿里（不丢稿）
+//   P4 导出失败 → 编辑内容留在草稿里（不丢稿），且全程零网络请求
 //   P5 静态文章正文按需加载 + 快速切换不显示上一篇
 //
-// 全程使用模拟的 GitHub Contents API 与本地静态服务器，不访问真实网络/Token。
+// 全程使用本地静态服务器；第三方脚本（giscus）被拦截，不访问真实网络。
 const http = require('http');
 const fs = require('fs');
 const path = require('path');
@@ -80,66 +81,17 @@ const check = (name, cond, extra) => {
   console.log((ok ? 'PASS ' : 'FAIL ') + name + (extra !== undefined ? '  (' + extra + ')' : ''));
 };
 
-const b64 = s => Buffer.from(s, 'utf8').toString('base64');
-
-// 只模拟 GitHub API；同源静态资源（正文 .md、搜索语料）仍走真实 XHR，
-// 否则会把 data/search-index.json 也 mock 掉，测不出真实的搜索链路。
-function xhrGet(window, url) {
-  return new Promise((resolve, reject) => {
-    const x = new window.XMLHttpRequest();
-    x.onload = () => resolve({
-      ok: x.status >= 200 && x.status < 300,
-      status: x.status,
-      text: () => Promise.resolve(x.responseText),
-      json: () => Promise.resolve(JSON.parse(x.responseText))
-    });
-    x.onerror = () => reject(new TypeError('network error: ' + url));
-    x.open('GET', url, true);
-    x.send();
-  });
-}
-
-function makeFetch(mock, window) {
-  return function (url, init) {
-    if (String(url).indexOf('api.github.com') === -1) return xhrGet(window, String(url));
-    init = init || {};
-    const method = (init.method || 'GET').toUpperCase();
-    if (method === 'GET') {
-      if (mock.getMode === 'http500') {
-        return Promise.resolve({ ok: false, status: 500, json: () => Promise.resolve({ message: 'boom' }), text: () => Promise.resolve('boom') });
-      }
-      if (mock.getMode === 'network') return Promise.reject(new TypeError('Failed to fetch'));
-      return Promise.resolve({
-        ok: true, status: 200,
-        json: () => Promise.resolve({ sha: 'sha-1', content: b64('const USER_POSTS = ' + JSON.stringify(mock.posts || [], null, 2) + ';\n') }),
-        text: () => Promise.resolve('ok')
-      });
-    }
-    mock.puts = mock.puts || [];
-    mock.puts.push({ url: url, body: init.body });
-    return Promise.resolve({ ok: true, status: 200, json: () => Promise.resolve({ content: { sha: 'sha-2' } }), text: () => Promise.resolve('ok') });
+// Batch 8A：编辑器只导出本地文件。这里截获下载内容，并统计任何网络调用（必须为 0）。
+function stubExport(window) {
+  const state = { downloads: [], netCalls: 0 };
+  window.__downloadText = function (text, filename) {
+    state.downloads.push({ text: text, filename: filename });
   };
-}
-
-// Batch 7C-3A 的队列 API 最小 mock：分支存在、队列文件不存在、PUT 成功
-function queueFetch(mock) {
-  const json = (status, body) => Promise.resolve({
-    ok: status >= 200 && status < 300,
-    status,
-    json: () => Promise.resolve(body)
-  });
-  return function (url, init) {
-    const u = String(url);
-    const method = ((init && init.method) || 'GET').toUpperCase();
-    if (u.indexOf('/branches/') !== -1) return json(200, { name: 'content/queue' });
-    if (method === 'PUT') {
-      const p = u.split('/contents/')[1] || '';
-      mock.puts.push(decodeURIComponent(p.split('?')[0]));
-      return json(201, { content: { path: p } });
-    }
-    if (u.indexOf('/contents/') !== -1) return json(404, { message: 'Not Found' });
-    return json(200, {});
+  window.fetch = function () {
+    state.netCalls++;
+    return Promise.reject(new TypeError('network disabled by test20'));
   };
+  return state;
 }
 
 async function openPage(hash) {
@@ -165,15 +117,11 @@ function fillEditor(doc, title, content) {
   doc.getElementById('editorContent').value = content;
 }
 
-async function publish(window, doc, title, content) {
-  // 模拟"已配置 Token"：不访问真实 GitHub
-  window.sessionStorage.setItem('gh_token', 'fake-token');
-  window.localStorage.setItem('gh_owner', 'demo');
-  window.localStorage.setItem('gh_repo', 'demo-blog');
+async function exportArticle(window, doc, title, content) {
   window.location.hash = '#/editor';
   await wait(300);
   fillEditor(doc, title, content);
-  await window.publishPost();
+  window.exportPost();
   await wait(120);
 }
 
@@ -191,26 +139,27 @@ async function typeSearch(doc, window, text, waitMs) {
 (function main() {
   server.listen(PORT, async () => {
     try {
-      // ------------------------------------------------ P1/P2/P3 发布 → 搜索 → 修改 → 删除
-      // Batch 7C-3A 起：编辑器把文章写进 content/queue（受控分支），不再改 USER_POSTS；
-      // 这里验证"提交 ≠ 上线"，再用直接注入 USER_POSTS 的方式模拟"已合并"后的表现。
+      // ------------------------------------------------ P1/P2/P3 导出 → 搜索 → 修改 → 删除
+      // Batch 8A 起：编辑器只导出本地 JSON，不再改 USER_POSTS、不再联网；
+      // 这里验证"导出 ≠ 上线"，再用直接注入 USER_POSTS 的方式模拟"已导入并合并"后的表现。
       {
-        const mock = { getMode: 'ok', posts: [], puts: [] };
         const { dom, window, doc, errors, loader } = await openPage('#/editor');
-        window.fetch = queueFetch(mock);
+        const exported = stubExport(window);
 
-        await publish(window, doc, '发布一致性测试文章', '# 发布一致性测试\n\n正文里有唯一词：蓝鲸螺栓校准。\n');
-        check('P1 提交队列后 USER_POSTS 不变（尚未上线）',
+        await exportArticle(window, doc, '发布一致性测试文章', '# 发布一致性测试\n\n正文里有唯一词：蓝鲸螺栓校准。\n');
+        check('P1 导出后 USER_POSTS 不变（尚未上线）',
           window.eval('USER_POSTS.length') === 0, window.eval('USER_POSTS.length'));
-        check('P1 不再向 js/user-posts.js 写任何东西',
-          (mock.puts || []).filter(p => p === 'js/user-posts.js').length === 0,
-          (mock.puts || []).join(',') || '0 次');
-        check('P1 提示明确区分"已提交队列"与"已上线"',
-          /队列/.test(doc.getElementById('editorStatus').textContent) &&
+        check('P1 导出没有产生任何网络请求（不再写 js/user-posts.js）',
+          exported.netCalls === 0 && exported.downloads.length === 1,
+          'net=' + exported.netCalls + ' files=' + exported.downloads.length);
+        check('P1 导出内容包含正文唯一词',
+          /蓝鲸螺栓校准/.test((exported.downloads[0] || {}).text || ''), (exported.downloads[0] || {}).filename);
+        check('P1 提示明确区分"本地导出"与"已上线"',
+          /尚未上线/.test(doc.getElementById('editorStatus').textContent) &&
           !/发布成功/.test(doc.getElementById('editorStatus').textContent),
           doc.getElementById('editorStatus').textContent.slice(0, 40));
 
-        // 模拟"队列已被构建合并进 USER_POSTS"
+        // 模拟"导出的文章已被导入并合并进 USER_POSTS"
         window.eval("USER_POSTS.push({ id: 'e2e-publish-1', title: '发布一致性测试文章', date: '2026-11-10', tags: ['测试'], excerpt: '摘要与正文关键词无关', content: '# 发布一致性测试\\n\\n正文里有唯一词：蓝鲸螺栓校准。\\n' });");
 
         window.location.hash = '#/';
@@ -247,16 +196,17 @@ async function typeSearch(doc, window, text, waitMs) {
         dom.window.close();
       }
 
-      // ------------------------------------------------ P4 发布失败保留草稿
+      // ------------------------------------------------ P4 导出失败保留草稿
       {
-        const mock = { getMode: 'http500', posts: [], puts: [] };
         const { dom, window, doc } = await openPage('#/editor');
-        window.fetch = makeFetch(mock, window);
-        await publish(window, doc, '会失败的发布', '# 失败也要保住草稿\n\n这段内容不能丢。\n');
+        const exported = stubExport(window);
+        window.__downloadText = function () { throw new Error('download blocked'); };
+        await exportArticle(window, doc, '会失败的导出', '# 失败也要保住草稿\n\n这段内容不能丢。\n');
         const draftRaw = window.localStorage.getItem('blog_draft');
-        check('P4 提交失败时未发出 PUT', (mock.puts || []).length === 0);
-        check('P4 提交失败后草稿仍在', !!draftRaw && /失败也要保住草稿/.test(draftRaw || ''), draftRaw ? draftRaw.slice(0, 40) : 'null');
-        check('P4 提交失败提示可见', /提交失败|发布失败/.test(doc.getElementById('editorStatus').textContent));
+        check('P4 导出失败时未发出任何网络请求', exported.netCalls === 0, exported.netCalls);
+        check('P4 导出失败没有产生文件', exported.downloads.length === 0);
+        check('P4 导出失败后草稿仍在', !!draftRaw && /失败也要保住草稿/.test(draftRaw || ''), draftRaw ? draftRaw.slice(0, 40) : 'null');
+        check('P4 导出失败提示可见', /导出失败/.test(doc.getElementById('editorStatus').textContent));
         dom.window.close();
       }
 

@@ -1,19 +1,24 @@
-// B2-01 GitHub 发布历史数据保护回归（Batch 7C-3A 起重定向到发布队列）
+// B2-01 发布历史数据保护回归（Batch 8A：契约改为「导出」，保护强度只增不减）
 //
-// 历史意图（保持不变）：**只要无法确认"历史内容不会被破坏"，就绝不发 PUT。**
-// 7C-3A 之后编辑器不再整文件读写 js/user-posts.js，而是每次只往
-// content/queue/<id>.json 写一个文件，所以这里的 10 个场景改成验证新契约下的等价保证：
-//   C1 正常提交只写一个新文件，历史文件（js/user-posts.js）根本不被读写
-//   C2 分支读取 5xx → 不发 PUT
-//   C3 队列条目已存在（内容不可解析也照样）→ 不覆盖
-//   C4 队列目录不可读（403）→ 不发 PUT
-//   C5 队列检查返回异常状态 → 不发 PUT
-//   C6 响应体不可解析 → 不发 PUT
-//   C7 条目 404 → 允许新建，PUT 显式带 branch，且载荷只有一篇文章
-//   C8 PUT 409 → 明确报错，不覆盖
-//   C9 同标题重复提交 → 两个不同 id，互不覆盖
-//   C10 网络异常 → 不发 PUT，提示可读错误
-// 全部使用本地模拟 GitHub Contents API，不访问真实网络/仓库。
+// 历史意图（保持不变）：**只要无法确认"历史内容不会被破坏"，就绝不写远端。**
+//   * Batch 2   ：编辑器整文件读写 js/user-posts.js → 必须模拟 GitHub API 才敢发布；
+//   * Batch 7C-3A：改成只往 content/queue/<id>.json 写一个文件；
+//   * Batch 8A  ：编辑器彻底不联网 —— 导出只是本地文件，发布改由
+//                  scripts/import_post.py 在本地完成（它自己保证不覆盖历史正文）。
+//
+// 因此这里把 10 个场景改成验证新契约下的**更强**保证：
+//   C1  正常导出：零网络请求、零历史写入、载荷只有这一篇
+//   C2  导出物字段固定且可被 JSON.parse
+//   C3  空标题 → 本地拦截，不产生文件、不发请求
+//   C4  空正文 → 本地拦截
+//   C5  非法 id → 本地拦截
+//   C6  与已发布文章同 id → 本地拦截
+//   C7  导出失败（下载异常）→ 明确报错且草稿保留
+//   C8  导出成功 → 草稿仍然保留（8A 不再静默删稿，用户可继续编辑）
+//   C9  历史文章集合（POSTS / USER_POSTS）在导出前后完全不变
+//   C10 断网（fetch 全部拒绝）也能导出；重复导出同一篇 → 同一 id（幂等）
+'use strict';
+
 const http = require('http');
 const fs = require('fs');
 const path = require('path');
@@ -25,8 +30,10 @@ const BASE = 'http://localhost:' + PORT;
 const MIME = {
   '.html': 'text/html; charset=utf-8', '.css': 'text/css; charset=utf-8',
   '.js': 'text/javascript; charset=utf-8', '.json': 'application/json; charset=utf-8',
-  '.xml': 'application/xml; charset=utf-8', '.png': 'image/png', '.txt': 'text/plain'
+  '.xml': 'application/xml; charset=utf-8', '.png': 'image/png', '.txt': 'text/plain; charset=utf-8',
+  '.md': 'text/markdown; charset=utf-8'
 };
+
 const server = http.createServer((req, res) => {
   let p = decodeURIComponent(req.url.split('?')[0]);
   if (p === '/') p = '/index.html';
@@ -42,206 +49,182 @@ let pass = true;
 let total = 0;
 const check = (name, cond, extra) => {
   total++;
-  console.log((cond ? 'PASS ' : 'FAIL ') + name + (extra !== undefined ? '  (' + extra + ')' : ''));
+  console.log((cond ? 'PASS ' : 'FAIL ') + name + (extra !== undefined ? '  (' + String(extra).slice(0, 90) + ')' : ''));
   if (!cond) pass = false;
 };
 
-function resp(status, body) {
-  return {
-    ok: status >= 200 && status < 300,
-    status: status,
-    json: body === undefined ? () => Promise.reject(new Error('invalid json')) : () => Promise.resolve(body),
-    text: () => Promise.resolve(JSON.stringify(body))
-  };
+function readDraft(window) {
+  try { return JSON.parse(window.localStorage.getItem('blog_draft') || 'null'); } catch (e) { return null; }
 }
 
-/**
- * 可编程的队列桩。state:
- *   branches: 'ok' | 500 | network
- *   dup:      'none' | 'exists' | 403 | 500 | 'badjson'
- *   put:      'ok' | 409 | 500
- * 记录：puts（PUT 次数）、paths（PUT 的路径）、branch（PUT 的 branch 字段）、
- *       touchedHistory（是否请求过 js/user-posts.js）
- */
-function makeFetch(state) {
-  state.puts = state.puts || 0;
-  state.paths = state.paths || [];
-  state.branch = state.branch || null;
-  state.touchedHistory = false;
-  return function (url, init) {
-    init = init || {};
-    const u = String(url);
-    const method = (init.method || 'GET').toUpperCase();
-    if (u.indexOf('api.github.com') === -1) return Promise.reject(new Error('unexpected ' + u));
-    if (u.indexOf('user-posts') !== -1) { state.touchedHistory = true; }
-
-    if (state.branches === 'network') return Promise.reject(new TypeError('Failed to fetch'));
-
-    if (u.indexOf('/branches/') !== -1) {
-      if (state.branches === 500) return Promise.resolve(resp(500, { message: 'boom' }));
-      return Promise.resolve(resp(200, { name: 'content/queue' }));
-    }
-    if (u.indexOf('/contents/') === -1) return Promise.resolve(resp(200, {}));
-
-    if (method === 'PUT') {
-      state.puts++;
-      state.paths.push(u.split('/contents/')[1].split('?')[0]);
-      try { state.branch = JSON.parse(init.body).branch; } catch (e) { state.branch = null; }
-      if (state.put === 409) return Promise.resolve(resp(409, { message: 'sha does not match' }));
-      if (state.put === 500) return Promise.resolve(resp(500, { message: 'write failed' }));
-      return Promise.resolve(resp(201, { content: { sha: 'sha-new' } }));
-    }
-
-    switch (state.dup) {
-      case 'exists': return Promise.resolve(resp(200, { sha: 'sha-old', size: 10, encoding: 'base64', content: 'e30=' }));
-      case 'badjson': return Promise.resolve(resp(200, undefined));
-      case 403: return Promise.resolve(resp(403, { message: 'Forbidden' }));
-      case 500: return Promise.resolve(resp(500, { message: 'boom' }));
-      default: return Promise.resolve(resp(404, { message: 'Not Found' }));
-    }
-  };
-}
-
-function payloadOf(init) {
-  return JSON.parse(Buffer.from(JSON.parse(init.body).content, 'base64').toString('utf8'));
-}
-
-async function openEditor(vcErrors) {
+async function openEditor() {
+  const errors = [];
   const vc = new VirtualConsole();
   vc.on('jsdomError', e => {
-    if (!/Not implemented: (window\.scrollTo|Window's scrollTo|scrollIntoView)/.test(e.message)) vcErrors.push(e.message);
+    if (!/Not implemented: (window\.scrollTo|Window's scrollTo|scrollIntoView)/.test(e.message)) errors.push(e.message);
   });
-  vc.on('error', (...a) => vcErrors.push(String(a[0])));
+  vc.on('error', (...a) => errors.push(String(a[0])));
   const dom = await JSDOM.fromURL(BASE + '/index.html#/editor', {
     runScripts: 'dangerously', resources: 'usable', pretendToBeVisual: true, virtualConsole: vc
   });
   const { window } = dom;
   const doc = window.document;
   await new Promise(r => window.addEventListener('load', r));
-  await wait(500);
-  window.sessionStorage.setItem('gh_token', 'fake-token');
-  window.localStorage.setItem('gh_owner', 'demo');
-  window.localStorage.setItem('gh_repo', 'demo-blog');
-  return { dom, window, doc };
+  await wait(450);
+  window.localStorage.removeItem('blog_draft');
+  return { dom, window, doc, errors };
 }
 
-async function runCase(name, state, title, opts) {
-  opts = opts || {};
-  const errors = [];
-  const { dom, window, doc } = await openEditor(errors);
-  const t = doc.getElementById('editorTitle');
-  const c = doc.getElementById('editorContent');
-  if (!t || !c) {
-    check(name + ' · 编辑器可用', false, '编辑器未渲染');
-    dom.window.close();
-    return;
-  }
-  t.value = title;
-  c.value = '# 正文\n\n内容';
-  const fetchImpl = makeFetch(state);
-  window.fetch = fetchImpl;
-  // 记录 PUT 的载荷（makeFetch 里拿不到 init，这里包一层）
-  const origPut = window.fetch;
-  window.fetch = (url, init) => {
-    if ((init && init.method) === 'PUT') state.lastPayload = payloadOf(init);
-    return origPut(url, init);
+// 任何网络请求都算违规：计数并让请求失败（提示"断网也能导出"）
+function blockNetwork(window) {
+  const state = { calls: 0, urls: [] };
+  window.fetch = function (url) {
+    state.calls++;
+    state.urls.push(String(url));
+    return Promise.reject(new TypeError('Failed to fetch (network disabled by test10)'));
   };
-  await window.publishPost();
-  await wait(60);
-  opts.assert(state, errors, window, doc);
-  dom.window.close();
+  return state;
 }
+
+function captureDownloads(window) {
+  const out = [];
+  window.__downloadText = function (text, filename) { out.push({ text: text, filename: filename }); };
+  return out;
+}
+
+function fill(doc, title, content) {
+  doc.getElementById('editorTitle').value = title;
+  doc.getElementById('editorTags').value = '测试, 技术笔记';
+  doc.getElementById('editorExcerpt').value = '摘要（与正文关键词无关）';
+  doc.getElementById('editorContent').value = content;
+}
+
+const snapshotPosts = window0 => window0.eval(
+  'JSON.stringify({ posts: POSTS.map(function (p) { return p.id; }),' +
+  ' user: USER_POSTS.map(function (p) { return p.id; }) })');
 
 server.listen(PORT, async () => {
   try {
-    // 1) 正常提交：只写一个新文件，历史文件完全不被碰
-    await runCase('C1 正常提交', { branches: 'ok', dup: 'none', put: 'ok' }, '新文章A', {
-      assert: (s) => {
-        check('C1 · 只发一次 PUT', s.puts === 1, s.puts + ' 次');
-        check('C1 · 目标是 content/queue/<id>.json',
-          /^content\/queue\/[a-z0-9-]+\.json$/.test(s.paths[0] || ''), s.paths[0]);
-        check('C1 · 显式指定 branch=content/queue', s.branch === 'content/queue', s.branch);
-        check('C1 · 完全没碰 js/user-posts.js（历史不受影响）', s.touchedHistory === false);
-        check('C1 · 载荷只有这一篇', s.lastPayload && s.lastPayload.id && s.lastPayload.content);
-      }
-    });
-
-    // 2) 分支读取 500：不得 PUT
-    await runCase('C2 分支读取 5xx', { branches: 500, dup: 'none', put: 'ok' }, '新文章B', {
-      assert: (s, errs, w, d) => {
-        check('C2 · 未发出 PUT', s.puts === 0, s.puts + ' 次');
-        check('C2 · 提示提交失败', /提交失败|发布失败/.test(d.getElementById('editorStatus').textContent));
-      }
-    });
-
-    // 3) 队列条目已存在 → 不覆盖（哪怕内容读不懂）
-    await runCase('C3 条目已存在', { branches: 'ok', dup: 'exists', put: 'ok' }, '新文章C', {
-      assert: (s, errs, w, d) => {
-        check('C3 · 已存在时不 PUT（避免覆盖）', s.puts === 0, s.puts + ' 次');
-        check('C3 · 提示不覆盖', /不会覆盖|已有同 id/.test(d.getElementById('editorStatus').textContent));
-      }
-    });
-
-    // 4) 队列目录不可读（403）
-    await runCase('C4 队列目录 403', { branches: 'ok', dup: 403, put: 'ok' }, '新文章D', {
-      assert: (s) => {
-        check('C4 · 不 PUT（避免覆盖）', s.puts === 0, s.puts + ' 次');
-      }
-    });
-
-    // 5) 队列检查 5xx
-    await runCase('C5 队列检查 5xx', { branches: 'ok', dup: 500, put: 'ok' }, '新文章E', {
-      assert: (s) => {
-        check('C5 · 不 PUT（避免覆盖）', s.puts === 0, s.puts + ' 次');
-      }
-    });
-
-    // 6) 响应体不可解析
-    await runCase('C6 响应不可解析', { branches: 'ok', dup: 'badjson', put: 'ok' }, '新文章F', {
-      assert: (s) => {
-        check('C6 · 不 PUT（避免覆盖）', s.puts === 0, s.puts + ' 次');
-      }
-    });
-
-    // 7) 条目 404 → 允许新建
-    await runCase('C7 404 新建条目', { branches: 'ok', dup: 'none', put: 'ok' }, '首篇文章', {
-      assert: (s) => {
-        check('C7 · 允许新建并 PUT', s.puts === 1, s.puts + ' 次');
-        check('C7 · 显式带 branch', s.branch === 'content/queue', s.branch);
-        check('C7 · 新建时不带 sha（不会顶掉别人的版本）',
-          s.lastPayload && s.lastPayload.id, s.lastPayload && s.lastPayload.id);
-      }
-    });
-
-    // 8) PUT 冲突
-    await runCase('C8 PUT 409 冲突', { branches: 'ok', dup: 'none', put: 409 }, '新文章G', {
-      assert: (s, errs, w, d) => {
-        check('C8 · 冲突时给出明确错误', /冲突|提交失败/.test(d.getElementById('editorStatus').textContent),
-          d.getElementById('editorStatus').textContent.trim().slice(0, 40));
-      }
-    });
-
-    // 9) 同标题重复提交 → 两个不同 id，互不覆盖
+    // ---------------------------------------------------------------- C1/C2/C9/C10
     {
-      const ids = [];
-      for (const n of [1, 2]) {
-        await runCase('C9 重复提交 #' + n, { branches: 'ok', dup: 'none', put: 'ok' }, '重复标题', {
-          assert: (s) => { ids.push(s.lastPayload && s.lastPayload.id); }
-        });
-      }
-      check('C9 · 重复提交生成两个不同 id（不覆盖）',
-        ids.length === 2 && ids[0] && ids[1] && ids[0] !== ids[1], ids.join(','));
+      const { dom, window, doc, errors } = await openEditor();
+      const net = blockNetwork(window);
+      const downloads = captureDownloads(window);
+      const before = snapshotPosts(window);
+
+      fill(doc, '历史保护测试文章', '# 历史保护\n\n正文只属于这篇文章。\n');
+      const ok = window.exportPost();
+      await wait(60);
+
+      check('C1 导出成功', ok === true);
+      check('C1 全程零网络请求（不再有 GitHub API 调用）', net.calls === 0, net.urls.slice(0, 1).join(','));
+      check('C1 只产生一个文件', downloads.length === 1, downloads.length);
+
+      const payload = JSON.parse(downloads[0].text);
+      check('C2 导出物字段顺序固定',
+        Object.keys(payload).join(',') === 'id,title,date,tags,excerpt,content', Object.keys(payload).join(','));
+      check('C2 载荷只有这一篇（不含历史文章）',
+        typeof payload.id === 'string' && typeof payload.content === 'string' &&
+        !Array.isArray(payload), payload.id);
+      check('C2 正文与输入一致（trim 规范后）',
+        payload.content === '# 历史保护\n\n正文只属于这篇文章。');
+
+      check('C9 POSTS / USER_POSTS 在导出前后完全不变', snapshotPosts(window) === before);
+
+      // 重复导出同一篇：id 必须稳定（避免在 data/posts 里留下两份正文）
+      const again = window.buildExportPayload();
+      check('C10 重复导出使用同一 id（幂等）', again.ok && again.post.id === payload.id, again.post.id);
+      check('C10 文件名仍是 <id>.json', downloads[0].filename === payload.id + '.json', downloads[0].filename);
+
+      check('C1 无脚本错误', errors.length === 0, errors.slice(0, 2).join(' | '));
+      dom.window.close();
     }
 
-    // 10) 网络异常
-    await runCase('C10 网络异常', { branches: 'network', dup: 'none', put: 'ok' }, '新文章H', {
-      assert: (s, errs, w, d) => {
-        check('C10 · 未发出 PUT', s.puts === 0, s.puts + ' 次');
-        check('C10 · 提示可读错误', /提交失败|发布失败/.test(d.getElementById('editorStatus').textContent));
-      }
-    });
+    // ---------------------------------------------------------------- C3/C4 空标题/空正文
+    {
+      const { dom, window, doc } = await openEditor();
+      const net = blockNetwork(window);
+      const downloads = captureDownloads(window);
+
+      fill(doc, '', '# 有正文\n');
+      check('C3 空标题被本地拦截', window.exportPost() === false &&
+        /标题不能为空/.test(doc.getElementById('editorStatus').textContent));
+      check('C3 空标题不产生文件、不发请求', downloads.length === 0 && net.calls === 0);
+
+      fill(doc, '有标题但没正文', '   \n');
+      check('C4 空正文被本地拦截', window.exportPost() === false &&
+        /正文不能为空/.test(doc.getElementById('editorStatus').textContent));
+      check('C4 空正文不产生文件、不发请求', downloads.length === 0 && net.calls === 0);
+      dom.window.close();
+    }
+
+    // ---------------------------------------------------------------- C5 非法 id
+    {
+      const { dom, window, doc } = await openEditor();
+      const net = blockNetwork(window);
+      const downloads = captureDownloads(window);
+      window.eval("generatePostId = function () { return 'Bad_ID!'; };");
+      fill(doc, '非法 id', '# x\n');
+      check('C5 非法 id 被本地拦截', window.exportPost() === false &&
+        /id 非法/.test(doc.getElementById('editorStatus').textContent));
+      check('C5 非法 id 不产生文件、不发请求', downloads.length === 0 && net.calls === 0);
+      dom.window.close();
+    }
+
+    // ---------------------------------------------------------------- C6 与已有文章同 id
+    {
+      const { dom, window, doc } = await openEditor();
+      const net = blockNetwork(window);
+      const downloads = captureDownloads(window);
+      const existing = window.eval('POSTS[0].id');
+      window.eval("generatePostId = function () { return '" + existing + "'; };");
+      fill(doc, '撞已有 id', '# x\n');
+      check('C6 同 id 被本地拦截', window.exportPost() === false &&
+        /id 冲突/.test(doc.getElementById('editorStatus').textContent));
+      check('C6 同 id 不产生文件、不发请求', downloads.length === 0 && net.calls === 0);
+      dom.window.close();
+    }
+
+    // ---------------------------------------------------------------- C7 导出失败保草稿
+    {
+      const { dom, window, doc } = await openEditor();
+      const net = blockNetwork(window);
+      window.__downloadText = function () { throw new Error('download blocked'); };
+      fill(doc, '导出会失败', '# 这段内容不能丢\n\n正文。\n');
+      const ok = window.exportPost();
+      await wait(60);
+      check('C7 导出失败返回 false', ok === false);
+      check('C7 导出失败有明确提示', /导出失败/.test(doc.getElementById('editorStatus').textContent));
+      check('C7 导出失败草稿保留', /这段内容不能丢/.test((readDraft(window) || {}).content || ''));
+      check('C7 导出失败也没有发请求', net.calls === 0);
+      dom.window.close();
+    }
+
+    // ---------------------------------------------------------------- C8 导出成功保留草稿
+    {
+      const { dom, window, doc } = await openEditor();
+      blockNetwork(window);
+      captureDownloads(window);
+      fill(doc, '导出成功也要留草稿', '# 可继续编辑\n');
+      window.exportPost();
+      await wait(60);
+      const draft = readDraft(window);
+      check('C8 导出成功后草稿仍在（8A 不再静默删稿）', draft !== null);
+      check('C8 草稿内容可用于继续编辑', (draft || {}).content === '# 可继续编辑\n', (draft || {}).content);
+      check('C8 重新进入编辑器会回填草稿', (function () {
+        window.location.hash = '#/';
+        return true;
+      })());
+      await wait(200);
+      window.location.hash = '#/editor';
+      await wait(500);
+      check('C8 回填后的正文与草稿一致',
+        doc.getElementById('editorContent').value === '# 可继续编辑\n',
+        doc.getElementById('editorContent').value.slice(0, 20));
+      dom.window.close();
+    }
   } catch (e) {
-    console.error('SMOKE ERROR:', e);
+    console.error('SMOKE ERROR:', e && e.stack || e);
     pass = false;
   }
 
