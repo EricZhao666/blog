@@ -2483,6 +2483,447 @@ function runMarkdownAction(action, textarea) {
 }
 window.runMarkdownAction = runMarkdownAction;
 
+// ============================================
+// DraftHistory（Batch 8B-3）：草稿历史快照
+//
+// 设计约束（对应 BATCH8B3_REPORT.md「历史版本存储结构」）：
+//   1. 现有 localStorage 草稿（blog_draft / blog_draft_edit::<id>）**保持不动**，
+//      历史快照另存 IndexedDB；IndexedDB 不可用时退化为进程内内存（只有当前标签页可见）。
+//   2. 隔离：scopeKey = 'new' 或 'edit:<文章 id>'，两者、以及不同 id 之间永不互相覆盖。
+//   3. 去重：内容指纹（标题/日期/标签/摘要/正文 的 FNV-1a）相同则不重复写入。
+//   4. 配额：每个 scopeKey 最多 10 条；先淘汰最旧的 auto，再淘汰最旧的"受保护"记录。
+//   5. 只保存 6 个白名单字段，绝不写入 Token/密码等无关数据，也不发起任何网络请求。
+//   6. 所有方法都返回 Promise<结果对象>，**从不 reject**：历史模块故障不能影响草稿与导出。
+// ============================================
+var DraftHistory = (function () {
+  var DB_NAME = 'blog-draft-history';
+  var DB_VERSION = 1;
+  var STORE = 'snapshots';
+  var MAX_PER_SCOPE = 10;
+  var AUTO_INTERVAL_MS = 5 * 60 * 1000;      // 自动快照最小间隔（约 5 分钟）
+  var PREVIEW_CHARS = 80;
+
+  var KIND_MANUAL = 'manual';
+  var KIND_AUTO = 'auto';
+  var KIND_BACKUP = 'restore-backup';
+
+  var cfg = { scope: 'new', postId: '', now: null };
+  var backend = null;            // { name, listAll, put, remove, clear }
+  var degradeReason = '';
+  var cache = [];                // 当前 scope 的记录（内存镜像，按 savedAt 倒序）
+  var lastAutoAt = 0;
+  var scopeLoaded = false;       // 是否已经把该 scope 的历史读进内存（防重入）
+  var readyPromise = null;
+  var tabId = Math.random().toString(36).slice(2, 8);
+
+  function nowMs(at) {
+    if (typeof at === 'number' && isFinite(at)) return at;
+    if (cfg.now) return cfg.now();
+    return Date.now();
+  }
+
+  function scopeKey() {
+    return cfg.scope === 'edit' ? 'edit:' + (cfg.postId || '') : 'new';
+  }
+
+  function hash(str) {
+    var h = 0x811c9dc5;
+    for (var i = 0; i < str.length; i++) {
+      h ^= str.charCodeAt(i);
+      h = (h + (h << 1) + (h << 4) + (h << 7) + (h << 8) + (h << 24)) >>> 0;
+    }
+    return h.toString(36);
+  }
+
+  // 只取白名单字段：历史里绝不允许出现 token / password / 其它状态
+  function pickState(state) {
+    var s = state || {};
+    var tags = s.tags;
+    if (typeof tags === 'string') {
+      tags = tags.split(/[,，]/).map(function (t) { return t.trim(); })
+        .filter(function (t) { return t; });
+    }
+    if (!Array.isArray(tags)) tags = [];
+    return {
+      title: String(s.title == null ? '' : s.title),
+      date: String(s.date == null ? '' : s.date).slice(0, 10),
+      tags: tags.slice(0, 30).map(function (t) { return String(t).slice(0, 40); }),
+      excerpt: String(s.excerpt == null ? '' : s.excerpt).slice(0, 2000),
+      content: String(s.content == null ? '' : s.content)
+    };
+  }
+
+  function fingerprint(snap) {
+    return hash([snap.title, snap.date, snap.tags.join('\u0001'), snap.excerpt, snap.content].join('\u0000'));
+  }
+
+  function sortDesc(list) {
+    return list.slice().sort(function (a, b) {
+      if (b.savedAt !== a.savedAt) return b.savedAt - a.savedAt;
+      return String(b.id) < String(a.id) ? -1 : 1;
+    });
+  }
+
+  // ---------------------------------------------------------------- 后端
+  function openDb() {
+    return new Promise(function (resolve, reject) {
+      if (typeof indexedDB === 'undefined' || !indexedDB) {
+        reject(new Error('IndexedDB 不可用'));
+        return;
+      }
+      var req;
+      try {
+        req = indexedDB.open(DB_NAME, DB_VERSION);
+      } catch (e) {
+        reject(e);
+        return;
+      }
+      req.onupgradeneeded = function () {
+        var db = req.result;
+        if (!db.objectStoreNames.contains(STORE)) {
+          var os = db.createObjectStore(STORE, { keyPath: 'id' });
+          os.createIndex('byScope', 'scopeKey', { unique: false });
+        }
+      };
+      req.onsuccess = function () { resolve(req.result); };
+      req.onerror = function () { reject(req.error || new Error('打开 IndexedDB 失败')); };
+      req.onblocked = function () { reject(new Error('IndexedDB 被其它标签页阻塞')); };
+    });
+  }
+
+  function makeIdbBackend(db) {
+    function txDone(tx, resolve, reject) {
+      tx.oncomplete = function () { resolve(true); };
+      tx.onerror = function () { reject(tx.error || new Error('IndexedDB 事务失败')); };
+      tx.onabort = function () { reject(tx.error || new Error('IndexedDB 事务中止')); };
+    }
+    return {
+      name: 'idb',
+      listAll: function () {
+        return new Promise(function (resolve, reject) {
+          var tx = db.transaction(STORE, 'readonly');
+          var req = tx.objectStore(STORE).getAll();
+          req.onsuccess = function () { resolve(req.result || []); };
+          req.onerror = function () { reject(req.error || new Error('读取历史失败')); };
+        });
+      },
+      put: function (rec) {
+        return new Promise(function (resolve, reject) {
+          var tx = db.transaction(STORE, 'readwrite');
+          tx.objectStore(STORE).put(rec);
+          txDone(tx, resolve, reject);
+        });
+      },
+      remove: function (id) {
+        return new Promise(function (resolve, reject) {
+          var tx = db.transaction(STORE, 'readwrite');
+          tx.objectStore(STORE).delete(id);
+          txDone(tx, resolve, reject);
+        });
+      },
+      clear: function () {
+        return new Promise(function (resolve, reject) {
+          var tx = db.transaction(STORE, 'readwrite');
+          tx.objectStore(STORE).clear();
+          txDone(tx, resolve, reject);
+        });
+      }
+    };
+  }
+
+  function makeMemoryBackend(reason) {
+    var mem = [];
+    return {
+      name: 'memory',
+      listAll: function () { return Promise.resolve(mem.slice()); },
+      put: function (rec) {
+        var i = mem.findIndex(function (r) { return r.id === rec.id; });
+        if (i >= 0) mem[i] = rec; else mem.push(rec);
+        return Promise.resolve(true);
+      },
+      remove: function (id) {
+        var i = mem.findIndex(function (r) { return r.id === id; });
+        if (i >= 0) mem.splice(i, 1);
+        return Promise.resolve(true);
+      },
+      clear: function () {
+        mem = mem.filter(function (r) { return r.scopeKey !== scopeKey(); });
+        return Promise.resolve(true);
+      },
+      reason: reason || ''
+    };
+  }
+
+  function ensureBackend() {
+    if (backend) return Promise.resolve(backend);
+    return openDb().then(function (db) {
+      backend = makeIdbBackend(db);
+      return backend;
+    }).catch(function (err) {
+      degradeReason = (err && err.message) || String(err);
+      backend = makeMemoryBackend(degradeReason);
+      return backend;
+    });
+  }
+
+  // ---------------------------------------------------------------- 查询
+  function loadScope() {
+    return ensureBackend().then(function (be) { return be.listAll(); }).then(function (all) {
+      var key = scopeKey();
+      // 损坏记录（缺字段/类型不对）单独丢弃，不能连累同 scope 的其它正常版本
+      var mine = sortDesc((all || []).filter(function (r) {
+        return r && r.scopeKey === key && typeof r.id === 'string' &&
+          typeof r.savedAt === 'number' && isFinite(r.savedAt) &&
+          typeof r.content === 'string' && typeof r.title === 'string';
+      }));
+      cache = mine;
+      lastAutoAt = 0;
+      mine.forEach(function (r) {
+        if (r.kind === KIND_AUTO && r.savedAt > lastAutoAt) lastAutoAt = r.savedAt;
+      });
+      scopeLoaded = true;
+      return mine;
+    }).catch(function (err) {
+      degradeReason = degradeReason || ((err && err.message) || String(err));
+      cache = cache || [];
+      scopeLoaded = true;
+      return cache;
+    });
+  }
+
+  // ---------------------------------------------------------------- 写入
+  function buildRecord(kind, snap, at) {
+    var fp = fingerprint(snap);
+    return {
+      id: scopeKey() + '|' + at + '|' + Math.random().toString(36).slice(2, 7),
+      scopeKey: scopeKey(),
+      scope: cfg.scope,
+      postId: cfg.postId || '',
+      kind: kind,
+      savedAt: at,
+      savedAtISO: new Date(at).toISOString(),
+      title: snap.title,
+      date: snap.date,
+      tags: snap.tags.slice(),
+      excerpt: snap.excerpt,
+      content: snap.content,
+      chars: snap.content.replace(/\s/g, '').length,
+      hash: fp,
+      tabId: tabId
+    };
+  }
+
+  // 配额：先删最旧的 auto，再删最旧的受保护记录；手动版本优先保留
+  function prune(list, be) {
+    if (list.length <= MAX_PER_SCOPE) return Promise.resolve({ trimmed: 0, list: list });
+    var keep = list.slice();
+    var removed = 0;
+    var over = keep.length - MAX_PER_SCOPE;
+    // 1) 从最旧的 auto 开始
+    for (var i = keep.length - 1; i >= 0 && removed < over; i--) {
+      if (keep[i].kind === KIND_AUTO) { keep.splice(i, 1); removed++; }
+    }
+    // 2) 仍超限：动最旧的受保护记录（restore-backup 先于 manual）
+    for (var j = keep.length - 1; j >= 0 && removed < over; j--) {
+      if (keep[j].kind !== KIND_MANUAL) { keep.splice(j, 1); removed++; }
+    }
+    for (var k = keep.length - 1; k >= 0 && removed < over; k--) {
+      keep.splice(k, 1); removed++;
+    }
+    var drop = list.filter(function (r) { return keep.indexOf(r) === -1; });
+    return Promise.all(drop.map(function (r) {
+      return be.remove(r.id).catch(function () { return false; });
+    })).then(function () {
+      cache = sortDesc(keep);
+      return { trimmed: removed, list: cache };
+    });
+  }
+
+  function snapshot(kind, state, atMs) {
+    var at = nowMs(atMs);
+    var snap = pickState(state);
+    try {
+      if (!snap.content.trim() && !snap.title.trim()) {
+        return Promise.resolve({ ok: false, saved: false, error: '空白内容不保存为历史版本' });
+      }
+      return ensureBackend().then(function (be) {
+        return be.listAll().then(function (all) {
+          var mine = sortDesc((all || []).filter(function (r) {
+            return r && r.scopeKey === scopeKey();
+          }));
+          var fp = fingerprint(snap);
+          var dup = mine.some(function (r) { return r.hash === fp; });   // 同内容不重复
+          if (dup) {
+            cache = mine;
+            return { ok: true, saved: false, skipped: 'duplicate', count: mine.length };
+          }
+          var rec = buildRecord(kind || KIND_MANUAL, snap, at);
+          return be.put(rec).then(function () {
+            var next = sortDesc([rec].concat(mine));
+            if (kind === KIND_AUTO) lastAutoAt = Math.max(lastAutoAt, at);
+            return prune(next, be).then(function (p) {
+              return { ok: true, saved: true, record: rec, count: p.list.length,
+                       trimmed: p.trimmed, backend: be.name };
+            });
+          });
+        });
+      }).catch(function (err) {
+        var msg = (err && err.message) || String(err);
+        var name = (err && err.name) || '';
+        if (/quota/i.test(name) || /QuotaExceeded|quota/i.test(msg)) {
+          return { ok: false, saved: false, error: '浏览器存储空间不足，无法保存历史版本' };
+        }
+        return { ok: false, saved: false, error: '历史版本写入失败：' + msg };
+      });
+    } catch (e) {
+      return Promise.resolve({ ok: false, saved: false, error: '历史版本模块异常：' + ((e && e.message) || e) });
+    }
+  }
+
+  function maybeAuto(state, atMs) {
+    var at = nowMs(atMs);
+    if (!scopeLoaded) {
+      // 第一次进来先读一遍该 scope 的历史（只重入一次；用 scopeLoaded 而不是 lastAutoAt 判断，
+      // 否则"还没有任何自动版本"时会无限递归）
+      return loadScope().then(function () {
+        if (lastAutoAt && at - lastAutoAt < AUTO_INTERVAL_MS) {
+          return { ok: true, saved: false, skipped: 'throttled' };
+        }
+        return snapshot(KIND_AUTO, state, at);
+      });
+    }
+    if (lastAutoAt && at - lastAutoAt < AUTO_INTERVAL_MS) {
+      return Promise.resolve({ ok: true, saved: false, skipped: 'throttled' });
+    }
+    return snapshot(KIND_AUTO, state, at);
+  }
+
+  // ---------------------------------------------------------------- 差异
+  function diff(oldRec, state) {
+    var cur = pickState(state);
+    var oldText = String((oldRec && oldRec.content) || '');
+    var newText = cur.content;
+    function lines(t) {
+      return String(t || '').split('\n').filter(function (l) { return l.trim() !== ''; });
+    }
+    var a = lines(oldText), b = lines(newText);
+    var counts = Object.create(null);
+    a.forEach(function (l) { counts[l] = (counts[l] || 0) + 1; });
+    var matched = 0;
+    b.forEach(function (l) {
+      if (counts[l] > 0) { counts[l]--; matched++; }
+    });
+    var charsOld = oldText.replace(/\s/g, '').length;
+    var charsNew = newText.replace(/\s/g, '').length;
+    var added = b.length - matched;
+    var removed = a.length - matched;
+    var bits = ['字数 ' + charsOld + ' → ' + charsNew + '（' + (charsNew - charsOld >= 0 ? '+' : '') + (charsNew - charsOld) + '）'];
+    if (added || removed) bits.push('行 ' + (added ? '+' + added : '±0') + ' / ' + (removed ? '−' + removed : '−0'));
+    if ((oldRec && oldRec.title) !== cur.title) bits.push('标题已改');
+    if (JSON.stringify((oldRec && oldRec.tags) || []) !== JSON.stringify(cur.tags)) bits.push('标签已改');
+    if ((oldRec && oldRec.excerpt) !== cur.excerpt) bits.push('摘要已改');
+    return { charsOld: charsOld, charsNew: charsNew, addedLines: added, removedLines: removed,
+             summary: bits.join('；') };
+  }
+
+  // ---------------------------------------------------------------- 公开 API
+  return {
+    KINDS: { MANUAL: KIND_MANUAL, AUTO: KIND_AUTO, BACKUP: KIND_BACKUP },
+    MAX_PER_SCOPE: MAX_PER_SCOPE,
+    AUTO_INTERVAL_MS: AUTO_INTERVAL_MS,
+    PREVIEW_CHARS: PREVIEW_CHARS,
+
+    configure: function (opts) {
+      var o = opts || {};
+      var nextScope = o.scope === 'edit' ? 'edit' : 'new';
+      var nextId = nextScope === 'edit' ? String(o.postId || '') : '';
+      if (nextScope !== cfg.scope || nextId !== cfg.postId) {
+        cfg.scope = nextScope;
+        cfg.postId = nextId;
+        cache = [];
+        lastAutoAt = 0;
+        scopeLoaded = false;
+        readyPromise = null;
+      }
+      if (typeof o.now === 'function') cfg.now = o.now;
+      return scopeKey();
+    },
+    scopeKey: scopeKey,
+    init: function () {
+      if (!readyPromise) {
+        readyPromise = ensureBackend().then(function (be) {
+          return loadScope().then(function (list) {
+            return { ok: true, backend: be.name, count: list.length,
+                     degraded: be.name !== 'idb', reason: degradeReason || '' };
+          });
+        }).catch(function (err) {
+          return { ok: false, backend: 'none', count: 0, degraded: true,
+                   reason: (err && err.message) || String(err) };
+        });
+      }
+      return readyPromise;
+    },
+    list: function () {
+      return loadScope().catch(function () { return cache.slice(); });
+    },
+    snapshot: snapshot,
+    maybeAuto: maybeAuto,
+    remove: function (id) {
+      if (!id) return Promise.resolve({ ok: false, error: '缺少记录 id' });
+      return ensureBackend().then(function (be) {
+        return be.remove(id).then(function () {
+          cache = cache.filter(function (r) { return r.id !== id; });
+          return { ok: true, count: cache.length };
+        });
+      }).catch(function (err) {
+        return { ok: false, error: '删除失败：' + ((err && err.message) || err) };
+      });
+    },
+    clear: function () {
+      return ensureBackend().then(function (be) {
+        return be.listAll().then(function (all) {
+          var mine = (all || []).filter(function (r) { return r && r.scopeKey === scopeKey(); });
+          return Promise.all(mine.map(function (r) {
+            return be.remove(r.id).catch(function () { return false; });
+          })).then(function () {
+            cache = [];
+            lastAutoAt = 0;
+            return { ok: true, count: 0 };
+          });
+        });
+      }).catch(function (err) {
+        return { ok: false, error: '清理失败：' + ((err && err.message) || err) };
+      });
+    },
+    stats: function () {
+      return { scopeKey: scopeKey(), count: cache.length, lastAutoAt: lastAutoAt,
+               backend: backend ? backend.name : 'none', tabId: tabId };
+    },
+    pickState: pickState,
+    fingerprint: function (state) { return fingerprint(pickState(state)); },
+    diff: diff,
+    // 测试专用：重置后端与缓存（不影响 localStorage 草稿）
+    _resetForTests: function (overrideBackend, opts) {
+      backend = overrideBackend || null;
+      cache = [];
+      lastAutoAt = 0;
+      scopeLoaded = false;
+      readyPromise = null;
+      degradeReason = (opts && opts.reason) || '';
+      cfg = { scope: 'new', postId: '', now: null };
+      tabId = 'testtab';
+    },
+    _injectBackend: function (be) {
+      backend = be;
+      readyPromise = null;
+      cache = [];
+      lastAutoAt = 0;
+      scopeLoaded = false;
+    }
+  };
+})();
+if (typeof window !== 'undefined') window.DraftHistory = DraftHistory;
+
 function editorToolbarHtml() {
   function btn(action, label, title) {
     return '<button type="button" class="editor-tool-btn" data-md="' + action +
@@ -2620,11 +3061,45 @@ function renderEditor(editId) {
     editorStatsHtml() +
     '    <div class="editor-actions">' +
     '      <button class="editor-btn editor-btn-secondary" onclick="saveDraft()">\u{1F4BE} \u4FDD\u5B58\u8349\u7A3F</button>' +
+    '      <button class="editor-btn editor-btn-secondary" onclick="saveHistoryVersion()">\u{1F5C2}\uFE0F \u4FDD\u5B58\u5386\u53F2\u7248\u672C</button>' +
+    '      <button class="editor-btn editor-btn-ghost" onclick="toggleHistoryPanel()">\u{1F558} \u5386\u53F2\u7248\u672C ' +
+    '<span id="editorHistoryCount" class="editor-history-count">0</span></button>' +
     '      <button class="editor-btn editor-btn-primary" onclick="exportPost()">' +
     (isEdit ? '\u{1F4E4} \u5BFC\u51FA\u66F4\u65B0\u7A3F' : '\u{1F4E4} \u5BFC\u51FA\u6587\u7AE0') + '</button>' +
     '      <button class="editor-btn editor-btn-ghost" onclick="toggleEditorSettings()">\u2699\uFE0F \u8BBE\u7F6E</button>' +
     '    </div>' +
     '    <div id="editorStatus" class="editor-status"></div>' +
+    '    <div class="editor-history-panel" id="editorHistoryPanel" hidden>' +
+    '      <div class="editor-history-head">' +
+    '        <strong>\u{1F558} \u5386\u53F2\u7248\u672C</strong>' +
+    '        <button type="button" class="editor-tool-btn" data-hist="close" title="\u5173\u95ED" aria-label="\u5173\u95ED">\u2716</button>' +
+    '      </div>' +
+    '      <div class="editor-history-actions">' +
+    '        <button type="button" class="editor-btn editor-btn-secondary" data-hist="snapshot">\u{1F5C2}\uFE0F \u4FDD\u5B58\u5F53\u524D\u4E3A\u5386\u53F2\u7248\u672C</button>' +
+    '        <button type="button" class="editor-btn editor-btn-ghost" data-hist="refresh">\u21BB \u5237\u65B0</button>' +
+    '        <button type="button" class="editor-btn editor-btn-ghost" data-hist="clear">\u{1F9F9} \u6E05\u7406\u8BE5\u6587\u7AE0\u5386\u53F2</button>' +
+    '      </div>' +
+    '      <p class="editor-history-note">\u5386\u53F2\u53EA\u4FDD\u5B58\u5728\u672C\u673A\u6D4F\u89C8\u5668' +
+    '\uFF08IndexedDB\uFF09\uFF0C<b>\u4E0D\u662F\u4E91\u7AEF\u5907\u4EFD</b>\uFF1A\u6E05\u9664\u7AD9\u70B9\u6570\u636E\u4F1A\u4E00\u5E76\u4E22\u5931\u3002' +
+    '\u6062\u590D\u5386\u53F2\u7248\u672C\u4E0D\u7B49\u4E8E\u53D1\u5E03\uFF0C\u4E5F\u4E0D\u4F1A\u4FEE\u6539\u4ED3\u5E93\u3002</p>' +
+    '      <p class="editor-history-notice" id="editorHistoryNotice" hidden></p>' +
+    '      <ul class="editor-history-list" id="editorHistoryList"></ul>' +
+    '      <div class="editor-history-preview" id="editorHistoryPreview" hidden>' +
+    '        <div class="editor-history-preview-head">' +
+    '          <span class="editor-history-preview-title" id="editorHistoryPreviewTitle"></span>' +
+    '          <button type="button" class="editor-tool-btn" data-hist="close-preview" title="\u5173\u95ED\u9884\u89C8" aria-label="\u5173\u95ED\u9884\u89C8">\u2716</button>' +
+    '        </div>' +
+    '        <div class="editor-history-diff" id="editorHistoryDiff"></div>' +
+    '        <div class="editor-history-body markdown-body" id="editorHistoryBody"></div>' +
+    '        <button type="button" class="editor-btn editor-btn-primary" data-hist="restore">\u267B\uFE0F \u6062\u590D\u8BE5\u7248\u672C</button>' +
+    '        <div class="editor-history-confirm" id="editorHistoryConfirm" hidden>' +
+    '          <p>\u786E\u8BA4\u7528\u8BE5\u7248\u672C\u8986\u76D6\u5F53\u524D\u7F16\u8F91\u5185\u5BB9\uFF1F' +
+    '\u6062\u590D\u524D\u4F1A\u5148\u7ED9\u5F53\u524D\u5185\u5BB9\u5B58\u4E00\u4EFD\u5B89\u5168\u5FEB\u7167\uFF1B\u5FEB\u7167\u5931\u8D25\u5219\u4E0D\u4F1A\u6062\u590D\u3002</p>' +
+    '          <button type="button" class="editor-btn editor-btn-primary" data-hist="confirm-restore">\u786E\u8BA4\u6062\u590D</button>' +
+    '          <button type="button" class="editor-btn editor-btn-ghost" data-hist="cancel-restore">\u53D6\u6D88</button>' +
+    '        </div>' +
+    '      </div>' +
+    '    </div>' +
     '    <div id="editorSettings" class="editor-settings" style="display:none;">' +
     '      <h3>\u65E7\u7248\u53D1\u5E03\u8BBE\u7F6E\uFF08\u5DF2\u505C\u7528\uFF09</h3>' +
     '      <div class="editor-settings-hint">' +
@@ -2713,6 +3188,16 @@ window.exitEditorEdit = function () {
 // 供测试与调试使用：当前是哪个模式、编辑的是哪一篇
 window.editorContext = function () {
   return { mode: _editorMode, id: _editCtx ? _editCtx.id : null };
+};
+
+// 供测试与调试使用：历史版本面板的当前状态（只读快照）
+window.editorHistory = function () {
+  return {
+    scope: historyScope(),
+    records: _historyUi.records.slice(),
+    selected: _historyUi.selectedId,
+    backend: DraftHistory.stats().backend
+  };
 };
 
 // --- 文章 id 生成 ---
@@ -2831,6 +3316,14 @@ function writeDraft(state, silent) {
   _draftState = payload;
   setDraftStat('saved');          // 状态栏只承诺"本地草稿已保存"，不代表已导出/已发布
   if (!silent) showEditorStatus('\u{1F4BE} \u8349\u7A3F\u5DF2\u4FDD\u5B58', 'success');
+
+  // 历史快照：复用同一个保存触发点，内部做「内容去重 + 5 分钟节流」；
+  // 任何失败都只影响历史，绝不影响刚写好的草稿（Promise 全部 resolve）。
+  try {
+    DraftHistory.maybeAuto(payload).then(function (r) {
+      if (r && r.saved) updateHistoryBadge(r.count);
+    });
+  } catch (e) { /* 历史模块异常必须静默吞掉 */ }
   return true;
 }
 
@@ -3207,6 +3700,291 @@ function setupEditorImagePanel() {
   if (fileEl) fileEl.addEventListener('change', onImageFileChosen);
 }
 
+// --- 历史版本面板（Batch 8B-3）---
+// 只是草稿的本地快照：恢复 ≠ 发布，也不会碰仓库里的任何文件。
+var _historyUi = { records: [], selectedId: '', pendingRestore: null, loaded: false };
+
+function historyScope() {
+  return {
+    scope: _editorMode === 'edit' ? 'edit' : 'new',
+    postId: (_editorMode === 'edit' && _editCtx) ? _editCtx.id : ''
+  };
+}
+
+function historyKindLabel(kind) {
+  if (kind === DraftHistory.KINDS.MANUAL) return '手动';
+  if (kind === DraftHistory.KINDS.AUTO) return '自动';
+  if (kind === DraftHistory.KINDS.BACKUP) return '恢复前备份';
+  return '历史';
+}
+
+function formatHistoryTime(ms) {
+  var d = new Date(ms);
+  var pad = function (n) { return (n < 10 ? '0' : '') + n; };
+  return d.getFullYear() + '-' + pad(d.getMonth() + 1) + '-' + pad(d.getDate()) +
+    ' ' + pad(d.getHours()) + ':' + pad(d.getMinutes());
+}
+
+function updateHistoryBadge(n) {
+  var el = document.getElementById('editorHistoryCount');
+  if (el) el.textContent = String(n == null ? 0 : n);
+}
+
+function setHistoryNotice(msg) {
+  var el = document.getElementById('editorHistoryNotice');
+  if (!el) return;
+  if (msg) { el.textContent = msg; el.removeAttribute('hidden'); }
+  else { el.textContent = ''; el.setAttribute('hidden', ''); }
+}
+
+function historyPreviewText(rec) {
+  var t = String(rec.content || '').replace(/[#*`>\-\[\]()!]/g, ' ').replace(/\s+/g, ' ').trim();
+  if (t.length > DraftHistory.PREVIEW_CHARS) t = t.slice(0, DraftHistory.PREVIEW_CHARS) + '…';
+  return t || '（正文为空）';
+}
+
+// 历史模块初始化：失败只提示，不影响草稿
+function setupDraftHistory() {
+  var sc = historyScope();
+  DraftHistory.configure(sc);
+  DraftHistory.init().then(function (info) {
+    _historyUi.loaded = true;
+    updateHistoryBadge(info.count || 0);
+    if (info.degraded) {
+      setHistoryNotice('\u26A0\uFE0F 历史版本已降级：' + (info.reason || 'IndexedDB 不可用') +
+        '\u3002草稿仍会正常保存，但历史只存在于当前标签页。');
+    }
+  });
+}
+
+function renderHistoryList() {
+  var listEl = document.getElementById('editorHistoryList');
+  if (!listEl) return;
+  var rows = _historyUi.records;
+  updateHistoryBadge(rows.length);
+  if (!rows.length) {
+    listEl.innerHTML = '<li class="editor-history-empty">\u8FD8\u6CA1\u6709\u5386\u53F2\u7248\u672C\u3002' +
+      '\u70B9\u300C\u4FDD\u5B58\u5386\u53F2\u7248\u672C\u300D\u624B\u52A8\u5B58\u4E00\u4EFD\uFF0C' +
+      '\u7F16\u8F91\u65F6\u4E5F\u4F1A\u6BCF 5 \u5206\u949F\u81EA\u52A8\u4FDD\u5B58\u4E00\u4EFD\u3002</li>';
+    return;
+  }
+  listEl.innerHTML = rows.map(function (r) {
+    return '<li class="editor-history-item' + (r.id === _historyUi.selectedId ? ' active' : '') +
+      '" data-hist-id="' + escapeHtml(r.id) + '">' +
+      '<div class="editor-history-row">' +
+      '  <span class="editor-history-time">' + escapeHtml(formatHistoryTime(r.savedAt)) + '</span>' +
+      '  <span class="editor-history-kind kind-' + escapeHtml(r.kind) + '">' + historyKindLabel(r.kind) + '</span>' +
+      '  <span class="editor-history-chars">' + (r.chars || 0) + ' \u5B57</span>' +
+      '</div>' +
+      '<div class="editor-history-title">' + escapeHtml(r.title || '\uFF08\u65E0\u6807\u9898\uFF09') + '</div>' +
+      '<div class="editor-history-snippet">' + escapeHtml(historyPreviewText(r)) + '</div>' +
+      '<div class="editor-history-btns">' +
+      '  <button type="button" class="editor-btn editor-btn-ghost" data-hist="preview" data-id="' + escapeHtml(r.id) + '">\u9884\u89C8</button>' +
+      '  <button type="button" class="editor-btn editor-btn-ghost" data-hist="delete" data-id="' + escapeHtml(r.id) + '">\u5220\u9664</button>' +
+      '</div>' +
+      '</li>';
+  }).join('');
+}
+
+function refreshHistoryList(selectId) {
+  return DraftHistory.list().then(function (rows) {
+    _historyUi.records = rows || [];
+    if (selectId) _historyUi.selectedId = selectId;
+    renderHistoryList();
+    return _historyUi.records;
+  });
+}
+
+window.toggleHistoryPanel = function (show) {
+  var panel = document.getElementById('editorHistoryPanel');
+  if (!panel) return;
+  var next = (show == null) ? panel.hasAttribute('hidden') : !!show;
+  if (!next) {
+    panel.setAttribute('hidden', '');
+    closeHistoryPreview();
+    return;
+  }
+  panel.removeAttribute('hidden');
+  refreshHistoryList();
+};
+
+function closeHistoryPreview() {
+  var box = document.getElementById('editorHistoryPreview');
+  if (box) box.setAttribute('hidden', '');
+  _historyUi.pendingRestore = null;
+  var confirmBox = document.getElementById('editorHistoryConfirm');
+  if (confirmBox) confirmBox.setAttribute('hidden', '');
+}
+
+window.saveHistoryVersion = function () {
+  var state = readEditorForm() || _draftState;
+  if (!state) {
+    showEditorStatus('\u26A0\uFE0F 没有可保存的内容', 'error');
+    return false;
+  }
+  DraftHistory.snapshot(DraftHistory.KINDS.MANUAL, state).then(function (r) {
+    if (!r.ok) {
+      showEditorStatus('\u26A0\uFE0F 历史版本保存失败：' + escapeHtml(r.error || '未知错误') +
+        '\uFF08\u5F53\u524D\u8349\u7A3F\u672A\u53D7\u5F71\u54CD\uFF09', 'error');
+      return;
+    }
+    if (r.saved) {
+      showEditorStatus('\u{1F5C2}\uFE0F 已保存历史版本（' + historyKindLabel(DraftHistory.KINDS.MANUAL) +
+        '\uFF0C\u5171 ' + r.count + ' \u4E2A\uFF09', 'success');
+    } else {
+      showEditorStatus('\u2139\uFE0F 内容与已有历史版本相同，未重复保存', 'loading');
+    }
+    refreshHistoryList();
+  });
+  return true;
+};
+
+function previewHistoryRecord(rec) {
+  if (!rec) return;
+  _historyUi.selectedId = rec.id;
+  _historyUi.pendingRestore = rec;
+  renderHistoryList();
+
+  var box = document.getElementById('editorHistoryPreview');
+  var titleEl = document.getElementById('editorHistoryPreviewTitle');
+  var bodyEl = document.getElementById('editorHistoryBody');
+  var diffEl = document.getElementById('editorHistoryDiff');
+  if (!box || !bodyEl) return;
+
+  var cur = readEditorForm() || _draftState || {};
+  var d = DraftHistory.diff(rec, cur);
+
+  if (titleEl) {
+    titleEl.textContent = formatHistoryTime(rec.savedAt) + ' · ' + historyKindLabel(rec.kind) +
+      (rec.title ? ' · ' + rec.title : '');
+  }
+  if (diffEl) diffEl.textContent = (typeof d.summary === 'string') ? d.summary : '';
+  // 历史正文同样走 marked → DOMPurify，绝不相信存档里的任何 HTML
+  bodyEl.innerHTML = renderMarkdown(rec.content || '');
+  box.removeAttribute('hidden');
+
+  var confirmBox = document.getElementById('editorHistoryConfirm');
+  if (confirmBox) confirmBox.setAttribute('hidden', '');
+}
+
+function requestRestoreHistory() {
+  if (!_historyUi.pendingRestore) return;
+  var confirmBox = document.getElementById('editorHistoryConfirm');
+  if (confirmBox) confirmBox.removeAttribute('hidden');
+}
+
+function applyHistoryRecord(rec) {
+  var set = function (id, val) {
+    var el = document.getElementById(id);
+    if (el) el.value = val == null ? '' : val;
+  };
+  set('editorTitle', rec.title);
+  set('editorTags', (rec.tags || []).join(', '));
+  set('editorExcerpt', rec.excerpt);
+  set('editorContent', rec.content);
+  set('editorDate', rec.date);        // 新增模式没有日期输入框 → set 是空操作
+
+  // 编辑模式下 _editCtx（原文章快照）保持不变：导出的更新稿仍基于仓库里的原版本
+  updateEditorPreview();
+  updateEditorStats();
+  var saved = flushDraft(true);
+  setDraftStat('saved');
+  showEditorStatus('\u267B\uFE0F 已恢复历史版本（' + escapeHtml(formatHistoryTime(rec.savedAt)) +
+    '\uFF09\u3002\u8FD9\u53EA\u662F\u7F16\u8F91\u5668\u5185\u5BB9\uFF0C' +
+    (saved ? '\u5DF2\u5199\u5165\u672C\u5730\u8349\u7A3F\uFF1B' : '\u8349\u7A3F\u5199\u5165\u5931\u8D25\uFF1B') +
+    '\u5C1A\u672A\u5BFC\u51FA\u3001\u5C1A\u672A\u53D1\u5E03\u3002', saved ? 'success' : 'error');
+  return saved;
+}
+
+function confirmRestoreHistory() {
+  var rec = _historyUi.pendingRestore;
+  if (!rec) return Promise.resolve(false);
+  var current = readEditorForm() || _draftState || {};
+
+  // 关键：先给"当前内容"存一份安全快照；存不下来就绝不覆盖
+  return DraftHistory.snapshot(DraftHistory.KINDS.BACKUP, current).then(function (r) {
+    if (!r.ok) {
+      showEditorStatus('\u274C \u65E0\u6CD5\u4E3A\u5F53\u524D\u5185\u5BB9\u4FDD\u5B58\u5B89\u5168\u5FEB\u7167\uFF08' +
+        escapeHtml(r.error || '\u672A\u77E5\u539F\u56E0') + '\uFF09\uFF0C\u5DF2\u53D6\u6D88\u6062\u590D\u3002' +
+        '\u5F53\u524D\u8349\u7A3F\u672A\u88AB\u6539\u52A8\u3002', 'error');
+      return false;
+    }
+    var ok = applyHistoryRecord(rec);
+    closeHistoryPreview();
+    refreshHistoryList();
+    return ok;
+  });
+}
+
+function deleteHistoryRecord(id) {
+  return DraftHistory.remove(id).then(function (r) {
+    if (!r.ok) {
+      showEditorStatus('\u26A0\uFE0F ' + escapeHtml(r.error || '删除失败'), 'error');
+      return false;
+    }
+    if (_historyUi.selectedId === id) closeHistoryPreview();
+    return refreshHistoryList().then(function () { return true; });
+  });
+}
+
+function clearHistoryRecords() {
+  return DraftHistory.clear().then(function (r) {
+    if (!r.ok) {
+      showEditorStatus('\u26A0\uFE0F ' + escapeHtml(r.error || '清理失败'), 'error');
+      return false;
+    }
+    closeHistoryPreview();
+    return refreshHistoryList().then(function () {
+      showEditorStatus('\u{1F9F9} 已清理该文章的历史版本', 'success');
+      return true;
+    });
+  });
+}
+
+function setupHistoryPanelHandlers() {
+  var panel = document.getElementById('editorHistoryPanel');
+  if (!panel || panel.dataset.bound === '1') return;
+  panel.dataset.bound = '1';
+  panel.addEventListener('click', function (e) {
+    var el = e.target && e.target.closest ? e.target.closest('[data-hist]') : null;
+    if (!el) return;
+    var action = el.getAttribute('data-hist');
+    var id = el.getAttribute('data-id');
+    if (action === 'close') { toggleHistoryPanel(false); return; }
+    if (action === 'close-preview') { closeHistoryPreview(); return; }
+    if (action === 'snapshot') { window.saveHistoryVersion(); return; }
+    if (action === 'clear') { clearHistoryRecords(); return; }
+    if (action === 'refresh') { refreshHistoryList(); return; }
+    if (action === 'preview' && id) {
+      var rec = _historyUi.records.filter(function (r) { return r.id === id; })[0];
+      if (rec) previewHistoryRecord(rec);
+      return;
+    }
+    if (action === 'delete' && id) { deleteHistoryRecord(id); return; }
+    if (action === 'restore') { requestRestoreHistory(); return; }
+    if (action === 'confirm-restore') { confirmRestoreHistory(); return; }
+    if (action === 'cancel-restore') {
+      var box = document.getElementById('editorHistoryConfirm');
+      if (box) box.setAttribute('hidden', '');
+    }
+  });
+}
+
+// 多标签页：别的标签页写了同一份草稿时只做提示，绝不自动覆盖当前编辑
+function setupCrossTabDraftWatch() {
+  if (window.__draftCrossTabBound) return;
+  window.__draftCrossTabBound = true;
+  window.addEventListener('storage', function (e) {
+    if (!e || !e.key) return;
+    if (e.key !== 'blog_draft' && e.key.indexOf(EDIT_DRAFT_PREFIX) !== 0) return;
+    var cur = draftStorageKey();
+    if (cur && e.key !== cur) return;
+    if (!e.newValue || e.newValue === e.oldValue) return;
+    setHistoryNotice('\u26A0\uFE0F 另一个标签页刚保存了同一份草稿；本页内容没有被自动覆盖。' +
+      '\u5982\u9700\u540C\u6B65\uFF0C\u8BF7\u5148\u5BFC\u51FA\u5F53\u524D\u5185\u5BB9\u3002');
+  });
+}
+
 // --- Auto-save draft on input ---
 // 标题/标签/摘要/正文共用同一套防抖保存策略，避免只改标题时草稿不更新
 function setupEditorListeners() {
@@ -3228,6 +4006,9 @@ function setupEditorListeners() {
   setupEditorShortcuts();
   setupEditorViewToggle();
   setupEditorImagePanel();
+  setupHistoryPanelHandlers();     // Batch 8B-3：历史版本面板（恢复/删除/清理）
+  setupDraftHistory();             // 初始化 IndexedDB（失败只降级，不影响草稿）
+  setupCrossTabDraftWatch();
 
   // Initial preview + stats（草稿状态按磁盘上的实际情况显示，不新增状态）
   updateEditorPreview();

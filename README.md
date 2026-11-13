@@ -205,6 +205,8 @@ python scripts/run_tests.py --report /tmp/r.md --json /tmp/r.json
 | `test35_editor_update.js` | B8B1：编辑器编辑模式（回填/固定 id/更新稿/草稿隔离/前进后退/深链不变） |
 | `test36_editor_toolbar.js` | B8B2：工具栏插入/快捷键/焦点与选区/原生撤销/状态栏 |
 | `test37_editor_images.js` | B8B2：图片协议白名单/本地文件校验/仅预览提示/XSS 净化 |
+| `test38_draft_history.js` | B8B3：草稿历史（快照/去重/5 分钟节流/隔离/配额/损坏/安全恢复） |
+| `browser/editor-history.spec.js` | B8B3：真实 IndexedDB 历史、恢复前备份、刷新持久、多标签页、SW 升级 |
 | `browser/editor-ux.spec.js` | B8B2：真实 Chromium 下的工具栏、原生 Undo、375/390/768/1280 布局、SW 升级 |
 | `test12.py` | `scan_codefiles.py` 描述保护（合成 fixture） |
 | `test13.py` | `gen_feed.py` 解析、失败策略、路径（合成 fixture） |
@@ -306,6 +308,9 @@ python scripts/import_post.py --file <id>.update.json --mode update --apply
   **不会**写 base64、不上传、不需要 Token —— 原图需要你自己放进仓库并与文章一起提交。
 - 移动端（≤768px）：编辑与预览用开关切换，只切 CSS 不重建 DOM；工具栏可横向滚动。
 - 状态栏显示字数、英文词数、预计阅读时间、模式/文章 id 与**本地草稿**保存状态（"已保存"仅指本地草稿）。
+- 历史版本（Batch 8B-3）：手点「🗂️ 保存历史版本」立即存一份；编辑过程中每约 5 分钟自动存一份（内容没变不重复存）。
+  每篇文章最多保留 10 份（优先清理最旧的自动版本，手动版本优先保留），恢复前会**先给当前内容存一份安全快照**，
+  快照失败就不恢复。历史只存在本机 IndexedDB，**不是云端备份**，清除站点数据会一并丢失。
 
 合并到 `main` 后 GitHub Pages 自动构建（约 30 秒 ~ 2 分钟）。
 
