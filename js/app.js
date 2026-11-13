@@ -2088,6 +2088,481 @@ function editorPostOptions(selectedId) {
   }).join('');
 }
 
+// ============================================
+// Markdown 编辑内核（Batch 8B-2）
+// 设计原则：
+//   1. 纯函数：输入 (text, start, end, …) → 输出 {start, end, replacement, selStart, selEnd}，
+//      不碰 DOM，便于单元测试；按钮与快捷键共用同一套实现；
+//   2. 应用层只做一件事：把结果交回 textarea（优先 document.execCommand('insertText')，
+//      走浏览器原生编辑管线 → 原生 Undo/Redo 与 input 事件都不会被破坏）；
+//   3. 所有插入都经过 escapeHtml 之外的 **Markdown 文本** 处理，不拼 HTML。
+// ============================================
+
+var MD_INDENT = '  ';                       // Tab 缩进 = 2 空格（GitHub 习惯）
+var MD_IMAGE_DIR = 'images';                // 站内图片目录（仓库根，与 icons/ 同级）
+var MD_IMAGE_MAX_BYTES = 2 * 1024 * 1024;   // 单张图片上限 2 MiB（本地校验，不上传）
+var MD_PLACEHOLDER = {
+  bold: '加粗文字',
+  italic: '斜体文字',
+  code: '代码',
+  codeBody: '在这里写代码',
+  linkText: '链接文字',
+  imageAlt: '图片描述',
+  tableCell: '列 1'
+};
+
+var MDEditor = (function () {
+  function clamp(n, lo, hi) { return Math.max(lo, Math.min(hi, n)); }
+
+  function lineStartOf(text, i) {
+    if (i <= 0) return 0;                       // 注意：不能从 i-1 之外的位置搜，否则开头就是 \n 时会偏一行
+    var idx = text.lastIndexOf('\n', i - 1);
+    return idx === -1 ? 0 : idx + 1;
+  }
+
+  function lineEndOf(text, i) {                       // 该行结尾（不含 \n）
+    var idx = text.indexOf('\n', i);
+    return idx === -1 ? text.length : idx;
+  }
+
+  // 选区覆盖的整块行范围。选区末尾正好落在行首时，不多算下一行。
+  function blockRange(text, start, end) {
+    var last = (end > start) ? end - 1 : start;
+    return { start: lineStartOf(text, start), end: lineEndOf(text, last) };
+  }
+
+  function edit(start, end, replacement, selStart, selEnd) {
+    var ss = (selStart == null) ? start : selStart;
+    var se = (selEnd == null) ? ss : selEnd;
+    return { start: start, end: end, replacement: replacement, selStart: ss, selEnd: se };
+  }
+
+  // ---- 行级编辑 ----
+  function applyLines(text, start, end, transform) {
+    var r = blockRange(text, start, end);
+    var lines = text.slice(r.start, r.end).split('\n');
+    var out = transform(lines, r);
+    var block = out.join('\n');
+    return edit(r.start, r.end, block, r.start, r.start + block.length);
+  }
+
+  function toggleLinePrefix(text, start, end, prefix, re) {
+    return applyLines(text, start, end, function (lines) {
+      var filled = lines.filter(function (l) { return l !== ''; });
+      var all = filled.length > 0 && filled.every(function (l) { return re.test(l); });
+      return lines.map(function (l) {
+        if (all) return l.replace(re, '');
+        var bare = l.replace(re, '');
+        return prefix + bare;
+      });
+    });
+  }
+
+  function setHeading(text, start, end, level) {
+    var want = new Array(level + 1).join('#') + ' ';
+    var sameRe = new RegExp('^#{' + level + '} ');
+    var anyRe = /^#{1,6} /;
+    return applyLines(text, start, end, function (lines) {
+      var filled = lines.filter(function (l) { return l !== ''; });
+      var same = filled.length > 0 && filled.every(function (l) { return sameRe.test(l); });
+      return lines.map(function (l) {
+        if (same) return l.replace(sameRe, '');
+        return want + l.replace(anyRe, '');
+      });
+    });
+  }
+
+  function toggleQuote(text, start, end) {
+    return toggleLinePrefix(text, start, end, '> ', /^> ?/);
+  }
+
+  function toggleUnorderedList(text, start, end) {
+    return toggleLinePrefix(text, start, end, '- ', /^(?:[-*+] )/);
+  }
+
+  function toggleOrderedList(text, start, end) {
+    return applyLines(text, start, end, function (lines) {
+      var filled = lines.filter(function (l) { return l !== ''; });
+      var all = filled.length > 0 && filled.every(function (l) { return /^\d+\. /.test(l); });
+      var n = 0;
+      return lines.map(function (l) {
+        var bare = l.replace(/^\d+\. /, '');
+        if (all) return bare;
+        n += 1;
+        return n + '. ' + bare;
+      });
+    });
+  }
+
+  function indent(text, start, end, outdent) {
+    var r = blockRange(text, start, end);
+    var multiline = start !== end && text.slice(start, end).indexOf('\n') !== -1;
+    if (!multiline && !outdent) {
+      // 单点 Tab：插入一级缩进（2 空格）。不做"到下一个制表位"的对齐，
+      // 因为 Markdown 里按 Tab 的预期就是"缩进一格"，对齐会让结果随列号跳变。
+      return edit(start, end, MD_INDENT, start + MD_INDENT.length, start + MD_INDENT.length);
+    }
+    return applyLines(text, start, end, function (lines) {
+      if (!outdent) return lines.map(function (l) { return l === '' ? l : MD_INDENT + l; });
+      return lines.map(function (l) {
+        if (l.slice(0, MD_INDENT.length) === MD_INDENT) return l.slice(MD_INDENT.length);
+        return l.replace(/^ {1,2}/, '');
+      });
+    });
+  }
+
+  // ---- 行内包裹 ----
+  function toggleInline(text, start, end, marker, placeholder) {
+    var len = marker.length;
+    if (start !== end) {
+      var sel = text.slice(start, end);
+      // 选区两侧已经有 marker → 取消格式
+      if (text.slice(start - len, start) === marker && text.slice(end, end + len) === marker) {
+        return edit(start - len, end + len, sel, start - len, end - len);
+      }
+      // 选区自身带着 marker（用户选中了 **粗体**）→ 取消格式
+      if (sel.length >= 2 * len && sel.slice(0, len) === marker && sel.slice(-len) === marker &&
+          sel.slice(len, -len).length) {
+        var inner = sel.slice(len, sel.length - len);
+        return edit(start, end, inner, start, start + inner.length);
+      }
+      return edit(start, end, marker + sel + marker, start + len, end + len);
+    }
+    var body = placeholder || '';
+    return edit(start, end, marker + body + marker,
+                start + len, start + len + body.length);
+  }
+
+  function bold(text, s, e) { return toggleInline(text, s, e, '**', MD_PLACEHOLDER.bold); }
+  function italic(text, s, e) { return toggleInline(text, s, e, '*', MD_PLACEHOLDER.italic); }
+  function inlineCode(text, s, e) { return toggleInline(text, s, e, '`', MD_PLACEHOLDER.code); }
+
+  // ---- 代码块：正确处理换行与语言标记 ----
+  function codeBlock(text, start, end, lang) {
+    var r = blockRange(text, start, end);
+    var blockText = text.slice(r.start, r.end);
+    var m = /^```[^\n]*\n([\s\S]*?)\n```$/.exec(blockText);
+    if (m) {                                       // 选区本身就是围栏块 → 取消
+      var inner0 = m[1];
+      return edit(r.start, r.end, inner0, r.start, r.start + inner0.length);
+    }
+    // 选区在围栏**内部**（上一次插入后选中的正是代码内容）→ 把上下两行围栏一起去掉
+    if (r.start > 0) {
+      var prevStart = lineStartOf(text, r.start - 1);
+      var prevLine = text.slice(prevStart, r.start - 1);
+      var afterStart = r.end + 1;
+      if (/^```/.test(prevLine) && afterStart <= text.length) {
+        var afterLine = text.slice(afterStart, lineEndOf(text, afterStart));
+        if (/^```\s*$/.test(afterLine)) {
+          return edit(prevStart, afterStart + afterLine.length, blockText,
+                      prevStart, prevStart + blockText.length);
+        }
+      }
+    }
+    var inner = blockText;
+    if (start === end && !inner) inner = MD_PLACEHOLDER.codeBody;
+    var fence = '```' + (lang || '');
+    var out = fence + '\n' + inner + '\n```';
+    var innerStart = r.start + fence.length + 1;
+    return edit(r.start, r.end, out, innerStart, innerStart + inner.length);
+  }
+
+  // ---- 链接 / 图片 ----
+  function link(text, start, end, url) {
+    var sel = text.slice(start, end);
+    var isUrl = /^https?:\/\/\S+$/i.test(sel.trim());
+    var fromSelection = !!sel && !isUrl;
+    var label = fromSelection ? sel : MD_PLACEHOLDER.linkText;
+    var target = isUrl ? sel.trim() : (url || 'https://');
+    var snippet = '[' + label + '](' + mdUrl(target) + ')';
+    // 选区已是文字 → 选中 URL 段（下一步就是粘贴地址）；否则选中占位文字
+    var open = snippet.lastIndexOf('(') + 1;
+    var close = snippet.length - 1;
+    if (fromSelection) return edit(start, end, snippet, start + open, start + close);
+    return edit(start, end, snippet, start + 1, start + 1 + label.length);
+  }
+
+  function image(alt, url) {
+    var snippet = '![' + sanitizeAlt(alt) + '](' + mdUrl(url) + ')';
+    return { snippet: snippet };
+  }
+
+  function table(text, start, end) {
+    var head = '| 列 1 | 列 2 | 列 3 |';
+    var sep = '| --- | --- | --- |';
+    var row = '|  |  |  |';
+    var block = head + '\n' + sep + '\n' + row;
+    // 不在行首 → 先换行，保证表格独立成块
+    var pre = (start !== 0 && text.charAt(start - 1) !== '\n') ? '\n' : '';
+    var snippet = pre + block;
+    var cellStart = start + pre.length + 2;          // '| ' 之后
+    return edit(start, end, snippet, cellStart, cellStart + MD_PLACEHOLDER.tableCell.length);
+  }
+
+  function hr(text, start, end) {
+    var pre = (start !== 0 && text[start - 1] !== '\n') ? '\n' : '';
+    var snippet = pre + '---\n';
+    return edit(start, end, snippet, start + snippet.length, start + snippet.length);
+  }
+
+  // ---- 文本安全 ----
+  function sanitizeAlt(alt) {
+    return String(alt == null ? '' : alt)
+      .replace(/[\r\n]+/g, ' ')
+      .replace(/[[\]]/g, '')
+      .trim()
+      .slice(0, 120) || MD_PLACEHOLDER.imageAlt;
+  }
+
+  // Markdown 链接目标：含括号/尖括号时用 <…> 包起来，避免提前闭合
+  function mdUrl(url) {
+    var u = String(url == null ? '' : url).trim();
+    if (/[()<>\s]/.test(u)) return '<' + u.replace(/[<>]/g, '') + '>';
+    return u;
+  }
+
+  // 图片地址白名单：https 绝对地址，或站内相对路径（拒绝 javascript:/data:/http: 等）
+  function validateImageUrl(raw) {
+    var url = String(raw == null ? '' : raw).trim();
+    if (!url) return { ok: false, error: '请输入图片地址' };
+    if (/[\u0000-\u001f\u007f]/.test(url)) return { ok: false, error: '地址里包含控制字符' };
+    if (/\s/.test(url)) return { ok: false, error: '地址里不能有空格（请用 %20 或改用无空格路径）' };
+    if (/[<>"`\\]/.test(url)) return { ok: false, error: '地址里不能出现 < > " ` \\ 这些字符' };
+
+    var scheme = /^([A-Za-z][A-Za-z0-9+.\-]*):/.exec(url);
+    if (scheme) {
+      var s = scheme[1].toLowerCase();
+      if (s === 'https') return { ok: true, url: url, kind: 'remote' };
+      if (s === 'http') {
+        return { ok: false, error: '只支持 https:// 或站内相对路径（http 会被浏览器按混合内容拦截）' };
+      }
+      return { ok: false, error: '不支持的协议 ' + s + ':（只允许 https://）' };
+    }
+    if (url.indexOf('//') === 0) {
+      return { ok: false, error: '协议相对地址（//…）不安全，请写完整的 https://' };
+    }
+    if (url.charAt(0) === '#') return { ok: false, error: '这不是图片地址' };
+    if (url.split('/').indexOf('..') !== -1) {
+      return { ok: false, error: '站内路径不能包含 ..（会跳出站点根目录）' };
+    }
+    return { ok: true, url: url, kind: 'relative' };
+  }
+
+  var MIME_EXT = {
+    'image/png': '.png',
+    'image/jpeg': '.jpg',
+    'image/webp': '.webp',
+    'image/gif': '.gif'
+  };
+  var EXT_MIME = { '.png': 'image/png', '.jpg': 'image/jpeg', '.jpeg': 'image/jpeg',
+                   '.webp': 'image/webp', '.gif': 'image/gif' };
+
+  function checkImageFile(file) {
+    if (!file) return { ok: false, error: '请选择一张本地图片' };
+    var name = String(file.name || '');
+    var ext = (/\.[^.]+$/.exec(name) || [''])[0].toLowerCase();
+    var type = String(file.type || '').toLowerCase();
+    if (!MIME_EXT[type] && !EXT_MIME[ext]) {
+      return { ok: false, error: '只支持 PNG / JPEG / WebP / GIF' };
+    }
+    var size = Number(file.size || 0);
+    if (size <= 0) return { ok: false, error: '这个文件是空的' };
+    if (size > MD_IMAGE_MAX_BYTES) {
+      return { ok: false, error: '图片过大（' + (size / 1024 / 1024).toFixed(1) + ' MB > 2 MB 上限）' };
+    }
+    return { ok: true, ext: MIME_EXT[type] || ext.replace('.jpeg', '.jpg'), mime: type || EXT_MIME[ext] };
+  }
+
+  function fnv1a(str) {
+    var h = 0x811c9dc5;
+    for (var i = 0; i < str.length; i++) {
+      h ^= str.charCodeAt(i);
+      h = (h + (h << 1) + (h << 4) + (h << 7) + (h << 8) + (h << 24)) >>> 0;
+    }
+    return h >>> 0;
+  }
+
+  // 安全文件名：ASCII slug + 基于 (文件名, 大小, 修改时间) 的短哈希 → 同名不同图不会互相覆盖
+  function suggestImagePath(file) {
+    var check = checkImageFile(file);
+    if (!check.ok) return check;
+    var name = String(file.name || 'image');
+    var base = name.replace(/\.[^.]+$/, '');
+    var slug = base.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '').slice(0, 40) || 'image';
+    var hash = fnv1a(base + '|' + (file.size || 0) + '|' + (file.lastModified || 0)).toString(36).slice(0, 6);
+    return { ok: true, path: MD_IMAGE_DIR + '/' + slug + '-' + hash + check.ext };
+  }
+
+  function stats(text) {
+    var t = String(text == null ? '' : text);
+    var chars = t.replace(/\s/g, '').length;
+    var cjk = (t.match(/[\u4e00-\u9fa5]/g) || []).length;
+    var words = (t.replace(/[\u4e00-\u9fa5]/g, '').match(/\b\w+\b/g) || []).length;
+    return { chars: chars, cjk: cjk, words: words, minutes: readingTime(t) };
+  }
+
+  return {
+    bold: bold, italic: italic, inlineCode: inlineCode,
+    setHeading: setHeading, codeBlock: codeBlock,
+    toggleQuote: toggleQuote, toggleUnorderedList: toggleUnorderedList,
+    toggleOrderedList: toggleOrderedList,
+    link: link, image: image, table: table, hr: hr, indent: indent,
+    toggleInline: toggleInline, toggleLinePrefix: toggleLinePrefix,
+    sanitizeAlt: sanitizeAlt, mdUrl: mdUrl, validateImageUrl: validateImageUrl,
+    checkImageFile: checkImageFile, suggestImagePath: suggestImagePath,
+    stats: stats, linesOf: blockRange, clamp: clamp
+  };
+})();
+window.MDEditor = MDEditor;
+
+// 把一次编辑写回 textarea。
+// 优先 execCommand('insertText')：它走浏览器原生编辑管线，**原生 Undo/Redo 与 input 事件都保留**；
+// 只有环境不支持时才退化为 setRangeText + 手动派发 input（jsdom 等）。
+function applyMarkdownEdit(textarea, ed) {
+  if (!textarea || !ed) return false;
+  textarea.focus();
+  textarea.setSelectionRange(ed.start, ed.end);
+
+  var done = false;
+  if (typeof document.execCommand === 'function') {
+    try { done = document.execCommand('insertText', false, ed.replacement); } catch (e) { done = false; }
+  }
+  if (!done) {
+    if (typeof textarea.setRangeText === 'function') {
+      textarea.setRangeText(ed.replacement, ed.start, ed.end, 'end');
+    } else {
+      textarea.value = textarea.value.slice(0, ed.start) + ed.replacement + textarea.value.slice(ed.end);
+    }
+    // execCommand 路径会自动触发 input；退化路径需要手动补，保证草稿与预览都更新
+    var ev;
+    try {
+      ev = new Event('input', { bubbles: true });
+    } catch (e) {
+      ev = document.createEvent('Event');
+      ev.initEvent('input', true, false);
+    }
+    textarea.dispatchEvent(ev);
+  }
+
+  var value = textarea.value;
+  var s = MDEditor.clamp(ed.selStart, 0, value.length);
+  var e2 = MDEditor.clamp(ed.selEnd, s, value.length);
+  textarea.setSelectionRange(s, e2);
+  textarea.focus();
+  return true;
+}
+
+// 工具栏动作表：id → 纯函数（按钮与快捷键共用）
+function runMarkdownAction(action, textarea) {
+  if (!textarea) return false;
+  var text = textarea.value;
+  var s = textarea.selectionStart;
+  var e = textarea.selectionEnd;
+  var langEl = document.getElementById('editorCodeLang');
+  var ed = null;
+
+  switch (action) {
+    case 'h1': ed = MDEditor.setHeading(text, s, e, 1); break;
+    case 'h2': ed = MDEditor.setHeading(text, s, e, 2); break;
+    case 'h3': ed = MDEditor.setHeading(text, s, e, 3); break;
+    case 'bold': ed = MDEditor.bold(text, s, e); break;
+    case 'italic': ed = MDEditor.italic(text, s, e); break;
+    case 'code': ed = MDEditor.inlineCode(text, s, e); break;
+    case 'codeblock': ed = MDEditor.codeBlock(text, s, e, langEl ? langEl.value : ''); break;
+    case 'ul': ed = MDEditor.toggleUnorderedList(text, s, e); break;
+    case 'ol': ed = MDEditor.toggleOrderedList(text, s, e); break;
+    case 'quote': ed = MDEditor.toggleQuote(text, s, e); break;
+    case 'link': ed = MDEditor.link(text, s, e); break;
+    case 'table': ed = MDEditor.table(text, s, e); break;
+    case 'hr': ed = MDEditor.hr(text, s, e); break;
+    case 'indent': ed = MDEditor.indent(text, s, e, false); break;
+    case 'outdent': ed = MDEditor.indent(text, s, e, true); break;
+    default: return false;
+  }
+  return ed ? applyMarkdownEdit(textarea, ed) : false;
+}
+window.runMarkdownAction = runMarkdownAction;
+
+function editorToolbarHtml() {
+  function btn(action, label, title) {
+    return '<button type="button" class="editor-tool-btn" data-md="' + action +
+      '" title="' + title + '" aria-label="' + title + '">' + label + '</button>';
+  }
+  var langs = ['', 'python', 'javascript', 'bash', 'json', 'html', 'css', 'sql', 'yaml', 'text'];
+  var langSelect = '<select id="editorCodeLang" class="editor-lang" title="代码块语言" ' +
+    'aria-label="代码块语言">' + langs.map(function (l) {
+      return '<option value="' + l + '">' + (l || '无语言') + '</option>';
+    }).join('') + '</select>';
+
+  return '<div class="editor-toolbar" id="editorToolbar" role="toolbar" aria-label="Markdown 工具栏">' +
+    btn('h1', 'H1', '一级标题') + btn('h2', 'H2', '二级标题') + btn('h3', 'H3', '三级标题') +
+    '<span class="editor-tool-sep" aria-hidden="true"></span>' +
+    btn('bold', '<b>B</b>', '加粗 (Ctrl+B)') +
+    btn('italic', '<i>I</i>', '斜体 (Ctrl+I)') +
+    btn('code', '&lt;/&gt;', '行内代码') +
+    btn('codeblock', '```', '多行代码块') + langSelect +
+    '<span class="editor-tool-sep" aria-hidden="true"></span>' +
+    btn('ul', '• 列表', '无序列表') +
+    btn('ol', '1. 列表', '有序列表') +
+    btn('quote', '❝ 引用', '引用') +
+    '<span class="editor-tool-sep" aria-hidden="true"></span>' +
+    btn('link', '🔗 链接', '插入链接 (Ctrl+K)') +
+    btn('image', '🖼 图片', '插入图片') +
+    btn('table', '▦ 表格', '插入表格') +
+    btn('hr', '—', '分割线') +
+    '</div>';
+}
+
+function editorImagePanelHtml() {
+  return '' +
+    '<div class="editor-image-panel" id="editorImagePanel" hidden>' +
+    '  <div class="editor-image-head">' +
+    '    <strong>插入图片</strong>' +
+    '    <button type="button" class="editor-tool-btn" data-img="close" title="关闭" aria-label="关闭">\u2716</button>' +
+    '  </div>' +
+    '  <div class="editor-image-tabs" role="tablist">' +
+    '    <button type="button" class="editor-tab active" data-img-tab="url" role="tab" aria-selected="true">图片链接</button>' +
+    '    <button type="button" class="editor-tab" data-img-tab="file" role="tab" aria-selected="false">本地图片</button>' +
+    '  </div>' +
+    '  <div class="editor-image-alt">' +
+    '    <label class="editor-image-label" for="editorImageAlt">图片描述（alt，可选）</label>' +
+    '    <input type="text" id="editorImageAlt" class="editor-input" placeholder="图片描述">' +
+    '  </div>' +
+    '  <div class="editor-image-pane" data-img-pane="url">' +
+    '    <label class="editor-image-label" for="editorImageUrl">图片地址</label>' +
+    '    <input type="text" id="editorImageUrl" class="editor-input" placeholder="https://… 或 images/example.png">' +
+    '    <p class="editor-image-hint">只接受 <code>https://</code> 绝对地址或站内相对路径（如 <code>images/x.png</code>）。' +
+    '      预览统一经过 DOMPurify，<code>javascript:</code> 之类的协议会被拒绝。</p>' +
+    '    <button type="button" class="editor-btn editor-btn-primary" data-img="insert-url">插入链接图片</button>' +
+    '  </div>' +
+    '  <div class="editor-image-pane" data-img-pane="file" hidden>' +
+    '    <label class="editor-image-label" for="editorImageFile">选择本地图片（PNG / JPEG / WebP / GIF，\u2264 2 MB）</label>' +
+    '    <input type="file" id="editorImageFile" class="editor-input editor-file" ' +
+    'accept="image/png,image/jpeg,image/webp,image/gif">' +
+    '    <div class="editor-image-preview"><img id="editorImagePreview" alt="本地预览" hidden></div>' +
+    '    <p class="editor-image-path" id="editorImagePath" hidden></p>' +
+    '    <p class="editor-image-warn" id="editorImageWarn" hidden>\u26A0\uFE0F <b>仅本地预览</b>：' +
+    '      这张图还没放进仓库，文章里的引用在提交前会显示为坏图。' +
+    '      请把原图按上面的路径放进仓库，并与文章一起提交 PR。</p>' +
+    '    <button type="button" class="editor-btn editor-btn-primary" data-img="insert-file" disabled>插入图片引用</button>' +
+    '  </div>' +
+    '  <div class="editor-image-error" id="editorImageError" role="alert"></div>' +
+    '</div>';
+}
+
+function editorStatsHtml() {
+  var isEdit = _editorMode === 'edit' && !!_editCtx;
+  return '<div class="editor-stats" id="editorStats" data-stat-mode="' + (isEdit ? 'edit' : 'new') + '">' +
+    '<span data-stat="chars">0 字</span>' +
+    '<span data-stat="words">0 个英文词</span>' +
+    '<span data-stat="minutes">\u2248 1 分钟</span>' +
+    '<span data-stat="mode">' + (isEdit ? '\u7F16\u8F91\u6A21\u5F0F' : '\u65B0\u589E\u6A21\u5F0F') + '</span>' +
+    '<span data-stat="id"' + (isEdit ? '' : ' hidden') + '>id: ' +
+    escapeHtml(isEdit ? _editCtx.id : '') + '</span>' +
+    '<span data-stat="draft" data-state="empty">\u672C\u5730\u8349\u7A3F\uFF1A\u672A\u4FDD\u5B58</span>' +
+    '</div>';
+}
+
 function renderEditor(editId) {
   var isEdit = !!editId;
   _editorMode = isEdit ? 'edit' : 'new';
@@ -2126,16 +2601,23 @@ function renderEditor(editId) {
         '      <span class="editor-date-hint">\u9ED8\u8BA4\u4FDD\u7559\u539F\u6587\u7AE0\u65E5\u671F\uFF0C\u4E0D\u6539\u5C31\u4E0D\u4F1A\u53D8</span>' +
         '    </div>'
       : '') +
-    '    <div class="editor-split">' +
-    '      <div class="editor-pane">' +
+    editorToolbarHtml() +
+    '    <div class="editor-view-toggle" id="editorViewToggle" role="tablist" aria-label="编辑 / 预览切换">' +
+    '      <button type="button" class="editor-view-btn active" data-view="edit" role="tab" aria-selected="true">\u270F\uFE0F \u7F16\u8F91</button>' +
+    '      <button type="button" class="editor-view-btn" data-view="preview" role="tab" aria-selected="false">\u{1F441} \u9884\u89C8</button>' +
+    '    </div>' +
+    '    <div class="editor-split" id="editorSplit" data-view="edit">' +
+    '      <div class="editor-pane editor-pane-edit">' +
     '        <div class="editor-pane-label">Markdown \u7F16\u8F91</div>' +
     '        <textarea id="editorContent" class="editor-textarea-content" placeholder="\u5728\u8FD9\u91CC\u8F93\u5165 Markdown \u5185\u5BB9...\n\n# \u6807\u9898\n\n\u6B63\u6587...\n\n```python\nprint(\"hello\")\n```">' + escapeHtml(state.content || '') + '</textarea>' +
     '      </div>' +
-    '      <div class="editor-pane">' +
+    '      <div class="editor-pane editor-pane-preview">' +
     '        <div class="editor-pane-label">\u5B9E\u65F6\u9884\u89C8</div>' +
     '        <div id="editorPreview" class="editor-preview markdown-body"></div>' +
     '      </div>' +
     '    </div>' +
+    editorImagePanelHtml() +
+    editorStatsHtml() +
     '    <div class="editor-actions">' +
     '      <button class="editor-btn editor-btn-secondary" onclick="saveDraft()">\u{1F4BE} \u4FDD\u5B58\u8349\u7A3F</button>' +
     '      <button class="editor-btn editor-btn-primary" onclick="exportPost()">' +
@@ -2347,6 +2829,7 @@ function writeDraft(state, silent) {
     return false;
   }
   _draftState = payload;
+  setDraftStat('saved');          // 状态栏只承诺"本地草稿已保存"，不代表已导出/已发布
   if (!silent) showEditorStatus('\u{1F4BE} \u8349\u7A3F\u5DF2\u4FDD\u5B58', 'success');
   return true;
 }
@@ -2445,6 +2928,285 @@ function updateEditorPreview() {
   }
 }
 
+// --- 状态栏（Batch 8B-2）---
+// 统计随输入同步更新：这里只做一次字符串扫描，比同一事件里已有的 marked 渲染便宜得多，
+// 因此**不新增定时器**（现有草稿防抖定时器是唯一的计时器，测试也依赖这个契约）。
+function updateEditorStats() {
+  var box = document.getElementById('editorStats');
+  var ta = document.getElementById('editorContent');
+  if (!box || !ta) return;
+  var s = MDEditor.stats(ta.value);
+  var get = function (key) { return box.querySelector('[data-stat="' + key + '"]'); };
+  if (get('chars')) get('chars').textContent = s.chars + ' \u5B57';
+  if (get('words')) get('words').textContent = s.words + ' \u4E2A\u82F1\u6587\u8BCD';
+  if (get('minutes')) get('minutes').textContent = '\u2248 ' + s.minutes + ' \u5206\u949F';
+  if (get('mode')) get('mode').textContent = (_editorMode === 'edit') ? '\u7F16\u8F91\u6A21\u5F0F' : '\u65B0\u589E\u6A21\u5F0F';
+  var idEl = get('id');
+  if (idEl) {
+    if (_editorMode === 'edit' && _editCtx) {
+      idEl.textContent = 'id: ' + _editCtx.id;
+      idEl.removeAttribute('hidden');
+    } else {
+      idEl.textContent = '';
+      idEl.setAttribute('hidden', '');
+    }
+  }
+  box.setAttribute('data-stat-mode', _editorMode === 'edit' ? 'edit' : 'new');
+}
+
+// 草稿状态：只反映**本地草稿**（沿用 8A/8B1 的同一套保存流程，不引入第二套状态机）
+function setDraftStat(state) {
+  var el = document.querySelector('#editorStats [data-stat="draft"]');
+  if (!el) return;
+  el.setAttribute('data-state', state);
+  if (state === 'dirty') {
+    el.textContent = '\u672C\u5730\u8349\u7A3F\uFF1A\u5F85\u4FDD\u5B58\u2026';
+  } else if (state === 'saved') {
+    var d = new Date();
+    var pad = function (n) { return (n < 10 ? '0' : '') + n; };
+    el.textContent = '\u672C\u5730\u8349\u7A3F\uFF1A\u5DF2\u4FDD\u5B58 ' +
+      pad(d.getHours()) + ':' + pad(d.getMinutes()) + ':' + pad(d.getSeconds()) + '\uFF08\u4EC5\u672C\u5730\uFF09';
+  } else if (state === 'restored') {
+    el.textContent = '\u672C\u5730\u8349\u7A3F\uFF1A\u5DF2\u6062\u590D\uFF08\u5C1A\u672A\u5BFC\u51FA\uFF09';
+  } else {
+    el.textContent = '\u672C\u5730\u8349\u7A3F\uFF1A\u672A\u4FDD\u5B58';
+  }
+}
+
+// --- 工具栏 ---
+function setupEditorToolbar() {
+  var bar = document.getElementById('editorToolbar');
+  var ta = document.getElementById('editorContent');
+  if (!bar || !ta || bar.dataset.bound === '1') return;
+  bar.dataset.bound = '1';
+
+  // 按下就阻止默认行为：按钮不抢焦点，textarea 的选区与光标保持不变
+  bar.addEventListener('mousedown', function (e) {
+    var btn = e.target && e.target.closest ? e.target.closest('[data-md]') : null;
+    if (btn) e.preventDefault();
+  });
+  bar.addEventListener('click', function (e) {
+    var btn = e.target && e.target.closest ? e.target.closest('[data-md]') : null;
+    if (!btn) return;
+    var action = btn.getAttribute('data-md');
+    if (action === 'image') { toggleEditorImagePanel(true); return; }
+    runMarkdownAction(action, ta);
+  });
+}
+
+// --- 快捷键 ---
+// 只绑在正文 textarea 上：标题/标签/摘要等其它输入框完全不受影响。
+function handleEditorKeydown(e) {
+  // 中文输入法组合期间一律不处理（否则会打断候选词上屏）
+  if (e.isComposing || e.keyCode === 229) return;
+
+  var ta = e.currentTarget || document.getElementById('editorContent');
+  var mod = e.ctrlKey || e.metaKey;
+
+  if (mod && !e.altKey) {
+    var k = String(e.key || '').toLowerCase();
+    if (k === 'b') { e.preventDefault(); runMarkdownAction('bold', ta); return; }
+    if (k === 'i') { e.preventDefault(); runMarkdownAction('italic', ta); return; }
+    if (k === 'k') { e.preventDefault(); runMarkdownAction('link', ta); return; }
+    // Ctrl/Cmd+Z、Ctrl/Cmd+Shift+Z、Ctrl+Y：明确放行，交给浏览器原生 Undo/Redo。
+    // 自研历史栈会和输入法、拖拽、拼写检查抢状态，这里坚持不接管。
+    if (k === 'z' || k === 'y') return;
+  }
+
+  if (e.key === 'Tab' && !mod && !e.altKey) {
+    e.preventDefault();
+    runMarkdownAction(e.shiftKey ? 'outdent' : 'indent', ta);
+  }
+}
+
+function setupEditorShortcuts() {
+  var ta = document.getElementById('editorContent');
+  if (!ta || ta.dataset.keysBound === '1') return;
+  ta.dataset.keysBound = '1';
+  ta.addEventListener('keydown', handleEditorKeydown);
+}
+
+// --- 编辑 / 预览视图切换（仅移动端可见）---
+// 只切 data-view 属性，DOM 完全不动 → 切换后内容与选区都还在
+function setupEditorViewToggle() {
+  var box = document.getElementById('editorViewToggle');
+  var split = document.getElementById('editorSplit');
+  if (!box || !split || box.dataset.bound === '1') return;
+  box.dataset.bound = '1';
+  box.addEventListener('click', function (e) {
+    var btn = e.target && e.target.closest ? e.target.closest('[data-view]') : null;
+    if (!btn) return;
+    var view = btn.getAttribute('data-view');
+    split.setAttribute('data-view', view);
+    Array.prototype.forEach.call(box.querySelectorAll('[data-view]'), function (b) {
+      var on = (b === btn);
+      if (on) b.classList.add('active'); else b.classList.remove('active');
+      b.setAttribute('aria-selected', on ? 'true' : 'false');
+    });
+    if (view === 'preview') updateEditorPreview();
+  });
+}
+
+// --- 图片面板 ---
+var _imagePanel = { objectUrl: null, path: null };
+
+function showImageError(msg) {
+  var el = document.getElementById('editorImageError');
+  if (!el) return;
+  el.textContent = msg || '';
+  if (msg) el.setAttribute('data-error', '1'); else el.removeAttribute('data-error');
+}
+
+function switchImageTab(name) {
+  var panel = document.getElementById('editorImagePanel');
+  if (!panel) return;
+  Array.prototype.forEach.call(panel.querySelectorAll('[data-img-tab]'), function (b) {
+    var on = (b.getAttribute('data-img-tab') === name);
+    if (on) b.classList.add('active'); else b.classList.remove('active');
+    b.setAttribute('aria-selected', on ? 'true' : 'false');
+  });
+  Array.prototype.forEach.call(panel.querySelectorAll('[data-img-pane]'), function (p) {
+    if (p.getAttribute('data-img-pane') === name) p.removeAttribute('hidden');
+    else p.setAttribute('hidden', '');
+  });
+}
+
+function resetEditorImagePanel() {
+  if (_imagePanel.objectUrl && typeof URL !== 'undefined' && URL.revokeObjectURL) {
+    try { URL.revokeObjectURL(_imagePanel.objectUrl); } catch (e) {}
+  }
+  _imagePanel.objectUrl = null;
+  _imagePanel.path = null;
+  var urlEl = document.getElementById('editorImageUrl');
+  if (urlEl) urlEl.value = '';
+  var img = document.getElementById('editorImagePreview');
+  if (img) { img.removeAttribute('src'); img.setAttribute('hidden', ''); }
+  var pathEl = document.getElementById('editorImagePath');
+  if (pathEl) { pathEl.textContent = ''; pathEl.setAttribute('hidden', ''); }
+  var warnEl = document.getElementById('editorImageWarn');
+  if (warnEl) warnEl.setAttribute('hidden', '');
+  var btn = document.querySelector('[data-img="insert-file"]');
+  if (btn) btn.disabled = true;
+  showImageError('');
+}
+
+function toggleEditorImagePanel(show) {
+  var panel = document.getElementById('editorImagePanel');
+  if (!panel) return;
+  var next = (show == null) ? panel.hasAttribute('hidden') : !!show;
+  if (next) {
+    panel.removeAttribute('hidden');
+    switchImageTab('url');
+    var urlEl = document.getElementById('editorImageUrl');
+    if (urlEl) urlEl.focus();
+  } else {
+    panel.setAttribute('hidden', '');
+    resetEditorImagePanel();
+    var ta = document.getElementById('editorContent');
+    if (ta) ta.focus();
+  }
+}
+window.toggleEditorImagePanel = toggleEditorImagePanel;
+
+// 插入图片引用：只写 Markdown 文本，绝不写 base64、绝不发请求
+function insertImageReference(url, alt) {
+  var ta = document.getElementById('editorContent');
+  if (!ta) return false;
+  var snippet = MDEditor.image(alt, url).snippet;
+  var at = ta.selectionStart;
+  applyMarkdownEdit(ta, {
+    start: at, end: ta.selectionEnd, replacement: snippet,
+    selStart: at + snippet.length, selEnd: at + snippet.length
+  });
+  return true;
+}
+
+function insertImageFromUrl() {
+  var urlEl = document.getElementById('editorImageUrl');
+  var altEl = document.getElementById('editorImageAlt');
+  var check = MDEditor.validateImageUrl(urlEl ? urlEl.value : '');
+  if (!check.ok) { showImageError(check.error); return false; }
+  showImageError('');
+  insertImageReference(check.url, altEl ? altEl.value : '');
+  showEditorStatus('\u{1F5BC} \u5DF2\u63D2\u5165\u56FE\u7247\u5F15\u7528\uFF08' +
+    (check.kind === 'remote' ? '\u5916\u90E8\u94FE\u63A5' : '\u7AD9\u5185\u76F8\u5BF9\u8DEF\u5F84') + '\uFF09', 'success');
+  toggleEditorImagePanel(false);
+  return true;
+}
+
+function insertImageFromFile() {
+  var path = _imagePanel.path;
+  if (!path) { showImageError('\u8BF7\u5148\u9009\u62E9\u4E00\u5F20\u672C\u5730\u56FE\u7247'); return false; }
+  var altEl = document.getElementById('editorImageAlt');
+  insertImageReference(path, altEl ? altEl.value : '');
+  // 如实告知：这张图还没进仓库
+  showEditorStatus('\u{1F5BC} \u5DF2\u63D2\u5165 <code>' + escapeHtml(path) + '</code>' +
+    '\uFF08<b>\u4EC5\u672C\u5730\u9884\u89C8\uFF0C\u56FE\u7247\u5C1A\u672A\u52A0\u5165\u4ED3\u5E93</b>\uFF09' +
+    '\u3002\u8BF7\u628A\u539F\u56FE\u653E\u5230 <code>' + escapeHtml(path) +
+    '</code> \u5E76\u4E0E\u6587\u7AE0\u4E00\u8D77\u63D0\u4EA4\u3002', 'loading');
+  toggleEditorImagePanel(false);
+  return true;
+}
+
+function onImageFileChosen(e) {
+  var file = e.target.files && e.target.files[0];
+  var img = document.getElementById('editorImagePreview');
+  var pathEl = document.getElementById('editorImagePath');
+  var warnEl = document.getElementById('editorImageWarn');
+  var btn = document.querySelector('[data-img="insert-file"]');
+
+  if (_imagePanel.objectUrl && typeof URL !== 'undefined' && URL.revokeObjectURL) {
+    try { URL.revokeObjectURL(_imagePanel.objectUrl); } catch (err) {}
+  }
+  _imagePanel.objectUrl = null;
+  _imagePanel.path = null;
+  if (img) { img.removeAttribute('src'); img.setAttribute('hidden', ''); }
+  if (pathEl) { pathEl.textContent = ''; pathEl.setAttribute('hidden', ''); }
+  if (warnEl) warnEl.setAttribute('hidden', '');
+  if (btn) btn.disabled = true;
+
+  if (!file) return;
+  var check = MDEditor.checkImageFile(file);
+  if (!check.ok) { showImageError(check.error); return; }
+  var sug = MDEditor.suggestImagePath(file);
+  if (!sug.ok) { showImageError(sug.error); return; }
+
+  showImageError('');
+  _imagePanel.path = sug.path;
+  if (img && typeof URL !== 'undefined' && URL.createObjectURL) {
+    try {
+      _imagePanel.objectUrl = URL.createObjectURL(file);
+      img.src = _imagePanel.objectUrl;
+      img.removeAttribute('hidden');
+    } catch (err) { /* 预览失败不影响插入引用 */ }
+  }
+  if (pathEl) {
+    pathEl.textContent = '\u5EFA\u8BAE\u8DEF\u5F84\uFF1A' + sug.path +
+      '\uFF08\u4ED3\u5E93\u6839\u76EE\u5F55\uFF1B\u4E0D\u5B58\u5728\u65F6\u9700\u8981\u65B0\u5EFA images/ \u76EE\u5F55\uFF09';
+    pathEl.removeAttribute('hidden');
+  }
+  if (warnEl) warnEl.removeAttribute('hidden');
+  if (btn) btn.disabled = false;
+}
+
+function setupEditorImagePanel() {
+  var panel = document.getElementById('editorImagePanel');
+  if (!panel || panel.dataset.bound === '1') return;
+  panel.dataset.bound = '1';
+  panel.addEventListener('click', function (e) {
+    var tab = e.target && e.target.closest ? e.target.closest('[data-img-tab]') : null;
+    if (tab) { switchImageTab(tab.getAttribute('data-img-tab')); return; }
+    var act = e.target && e.target.closest ? e.target.closest('[data-img]') : null;
+    if (!act) return;
+    var a = act.getAttribute('data-img');
+    if (a === 'close') toggleEditorImagePanel(false);
+    else if (a === 'insert-url') insertImageFromUrl();
+    else if (a === 'insert-file') insertImageFromFile();
+  });
+  var fileEl = document.getElementById('editorImageFile');
+  if (fileEl) fileEl.addEventListener('change', onImageFileChosen);
+}
+
 // --- Auto-save draft on input ---
 // 标题/标签/摘要/正文共用同一套防抖保存策略，避免只改标题时草稿不更新
 function setupEditorListeners() {
@@ -2453,12 +3215,26 @@ function setupEditorListeners() {
     if (!el || el.dataset.draftBound === '1') return;
     el.dataset.draftBound = '1';
     el.addEventListener('input', function() {
-      if (id === 'editorContent') updateEditorPreview();
+      if (id === 'editorContent') {
+        updateEditorPreview();
+        updateEditorStats();
+      }
+      setDraftStat('dirty');
       scheduleDraftSave();
     });
   });
-  // Initial preview
+
+  setupEditorToolbar();
+  setupEditorShortcuts();
+  setupEditorViewToggle();
+  setupEditorImagePanel();
+
+  // Initial preview + stats（草稿状态按磁盘上的实际情况显示，不新增状态）
   updateEditorPreview();
+  updateEditorStats();
+  var hasDraft = false;
+  try { hasDraft = !!localStorage.getItem(draftStorageKey()); } catch (e) {}
+  setDraftStat(hasDraft ? 'restored' : 'empty');
 }
 
 // --- 导出文章（Batch 8A）---

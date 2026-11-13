@@ -203,6 +203,9 @@ python scripts/run_tests.py --report /tmp/r.md --json /tmp/r.json
 | `test33_import_post.py` | B8A：本地导入器（冲突/恶意路径/非法 JSON/中断回滚/RSS 与搜索索引） |
 | `test34_post_update.py` | B8B1：更新已有文章（原版本校验/锁/回滚/id 不变/其他文章不变） |
 | `test35_editor_update.js` | B8B1：编辑器编辑模式（回填/固定 id/更新稿/草稿隔离/前进后退/深链不变） |
+| `test36_editor_toolbar.js` | B8B2：工具栏插入/快捷键/焦点与选区/原生撤销/状态栏 |
+| `test37_editor_images.js` | B8B2：图片协议白名单/本地文件校验/仅预览提示/XSS 净化 |
+| `browser/editor-ux.spec.js` | B8B2：真实 Chromium 下的工具栏、原生 Undo、375/390/768/1280 布局、SW 升级 |
 | `test12.py` | `scan_codefiles.py` 描述保护（合成 fixture） |
 | `test13.py` | `gen_feed.py` 解析、失败策略、路径（合成 fixture） |
 | `test14.js` | 排序一致性 + 日期时区（Asia/Shanghai、America/New_York、Europe/London） |
@@ -294,6 +297,15 @@ python scripts/import_post.py --file <id>.update.json --mode update --apply
 
 > 更新稿里带 `original` 原版本快照（原文全文 + 原元数据）；导入器把它与仓库当前内容逐字段比对，
 > 不一致就拒绝（退出码 2），不会把旧版本覆盖到别人的新改动上。
+
+**编辑器用法（Batch 8B-2）**
+
+- 工具栏：H1–H3、加粗、斜体、行内代码、代码块（可选语言）、有序/无序列表、引用、链接、图片、表格、分割线；再点一次取消简单格式。
+- 快捷键：`Ctrl/Cmd+B` 加粗、`Ctrl/Cmd+I` 斜体、`Ctrl/Cmd+K` 链接、`Tab` / `Shift+Tab` 缩进与反缩进；`Ctrl/Cmd+Z` 与撤销/重做**交给浏览器原生行为**（不接管）。
+- 图片：链接只接受 `https://` 或站内相对路径；本地图片只做**类型/大小校验 + 本地缩略图**，插入的是仓库内路径（默认 `images/`），
+  **不会**写 base64、不上传、不需要 Token —— 原图需要你自己放进仓库并与文章一起提交。
+- 移动端（≤768px）：编辑与预览用开关切换，只切 CSS 不重建 DOM；工具栏可横向滚动。
+- 状态栏显示字数、英文词数、预计阅读时间、模式/文章 id 与**本地草稿**保存状态（"已保存"仅指本地草稿）。
 
 合并到 `main` 后 GitHub Pages 自动构建（约 30 秒 ~ 2 分钟）。
 
