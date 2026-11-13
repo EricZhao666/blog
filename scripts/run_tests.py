@@ -98,6 +98,8 @@ TESTS = [
      'desc': 'B8B2：Markdown 工具栏 / 快捷键 / 原生撤销 / 状态栏'},
     {'name': 'test37', 'file': 'tests/test37_editor_images.js', 'kind': 'jsdom',
      'desc': 'B8B2：图片插入与预览（协议白名单/本地文件/仅预览提示/净化）'},
+    {'name': 'test38', 'file': 'tests/test38_draft_history.js', 'kind': 'jsdom',
+     'desc': 'B8B3：草稿历史（快照/去重/节流/隔离/配额/损坏/安全恢复）'},
     {'name': 'content-check', 'file': 'scripts/build_content.py', 'kind': 'python', 'args': ['--check'],
      'desc': 'B7C2：发布前内容一致性门禁（元数据/正文/搜索语料/清单/RSS）',
      'pass_marker': 'OK:'},
@@ -117,6 +119,8 @@ TESTS = [
      'desc': 'B7B2：论文/学习资料深链（身份稳定/焦点/滚动/历史/降级/视口/慢网 SW）'},
     {'name': 'editor-ux', 'file': 'tests/browser/editor-ux.spec.js', 'kind': 'browser',
      'desc': 'B8B2：真实 Chromium 下的工具栏/快捷键/原生撤销/移动端切换/无溢出/SW 升级'},
+    {'name': 'editor-history', 'file': 'tests/browser/editor-history.spec.js', 'kind': 'browser',
+     'desc': 'B8B3：真实 IndexedDB 历史/恢复备份/刷新持久/多标签页/移动端/SW 升级'},
 ]
 
 COUNT_RE = re.compile(r'共\s*(\d+)\s*项[，,]\s*PASS\s*(\d+)[，,]\s*FAIL\s*(\d+)')
