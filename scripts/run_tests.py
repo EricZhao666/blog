@@ -94,6 +94,10 @@ TESTS = [
      'desc': 'B8B1：已有文章更新（版本校验/锁定/回滚/id 不变/其他文章不变）'},
     {'name': 'test35', 'file': 'tests/test35_editor_update.js', 'kind': 'jsdom',
      'desc': 'B8B1：编辑器编辑模式（回填/固定 id/更新稿/草稿隔离/前进后退）'},
+    {'name': 'test36', 'file': 'tests/test36_editor_toolbar.js', 'kind': 'jsdom',
+     'desc': 'B8B2：Markdown 工具栏 / 快捷键 / 原生撤销 / 状态栏'},
+    {'name': 'test37', 'file': 'tests/test37_editor_images.js', 'kind': 'jsdom',
+     'desc': 'B8B2：图片插入与预览（协议白名单/本地文件/仅预览提示/净化）'},
     {'name': 'content-check', 'file': 'scripts/build_content.py', 'kind': 'python', 'args': ['--check'],
      'desc': 'B7C2：发布前内容一致性门禁（元数据/正文/搜索语料/清单/RSS）',
      'pass_marker': 'OK:'},
@@ -111,6 +115,8 @@ TESTS = [
      'desc': 'B7A：课程 canonical / og:url / 异步竞态 / 静态 HTML SEO'},
     {'name': 'papers-deeplink', 'file': 'tests/browser/papers-deeplink.spec.js', 'kind': 'browser',
      'desc': 'B7B2：论文/学习资料深链（身份稳定/焦点/滚动/历史/降级/视口/慢网 SW）'},
+    {'name': 'editor-ux', 'file': 'tests/browser/editor-ux.spec.js', 'kind': 'browser',
+     'desc': 'B8B2：真实 Chromium 下的工具栏/快捷键/原生撤销/移动端切换/无溢出/SW 升级'},
 ]
 
 COUNT_RE = re.compile(r'共\s*(\d+)\s*项[，,]\s*PASS\s*(\d+)[，,]\s*FAIL\s*(\d+)')

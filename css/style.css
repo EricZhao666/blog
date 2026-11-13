@@ -1760,6 +1760,235 @@ main {
   cursor: pointer;
 }
 
+/* ---- Markdown 工具栏（Batch 8B-2）---- */
+.editor-toolbar {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  flex-wrap: wrap;
+  padding: 6px;
+  margin-bottom: 10px;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  background: var(--color-bg);
+  overflow-x: auto;
+}
+
+.editor-tool-btn {
+  flex: 0 0 auto;
+  min-width: 34px;
+  height: 32px;
+  padding: 0 8px;
+  border: 1px solid transparent;
+  border-radius: var(--radius-sm);
+  background: var(--color-surface);
+  color: var(--color-text);
+  font-size: 0.82rem;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.editor-tool-btn:hover {
+  border-color: var(--color-primary);
+  color: var(--color-primary);
+}
+
+.editor-tool-btn:active {
+  background: var(--color-primary-light);
+}
+
+.editor-tool-btn:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 1px;
+}
+
+.editor-tool-sep {
+  flex: 0 0 auto;
+  width: 1px;
+  height: 20px;
+  margin: 0 4px;
+  background: var(--color-border);
+}
+
+.editor-lang {
+  flex: 0 0 auto;
+  height: 32px;
+  padding: 0 6px;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  background: var(--color-surface);
+  color: var(--color-text);
+  font-size: 0.8rem;
+}
+
+/* 编辑 / 预览切换：桌面端隐藏（双栏同屏显示） */
+.editor-view-toggle {
+  display: none;
+  gap: 6px;
+  margin-bottom: 10px;
+}
+
+.editor-view-btn {
+  flex: 1;
+  min-height: 38px;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  background: var(--color-surface);
+  color: var(--color-text-secondary);
+  font-size: 0.85rem;
+  cursor: pointer;
+}
+
+.editor-view-btn.active {
+  border-color: var(--color-primary);
+  background: var(--color-primary-light);
+  color: var(--color-primary);
+  font-weight: 600;
+}
+
+/* ---- 图片面板 ---- */
+.editor-image-panel {
+  margin: 12px 0;
+  padding: 16px;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  background: var(--color-bg);
+}
+
+.editor-image-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 10px;
+}
+
+.editor-image-tabs {
+  display: flex;
+  gap: 6px;
+  margin-bottom: 12px;
+}
+
+.editor-tab {
+  flex: 0 0 auto;
+  padding: 6px 12px;
+  border: 1px solid var(--color-border);
+  border-radius: 999px;
+  background: var(--color-surface);
+  color: var(--color-text-secondary);
+  font-size: 0.8rem;
+  cursor: pointer;
+}
+
+.editor-tab.active {
+  border-color: var(--color-primary);
+  background: var(--color-primary-light);
+  color: var(--color-primary);
+}
+
+.editor-image-label {
+  display: block;
+  margin-bottom: 6px;
+  font-size: 0.8rem;
+  color: var(--color-text-secondary);
+}
+
+.editor-image-alt .editor-input,
+.editor-image-pane .editor-input {
+  margin-bottom: 10px;
+}
+
+.editor-image-hint {
+  margin: 0 0 10px;
+  font-size: 0.76rem;
+  color: var(--color-text-muted);
+}
+
+.editor-image-preview img {
+  max-width: 100%;
+  max-height: 220px;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+}
+
+.editor-image-path {
+  margin: 8px 0;
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 0.76rem;
+  color: var(--color-text-secondary);
+  word-break: break-all;
+}
+
+.editor-image-warn {
+  margin: 0 0 10px;
+  padding: 8px 10px;
+  border-radius: var(--radius-sm);
+  background: rgba(245, 158, 11, 0.14);
+  font-size: 0.78rem;
+  color: #b45309;
+}
+
+[data-theme="dark"] .editor-image-warn {
+  color: #fbbf24;
+}
+
+.editor-image-error {
+  margin-top: 8px;
+  font-size: 0.8rem;
+  color: #dc2626;
+}
+
+[data-theme="dark"] .editor-image-error {
+  color: #f87171;
+}
+
+/* ---- 状态栏 ---- */
+.editor-stats {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 14px;
+  margin-top: 12px;
+  padding-top: 10px;
+  border-top: 1px dashed var(--color-border);
+  font-size: 0.76rem;
+  color: var(--color-text-secondary);
+}
+
+.editor-stats span[hidden] {
+  display: none;
+}
+
+.editor-stats [data-stat='draft'][data-state='saved'] {
+  color: #059669;
+}
+
+.editor-stats [data-stat='draft'][data-state='dirty'] {
+  color: #b45309;
+}
+
+[data-theme="dark"] .editor-stats [data-stat='draft'][data-state='saved'] {
+  color: #34d399;
+}
+
+[data-theme="dark"] .editor-stats [data-stat='draft'][data-state='dirty'] {
+  color: #fbbf24;
+}
+
+/* 长代码块 / 表格不撑破编辑区 */
+.editor-pane {
+  min-width: 0;
+}
+
+.editor-preview pre {
+  max-width: 100%;
+  overflow-x: auto;
+}
+
+.editor-preview table {
+  display: block;
+  max-width: 100%;
+  overflow-x: auto;
+}
+
 @media (max-width: 768px) {
   .editor-split {
     flex-direction: column;
@@ -1778,6 +2007,66 @@ main {
 
   .editor-input-title {
     font-size: 1.1rem;
+  }
+
+  /* 手机端：单栏 + 编辑/预览切换（只切 CSS，不重建 DOM） */
+  .editor-view-toggle {
+    display: flex;
+  }
+
+  .editor-split[data-view='edit'] .editor-pane-preview {
+    display: none;
+  }
+
+  .editor-split[data-view='preview'] .editor-pane-edit {
+    display: none;
+  }
+
+  /* 工具栏横向滚动，按钮够大 */
+  .editor-toolbar {
+    flex-wrap: nowrap;
+    padding: 8px 6px;
+  }
+
+  .editor-tool-btn {
+    min-width: 40px;
+    height: 40px;
+    padding: 0 10px;
+  }
+
+  .editor-lang {
+    height: 40px;
+  }
+
+  /* 键盘弹出时不遮住保存/导出：正文自身滚动，页面结构不做 fixed 定位 */
+  .editor-textarea-content {
+    max-height: 55vh;
+  }
+
+  .editor-preview {
+    max-height: 55vh;
+    overflow-y: auto;
+  }
+
+  .editor-actions {
+    position: static;
+  }
+}
+
+@media (max-width: 420px) {
+  .editor-tool-btn {
+    min-width: 44px;
+    height: 44px;
+    padding: 0 8px;
+  }
+
+  .editor-form {
+    padding: 12px;
+  }
+
+  .editor-stats {
+    font-size: 0.72rem;
+    gap: 4px 10px;
   }
 }
 
