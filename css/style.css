@@ -2518,6 +2518,62 @@ main {
   background: var(--color-bg-soft, transparent);
 }
 
+/* 多数据源加载状态（Batch 8C-1）：已加载 / 加载中 / 失败可重试 */
+.search-sources-status {
+  margin: 0 0 14px;
+  padding: 8px 10px;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  background: var(--color-surface);
+  font-size: 0.78rem;
+  color: var(--color-text-muted);
+  overflow-wrap: anywhere;
+}
+
+.search-sources-summary { margin-bottom: 6px; }
+
+.search-source-badges {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.search-source-badge {
+  display: inline-flex;
+  align-items: center;
+  max-width: 100%;
+  padding: 2px 8px;
+  border: 1px solid var(--color-border);
+  border-radius: 999px;
+  white-space: normal;
+  overflow-wrap: anywhere;
+}
+
+.search-source-badge.ready { color: var(--color-primary); }
+.search-source-badge.loading { color: var(--color-text-muted); }
+.search-source-badge.idle { opacity: 0.75; }
+.search-source-badge.error {
+  border-color: #dc2626;
+  color: #dc2626;
+}
+.search-source-badge a { color: inherit; font-weight: 600; }
+
+/* 命中片段：长正文/中文/URL 都不撑破卡片 */
+.search-item-snippet,
+.article-card-excerpt {
+  overflow-wrap: anywhere;
+  word-break: break-word;
+}
+
+.search-snippet-label {
+  margin-right: 6px;
+  padding: 0 5px;
+  border-radius: 4px;
+  background: var(--color-bg-soft, rgba(127, 127, 127, 0.12));
+  font-size: 0.72rem;
+  color: var(--color-primary);
+}
+
 /* 文章正文加载态 / 失败重试 */
 .article-loading .article-detail-title {
   margin-bottom: 8px;
@@ -3117,6 +3173,22 @@ main {
 
   .search-results-count {
     font-size: 0.85rem;
+  }
+
+  /* 窄屏下状态条换行而不是撑出横向滚动 */
+  .search-sources-status {
+    font-size: 0.72rem;
+    padding: 6px 8px;
+  }
+
+  .search-source-badge {
+    font-size: 0.72rem;
+    max-width: 100%;
+  }
+
+  .search-item-snippet,
+  .article-card-excerpt {
+    overflow-wrap: anywhere;
   }
 }
 

@@ -100,6 +100,10 @@ TESTS = [
      'desc': 'B8B2：图片插入与预览（协议白名单/本地文件/仅预览提示/净化）'},
     {'name': 'test38', 'file': 'tests/test38_draft_history.js', 'kind': 'jsdom',
      'desc': 'B8B3：草稿历史（快照/去重/节流/隔离/配额/损坏/安全恢复）'},
+    {'name': 'test39', 'file': 'tests/test39_search_ranking.js', 'kind': 'jsdom',
+     'desc': 'B8C1：统一结果模型 / 相关性评分 / 中文混合 / XSS / 稳定深链'},
+    {'name': 'test40', 'file': 'tests/test40_search_sources.js', 'kind': 'jsdom',
+     'desc': 'B8C1：多数据源按需加载 / 失败恢复 / 竞态 / IME / 历史恢复'},
     {'name': 'content-check', 'file': 'scripts/build_content.py', 'kind': 'python', 'args': ['--check'],
      'desc': 'B7C2：发布前内容一致性门禁（元数据/正文/搜索语料/清单/RSS）',
      'pass_marker': 'OK:'},
@@ -121,6 +125,8 @@ TESTS = [
      'desc': 'B8B2：真实 Chromium 下的工具栏/快捷键/原生撤销/移动端切换/无溢出/SW 升级'},
     {'name': 'editor-history', 'file': 'tests/browser/editor-history.spec.js', 'kind': 'browser',
      'desc': 'B8B3：真实 IndexedDB 历史/恢复备份/刷新持久/多标签页/移动端/SW 升级'},
+    {'name': 'search-ux', 'file': 'tests/browser/search-ux.spec.js', 'kind': 'browser',
+     'desc': 'B8C1：真实 Chromium 下四类命中 / XSS / 稳定深链 / 竞态 / 移动端 / 性能'},
 ]
 
 COUNT_RE = re.compile(r'共\s*(\d+)\s*项[，,]\s*PASS\s*(\d+)[，,]\s*FAIL\s*(\d+)')

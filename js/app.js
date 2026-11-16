@@ -282,18 +282,130 @@ function updateMetaForRoute(hash) {
   setCanonical(null);
 }
 
-// 搜索关键词高亮：先转义再包裹 <mark>，避免 XSS
+// ============================================
+// 全站搜索 2.0（Batch 8C-1）：查询归一化 / 小写化缓存 / 安全高亮 / 命中片段
+// 所有结果文本统一经 escapeHtml 输出，高亮只作用在已转义的文本上
+// ============================================
+const SEARCH_QUERY_MAX = 120;       // 超长输入截断，避免构造超长正则拖慢输入
+const SEARCH_TOKEN_MAX = 8;
+const SEARCH_SNIPPET_MAX = 160;     // 片段硬上限
+const SEARCH_HIT_CAP = 3;           // 单字段命中次数封顶：长文重复出现不会无限加分
+const SEARCH_RANK_SCALE = 1000;
+
+// 主分等级：标题完整 > 标题前缀 > 标题部分 > 标签/作者/类别 > 摘要/描述 > 正文
+const SEARCH_RANK = {
+  TITLE_EXACT: 6,
+  TITLE_PREFIX: 5,
+  TITLE_PARTIAL: 4,
+  META: 3,
+  DESC: 2,
+  BODY: 1
+};
+// 次级分：同一等级内按字段命中细分，有硬上限且远小于一个等级差
+const SEARCH_BONUS = {
+  meta: { base: 60, step: 2 },
+  desc: { base: 30, step: 1 },
+  body: { base: 10, step: 1 },
+  token: { base: 5, step: 0 }
+};
+
+// 小写化缓存：以原始数据对象为键，按字段缓存 {raw, lower}。
+// 正文被修改（编辑器更新 / 用户文章合并）时 raw 变化即失效，
+// 因此不会在每次输入时重新小写化整篇 Markdown。
+const _searchTextCache = new WeakMap();
+
+function searchLowerText(obj, field) {
+  if (!obj) return '';
+  let value = obj[field];
+  if (value == null) value = '';
+  if (Array.isArray(value)) value = value.join(' ');
+  const raw = String(value);
+  let slots = _searchTextCache.get(obj);
+  if (!slots) { slots = Object.create(null); _searchTextCache.set(obj, slots); }
+  const cached = slots[field];
+  if (cached && cached.raw === raw) return cached.lower;
+  const lower = raw.toLowerCase();
+  slots[field] = { raw: raw, lower: lower };
+  return lower;
+}
+
+function normalizeSearchQuery(query) {
+  const raw = String(query == null ? '' : query).trim().slice(0, SEARCH_QUERY_MAX).toLowerCase();
+  const tokens = raw.split(/[\s,，、;；/\\|+]+/).filter(Boolean).slice(0, SEARCH_TOKEN_MAX);
+  return { raw: raw, tokens: tokens };
+}
+
+function searchQueryOf(query) {
+  return (query && typeof query === 'object' && Array.isArray(query.tokens))
+    ? query : normalizeSearchQuery(query);
+}
+
+function countSearchHits(haystack, needle) {
+  if (!haystack || !needle) return 0;
+  let count = 0, from = 0;
+  while (count < SEARCH_HIT_CAP) {
+    const at = haystack.indexOf(needle, from);
+    if (at === -1) break;
+    count++;
+    from = at + needle.length;
+  }
+  return count;
+}
+
+// 关键词高亮：先把文本转义，再把同样转义过的关键词做成正则，只插入 <mark>。
+// 多词（中英文混合）逐词高亮；HTML 特殊字符与正则元字符都进不了 HTML 结构。
 function highlightMatch(text, query) {
-  const safe = escapeHtml(text || '');
-  if (!query) return safe;
-  const eq = escapeHtml(query).replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+  const safe = escapeHtml(text == null ? '' : String(text));
+  const q = searchQueryOf(query);
+  if (!q.raw) return safe;
+  const terms = [q.raw];
+  q.tokens.forEach(function (t) {
+    if (t && t !== q.raw && terms.indexOf(t) === -1) terms.push(t);
+  });
+  const patterns = terms.slice(0, SEARCH_TOKEN_MAX + 1).map(function (t) {
+    return escapeHtml(t).replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+  }).filter(Boolean).sort(function (a, b) { return b.length - a.length; });
+  if (!patterns.length) return safe;
   try {
-    return safe.replace(new RegExp(eq, 'gi'), function (m) {
-      return '<mark class="search-hit">' + m + '</mark>';
-    });
+    return safe.replace(new RegExp('(' + patterns.join('|') + ')', 'gi'),
+      '<mark class="search-hit">$1</mark>');
   } catch (e) {
     return safe;
   }
+}
+
+// 命中上下文片段：只截取命中附近的小窗口再清洗 Markdown，
+// 不在每次输入时解析整篇正文；输出统一走 highlightMatch 转义。
+function makeSearchSnippet(text, query, source, maxLen) {
+  const q = searchQueryOf(query);
+  const raw = String(text == null ? '' : text);
+  if (!raw || !q.raw) return null;
+  const lower = raw.toLowerCase();
+  const candidates = [q.raw].concat(q.tokens);
+  let needle = '', idx = -1;
+  for (let i = 0; i < candidates.length; i++) {
+    if (!candidates[i]) continue;
+    const at = lower.indexOf(candidates[i]);
+    if (at !== -1 && (idx === -1 || at < idx)) { idx = at; needle = candidates[i]; }
+  }
+  if (idx === -1) return null;
+  const start = Math.max(0, idx - 36);
+  const end = Math.min(raw.length, idx + needle.length + 84);
+  let piece = raw.slice(start, end)
+    .replace(/!\[[^\]]*\]\([^)]*\)/g, ' ')
+    .replace(/\[([^\]]*)\]\([^)]*\)/g, '$1')
+    .replace(/\|/g, ' ')
+    .replace(/[#>*`_~]+/g, ' ')
+    .replace(/\s+/g, ' ')
+    .trim();
+  const cap = maxLen || SEARCH_SNIPPET_MAX;
+  if (piece.length > cap) piece = piece.slice(0, cap);
+  return {
+    text: piece,
+    source: source || '',
+    count: countSearchHits(lower, q.raw) || countSearchHits(lower, needle),
+    html: (start > 0 ? '…' : '') + highlightMatch(piece, q) + (end < raw.length ? '…' : '')
+  };
 }
 
 // 通用实时搜索绑定：
@@ -511,6 +623,74 @@ function ensureSearchDocs() {
       throw err;
     });
   return _searchDocsPromise;
+}
+
+// ============================================
+// 搜索数据源：按需加载 / 逐源状态 / 失败可重试（Batch 8C-1）
+// 复用 loadData() 的 Promise 缓存与 ensureSearchDocs() 的语料缓存，
+// 每个源的 Promise 都先 settle 成 {key, ok}，因此 Promise.all 不会产生未处理的 rejection。
+// ============================================
+const SEARCH_SOURCE_KEYS = ['posts', 'courses', 'notes', 'papers', 'docs'];
+const SEARCH_SOURCE_LABELS = {
+  posts: '文章',
+  courses: '课程',
+  notes: '课程笔记',
+  papers: '论文 / 学习资料',
+  docs: '正文检索语料'
+};
+let _searchLoadPromise = null;
+
+function searchSourceStatus() {
+  const status = { posts: 'ready' };   // js/data.js 是首屏必需资源
+  ['courses', 'notes', 'papers'].forEach(function (key) {
+    if (dataReady(key)) status[key] = 'ready';
+    else if (_dataPromises[key]) status[key] = 'loading';
+    else if (_dataFailures[key]) status[key] = 'error';
+    else status[key] = 'idle';
+  });
+  status.docs = _searchDocsReady ? 'ready'
+    : (_searchDocsError ? 'error' : (_searchDocsPromise ? 'loading' : 'idle'));
+  return status;
+}
+
+function loadSearchSource(key) {
+  let task;
+  try {
+    task = (key === 'docs') ? ensureSearchDocs() : loadData(key);
+  } catch (err) {
+    return Promise.resolve({ key: key, ok: false, error: err });
+  }
+  return Promise.resolve(task).then(
+    function () {
+      // loadData() 会吞掉错误，这里用真实就绪状态判断，才能如实报告"加载失败"
+      return { key: key, ok: (key === 'docs') ? _searchDocsReady : dataReady(key) };
+    },
+    function (err) { return { key: key, ok: false, error: err }; }
+  );
+}
+
+function loadSearchSources() {
+  if (_searchLoadPromise) return _searchLoadPromise;      // 不重复请求正在加载的资源
+  const jobs = ['courses', 'notes', 'papers', 'docs'].map(loadSearchSource);
+  _searchLoadPromise = Promise.all(jobs).then(function (results) {
+    _searchLoadPromise = null;
+    return results;
+  });
+  return _searchLoadPromise;
+}
+
+function resetSearchSource(key) {
+  if (key === 'docs') {
+    _searchDocsPromise = null;
+    _searchDocsError = false;
+  } else if (key === 'courses' || key === 'notes' || key === 'papers') {
+    delete _dataPromises[key];
+    // _dataFailures 保留：重试 URL 会带 retry 参数，绕开缓存里的坏响应
+  } else {
+    return false;
+  }
+  _searchLoadPromise = null;
+  return true;
 }
 
 // 阅读时长：优先用构建期算好的值（与 readingTime 等价），没有正文时也不会算错
@@ -751,102 +931,336 @@ function renderHome() {
   return `<div class="article-list">${cards}</div>`;
 }
 
-function renderGlobalSearch(query) {
-  const q = query.toLowerCase();
-  const posts = getAllPosts().filter(p =>
-    (p.title || '').toLowerCase().includes(q) ||
-    (p.excerpt || '').toLowerCase().includes(q) ||
-    (p.tags || []).some(t => t.toLowerCase().includes(q)) ||
-    (p.content || '').toLowerCase().includes(q)
-  );
-  const notesLoaded = typeof COURSE_NOTES !== 'undefined';
-  const courses = (typeof COURSES !== 'undefined') ? COURSES.filter(c => {
-    if (c.name.toLowerCase().includes(q) ||
-        (c.category || '').toLowerCase().includes(q) ||
-        (c.description || '').toLowerCase().includes(q)) return true;
-    // 笔记正文也参与搜索（课程区现在只有笔记）
-    if (notesLoaded && COURSE_NOTES[c.id]) {
-      const entry = COURSE_NOTES[c.id];
-      return ((entry.summary || '') + (entry.notes || '')).toLowerCase().includes(q);
+// ============================================
+// 统一搜索结果模型（只在内存中整理，不改动任何生成数据格式）
+// { type, id, title, description, matchedFields, score, targetUrl, snippet }
+// ============================================
+const SEARCH_TYPE_ORDER = { post: 0, course: 1, paper: 2, material: 3 };
+
+// 普通字段：完整串命中 > 多词 AND（中英文混合）；次数封顶
+function matchSearchField(obj, field, q) {
+  const lower = searchLowerText(obj, field);
+  if (!lower || !q.raw) return { count: 0 };
+  const count = countSearchHits(lower, q.raw);
+  if (count) return { count: count };
+  if (q.tokens.length > 1 && q.tokens.every(function (t) { return lower.indexOf(t) !== -1; })) {
+    return { count: 1 };
+  }
+  return { count: 0 };
+}
+
+// 标题：完整匹配 > 前缀匹配 > 部分匹配
+function matchSearchTitle(obj, field, q) {
+  const title = searchLowerText(obj, field).trim();
+  if (!title || !q.raw) return { rank: 0, count: 0 };
+  if (title === q.raw) return { rank: SEARCH_RANK.TITLE_EXACT, count: 1 };
+  if (title.indexOf(q.raw) === 0) return { rank: SEARCH_RANK.TITLE_PREFIX, count: 1 };
+  if (title.indexOf(q.raw) !== -1) return { rank: SEARCH_RANK.TITLE_PARTIAL, count: 1 };
+  if (q.tokens.length > 1 && q.tokens.every(function (t) { return title.indexOf(t) !== -1; })) {
+    return { rank: SEARCH_RANK.TITLE_PARTIAL, count: 1 };   // 中英混合多词同标题
+  }
+  return { rank: 0, count: 0 };
+}
+
+// spec.fields: [{obj, field, level: title|meta|desc|body, label}]
+function buildSearchResult(type, spec, q) {
+  let rank = 0, bonus = 0;
+  const matched = [];
+  const hits = Object.create(null);
+  spec.fields.forEach(function (f) {
+    const m = (f.level === 'title')
+      ? matchSearchTitle(f.obj, f.field, q)
+      : matchSearchField(f.obj, f.field, q);
+    if (!m.count) return;
+    matched.push(f.label);
+    hits[f.label] = m.count;
+    if (f.level === 'title') {
+      rank = Math.max(rank, m.rank);
+    } else {
+      const levelRank = f.level === 'meta' ? SEARCH_RANK.META
+        : f.level === 'desc' ? SEARCH_RANK.DESC : SEARCH_RANK.BODY;
+      rank = Math.max(rank, levelRank);
+      const cfg = SEARCH_BONUS[f.level] || SEARCH_BONUS.body;
+      bonus += cfg.base + Math.min(m.count, SEARCH_HIT_CAP) * cfg.step;
     }
-    return false;
-  }) : [];
-  const papers = (typeof PAPERS !== 'undefined') ? PAPERS.filter(p =>
-    (p.title || '').toLowerCase().includes(q) ||
-    (p.authors || '').toLowerCase().includes(q) ||
-    (p.abstract || '').toLowerCase().includes(q)
-  ) : [];
-  const materials = (typeof LEARNING_MATERIALS !== 'undefined') ? LEARNING_MATERIALS.filter(m =>
-    (m.name || '').toLowerCase().includes(q) ||
-    (m.subcategory || '').toLowerCase().includes(q)
-  ) : [];
+  });
+  if (!matched.length && q.tokens.length > 1) {
+    // 关键词分散在不同字段也算命中（最低优先级）
+    const all = spec.fields.map(function (f) { return searchLowerText(f.obj, f.field); }).join(' ');
+    if (q.tokens.every(function (t) { return all.indexOf(t) !== -1; })) {
+      rank = SEARCH_RANK.BODY;
+      bonus += SEARCH_BONUS.token.base;
+      matched.push('tokens');
+    }
+  }
+  if (!rank) return null;
+  return {
+    type: type,
+    id: spec.id,
+    title: spec.title || '',
+    description: spec.description || '',
+    matchedFields: matched,
+    score: rank * SEARCH_RANK_SCALE + Math.min(bonus, SEARCH_RANK_SCALE - 1),
+    targetUrl: spec.targetUrl,
+    snippet: (typeof spec.snippet === 'function') ? spec.snippet(q, hits) : null,
+    order: spec.order || 0,
+    hits: hits
+  };
+}
 
-  const total = posts.length + courses.length + papers.length + materials.length;
-  let html = `<div class="search-results-count">找到 ${total} 条与 “${escapeHtml(query)}” 相关的结果</div>`;
-  // 正文语料是首次搜索才加载的：明确告诉用户当前结果只覆盖标题/摘要/标签
-  if (!_searchDocsReady) {
-    html += '<div class="search-hint">' + (_searchDocsError
-      ? '正文检索暂不可用（当前只匹配标题 / 摘要 / 标签），重新输入可重试'
-      : '正在加载正文检索语料，结果会随后补全…') + '</div>';
+// 同分按原始顺序 → 类型 → id，保证结果顺序稳定可复现
+function compareSearchResults(a, b) {
+  if (b.score !== a.score) return b.score - a.score;
+  if (a.order !== b.order) return a.order - b.order;
+  if (a.type !== b.type) return (SEARCH_TYPE_ORDER[a.type] || 9) - (SEARCH_TYPE_ORDER[b.type] || 9);
+  return String(a.id).localeCompare(String(b.id));
+}
+
+function collectSearchResults(query) {
+  const q = searchQueryOf(query);
+  const sources = searchSourceStatus();
+  const incomplete = SEARCH_SOURCE_KEYS.some(function (k) { return sources[k] !== 'ready'; });
+  const hasError = SEARCH_SOURCE_KEYS.some(function (k) { return sources[k] === 'error'; });
+  const groups = { post: [], course: [], paper: [], material: [] };
+  if (!q.raw) {
+    return { groups: groups, total: 0, sources: sources, incomplete: incomplete, hasError: hasError, query: q };
+  }
+  let order = 0;
+
+  getAllPosts().forEach(function (post) {
+    const r = buildSearchResult('post', {
+      id: post.id,
+      title: post.title || '',
+      description: post.excerpt || getExcerpt(post),
+      targetUrl: '#/post/' + post.id,
+      order: order++,
+      fields: [
+        { obj: post, field: 'title', level: 'title', label: 'title' },
+        { obj: post, field: 'tags', level: 'meta', label: 'tags' },
+        { obj: post, field: 'excerpt', level: 'desc', label: 'excerpt' },
+        { obj: post, field: 'content', level: 'body', label: 'content' }
+      ],
+      snippet: function (qq, hits) {
+        if (hits.content) {
+          const body = cachedPostContent(post);
+          if (body) return makeSearchSnippet(body, qq, '正文', SEARCH_SNIPPET_MAX);
+        }
+        if (hits.excerpt && post.excerpt) {
+          return makeSearchSnippet(post.excerpt, qq, '摘要', SEARCH_SNIPPET_MAX);
+        }
+        return null;
+      }
+    }, q);
+    if (r) { r.tags = post.tags || []; r.date = post.date || ''; groups.post.push(r); }
+  });
+
+  if (dataReady('courses')) {
+    COURSES.forEach(function (c) {
+      const note = (typeof COURSE_NOTES !== 'undefined' && COURSE_NOTES[c.id]) ? COURSE_NOTES[c.id] : null;
+      const fields = [
+        { obj: c, field: 'name', level: 'title', label: 'title' },
+        { obj: c, field: 'category', level: 'meta', label: 'category' },
+        { obj: c, field: 'description', level: 'desc', label: 'description' }
+      ];
+      if (note) {
+        fields.push({ obj: note, field: 'summary', level: 'desc', label: 'summary' });
+        fields.push({ obj: note, field: 'notes', level: 'body', label: 'notes' });
+      }
+      const r = buildSearchResult('course', {
+        id: c.id,
+        title: c.name || '',
+        description: [c.category, c.description].filter(Boolean).join(' · '),
+        targetUrl: '#/course/' + encodeURIComponent(c.id),
+        order: order++,
+        fields: fields,
+        snippet: function (qq, hits) {
+          if (note && (hits.notes || hits.summary)) {
+            return makeSearchSnippet(noteText(note), qq, '课程笔记', SEARCH_SNIPPET_MAX);
+          }
+          if (hits.description && c.description) {
+            return makeSearchSnippet(c.description, qq, '课程简介', SEARCH_SNIPPET_MAX);
+          }
+          return null;
+        }
+      }, q);
+      if (r) { r.category = c.category || ''; r.hasNotes = !!note; groups.course.push(r); }
+    });
   }
 
-  if (posts.length) {
-    html += `<div class="search-section-title">📝 文章 (${posts.length})</div>`;
-    html += `<div class="article-list">` + posts.map(post => `
-      <article class="article-card" data-href="#/post/${post.id}" tabindex="0" role="link" onclick="location.hash = '#/post/${post.id}'">
-        <h2 class="article-card-title"><a href="#/post/${post.id}">${highlightMatch(post.title, query)}</a></h2>
-        <p class="article-card-excerpt">${highlightMatch(getExcerpt(post), query)}</p>
-        <div class="article-card-meta">
-          <span class="meta-item">${formatDate(post.date)}</span>
-          <div class="article-card-tags">${post.tags.map(t => `<span class="tag">${escapeHtml(t)}</span>`).join('')}</div>
-        </div>
-      </article>`).join('') + `</div>`;
+  if (dataReady('papers')) {
+    PAPERS.forEach(function (p) {
+      const r = buildSearchResult('paper', {
+        id: paperTargetKey(p),
+        title: p.title || '',
+        description: p.authors || '',
+        targetUrl: papersDeepLink('paper', paperTargetKey(p)),
+        order: order++,
+        fields: [
+          { obj: p, field: 'title', level: 'title', label: 'title' },
+          { obj: p, field: 'authors', level: 'meta', label: 'authors' },
+          { obj: p, field: 'category', level: 'meta', label: 'category' },
+          { obj: p, field: 'abstract', level: 'body', label: 'abstract' }
+        ],
+        snippet: function (qq, hits) {
+          return hits.abstract && p.abstract
+            ? makeSearchSnippet(p.abstract, qq, '论文摘要', SEARCH_SNIPPET_MAX) : null;
+        }
+      }, q);
+      if (r) { r.authors = p.authors || ''; groups.paper.push(r); }
+    });
+
+    if (typeof LEARNING_MATERIALS !== 'undefined') {
+      LEARNING_MATERIALS.forEach(function (m) {
+        // 持久 ID（或旧数据的 lgx: 稳定键）原样保留，绝不使用数组下标
+        const key = materialTargetKey(m);
+        const r = buildSearchResult('material', {
+          id: key,
+          title: m.name || '',
+          description: [m.category, m.subcategory].filter(Boolean).join(' · '),
+          targetUrl: papersDeepLink('material', key),
+          order: order++,
+          fields: [
+            { obj: m, field: 'name', level: 'title', label: 'title' },
+            { obj: m, field: 'category', level: 'meta', label: 'category' },
+            { obj: m, field: 'subcategory', level: 'meta', label: 'subcategory' },
+            { obj: m, field: 'type', level: 'meta', label: 'type' }
+          ],
+          snippet: null
+        }, q);
+        if (r) { r.category = m.category || ''; r.subcategory = m.subcategory || ''; groups.material.push(r); }
+      });
+    }
   }
-  if (courses.length) {
-    html += `<div class="search-section-title">📚 课程 (${courses.length})</div>`;
-    html += courses.map(c => {
-      // 命中来自笔记正文时，直接给出上下文，省去再点进去确认
-      const hit = (notesLoaded && COURSE_NOTES[c.id]) ? noteSearchHit(COURSE_NOTES[c.id], query) : null;
-      return `
-      <div class="search-course-item" data-href="#/course/${encodeURIComponent(c.id)}" tabindex="0" role="link" onclick="location.hash='#/course/${encodeURIComponent(c.id)}'">
-        <span class="search-item-icon">📚</span>
-        <div class="search-item-main">
-          <div class="search-item-title">${highlightMatch(c.name, query)}</div>
-          <div class="search-item-sub">${escapeHtml(c.category)} · ${notesLoaded && COURSE_NOTES[c.id] ? '📝 有笔记' : '暂无笔记'}${hit ? ' · 笔记命中 ' + hit.count + ' 处' : ''}</div>
-          ${hit ? `<div class="search-item-snippet">${hit.html}</div>` : ''}
-        </div>
-        <span class="search-item-meta">查看 →</span>
-      </div>`;
-    }).join('');
+
+  Object.keys(groups).forEach(function (k) { groups[k].sort(compareSearchResults); });
+  const total = groups.post.length + groups.course.length + groups.paper.length + groups.material.length;
+  return { groups: groups, total: total, sources: sources, incomplete: incomplete, hasError: hasError, query: q };
+}
+
+// 数据源加载状态：明确列出已加载 / 加载中 / 加载失败的类别与重试入口
+function renderSearchSourceStatus(sources) {
+  let html = '<div class="search-sources-status" id="searchSourcesStatus" role="status" aria-live="polite">';
+  const ready = SEARCH_SOURCE_KEYS.filter(function (k) { return sources[k] === 'ready'; });
+  html += '<div class="search-sources-summary">已加载 ' + ready.length + '/' + SEARCH_SOURCE_KEYS.length +
+    ' 类：' + escapeHtml(ready.map(function (k) { return SEARCH_SOURCE_LABELS[k]; }).join('、')) + '</div>';
+  html += '<div class="search-source-badges">';
+  SEARCH_SOURCE_KEYS.forEach(function (k) {
+    const st = sources[k];
+    const tail = st === 'ready' ? ' ✓ 已加载'
+      : st === 'loading' ? ' ⏳ 加载中'
+        : st === 'error' ? ' ⚠ 加载失败' : ' · 待加载';
+    html += '<span class="search-source-badge ' + st + '">' +
+      escapeHtml(SEARCH_SOURCE_LABELS[k] + tail) +
+      (st === 'error' && k !== 'posts'
+        ? ' <a href="#" data-retry-search-source="' + escapeHtml(k) + '">重试</a>' : '') +
+      '</span>';
+  });
+  html += '</div></div>';
+  return html;
+}
+
+function searchSnippetHtml(r) {
+  if (!r || !r.snippet) return '';
+  return '<div class="search-item-snippet"><span class="search-snippet-label">' +
+    escapeHtml(r.snippet.source) + '命中</span>' + r.snippet.html + '</div>';
+}
+
+function renderSearchPostResult(r, query) {
+  const q = searchQueryOf(query);
+  const excerptHtml = (r.snippet && r.snippet.source === '摘要')
+    ? r.snippet.html : highlightMatch(r.description, q);
+  const bodySnippet = (r.snippet && r.snippet.source === '正文') ? searchSnippetHtml(r) : '';
+  return '<article class="article-card" data-href="' + escapeHtml(r.targetUrl) + '" tabindex="0" role="link">' +
+    '<h2 class="article-card-title"><a href="' + escapeHtml(r.targetUrl) + '">' +
+    highlightMatch(r.title, q) + '</a></h2>' +
+    '<p class="article-card-excerpt">' + excerptHtml + '</p>' +
+    bodySnippet +
+    '<div class="article-card-meta"><span class="meta-item">' + escapeHtml(formatDate(r.date)) + '</span>' +
+    '<div class="article-card-tags">' + (r.tags || []).map(function (t) {
+      return '<span class="tag">' + highlightMatch(t, q) + '</span>';
+    }).join('') + '</div></div></article>';
+}
+
+function renderSearchCourseResult(r, query) {
+  const q = searchQueryOf(query);
+  const noteHits = (r.hits.notes || 0) + (r.hits.summary || 0);
+  return '<div class="search-course-item" data-href="' + escapeHtml(r.targetUrl) + '" tabindex="0" role="link">' +
+    '<span class="search-item-icon">📚</span><div class="search-item-main">' +
+    '<div class="search-item-title">' + highlightMatch(r.title, q) + '</div>' +
+    '<div class="search-item-sub">' + highlightMatch(r.category, q) + ' · ' +
+    (r.hasNotes ? '📝 有笔记' : '暂无笔记') +
+    (noteHits ? ' · 笔记命中 ' + noteHits + ' 处' : '') + '</div>' +
+    searchSnippetHtml(r) +
+    '</div><span class="search-item-meta">查看 →</span></div>';
+}
+
+function renderSearchPaperResult(r, query) {
+  const q = searchQueryOf(query);
+  return '<div class="search-paper-item" data-href="' + escapeHtml(r.targetUrl) + '" tabindex="0" role="link">' +
+    '<span class="search-item-icon">📄</span><div class="search-item-main">' +
+    '<div class="search-item-title">' + highlightMatch(r.title, q) + '</div>' +
+    '<div class="search-item-sub">' + highlightMatch(r.authors, q) + '</div>' +
+    searchSnippetHtml(r) +
+    '</div><span class="search-item-meta">查看 →</span></div>';
+}
+
+function renderSearchMaterialResult(r, query) {
+  const q = searchQueryOf(query);
+  return '<div class="search-paper-item" data-href="' + escapeHtml(r.targetUrl) + '" tabindex="0" role="link">' +
+    '<span class="search-item-icon">📎</span><div class="search-item-main">' +
+    '<div class="search-item-title">' + highlightMatch(r.title, q) + '</div>' +
+    '<div class="search-item-sub">' + highlightMatch(r.category, q) +
+    (r.subcategory ? ' · ' + highlightMatch(r.subcategory, q) : '') + '</div>' +
+    '</div><span class="search-item-meta">查看 →</span></div>';
+}
+
+// 结果计算与 DOM 渲染分离：本函数只产出 HTML 字符串
+function buildGlobalSearchHtml(query) {
+  const q = searchQueryOf(query);
+  const display = (query && typeof query === 'object') ? q.raw : String(query == null ? '' : query);
+  const bundle = collectSearchResults(q);
+  const g = bundle.groups;
+  let html = '<div class="search-results-count">找到 ' + bundle.total + ' 条与 “' +
+    escapeHtml(display) + '” 相关的结果</div>';
+  html += renderSearchSourceStatus(bundle.sources);
+  if (bundle.incomplete) {
+    html += '<div class="search-hint">' + (bundle.hasError
+      ? '部分数据源加载失败，当前结果可能不完整；点击上方「重试」可重新加载。'
+      : '正在加载其余搜索数据源，结果会随后补全…') + '</div>';
   }
-  if (papers.length) {
-    html += `<div class="search-section-title">📄 论文 (${papers.length})</div>`;
-    html += papers.map(p => `
-      <div class="search-paper-item" data-href="${escapeHtml(papersDeepLink('paper', paperTargetKey(p)))}" tabindex="0" role="link">
-        <span class="search-item-icon">📄</span>
-        <div class="search-item-main">
-          <div class="search-item-title">${highlightMatch(p.title, query)}</div>
-          <div class="search-item-sub">${escapeHtml(p.authors || '')}</div>
-        </div>
-        <span class="search-item-meta">查看 →</span>
-      </div>`).join('');
+
+  if (g.post.length) {
+    html += '<div class="search-section-title">📝 文章 (' + g.post.length + ')</div>';
+    html += '<div class="article-list">' + g.post.map(function (r) {
+      return renderSearchPostResult(r, q);
+    }).join('') + '</div>';
   }
-  if (materials.length) {
-    html += `<div class="search-section-title">📎 学习资料 (${materials.length})</div>`;
-    html += materials.map(m => `
-      <div class="search-paper-item" data-href="${escapeHtml(papersDeepLink('material', materialTargetKey(m)))}" tabindex="0" role="link">
-        <span class="search-item-icon">📎</span>
-        <div class="search-item-main">
-          <div class="search-item-title">${escapeHtml(m.name || '')}</div>
-          <div class="search-item-sub">${escapeHtml(m.subcategory || '')}</div>
-        </div>
-        <span class="search-item-meta">查看 →</span>
-      </div>`).join('');
+  if (g.course.length) {
+    html += '<div class="search-section-title">📚 课程 (' + g.course.length + ')</div>';
+    html += g.course.map(function (r) { return renderSearchCourseResult(r, q); }).join('');
   }
-  if (total === 0) {
-    html += `<div class="empty-state"><div class="empty-state-icon">🔍</div><p>没有找到相关内容，换个关键词试试</p></div>`;
+  if (g.paper.length) {
+    html += '<div class="search-section-title">📄 论文 (' + g.paper.length + ')</div>';
+    html += g.paper.map(function (r) { return renderSearchPaperResult(r, q); }).join('');
+  }
+  if (g.material.length) {
+    html += '<div class="search-section-title">📎 学习资料 (' + g.material.length + ')</div>';
+    html += g.material.map(function (r) { return renderSearchMaterialResult(r, q); }).join('');
+  }
+  if (bundle.total === 0) {
+    // 数据尚未到齐时的零结果只是临时状态，不能当成最终"无结果"
+    html += bundle.incomplete
+      ? '<div class="empty-state"><div class="empty-state-icon">⏳</div><p>还有数据源尚未加载完成，暂时无法确定是否有结果…</p></div>'
+      : '<div class="empty-state"><div class="empty-state-icon">🔍</div><p>没有找到相关内容，换个关键词试试</p></div>';
   }
   return html;
+}
+
+function renderGlobalSearch(query) {
+  const display = (query && typeof query === 'object') ? query.raw : String(query == null ? '' : query);
+  // 属性值只放百分号编码后的查询键，绝不把原始用户输入（含 HTML 特殊字符）拼进属性
+  return '<div class="search-results" data-search-root="1" data-query="' +
+    escapeHtml(encodeURIComponent(display)) + '">' + buildGlobalSearchHtml(display) + '</div>';
 }
 
 function renderPostMissing() {
@@ -1125,6 +1539,7 @@ function noteStats(courseId) {
 }
 
 // 笔记全文命中：返回高亮片段与命中次数；未命中返回 null
+// 片段生成与全局搜索共用同一套"截取窗口 → 转义 → 高亮"逻辑
 function noteSearchHit(entry, query) {
   const raw = noteText(entry);
   const q = (query || '').toLowerCase();
@@ -1139,18 +1554,10 @@ function noteSearchHit(entry, query) {
     count++;
     from = at + q.length;
   }
-  const start = Math.max(0, idx - 36);
-  const end = Math.min(raw.length, idx + q.length + 64);
-  const snippet = raw.slice(start, end)
-    .replace(/!\[[^\]]*\]\([^)]*\)/g, ' ')
-    .replace(/\[([^\]]*)\]\([^)]*\)/g, '$1')
-    .replace(/\|/g, ' ')
-    .replace(/[#>*`_~]+/g, ' ')
-    .replace(/\s+/g, ' ')
-    .trim();
+  const snippet = makeSearchSnippet(raw, query, '', SEARCH_SNIPPET_MAX);
   return {
     count: count,
-    html: (start > 0 ? '…' : '') + highlightMatch(snippet, query) + (end < raw.length ? '…' : '')
+    html: snippet ? snippet.html : escapeHtml(raw.slice(0, SEARCH_SNIPPET_MAX))
   };
 }
 
@@ -4603,49 +5010,98 @@ function rememberEntryState(hash) {
   } catch (e) { /* 仅影响后退恢复体验，不影响当前页面 */ }
 }
 
+// 搜索渲染状态（Batch 8C-1）：查询序列号 / IME 组合标记 / 局部重绘
+let _searchSeq = 0;
+let _searchComposing = false;
+let _searchRepaintPending = false;
+
+// 计算与渲染分离：结果 HTML 由 buildGlobalSearchHtml 生成，这里只负责落到 DOM。
+// 已有结果容器时只更新容器内部，不重建整页、更不会重建 #searchBar 里的输入框。
+function paintSearchResults(query) {
+  const box = document.getElementById('app');
+  if (!box || !box.isConnected) return;
+  const root = box.querySelector('[data-search-root]');
+  if (root && root.getAttribute('data-query') === encodeURIComponent(query)) {
+    root.innerHTML = buildGlobalSearchHtml(query);
+  } else {
+    box.innerHTML = renderGlobalSearch(query);
+  }
+}
+
+// 统一发起 / 等待四个搜索数据源：每个源都先 settle 成 {key, ok}，
+// 单个源失败不阻断其他来源，也不会产生未处理的 Promise rejection。
+function searchResultsReady() {
+  const seq = ++_searchSeq;
+  const token = _routeToken;
+  const target = searchQuery.trim();
+  const job = loadSearchSources();                 // 复用 Promise 缓存，不重复请求
+  job.then(function () {
+    if (seq !== _searchSeq) return;                 // 快速连续输入：只显示最新查询
+    if (token !== _routeToken) return;              // 路由已切换：旧请求不重绘新页面
+    if (!isHomeRoute()) return;
+    if (searchQuery.trim() !== target) return;
+    if (_searchComposing) { _searchRepaintPending = true; return; }  // IME 组合期间不打断
+    if (target) paintSearchResults(target);
+  });
+  return job;
+}
+
 function applyGlobalSearch(val) {
   searchQuery = val;
   if (!isHomeRoute()) return;
-  document.getElementById('app').innerHTML = renderHome();
-  rememberEntryState(routeHash());
-
   const target = val.trim();
-  if (!target) return;
-  const needData = !dataReady('courses') || !dataReady('papers') || !dataReady('notes');
-  const needBodies = !_searchDocsReady;
-  if (!needData && !needBodies) return;
-  const token = _routeToken;   // 异步回调回来时路由若已切换，直接丢弃
+  rememberEntryState(routeHash());
+  if (!target) {
+    document.getElementById('app').innerHTML = renderHome();
+    return;
+  }
 
-  // 正文语料加载失败时降级为"仅标题/摘要/标签命中"，不阻断搜索
-  Promise.all([
-    loadData('courses'), loadData('papers'), loadData('notes'),
-    ensureSearchDocs().catch(function () { return null; })
-  ]).then(function () {
-    if (token !== _routeToken) return;          // 路由已切换过：旧回调一律丢弃
-    if (!isHomeRoute()) return;                 // 已经离开首页：不能覆盖当前路由
-    if (searchQuery.trim() !== target) return;  // 输入已变化：丢弃过时的异步结果
-    const box = document.getElementById('app');
-    if (!box || !box.isConnected) return;
-    box.innerHTML = renderHome();
-    // 重绘会换掉输入框，必须重新绑定，否则后续输入不再生效
-    bindLiveSearch('searchInput', applyGlobalSearch, 180);
-    const input = document.getElementById('searchInput');
-    if (input) { input.value = searchQuery; input.focus(); }
+  // 只补齐尚未就绪（且未失败）的源；失败源由状态条里的「重试」显式恢复，
+  // 已失败的源不会在每次敲键时被反复请求。
+  const status = searchSourceStatus();
+  const missing = ['courses', 'notes', 'papers', 'docs'].filter(function (k) {
+    return status[k] !== 'ready' && status[k] !== 'error';
   });
+  if (!missing.length) { paintSearchResults(target); return; }
+  // 先发起加载（状态转为 loading）再渲染，状态条如实反映进度
+  searchResultsReady();
+  paintSearchResults(target);
 }
 
 bindLiveSearch('searchInput', applyGlobalSearch);
 
+// 中文输入法组合期间不重建（也不重新聚焦）输入框；组合结束后补一次重绘
+document.addEventListener('compositionstart', function (e) {
+  if (e.target && e.target.id === 'searchInput') _searchComposing = true;
+}, true);
+document.addEventListener('compositionend', function (e) {
+  if (!e.target || e.target.id !== 'searchInput') return;
+  _searchComposing = false;
+  if (_searchRepaintPending) {
+    _searchRepaintPending = false;
+    if (isHomeRoute() && searchQuery.trim()) paintSearchResults(searchQuery.trim());
+  }
+}, true);
+
+// 失败数据源的「原地重试」：清掉失败缓存后重新发起，完成后只刷新结果区
+document.addEventListener('click', function (e) {
+  const btn = e.target && e.target.closest ? e.target.closest('[data-retry-search-source]') : null;
+  if (!btn) return;
+  e.preventDefault();
+  const key = btn.getAttribute('data-retry-search-source');
+  if (!key || !resetSearchSource(key) || !isHomeRoute()) return;
+  const target = searchQuery.trim();
+  searchResultsReady();                      // 立刻把状态切回"加载中"
+  if (target) paintSearchResults(target);
+});
+
 // 用户一旦聚焦搜索框（点/按 /），就把搜索需要的数据全部预热：
 // 首个搜索的耗时几乎全在"课程/论文/笔记 157KB + 正文语料 107KB"上，
 // 而"点开搜索框"到"真正敲字"通常有几百毫秒，用来并行拉取正好。
-// 失败不影响任何功能（下次输入仍会重试）。
+// 内部所有 Promise 都已 settle，失败不阻断、下次输入或点击重试仍可恢复。
 document.addEventListener('focusin', function (e) {
   if (!e.target || e.target.id !== 'searchInput') return;
-  loadData('courses');
-  loadData('papers');
-  loadData('notes');
-  ensureSearchDocs().catch(function () { return null; });
+  loadSearchSources();
 });
 
 // 正文加载失败后的"重新加载"：事件委托，避免把 id 拼进内联事件
