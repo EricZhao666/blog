@@ -45,7 +45,7 @@
 
 - 懒创建单例 `<dialog id="imageLightbox">`（`document.createElement` + `append`），包含：
   - 关闭按钮（`aria-label="关闭图片预览"`，42px / 手机 46px）；
-  - 原图 `<img>`（`max-width:100%`、`max-height:calc(100vh - 120px)`、`object-fit:contain`、`width/height:auto`，保持原比例");
+  - 原图 `<img>`（`max-width:100%`、`max-height:calc(100vh - 120px)`、`object-fit:contain`、`width/height:auto`，保持原比例）；
   - 失败提示（静态文本「图片加载失败，请稍后重试。」）；
   - 说明区（仅 alt 非空时显示）。
 - 打开流程：记录 `window.scrollY` → `html.lightbox-open { overflow:hidden }` → `showModal()`（不支持时降级 `open` 属性）→ 焦点移到关闭按钮。
