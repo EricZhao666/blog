@@ -482,7 +482,7 @@ async function scrollToBodyEnd(page) {
       await sleep(1800);
       const caches = await s.page.evaluate(() => (window.caches ? caches.keys() : []));
       check('S1 CACHE_VERSION 已递增',
-        !!cacheVer && cacheVer > OLD_CACHE_VERSION && cacheVer === '2026-11-16-2', cacheVer);
+        !!cacheVer && cacheVer > OLD_CACHE_VERSION && cacheVer > '2026-11-16-2', cacheVer);
       check('S2 SW 使用当前缓存版本', caches.some(n => n.indexOf(cacheVer) !== -1), caches.join(','));
       check('S3 旧版本缓存已清理', !caches.some(n => n.indexOf(OLD_CACHE_VERSION) !== -1), caches.join(','));
       check('S4 SW 生效时页面仍可用', await s.page.isVisible('#searchInput') && s.errors.length === 0);
