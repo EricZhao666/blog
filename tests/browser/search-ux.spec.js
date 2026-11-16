@@ -315,7 +315,7 @@ async function search(page, text, waitMs) {
       const swSrc = fs.readFileSync(path.join(ROOT, 'sw.js'), 'utf8');
       const ver = (/CACHE_VERSION = '([^']+)'/.exec(swSrc) || [])[1];
       check('U15 app.js / css 修改后 CACHE_VERSION 已递增',
-        !!ver && ver === '2026-11-13-3' && /\.\/js\/app\.js/.test(swSrc) && /\.\/css\/style\.css/.test(swSrc), ver);
+        !!ver && ver > '2026-11-13-3' && /\.\/js\/app\.js/.test(swSrc) && /\.\/css\/style\.css/.test(swSrc), ver);
     }
 
     console.log('\n共 ' + (pass + fail) + ' 项，PASS ' + pass + '，FAIL ' + fail);

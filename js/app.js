@@ -1159,6 +1159,235 @@ function renderSearchSourceStatus(sources) {
   return html;
 }
 
+// ============================================
+// 搜索交互状态（Batch 8C-2）：分类筛选 / 排序 / 折叠 / 键盘选中 / 本地历史
+// 全部是轻量 UI 状态，复用 collectSearchResults() 的结果，不新建第二套搜索数据结构。
+// ============================================
+const SEARCH_FILTER_TYPES = [
+  { key: 'all', label: '全部' },
+  { key: 'post', label: '文章' },
+  { key: 'course', label: '课程' },
+  { key: 'paper', label: '论文' },
+  { key: 'material', label: '学习资料' }
+];
+const SEARCH_SORT_OPTIONS = ['relevance', 'title', 'date'];
+const SEARCH_VISIBLE_LIMIT = 6;              // 每组默认渲染上限，只限制渲染不截断计算
+const SEARCH_HISTORY_KEY = 'blog.searchHistory.v1';
+const SEARCH_HISTORY_MAX = 10;
+const SEARCH_GROUP_LABELS = {
+  post: '📝 文章', course: '📚 课程', paper: '📄 论文', material: '📎 学习资料'
+};
+
+let _searchFilterType = 'all';
+let _searchSort = 'relevance';
+let _searchExpanded = Object.create(null);
+let _searchActiveIndex = -1;
+let _lastSearchQuery = '';
+let _renderResultIndex = 0;
+let _searchHistoryCache = null;
+let _searchHistoryStorageOk = true;
+
+function resetSearchExpanded() { _searchExpanded = Object.create(null); }
+
+// ---- 最近搜索历史：只存关键词字符串，仅浏览器本地，不上传、不与草稿 IndexedDB 混用 ----
+function decodeSearchHistoryKey(v) {
+  try { return decodeURIComponent(String(v == null ? '' : v)); } catch (e) { return ''; }
+}
+
+function dedupeSearchHistory(arr) {
+  const seen = Object.create(null);
+  const out = [];
+  for (let i = 0; i < arr.length && out.length < SEARCH_HISTORY_MAX; i++) {
+    const term = String(arr[i] == null ? '' : arr[i]).trim().slice(0, SEARCH_QUERY_MAX);
+    if (!term || seen[term]) continue;
+    seen[term] = 1;
+    out.push(term);
+  }
+  return out;
+}
+
+function readSearchHistory() {
+  if (_searchHistoryCache) return _searchHistoryCache;
+  let arr = [];
+  try {
+    const raw = window.localStorage.getItem(SEARCH_HISTORY_KEY);
+    const parsed = raw ? JSON.parse(raw) : null;
+    if (Array.isArray(parsed)) arr = parsed;
+    _searchHistoryStorageOk = true;
+  } catch (e) {
+    _searchHistoryStorageOk = false;        // 隐私模式 / 禁用存储：内存降级，不影响搜索
+  }
+  _searchHistoryCache = dedupeSearchHistory(arr);
+  return _searchHistoryCache;
+}
+
+function saveSearchHistory(arr) {
+  _searchHistoryCache = dedupeSearchHistory(arr);
+  try {
+    window.localStorage.setItem(SEARCH_HISTORY_KEY, JSON.stringify(_searchHistoryCache));
+  } catch (e) {
+    _searchHistoryStorageOk = false;
+  }
+  return _searchHistoryCache;
+}
+
+function recordSearchHistory(q) {
+  const term = String(q == null ? '' : q).trim().slice(0, SEARCH_QUERY_MAX);
+  if (!term) return;
+  const rest = readSearchHistory().filter(function (x) { return x !== term; });
+  saveSearchHistory([term].concat(rest));
+}
+
+function removeSearchHistory(q) {
+  saveSearchHistory(readSearchHistory().filter(function (x) { return x !== q; }));
+}
+
+function clearSearchHistory() {
+  _searchHistoryCache = [];                // 清空后不自动写回任何旧记录
+  try { window.localStorage.removeItem(SEARCH_HISTORY_KEY); }
+  catch (e) { _searchHistoryStorageOk = false; }
+}
+
+// ---- 排序：相关性完全沿用 collectSearchResults() 已排好的顺序 ----
+function compareSearchByTitle(a, b) {
+  const cmp = String(a.title || '').localeCompare(String(b.title || ''), 'zh-Hans-CN', { sensitivity: 'base' });
+  return cmp || compareSearchResults(a, b);
+}
+
+function reliableSearchDate(r) {
+  // 只有带 YYYY-MM-DD 日期的文章才算「可靠日期」；课程 / 论文 / 资料绝不伪造
+  return (r.type === 'post' && /^\d{4}-\d{2}-\d{2}/.test(r.date || '')) ? String(r.date).slice(0, 10) : '';
+}
+
+function compareSearchByDate(a, b) {
+  const da = reliableSearchDate(a), db = reliableSearchDate(b);
+  if (da && db && da !== db) return db.localeCompare(da);      // 新 → 旧
+  if (da && !db) return -1;
+  if (!da && db) return 1;
+  return compareSearchResults(a, b);                           // 无可靠日期：稳定回退
+}
+
+function sortSearchGroup(list, type) {
+  const copy = list.slice();                // 不改原始结果数组
+  if (_searchSort === 'title') return copy.sort(compareSearchByTitle);
+  if (_searchSort === 'date' && type === 'post') return copy.sort(compareSearchByDate);
+  return copy;                              // relevance：原样复用 Batch 8C-1 的 score 排序
+}
+
+// ---- 控件与分组渲染 ----
+function renderSearchControls(bundle) {
+  const g = bundle.groups;
+  const counts = {
+    all: bundle.total, post: g.post.length, course: g.course.length,
+    paper: g.paper.length, material: g.material.length
+  };
+  let html = '<div class="search-controls">';
+  html += '<div class="search-filter-bar" id="searchFilterBar" role="group" aria-label="搜索结果分类筛选">';
+  SEARCH_FILTER_TYPES.forEach(function (t) {
+    const on = _searchFilterType === t.key;
+    html += '<button type="button" class="search-filter-btn' + (on ? ' active' : '') +
+      '" data-search-filter="' + t.key + '" aria-pressed="' + on + '">' +
+      escapeHtml(t.label) + ' (' + counts[t.key] + ')</button>';
+  });
+  html += '</div>';
+  html += '<div class="search-sort-wrap"><label for="searchSortSelect">排序</label>' +
+    '<select id="searchSortSelect" data-search-sort="1" aria-label="搜索结果排序方式">';
+  [['relevance', '相关性'], ['title', '标题 A–Z'], ['date', '最新文章优先（仅文章）']].forEach(function (o) {
+    html += '<option value="' + o[0] + '"' + (_searchSort === o[0] ? ' selected' : '') + '>' +
+      escapeHtml(o[1]) + '</option>';
+  });
+  html += '</select></div></div>';
+  if (_searchSort === 'date') {
+    html += '<div class="search-hint">「最新文章优先」只对有可靠发布日期的文章生效；' +
+      '课程 / 论文 / 学习资料没有发布时间，保持相关性排序。</div>';
+  }
+  return html;
+}
+
+function renderSearchHistoryPanel() {
+  const list = readSearchHistory();
+  if (!list.length) return '';
+  let html = '<div class="search-history" id="searchHistoryPanel">' +
+    '<div class="search-history-head"><span>最近搜索（仅保存在此浏览器）</span>' +
+    '<button type="button" class="search-history-clear" data-search-history-clear="1">清空</button></div>' +
+    '<div class="search-history-list">';
+  list.forEach(function (term) {
+    const safe = escapeHtml(term);                       // 只作为文本节点，经 escapeHtml 输出
+    // 属性只放百分号编码后的键：转义文本在 innerHTML 序列化时会回显 <，不能拼进属性
+    const key = escapeHtml(encodeURIComponent(term));
+    html += '<span class="search-history-chip">' +
+      '<button type="button" class="search-history-term" data-search-history="' + key + '">' + safe + '</button>' +
+      '<button type="button" class="search-history-remove" data-search-history-remove="' + key +
+      '" aria-label="删除该搜索历史">×</button></span>';
+  });
+  html += '</div>';
+  if (!_searchHistoryStorageOk) {
+    html += '<div class="search-history-note">当前浏览器无法写入本地存储，历史仅保留到本次页面关闭。</div>';
+  }
+  html += '</div>';
+  return html;
+}
+
+function searchResultAttrs() {
+  const idx = _renderResultIndex++;
+  return ' id="search-result-' + idx + '" data-search-result="1" data-result-index="' + idx +
+    '" aria-selected="false"';
+}
+
+// ---- 键盘选中：只针对当前真正渲染出来的可见结果，避免指向已删除 DOM ----
+function searchResultNodes() {
+  const root = document.querySelector('[data-search-root]');
+  if (!root) return [];
+  return Array.prototype.slice.call(root.querySelectorAll('[data-search-result]'));
+}
+
+function resetSearchActive() {
+  _searchActiveIndex = -1;
+  const input = document.getElementById('searchInput');
+  if (input) input.removeAttribute('aria-activedescendant');
+}
+
+function syncSearchActive() {
+  const nodes = searchResultNodes();
+  if (_searchActiveIndex >= nodes.length) _searchActiveIndex = -1;
+  nodes.forEach(function (n, i) {
+    const on = i === _searchActiveIndex;
+    n.classList.toggle('search-result-active', on);
+    n.setAttribute('aria-selected', on ? 'true' : 'false');
+  });
+  const input = document.getElementById('searchInput');
+  if (input) {
+    input.setAttribute('role', 'combobox');
+    input.setAttribute('aria-controls', 'searchResults');
+    input.setAttribute('aria-autocomplete', 'list');
+    input.setAttribute('aria-expanded', nodes.length ? 'true' : 'false');
+    if (_searchActiveIndex >= 0) input.setAttribute('aria-activedescendant', nodes[_searchActiveIndex].id);
+    else input.removeAttribute('aria-activedescendant');
+  }
+  if (_searchActiveIndex >= 0) {
+    try { nodes[_searchActiveIndex].scrollIntoView({ block: 'nearest' }); } catch (e) { /* jsdom 忽略 */ }
+  }
+}
+
+function renderSearchGroup(type, list, q) {
+  const sorted = sortSearchGroup(list, type);
+  const visible = _searchExpanded[type] ? sorted : sorted.slice(0, SEARCH_VISIBLE_LIMIT);
+  const renderer = type === 'post' ? renderSearchPostResult
+    : type === 'course' ? renderSearchCourseResult
+      : type === 'paper' ? renderSearchPaperResult : renderSearchMaterialResult;
+  const items = visible.map(function (r) { return renderer(r, q); }).join('');
+  let html = '<div class="search-section-title">' + SEARCH_GROUP_LABELS[type] +
+    ' (显示 ' + visible.length + ' / 共 ' + list.length + ')</div>';
+  html += (type === 'post' ? '<div class="article-list">' : '') + items + (type === 'post' ? '</div>' : '');
+  if (list.length > SEARCH_VISIBLE_LIMIT) {
+    const expanded = !!_searchExpanded[type];
+    html += '<button type="button" class="search-expand-btn" data-search-expand="' + type +
+      '" aria-expanded="' + expanded + '">' +
+      (expanded ? '收起' : '展开更多 (' + (list.length - visible.length) + ')') + '</button>';
+  }
+  return html;
+}
+
 function searchSnippetHtml(r) {
   if (!r || !r.snippet) return '';
   return '<div class="search-item-snippet"><span class="search-snippet-label">' +
@@ -1167,10 +1396,11 @@ function searchSnippetHtml(r) {
 
 function renderSearchPostResult(r, query) {
   const q = searchQueryOf(query);
+  const attrs = searchResultAttrs();
   const excerptHtml = (r.snippet && r.snippet.source === '摘要')
     ? r.snippet.html : highlightMatch(r.description, q);
   const bodySnippet = (r.snippet && r.snippet.source === '正文') ? searchSnippetHtml(r) : '';
-  return '<article class="article-card" data-href="' + escapeHtml(r.targetUrl) + '" tabindex="0" role="link">' +
+  return '<article class="article-card"' + attrs + ' data-href="' + escapeHtml(r.targetUrl) + '" tabindex="0" role="link">' +
     '<h2 class="article-card-title"><a href="' + escapeHtml(r.targetUrl) + '">' +
     highlightMatch(r.title, q) + '</a></h2>' +
     '<p class="article-card-excerpt">' + excerptHtml + '</p>' +
@@ -1183,8 +1413,9 @@ function renderSearchPostResult(r, query) {
 
 function renderSearchCourseResult(r, query) {
   const q = searchQueryOf(query);
+  const attrs = searchResultAttrs();
   const noteHits = (r.hits.notes || 0) + (r.hits.summary || 0);
-  return '<div class="search-course-item" data-href="' + escapeHtml(r.targetUrl) + '" tabindex="0" role="link">' +
+  return '<div class="search-course-item"' + attrs + ' data-href="' + escapeHtml(r.targetUrl) + '" tabindex="0" role="link">' +
     '<span class="search-item-icon">📚</span><div class="search-item-main">' +
     '<div class="search-item-title">' + highlightMatch(r.title, q) + '</div>' +
     '<div class="search-item-sub">' + highlightMatch(r.category, q) + ' · ' +
@@ -1196,7 +1427,8 @@ function renderSearchCourseResult(r, query) {
 
 function renderSearchPaperResult(r, query) {
   const q = searchQueryOf(query);
-  return '<div class="search-paper-item" data-href="' + escapeHtml(r.targetUrl) + '" tabindex="0" role="link">' +
+  const attrs = searchResultAttrs();
+  return '<div class="search-paper-item"' + attrs + ' data-href="' + escapeHtml(r.targetUrl) + '" tabindex="0" role="link">' +
     '<span class="search-item-icon">📄</span><div class="search-item-main">' +
     '<div class="search-item-title">' + highlightMatch(r.title, q) + '</div>' +
     '<div class="search-item-sub">' + highlightMatch(r.authors, q) + '</div>' +
@@ -1206,7 +1438,8 @@ function renderSearchPaperResult(r, query) {
 
 function renderSearchMaterialResult(r, query) {
   const q = searchQueryOf(query);
-  return '<div class="search-paper-item" data-href="' + escapeHtml(r.targetUrl) + '" tabindex="0" role="link">' +
+  const attrs = searchResultAttrs();
+  return '<div class="search-paper-item"' + attrs + ' data-href="' + escapeHtml(r.targetUrl) + '" tabindex="0" role="link">' +
     '<span class="search-item-icon">📎</span><div class="search-item-main">' +
     '<div class="search-item-title">' + highlightMatch(r.title, q) + '</div>' +
     '<div class="search-item-sub">' + highlightMatch(r.category, q) +
@@ -1220,34 +1453,36 @@ function buildGlobalSearchHtml(query) {
   const display = (query && typeof query === 'object') ? q.raw : String(query == null ? '' : query);
   const bundle = collectSearchResults(q);
   const g = bundle.groups;
+  _renderResultIndex = 0;
   let html = '<div class="search-results-count">找到 ' + bundle.total + ' 条与 “' +
     escapeHtml(display) + '” 相关的结果</div>';
   html += renderSearchSourceStatus(bundle.sources);
+  html += renderSearchControls(bundle);
+  html += renderSearchHistoryPanel();
   if (bundle.incomplete) {
     html += '<div class="search-hint">' + (bundle.hasError
       ? '部分数据源加载失败，当前结果可能不完整；点击上方「重试」可重新加载。'
       : '正在加载其余搜索数据源，结果会随后补全…') + '</div>';
   }
 
-  if (g.post.length) {
-    html += '<div class="search-section-title">📝 文章 (' + g.post.length + ')</div>';
-    html += '<div class="article-list">' + g.post.map(function (r) {
-      return renderSearchPostResult(r, q);
-    }).join('') + '</div>';
-  }
-  if (g.course.length) {
-    html += '<div class="search-section-title">📚 课程 (' + g.course.length + ')</div>';
-    html += g.course.map(function (r) { return renderSearchCourseResult(r, q); }).join('');
-  }
-  if (g.paper.length) {
-    html += '<div class="search-section-title">📄 论文 (' + g.paper.length + ')</div>';
-    html += g.paper.map(function (r) { return renderSearchPaperResult(r, q); }).join('');
-  }
-  if (g.material.length) {
-    html += '<div class="search-section-title">📎 学习资料 (' + g.material.length + ')</div>';
-    html += g.material.map(function (r) { return renderSearchMaterialResult(r, q); }).join('');
-  }
-  if (bundle.total === 0) {
+  // 分类数量一律取筛选之前的 bundle.groups；筛选只决定渲染哪些分组
+  const types = ['post', 'course', 'paper', 'material'].filter(function (t) {
+    return _searchFilterType === 'all' || _searchFilterType === t;
+  });
+  types.forEach(function (t) {
+    if (g[t].length) html += renderSearchGroup(t, g[t], q);
+  });
+
+  if (_searchFilterType !== 'all' && !g[_searchFilterType].length) {
+    const label = (SEARCH_FILTER_TYPES.filter(function (t) {
+      return t.key === _searchFilterType;
+    })[0] || {}).label || '';
+    html += bundle.incomplete
+      ? '<div class="empty-state"><div class="empty-state-icon">⏳</div><p>该分类的数据源尚未加载完成，暂时无法确定是否有结果…</p></div>'
+      : '<div class="empty-state"><div class="empty-state-icon">🔍</div><p>当前分类「' +
+        escapeHtml(label) + '」没有匹配结果。</p><p><button type="button" class="search-expand-btn" ' +
+        'data-search-filter="all">查看全部结果</button></p></div>';
+  } else if (bundle.total === 0) {
     // 数据尚未到齐时的零结果只是临时状态，不能当成最终"无结果"
     html += bundle.incomplete
       ? '<div class="empty-state"><div class="empty-state-icon">⏳</div><p>还有数据源尚未加载完成，暂时无法确定是否有结果…</p></div>'
@@ -1259,7 +1494,7 @@ function buildGlobalSearchHtml(query) {
 function renderGlobalSearch(query) {
   const display = (query && typeof query === 'object') ? query.raw : String(query == null ? '' : query);
   // 属性值只放百分号编码后的查询键，绝不把原始用户输入（含 HTML 特殊字符）拼进属性
-  return '<div class="search-results" data-search-root="1" data-query="' +
+  return '<div class="search-results" id="searchResults" data-search-root="1" data-query="' +
     escapeHtml(encodeURIComponent(display)) + '">' + buildGlobalSearchHtml(display) + '</div>';
 }
 
@@ -5026,6 +5261,9 @@ function paintSearchResults(query) {
   } else {
     box.innerHTML = renderGlobalSearch(query);
   }
+  // 重绘后丢弃旧 DOM 的选中引用，再基于新节点同步 aria 状态
+  resetSearchActive();
+  syncSearchActive();
 }
 
 // 统一发起 / 等待四个搜索数据源：每个源都先 settle 成 {key, ok}，
@@ -5050,6 +5288,12 @@ function applyGlobalSearch(val) {
   searchQuery = val;
   if (!isHomeRoute()) return;
   const target = val.trim();
+  // 关键词变化（或清空）时重置展开与键盘选中，避免旧查询的状态污染新结果
+  if (target !== _lastSearchQuery || !target) {
+    resetSearchExpanded();
+    resetSearchActive();
+    _lastSearchQuery = target;
+  }
   rememberEntryState(routeHash());
   if (!target) {
     document.getElementById('app').innerHTML = renderHome();
@@ -5069,6 +5313,134 @@ function applyGlobalSearch(val) {
 }
 
 bindLiveSearch('searchInput', applyGlobalSearch);
+
+// ============================================
+// 搜索结果交互（Batch 8C-2）：筛选 / 排序 / 展开 / 历史 / 键盘导航
+// 统一事件委托，不引入键盘框架；切换控件只重算 + 局部重绘，不发起新的数据请求
+// ============================================
+function repaintSearchInteraction() {
+  resetSearchActive();
+  if (isHomeRoute() && searchQuery.trim()) paintSearchResults(searchQuery.trim());
+}
+
+document.addEventListener('click', function (e) {
+  const t = e.target;
+  if (!t || !t.closest) return;
+
+  const filterBtn = t.closest('[data-search-filter]');
+  if (filterBtn) {
+    e.preventDefault();
+    const key = filterBtn.getAttribute('data-search-filter');
+    if (SEARCH_FILTER_TYPES.some(function (x) { return x.key === key; })) {
+      _searchFilterType = key;
+      resetSearchExpanded();
+      repaintSearchInteraction();
+    }
+    return;
+  }
+
+  const expandBtn = t.closest('[data-search-expand]');
+  if (expandBtn) {
+    e.preventDefault();
+    const type = expandBtn.getAttribute('data-search-expand');
+    if (SEARCH_GROUP_LABELS[type]) {
+      _searchExpanded[type] = !_searchExpanded[type];
+      repaintSearchInteraction();
+    }
+    return;
+  }
+
+  const histTerm = t.closest('[data-search-history]');
+  if (histTerm) {
+    e.preventDefault();
+    const term = decodeSearchHistoryKey(histTerm.getAttribute('data-search-history'));
+    if (term) {
+      recordSearchHistory(term);
+      const input = document.getElementById('searchInput');
+      if (input) input.value = term;
+      applyGlobalSearch(term);
+      if (input) input.focus();
+    }
+    return;
+  }
+
+  const removeBtn = t.closest('[data-search-history-remove]');
+  if (removeBtn) {
+    e.preventDefault();
+    removeSearchHistory(decodeSearchHistoryKey(removeBtn.getAttribute('data-search-history-remove')));
+    repaintSearchInteraction();
+    return;
+  }
+
+  const clearBtn = t.closest('[data-search-history-clear]');
+  if (clearBtn) {
+    e.preventDefault();
+    clearSearchHistory();
+    repaintSearchInteraction();
+    return;
+  }
+
+  // 点击结果 = 用户确认搜索；鼠标点击与键盘选择共用同一 data-href
+  if (t.closest('[data-search-result]') && isHomeRoute() && searchQuery.trim()) {
+    recordSearchHistory(searchQuery);
+  }
+});
+
+document.addEventListener('change', function (e) {
+  const el = e.target;
+  if (!el || el.id !== 'searchSortSelect') return;
+  const v = String(el.value || '');
+  if (SEARCH_SORT_OPTIONS.indexOf(v) === -1) return;
+  _searchSort = v;
+  repaintSearchInteraction();
+});
+
+// 捕获阶段：Enter 时先取到当前选中结果，再让 bindLiveSearch 的提交逻辑执行
+document.addEventListener('keydown', function (e) {
+  const el = e.target;
+  if (!el || el.id !== 'searchInput') return;
+  if (e.isComposing || e.keyCode === 229 || _searchComposing) return;   // 中文输入法组合期
+  if (e.ctrlKey || e.metaKey || e.altKey || e.shiftKey) return;        // 系统快捷键一律放行
+  const key = e.key;
+
+  if (key === 'Escape') {
+    // 有选中项：只退出选择，不清空搜索；没有则交给原有 Esc 清空逻辑
+    if (_searchActiveIndex >= 0 && isHomeRoute()) {
+      e.preventDefault();
+      e.stopPropagation();
+      resetSearchActive();
+      syncSearchActive();
+    }
+    return;
+  }
+  if (key !== 'ArrowUp' && key !== 'ArrowDown' && key !== 'Enter') return;
+
+  const nodes = searchResultNodes();
+  if (key === 'ArrowUp' || key === 'ArrowDown') {
+    if (!nodes.length) return;
+    e.preventDefault();
+    if (_searchActiveIndex < 0) {
+      _searchActiveIndex = key === 'ArrowDown' ? 0 : nodes.length - 1;
+    } else {
+      _searchActiveIndex = Math.max(0, Math.min(nodes.length - 1,
+        _searchActiveIndex + (key === 'ArrowDown' ? 1 : -1)));
+    }
+    syncSearchActive();
+    return;
+  }
+
+  // Enter：只有用户确认搜索才写历史；查询已提交且有选中项时打开同一目标链接
+  const term = String(el.value || '').trim();
+  if (term) recordSearchHistory(term);
+  const submitted = term === searchQuery.trim();
+  if (submitted && _searchActiveIndex >= 0 && nodes[_searchActiveIndex]) {
+    const href = nodes[_searchActiveIndex].getAttribute('data-href');
+    if (href) {
+      e.preventDefault();
+      if (location.hash !== href) location.hash = href;
+    }
+  }
+}, true);
 
 // 中文输入法组合期间不重建（也不重新聚焦）输入框；组合结束后补一次重绘
 document.addEventListener('compositionstart', function (e) {
@@ -5217,7 +5589,8 @@ function applyTheme(theme) {
 
 function toggleTheme() {
   const cur = document.documentElement.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
-  localStorage.setItem('theme', cur);
+  // localStorage 不可用（隐私模式）时主题仍在当前页面生效，只是不持久化
+  try { localStorage.setItem('theme', cur); } catch (e) { /* 忽略存储失败 */ }
   applyTheme(cur);
   if (GISCUS_CONFIG.enabled && location.hash.indexOf('/post/') === 0) {
     loadGiscus(location.hash.slice('/post/'.length));
@@ -5227,13 +5600,16 @@ window.toggleTheme = toggleTheme;
 
 // 未手动切换过主题时，跟随系统深浅色变化
 (function initTheme() {
-  let theme = localStorage.getItem('theme');
+  let theme = null;
+  try { theme = localStorage.getItem('theme'); } catch (e) { theme = null; }
   const mq = window.matchMedia ? window.matchMedia('(prefers-color-scheme: dark)') : null;
   if (!theme && mq) theme = mq.matches ? 'dark' : 'light';
   applyTheme(theme || 'light');
   if (mq && mq.addEventListener) {
     mq.addEventListener('change', function (e) {
-      if (!localStorage.getItem('theme')) applyTheme(e.matches ? 'dark' : 'light');
+      let stored = null;
+      try { stored = localStorage.getItem('theme'); } catch (err) { /* 忽略存储失败 */ }
+      if (!stored) applyTheme(e.matches ? 'dark' : 'light');
     });
   }
   const btn = document.getElementById('themeToggle');

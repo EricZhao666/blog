@@ -2574,6 +2574,170 @@ main {
   color: var(--color-primary);
 }
 
+/* ============================================
+   搜索交互控件（Batch 8C-2）
+   ============================================ */
+.search-controls {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  margin: 0 0 12px;
+}
+
+.search-filter-bar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  min-width: 0;
+}
+
+.search-filter-btn,
+.search-expand-btn,
+.search-history-clear,
+.search-history-term,
+.search-history-remove {
+  font: inherit;
+  cursor: pointer;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  background: var(--color-surface);
+  color: var(--color-text);
+  min-height: 36px;
+  padding: 6px 12px;
+  transition: border-color var(--transition), background var(--transition);
+}
+
+.search-filter-btn { font-size: 0.82rem; white-space: nowrap; }
+
+.search-filter-btn:hover,
+.search-expand-btn:hover,
+.search-history-clear:hover,
+.search-history-term:hover,
+.search-history-remove:hover { border-color: var(--color-primary); }
+
+.search-filter-btn.active,
+.search-filter-btn[aria-pressed="true"] {
+  background: var(--color-primary);
+  border-color: var(--color-primary);
+  color: #fff;
+  font-weight: 600;
+}
+
+.search-filter-btn:focus-visible,
+.search-expand-btn:focus-visible,
+.search-sort-wrap select:focus-visible,
+.search-history-clear:focus-visible,
+.search-history-term:focus-visible,
+.search-history-remove:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 2px;
+}
+
+.search-sort-wrap {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+  font-size: 0.82rem;
+  color: var(--color-text-muted);
+}
+
+.search-sort-wrap label { white-space: nowrap; }
+
+.search-sort-wrap select {
+  font: inherit;
+  font-size: 0.85rem;
+  min-height: 36px;
+  max-width: 100%;
+  padding: 6px 8px;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  background: var(--color-surface);
+  color: var(--color-text);
+}
+
+.search-expand-btn {
+  display: block;
+  margin: 4px 0 18px;
+  font-size: 0.82rem;
+  color: var(--color-primary);
+}
+
+.search-history {
+  margin: 0 0 14px;
+  padding: 8px 10px;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  background: var(--color-surface);
+  font-size: 0.8rem;
+  overflow-wrap: anywhere;
+}
+
+.search-history-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin-bottom: 6px;
+  color: var(--color-text-muted);
+}
+
+.search-history-clear { min-height: 32px; padding: 2px 10px; font-size: 0.76rem; }
+.search-history-list { display: flex; flex-wrap: wrap; gap: 6px; }
+
+.search-history-chip {
+  display: inline-flex;
+  align-items: stretch;
+  max-width: 100%;
+  border: 1px solid var(--color-border);
+  border-radius: 999px;
+  overflow: hidden;
+}
+
+.search-history-term {
+  min-height: 32px;
+  max-width: 100%;
+  padding: 3px 10px;
+  border: 0;
+  border-radius: 0;
+  font-size: 0.78rem;
+  text-align: left;
+}
+
+.search-history-remove {
+  min-height: 32px;
+  padding: 2px 8px;
+  border: 0;
+  border-left: 1px solid var(--color-border);
+  border-radius: 0;
+  font-size: 0.9rem;
+  line-height: 1;
+}
+
+.search-history-note {
+  margin-top: 6px;
+  font-size: 0.74rem;
+  color: var(--color-text-muted);
+}
+
+/* 键盘选中：四类结果卡片共用同一套明显视觉状态 */
+[data-search-root] .search-result-active {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 2px;
+  border-color: var(--color-primary);
+}
+
+/* 长论文标题 / 文件名不撑破屏幕 */
+.search-item-title,
+.article-card-title,
+.search-history-term {
+  overflow-wrap: anywhere;
+  word-break: break-word;
+}
+
 /* 文章正文加载态 / 失败重试 */
 .article-loading .article-detail-title {
   margin-bottom: 8px;
@@ -3190,6 +3354,34 @@ main {
   .article-card-excerpt {
     overflow-wrap: anywhere;
   }
+
+  /* 窄屏：控件换行而不是撑出横向滚动，触控面积 ≥ 40px */
+  .search-controls {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 8px;
+  }
+
+  .search-filter-bar { width: 100%; }
+  .search-filter-btn { flex: 1 1 auto; min-height: 40px; }
+  .search-sort-wrap { width: 100%; }
+  .search-sort-wrap select {
+    flex: 1;
+    width: 100%;
+    min-height: 40px;
+    font-size: 16px;          /* 避免移动端聚焦时自动放大 */
+  }
+
+  .search-history { padding: 6px 8px; }
+
+  .search-item-title,
+  .article-card-title { overflow-wrap: anywhere; }
+}
+
+@media (max-width: 768px) {
+  .search-controls { align-items: stretch; }
+  .search-filter-bar { width: 100%; }
+  .search-sort-wrap select { flex: 1; }
 }
 
 @media (prefers-reduced-motion: reduce) {
