@@ -104,6 +104,10 @@ TESTS = [
      'desc': 'B8C1：统一结果模型 / 相关性评分 / 中文混合 / XSS / 稳定深链'},
     {'name': 'test40', 'file': 'tests/test40_search_sources.js', 'kind': 'jsdom',
      'desc': 'B8C1：多数据源按需加载 / 失败恢复 / 竞态 / IME / 历史恢复'},
+    {'name': 'test41', 'file': 'tests/test41_search_filters.js', 'kind': 'jsdom',
+     'desc': 'B8C2：分类筛选 / 排序 / 折叠 / 键盘导航 / 安全与稳定深链'},
+    {'name': 'test42', 'file': 'tests/test42_search_history.js', 'kind': 'jsdom',
+     'desc': 'B8C2：最近搜索历史 / localStorage 降级 / 竞态 / 部分失败'},
     {'name': 'content-check', 'file': 'scripts/build_content.py', 'kind': 'python', 'args': ['--check'],
      'desc': 'B7C2：发布前内容一致性门禁（元数据/正文/搜索语料/清单/RSS）',
      'pass_marker': 'OK:'},
@@ -127,6 +131,8 @@ TESTS = [
      'desc': 'B8B3：真实 IndexedDB 历史/恢复备份/刷新持久/多标签页/移动端/SW 升级'},
     {'name': 'search-ux', 'file': 'tests/browser/search-ux.spec.js', 'kind': 'browser',
      'desc': 'B8C1：真实 Chromium 下四类命中 / XSS / 稳定深链 / 竞态 / 移动端 / 性能'},
+    {'name': 'search-interaction', 'file': 'tests/browser/search-interaction.spec.js', 'kind': 'browser',
+     'desc': 'B8C2：真实 Chromium 下筛选/排序/折叠/键盘/历史/多视口/SW 升级'},
 ]
 
 COUNT_RE = re.compile(r'共\s*(\d+)\s*项[，,]\s*PASS\s*(\d+)[，,]\s*FAIL\s*(\d+)')
