@@ -423,7 +423,7 @@ async function search(page, text, waitMs) {
       await sleep(1600);
       const caches = await s.page.evaluate(() => (window.caches ? caches.keys() : []));
       check('E1 CACHE_VERSION 已随 app.js / css 递增',
-        !!cacheVer && cacheVer > OLD_CACHE_VERSION && cacheVer === '2026-11-16-1', cacheVer);
+        !!cacheVer && cacheVer > OLD_CACHE_VERSION && cacheVer > '2026-11-16-1', cacheVer);
       check('E2 SW 使用当前缓存版本', caches.some(n => n.indexOf(cacheVer) !== -1), caches.join(','));
       check('E3 旧版本缓存已清理', !caches.some(n => n.indexOf(OLD_CACHE_VERSION) !== -1), caches.join(','));
       check('E4 SW 生效时搜索仍可用',

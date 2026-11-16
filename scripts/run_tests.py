@@ -108,6 +108,8 @@ TESTS = [
      'desc': 'B8C2：分类筛选 / 排序 / 折叠 / 键盘导航 / 安全与稳定深链'},
     {'name': 'test42', 'file': 'tests/test42_search_history.js', 'kind': 'jsdom',
      'desc': 'B8C2：最近搜索历史 / localStorage 降级 / 竞态 / 部分失败'},
+    {'name': 'test43', 'file': 'tests/test43_reading_tools.js', 'kind': 'jsdom',
+     'desc': 'B8D1：目录 / 正文阅读进度 / 代码复制降级 / 表格局部滚动'},
     {'name': 'content-check', 'file': 'scripts/build_content.py', 'kind': 'python', 'args': ['--check'],
      'desc': 'B7C2：发布前内容一致性门禁（元数据/正文/搜索语料/清单/RSS）',
      'pass_marker': 'OK:'},
@@ -133,6 +135,8 @@ TESTS = [
      'desc': 'B8C1：真实 Chromium 下四类命中 / XSS / 稳定深链 / 竞态 / 移动端 / 性能'},
     {'name': 'search-interaction', 'file': 'tests/browser/search-interaction.spec.js', 'kind': 'browser',
      'desc': 'B8C2：真实 Chromium 下筛选/排序/折叠/键盘/历史/多视口/SW 升级'},
+    {'name': 'reading-experience', 'file': 'tests/browser/reading-experience.spec.js', 'kind': 'browser',
+     'desc': 'B8D1：真实 Chromium 下目录/进度/复制/移动端/动态高度/深链与 SW'},
 ]
 
 COUNT_RE = re.compile(r'共\s*(\d+)\s*项[，,]\s*PASS\s*(\d+)[，,]\s*FAIL\s*(\d+)')

@@ -751,80 +751,296 @@ function highlightIn(root) {
 // ============================================
 // 阅读工具：目录 TOC + 阅读进度 + 代码块复制
 // ============================================
+const READING_MIN_HEADINGS = 3;
+const READING_SCROLL_GAP = 12;
+const READING_MEASURE_DELAY = 80;
+
+let _readingState = null;
+let _readingRaf = 0;
+let _readingMeasureTimer = 0;
+let _readingLastPct = -1;
+let _readingLastActive = -2;
+let _readingObserver = null;
+let _readingListenersBound = false;
+
+function readingHeaderOffset() {
+  let raw = '';
+  try {
+    raw = getComputedStyle(document.documentElement).getPropertyValue('--header-height');
+  } catch (e) { /* 环境无 getComputedStyle */ }
+  const n = parseFloat(raw);
+  return (isFinite(n) && n > 0 ? n : 64) + READING_SCROLL_GAP;
+}
+
+function readingReducedMotion() {
+  try {
+    return !!(window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches);
+  } catch (e) {
+    return false;
+  }
+}
+
 function removeReadingTools() {
+  if (_readingRaf) { cancelAnimationFrame(_readingRaf); _readingRaf = 0; }
+  if (_readingMeasureTimer) { clearTimeout(_readingMeasureTimer); _readingMeasureTimer = 0; }
+  if (_readingObserver) {
+    try { _readingObserver.disconnect(); } catch (e) { /* 忽略 */ }
+    _readingObserver = null;
+  }
   const toc = document.getElementById('tocPanel');
   if (toc) toc.remove();
+  const mobile = document.getElementById('tocMobile');
+  if (mobile) mobile.remove();
   const bar = document.getElementById('readingProgress');
   if (bar) bar.remove();
+  _readingState = null;
+  _readingLastPct = -1;
+  _readingLastActive = -2;
 }
 
 function findArticleBody() {
   return document.querySelector('.article-detail-body, .course-notes .markdown-body');
 }
 
-// 从正文的 h2/h3 生成目录（宽屏侧边栏 + 顶部进度条）
-function buildReadingTools() {
-  const body = findArticleBody();
-  if (!body) { removeReadingTools(); return; }
-  const heads = Array.prototype.slice.call(body.querySelectorAll('h2, h3'));
-  if (heads.length < 3) { removeReadingTools(); return; }
-
-  // 清掉旧目录，避免重复
-  removeReadingTools();
-
-  let tocLinks = '';
-  heads.forEach(function (h, i) {
-    h.id = 'heading-' + i;
-    tocLinks += '<a class="toc-link ' + (h.tagName === 'H3' ? 'toc-h3' : '') + '" data-target="heading-' + i + '" tabindex="0">' + escapeHtml(h.textContent) + '</a>';
-  });
-
-  document.body.insertAdjacentHTML('beforeend',
-    '<div class="toc-panel" id="tocPanel"><div class="toc-title">目录</div><nav class="toc-nav">' + tocLinks + '</nav></div>' +
-    '<div class="reading-progress" id="readingProgress"><i></i></div>'
-  );
-  bindScrollSpy();
+// 标题 id：优先保留 Markdown 自带 id，冲突时生成唯一后缀，绝不覆盖正文锚点
+function ensureHeadingId(h, i) {
+  const base = h.getAttribute('id') || ('heading-' + i);
+  let candidate = base;
+  let n = 1;
+  while (document.getElementById(candidate) && document.getElementById(candidate) !== h) {
+    candidate = base + '-' + n++;
+  }
+  if (h.id !== candidate) h.id = candidate;
+  return candidate;
 }
 
-let _scrollSpyBound = false;
-function bindScrollSpy() {
-  if (_scrollSpyBound) return;
-  _scrollSpyBound = true;
-  window.addEventListener('scroll', function () {
-    const bar = document.querySelector('#readingProgress i');
-    if (bar) {
-      const doc = document.documentElement;
-      const total = doc.scrollHeight - window.innerHeight;
-      const pct = total > 0 ? Math.min(100, Math.max(0, window.scrollY / total * 100)) : 0;
-      bar.style.width = pct + '%';
-    }
-    const links = document.querySelectorAll('#tocPanel .toc-link');
-    if (links.length) {
-      const heads = Array.prototype.slice.call(findArticleBody() ? findArticleBody().querySelectorAll('h2, h3') : []);
-      let active = 0;
-      for (let i = 0; i < heads.length; i++) {
-        if (heads[i].getBoundingClientRect().top <= 90) active = i;
-      }
-      links.forEach(function (a, i) { a.classList.toggle('active', i === active); });
-    }
-  }, { passive: true });
+// 从正文的 h2/h3 生成目录（宽屏侧栏 + 移动端折叠入口），并始终创建阅读进度条
+function buildReadingTools() {
+  removeReadingTools();
+  const body = findArticleBody();
+  if (!body) return;
+
+  _readingState = {
+    body: body, heads: [], headTops: [], links: [], mobileLinks: [],
+    bodyTop: 0, bodyHeight: 0, headerOffset: readingHeaderOffset(),
+    progressEl: null, toc: null, mobile: null
+  };
+
+  // 进度条与标题数量无关：短文章 / 少量标题也要有阅读进度
+  const bar = document.createElement('div');
+  bar.className = 'reading-progress';
+  bar.id = 'readingProgress';
+  bar.setAttribute('aria-hidden', 'true');
+  bar.innerHTML = '<i></i>';
+  document.body.appendChild(bar);
+  _readingState.progressEl = bar.querySelector('i');
+
+  const heads = Array.prototype.slice.call(body.querySelectorAll('h2, h3'));
+  _readingState.heads = heads;
+  if (heads.length >= READING_MIN_HEADINGS) {
+    const items = heads.map(function (h, i) {
+      return {
+        id: ensureHeadingId(h, i),
+        text: (h.textContent || '').trim(),
+        level: h.tagName
+      };
+    });
+    buildTocDom(body, items);
+  }
+
+  bindReadingObservers();
+  measureReadingLayout();
+  updateReadingUi(true);
+}
+
+function buildTocDom(body, items) {
+  let linksHtml = '';
+  items.forEach(function (it, i) {
+    linksHtml += '<a class="toc-link' + (it.level === 'H3' ? ' toc-h3' : '') +
+      '" data-target="' + escapeHtml(it.id) + '" data-toc-index="' + i +
+      '" tabindex="0" aria-current="false">' + escapeHtml(it.text) + '</a>';
+  });
+
+  // 桌面侧栏：固定右侧，不改变正文布局
+  const panel = document.createElement('div');
+  panel.className = 'toc-panel';
+  panel.id = 'tocPanel';
+  panel.setAttribute('aria-label', '文章目录');
+  panel.innerHTML = '<div class="toc-title">目录</div><nav class="toc-nav">' + linksHtml + '</nav>';
+  document.body.appendChild(panel);
+
+  // 移动端：文档流内原生 details/summary，展开时把正文往下推，不遮挡内容
+  const mobile = document.createElement('details');
+  mobile.className = 'toc-mobile';
+  mobile.id = 'tocMobile';
+  mobile.innerHTML = '<summary aria-label="展开或收起文章目录" aria-expanded="false">📑 目录</summary>' +
+    '<nav class="toc-nav">' + linksHtml + '</nav>';
+  body.parentNode.insertBefore(mobile, body);
+  mobile.addEventListener('toggle', function () {
+    const summary = mobile.querySelector('summary');
+    if (summary) summary.setAttribute('aria-expanded', mobile.open ? 'true' : 'false');
+    scheduleReadingMeasure();
+  });
+
+  _readingState.toc = panel;
+  _readingState.mobile = mobile;
+  _readingState.links = Array.prototype.slice.call(panel.querySelectorAll('.toc-link'));
+  _readingState.mobileLinks = Array.prototype.slice.call(mobile.querySelectorAll('.toc-link'));
+}
+
+function closeMobileToc() {
+  const s = _readingState;
+  if (!s || !s.mobile) return;
+  s.mobile.open = false;
+  const summary = s.mobile.querySelector('summary');
+  if (summary) {
+    summary.setAttribute('aria-expanded', 'false');
+    try { summary.focus(); } catch (e) { /* 忽略 */ }
+  }
+}
+
+function closeMobileTocIfOpen() {
+  const s = _readingState;
+  if (s && s.mobile && s.mobile.open) closeMobileToc();
+}
+
+// 缓存正文与标题的文档坐标：滚动回调里不再读取布局
+function measureReadingLayout() {
+  const s = _readingState;
+  if (!s || !s.body || !s.body.isConnected) { _readingState = null; return; }
+  const rect = s.body.getBoundingClientRect();
+  s.bodyTop = rect.top + window.scrollY;
+  s.bodyHeight = rect.height;
+  s.headerOffset = readingHeaderOffset();
+  s.headTops = s.heads.map(function (h) {
+    return h.getBoundingClientRect().top + window.scrollY;
+  });
+}
+
+function scheduleReadingMeasure() {
+  if (_readingMeasureTimer) return;
+  _readingMeasureTimer = setTimeout(function () {
+    _readingMeasureTimer = 0;
+    if (!_readingState) return;
+    measureReadingLayout();
+    updateReadingUi(true);
+  }, READING_MEASURE_DELAY);
+}
+
+// 纯函数：只按正文区间计算，评论区 / 页脚 / 相关推荐不参与
+function readingProgressPercent(state, scrollY, viewportH) {
+  if (!state || !state.bodyHeight) return 0;
+  const start = state.bodyTop;
+  const end = Math.max(start, state.bodyTop + state.bodyHeight - viewportH);
+  if (end <= start) return 100;          // 正文一屏内可见：视为已读完
+  const pct = (scrollY - start) / (end - start) * 100;
+  const clamped = Math.min(100, Math.max(0, pct));
+  // 亚像素滚动会让"刚好到正文底部"停在 99.x%：吸附到两端，保证阅读完成状态准确
+  if (clamped >= 99.5) return 100;
+  // 已到页面底部时正文必然已读完：缓存的正文高度有 1~2 行误差也不应停在 99.x%
+  try {
+    const maxScroll = Math.max(0, document.documentElement.scrollHeight - viewportH);
+    if (maxScroll > 0 && scrollY >= maxScroll - 1) return 100;
+  } catch (e) { /* 忽略 */ }
+  if (clamped <= 0.5) return 0;
+  return clamped;
+}
+
+function updateReadingUi(force) {
+  const s = _readingState;
+  if (!s || !s.body || !s.body.isConnected) return;
+
+  // 每帧只读一次正文布局：上方标题 / 图片高度变化时用 delta 平移缓存标题坐标，
+  // 既避免逐标题读取布局，也不会因为缓存过期让进度停在 99.x%
+  const rect = s.body.getBoundingClientRect();
+  const liveTop = rect.top + window.scrollY;
+  const delta = liveTop - s.bodyTop;
+  if (Math.abs(delta) > 0.5) {
+    s.headTops = s.headTops.map(function (t) { return t + delta; });
+  }
+  s.bodyTop = liveTop;
+  s.bodyHeight = rect.height;
+
+  const pct = readingProgressPercent(s, window.scrollY, window.innerHeight);
+  const rounded = Math.round(pct * 10) / 10;
+  if (force || rounded !== _readingLastPct) {
+    _readingLastPct = rounded;
+    if (s.progressEl) s.progressEl.style.width = rounded + '%';
+  }
+
+  const links = (s.links || []).concat(s.mobileLinks || []);
+  if (!links.length || !s.headTops.length) return;
+  const probe = window.scrollY + s.headerOffset;
+  let active = 0;
+  for (let i = 0; i < s.headTops.length; i++) {
+    if (s.headTops[i] <= probe) active = i;
+    else break;
+  }
+  if (!force && active === _readingLastActive) return;
+  _readingLastActive = active;
+  links.forEach(function (a) {
+    const on = Number(a.getAttribute('data-toc-index')) === active;
+    a.classList.toggle('active', on);
+    a.setAttribute('aria-current', on ? 'true' : 'false');
+  });
+}
+
+function onReadingScroll() {
+  if (_readingRaf) return;
+  _readingRaf = requestAnimationFrame(function () {
+    _readingRaf = 0;
+    updateReadingUi(false);
+  });
+}
+
+function bindReadingObservers() {
+  if (!_readingListenersBound) {
+    _readingListenersBound = true;
+    window.addEventListener('scroll', onReadingScroll, { passive: true });
+    window.addEventListener('resize', scheduleReadingMeasure, { passive: true });
+  }
+  if (_readingObserver) {
+    try { _readingObserver.disconnect(); } catch (e) { /* 忽略 */ }
+    _readingObserver = null;
+  }
+  if (typeof ResizeObserver !== 'undefined' && _readingState && _readingState.body) {
+    _readingObserver = new ResizeObserver(function () { scheduleReadingMeasure(); });
+    try { _readingObserver.observe(_readingState.body); } catch (e) { /* 忽略 */ }
+  }
 }
 
 function scrollToHeading(id) {
   const el = document.getElementById(id);
-  if (el && typeof el.scrollIntoView === 'function') {
-    el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  if (!el) return;
+  const s = _readingState;
+  const offset = (s && s.headerOffset) || readingHeaderOffset();
+  const top = Math.max(0, el.getBoundingClientRect().top + window.scrollY - offset);
+  // 'instant' 才能绕开 html { scroll-behavior: smooth }，满足 prefers-reduced-motion
+  const behavior = readingReducedMotion() ? 'instant' : 'smooth';
+  if (typeof window.scrollTo === 'function') {
+    try { window.scrollTo({ top: top, behavior: behavior }); }
+    catch (e) { window.scrollTo(0, top); }
   }
+  closeMobileTocIfOpen();
 }
 
 // 目录点击/回车滚动到标题（hash 路由下不能用锚点，会触发整页跳转）
 document.addEventListener('click', function (e) {
-  const t = e.target.closest ? e.target.closest('[data-target]') : null;
+  const t = e.target && e.target.closest ? e.target.closest('[data-target]') : null;
   if (!t) return;
   scrollToHeading(t.getAttribute('data-target'));
 });
 
-// 键盘无障碍：Enter/Space 触发 data-href（卡片类可点击元素）与 data-target（目录）
+// 键盘无障碍：Esc 关闭移动端目录；Enter/Space 触发目录与卡片
 document.addEventListener('keydown', function (e) {
+  if (e.isComposing || e.keyCode === 229) return;
+  if (e.key === 'Escape') {
+    if (_readingState && _readingState.mobile && _readingState.mobile.open) {
+      e.preventDefault();
+      closeMobileToc();
+    }
+    return;
+  }
   if (e.key !== 'Enter' && e.key !== ' ') return;
   const t = e.target.closest ? e.target.closest('[data-href],[data-target]') : null;
   if (!t) return;
@@ -839,47 +1055,95 @@ document.addEventListener('keydown', function (e) {
   }
 });
 
-function fallbackCopy(text, done) {
-  const ta = document.createElement('textarea');
-  ta.value = text;
-  ta.style.position = 'fixed';
-  ta.style.opacity = '0';
-  document.body.appendChild(ta);
-  ta.select();
-  try { document.execCommand('copy'); done(); } catch (e) {}
-  document.body.removeChild(ta);
-}
+// 复制反馈：成功 / 失败都有明确状态；回退命令失败时绝不假报成功
+const COPY_LABELS = { idle: '复制', ok: '已复制 ✓', error: '复制失败' };
 
-function copyText(text, btn) {
-  const done = function () {
-    btn.textContent = '已复制 ✓';
-    setTimeout(function () { btn.textContent = '复制'; }, 1600);
-  };
-  if (navigator.clipboard && navigator.clipboard.writeText) {
-    navigator.clipboard.writeText(text).then(done).catch(function () { fallbackCopy(text, done); });
-  } else {
-    fallbackCopy(text, done);
+function setCopyFeedback(btn, state) {
+  if (!btn) return;
+  btn.textContent = COPY_LABELS[state] || COPY_LABELS.idle;
+  btn.classList.toggle('copy-ok', state === 'ok');
+  btn.classList.toggle('copy-error', state === 'error');
+  btn.setAttribute('data-copy-state', state);
+  if (state !== 'idle') {
+    clearTimeout(btn._copyTimer);
+    btn._copyTimer = setTimeout(function () {
+      setCopyFeedback(btn, 'idle');
+    }, state === 'error' ? 2600 : 1600);
   }
 }
 
-// 给代码块加「语言标签 + 复制按钮」悬浮工具条
+function fallbackCopy(text, ok, fail) {
+  const ta = document.createElement('textarea');
+  ta.value = text;
+  ta.setAttribute('readonly', '');
+  ta.style.position = 'fixed';
+  ta.style.top = '-1000px';
+  ta.style.opacity = '0';
+  document.body.appendChild(ta);
+  let copied = false;
+  try {
+    ta.select();
+    if (ta.setSelectionRange) ta.setSelectionRange(0, ta.value.length);
+    copied = typeof document.execCommand === 'function' && document.execCommand('copy') === true;
+  } catch (e) {
+    copied = false;
+  }
+  document.body.removeChild(ta);
+  if (copied) ok(); else fail();
+}
+
+function copyText(text, btn) {
+  const source = String(text == null ? '' : text);
+  const ok = function () { setCopyFeedback(btn, 'ok'); };
+  const fail = function () { setCopyFeedback(btn, 'error'); };
+  if (navigator.clipboard && typeof navigator.clipboard.writeText === 'function') {
+    try {
+      navigator.clipboard.writeText(source).then(ok, function () {
+        fallbackCopy(source, ok, fail);
+      });
+      return;
+    } catch (e) {
+      /* 同步异常：继续走安全回退 */
+    }
+  }
+  fallbackCopy(source, ok, fail);
+}
+
+// 给代码块加「语言标签 + 复制按钮」悬浮工具条（无语言标记时只显示复制）
 function enhanceCodeBlocks(root) {
   if (!root) return;
   root.querySelectorAll('pre').forEach(function (pre) {
-    if (pre.dataset.enhanced === '1') return;
+    if (pre.dataset.enhanced === '1' || pre.querySelector('.code-toolbar')) return;
     const code = pre.querySelector('code');
     if (!code) return;
     pre.dataset.enhanced = '1';
     const m = (code.className || '').match(/language-([\w+#-]+)/);
     const bar = document.createElement('div');
     bar.className = 'code-toolbar';
+    bar.setAttribute('aria-live', 'polite');
     bar.innerHTML =
       (m ? '<span class="code-lang">' + escapeHtml(m[1]) + '</span>' : '') +
-      '<button class="copy-btn" type="button">复制</button>';
+      '<button class="copy-btn" type="button" aria-label="复制代码">复制</button>';
     pre.appendChild(bar);
     bar.querySelector('.copy-btn').addEventListener('click', function () {
       copyText(code.innerText || code.textContent || '', this);
     });
+  });
+}
+
+// 让宽表格 / 长表格只在自己的容器内横向滚动，不撑破整页
+function enhanceTables(root) {
+  if (!root) return;
+  root.querySelectorAll('table').forEach(function (table) {
+    const parent = table.parentNode;
+    if (parent && parent.classList && parent.classList.contains('table-scroll')) return;
+    const wrap = document.createElement('div');
+    wrap.className = 'table-scroll';
+    wrap.setAttribute('tabindex', '0');
+    wrap.setAttribute('role', 'region');
+    wrap.setAttribute('aria-label', '可横向滚动的表格');
+    parent.insertBefore(wrap, table);
+    wrap.appendChild(table);
   });
 }
 
@@ -4057,6 +4321,7 @@ function updateEditorPreview() {
   try {
     preview.innerHTML = renderMarkdown(text);
     enhanceCodeBlocks(preview);
+    enhanceTables(preview);
     highlightIn(preview);
   } catch (e) {
     preview.innerHTML = '<p style="color:#e53e3e">\u9884\u89C8\u9519\u8BEF</p>';
@@ -5031,6 +5296,7 @@ async function router() {
           if ((location.hash.slice(1) || '/') !== hash) return;
           app.innerHTML = renderCourseDetail(id);
           enhanceCodeBlocks(app);
+          enhanceTables(app);
           highlightIn(app);
           buildReadingTools();
           // 笔记映射（NOTE_PAGES）此时才到位：canonical / og:url 必须跟着重算，
@@ -5154,6 +5420,7 @@ async function router() {
   scheduleAfterPaint(function () {
     perfMark('art:post-start');
     enhanceCodeBlocks(app);
+    enhanceTables(app);
     buildReadingTools();
     highlightIn(app);
     perfMark('art:post-end');
@@ -5241,7 +5508,8 @@ function readEntrySearch(hash) {
 
 function rememberEntryState(hash) {
   try {
-    history.replaceState({ blogHash: hash, search: searchQuery }, '');
+    // 显式传当前 URL：部分实现（含 jsdom）在省略 url 时会清掉 hash
+    history.replaceState({ blogHash: hash, search: searchQuery }, '', location.href);
   } catch (e) { /* 仅影响后退恢复体验，不影响当前页面 */ }
 }
 
