@@ -1365,6 +1365,21 @@ function renderHome() {
     `;
   }
 
+  // 首页此前没有页面标题层级，直接从文章卡片开始；这里补上标题、篇数与更新时间
+  const latestDate = filtered
+    .map(post => String(post.date || ''))
+    .filter(Boolean)
+    .sort()
+    .slice(-1)[0] || '';
+  const latestMonth = latestDate ? latestDate.slice(0, 7) : '';
+  const homeHead = `
+    <header class="home-head">
+      <h1 class="page-title">文章</h1>
+      <p class="page-desc">机器人、工业自动化与人工智能的技术笔记</p>
+      <p class="home-meta">共 ${filtered.length} 篇${latestMonth ? ` · 更新至 ${escapeHtml(latestMonth)}` : ''}</p>
+    </header>
+  `;
+
   const cards = filtered.map(post => `
     <article class="article-card" data-href="#/post/${post.id}" tabindex="0" role="link" onclick="location.hash = '#/post/${post.id}'">
       <h2 class="article-card-title">
@@ -1391,7 +1406,7 @@ function renderHome() {
     </article>
   `).join('');
 
-  return `<div class="article-list">${cards}</div>`;
+  return `${homeHead}<div class="article-list">${cards}</div>`;
 }
 
 // ============================================
@@ -2132,26 +2147,26 @@ function renderTags(tag) {
     </span>
   `).join('');
 
-  let content = '';
+  let header = '';
+  let body = '';
 
   if (tag) {
     const filtered = filterPosts(getAllPosts(), null, tag);
-    content = `
+    header = `
       <h1 class="page-title">标签: ${escapeHtml(tag)}</h1>
       <p class="page-desc">共 ${filtered.length} 篇文章</p>
     `;
 
     if (filtered.length === 0) {
-      content += `
+      body = `
         <div class="empty-state">
           <div class="empty-state-icon">📭</div>
           <p>该标签下暂无文章</p>
         </div>
       `;
     } else {
-      content += `<div class="article-list">`;
-      content += filtered.map(post => `
-        <article class="article-card" onclick="location.hash = '#/post/${post.id}'">
+      body = `<div class="article-list">${filtered.map(post => `
+        <article class="article-card" data-href="#/post/${post.id}" tabindex="0" role="link" onclick="location.hash = '#/post/${post.id}'">
           <h2 class="article-card-title">
             <a href="#/post/${post.id}">${escapeHtml(post.title)}</a>
           </h2>
@@ -2168,20 +2183,17 @@ function renderTags(tag) {
             </div>
           </div>
         </article>
-      `).join('');
-      content += `</div>`;
+      `).join('')}</div>`;
     }
   } else {
-    content = `
+    header = `
       <h1 class="page-title">所有标签</h1>
       <p class="page-desc">点击标签查看相关文章</p>
     `;
   }
 
-  return `
-    <div class="tags-cloud">${tagCloud}</div>
-    ${content}
-  `;
+  // 标题在前、标签云在后：标题不再被筛选控件压在下面（原结构是云在前）
+  return `${header}<div class="tags-cloud">${tagCloud}</div>${body}`;
 }
 
 // ============================================
@@ -2297,8 +2309,8 @@ function renderCourses() {
 
   // 视图切换：只看有笔记 / 全部课程
   html += '<div class="category-filter">';
-  html += `<span class="category-chip ${courseNotesOnly ? 'active' : ''}" onclick="setNotesOnly(true)">📝 有笔记 <span class="chip-count">${noteCount}</span></span>`;
-  html += `<span class="category-chip ${!courseNotesOnly ? 'active' : ''}" onclick="setNotesOnly(false)">📚 全部课程 <span class="chip-count">${COURSES.length}</span></span>`;
+  html += `<span class="category-chip ${courseNotesOnly ? 'active' : ''}" role="button" tabindex="0" aria-pressed="${courseNotesOnly}" onclick="setNotesOnly(true)" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();setNotesOnly(true)}">📝 有笔记 <span class="chip-count">${noteCount}</span></span>`;
+  html += `<span class="category-chip ${!courseNotesOnly ? 'active' : ''}" role="button" tabindex="0" aria-pressed="${!courseNotesOnly}" onclick="setNotesOnly(false)" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();setNotesOnly(false)}">📚 全部课程 <span class="chip-count">${COURSES.length}</span></span>`;
   html += '</div>';
 
   // 基础集合：默认只保留已整理笔记的课程
@@ -2857,6 +2869,29 @@ function getPaperCategoryIcon(cat) {
   return icons[cat] || '📄';
 }
 
+// 论文类型展示文案：数据里的 type 是 Zotero 英文枚举，直接渲染会把
+// "conferencePaper" 之类的内部值暴露给读者；这里只做展示层映射，数据不动。
+const PAPER_TYPE_LABELS = {
+  journalArticle: '期刊论文',
+  conferencePaper: '会议论文',
+  preprint: '预印本',
+  bookSection: '书章',
+  thesis: '学位论文',
+  report: '报告',
+  other: '其他',
+};
+
+function paperTypeLabel(type) {
+  return PAPER_TYPE_LABELS[type] || '其他';
+}
+
+// 论文卡片展开/收起：点击与键盘（Enter/Space）共用，并同步 aria-expanded
+function togglePaperCard(el) {
+  if (!el) return;
+  const expanded = el.classList.toggle('expanded');
+  el.setAttribute('aria-expanded', expanded ? 'true' : 'false');
+}
+
 function renderPapers() {
   let html = `
     <div class="papers-page">
@@ -2948,11 +2983,11 @@ function renderPapersTab() {
         const date = paper.date ? `<span class="meta-item">📅 ${escapeHtml(paper.date)}</span>` : '';
 
         html += `
-          <div class="paper-card" data-paper-key="${escapeHtml(paperTargetKey(paper))}" onclick="this.classList.toggle('expanded')">
+          <div class="paper-card" data-paper-key="${escapeHtml(paperTargetKey(paper))}" tabindex="0" role="button" aria-expanded="false" onclick="togglePaperCard(this)" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();togglePaperCard(this)}">
             <div class="paper-card-title">${escapeHtml(paper.title)}</div>
             <div class="paper-card-authors">${escapeHtml(paper.authors)}</div>
             <div class="paper-card-meta">
-              <span class="paper-type-badge ${typeClass}">${escapeHtml(paper.type)}</span>
+              <span class="paper-type-badge ${typeClass}">${escapeHtml(paperTypeLabel(paper.type))}</span>
               ${venue}
               ${date}
               ${pdfLink}

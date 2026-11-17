@@ -319,7 +319,7 @@ function lightboxState(page) {
       await sleep(1500);
       const caches = await p.evaluate(() => (window.caches ? caches.keys() : []));
       check('R4 CACHE_VERSION 已递增',
-        !!cacheVer && cacheVer > OLD_CACHE_VERSION && cacheVer === '2026-11-16-3', cacheVer);
+        !!cacheVer && cacheVer > OLD_CACHE_VERSION && cacheVer === '2026-11-17-1', cacheVer);
       check('R5 SW 使用当前缓存版本', caches.some(n => n.indexOf(cacheVer) !== -1), caches.join(','));
       check('R6 旧版本缓存已清理', !caches.some(n => n.indexOf(OLD_CACHE_VERSION) !== -1), caches.join(','));
       check('R7 无页面脚本错误', s.errors.length === 0, s.errors.slice(0, 2).join(' | '));

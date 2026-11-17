@@ -146,6 +146,8 @@ TESTS = [
      'desc': 'B8D1：真实 Chromium 下目录/进度/复制/移动端/动态高度/深链与 SW'},
     {'name': 'image-lightbox', 'file': 'tests/browser/image-lightbox.spec.js', 'kind': 'browser',
      'desc': 'B8D2A：真实 Chromium 下图片放大 / 焦点 / 滚动锁定 / 移动端 / SW'},
+    {'name': 'ui-refresh', 'file': 'tests/browser/ui-refresh.spec.js', 'kind': 'browser',
+     'desc': 'B8D3：全站 UI 2.0（页面渲染/导航/双主题/五档视口/长文本/键盘/目录与灯箱/编辑器/静态笔记）'},
 ]
 
 COUNT_RE = re.compile(r'共\s*(\d+)\s*项[，,]\s*PASS\s*(\d+)[，,]\s*FAIL\s*(\d+)')
