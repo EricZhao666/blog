@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-ver="{{ver}}">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>SW late registration fixture v{{ver}}</title>
+</head>
+<body>
+<div id="app" data-ver="{{ver}}">late registration v{{ver}}</div>
+<script>
+  // Batch 8D-2B：模拟"页面已 load，但注册还在飞"的慢路径。
+  // 真实页面（index.html）在 load 回调里才调用 register()，CI 慢机上
+  // load 与"注册记录已存在"之间有可观测的时间差；这里把它放大到 1500ms，
+  // 让"等待机制是否重试 getRegistration()"可以被确定性验证。
+  window.__registered = false;
+  setTimeout(function () {
+    navigator.serviceWorker.register('sw.js').then(function () {
+      window.__registered = true;
+    }).catch(function (e) {
+      window.__swError = String(e && e.message || e);
+    });
+  }, 1500);
+</script>
+</body>
+</html>

@@ -7,6 +7,8 @@
 - `scripts/run_tests.py` 注册 `test45` 与 `image-check`：用例总数 **55 → 57**。
 - 完整回归：**PASS 57 / FAIL 0 / SKIP 0 / BLOCKED 0**。
 - 未修改 `import_post.py` 事务逻辑、未改 Lightbox、未改图片命名算法、未引入云端服务。
+- 分支已 rebase 到正式 `main@88bfb78` 之上，PR 差异**只含本批次 5 个文件**（不再包含 B8D-2A）。
+- 云端 `sw-consistency`/T1 失败已定位**测试等待条件缺陷**并最小修复（35 → 37 项），**未改 `sw.js`**。
 - 本地已提交；**未 Push、未开 PR、未合并 main、未部署**。
 
 ---
@@ -16,15 +18,31 @@
 | 项 | 值 |
 | --- | --- |
 | 仓库 | `E:\work_funnycode\blog`（`git@github.com:EricZhao666/blog.git`） |
-| 新分支 | `feature/batch8d2b-image-assets` |
-| 分支起点 | `c220d31`（`feature/batch8d2a-image-lightbox` HEAD，含 B8D2A 两个提交） |
-| 本地 `main` | `3424310`（B8D1 已合并） |
+| 分支 | `feature/batch8d2b-image-assets` |
+| 正式基线 | `origin/main = 88bfb78615e89d78cd342e4935c92d261aafc79c`（PR #16，B8D-2A 已合并） |
+| 分支 HEAD | `28a3fd7`（8D-2B 提交）+ 本文档所在提交（见第 14 节） |
+| 相对 `origin/main` | **1 个提交**（不含 8D-2A） |
+| 本地 `main` | `3424310`（未被修改） |
 
-> **基线提交核实结果（如实报告）**：任务书写的 `main@88bfb78615e89d78cd342e4935c92d261aafc79c`
-> 在本仓库**不存在**（`git cat-file -t` 报 `could not get object info`，本地与 `origin` 都没有该对象，
-> 也没有任何分支指向它）。B8D-2A 的两个提交（`e87a8f8` 功能 + `c220d31` 文档）尚未合入 `main`，
-> 而任务书把 B8D-2A 列为"当前已完成"，因此本分支从 **8D2A 分支 HEAD（`c220d31`）** 切出，
-> 以便在包含 8D2A 的基线上工作。若需改为从 `main` 重建分支，请说明，我会重做一次（不含代码改动）。
+整理步骤与结果（任务一）：
+
+```bash
+git fetch origin
+git switch feature/batch8d2b-image-assets
+git rebase --onto origin/main c220d31
+git log --oneline origin/main..HEAD   # 28a3fd7 功能：发布前图片资源检查（B8D2B）
+git diff --stat origin/main...HEAD    # 5 files changed（仅 8D-2B）
+```
+
+- **基线一致性已在本地复核**：`c220d31^{tree}` 与 `88bfb78^{tree}` 同为
+  `824062d25cc25a8a1197994e612b553891237ef2`，因此 rebase 无冲突、内容零差异。
+- rebase 后 `git rev-list --count origin/main..HEAD = 1`、`merge-base = 88bfb78`、`git rev-parse main = 3424310`（正式 main 未变）。
+- `git diff --name-status origin/main...HEAD` 只有：`BATCH8D2B_REPORT.md`(A)、`README.md`(M)、
+  `scripts/check_images.py`(A)、`scripts/run_tests.py`(M)、`tests/test45_image_assets.py`(A)。
+- 全程**没有** `push`、`push --force`、`reset`、`rebase` 到 main 分支的操作。
+
+> 上一轮报告里"基线 `88bfb78` 不存在"的说明现已作废：当时远端尚未合并 PR #16，
+> `git fetch` 后该提交就是当前 `origin/main`。
 
 ---
 
@@ -230,27 +248,119 @@ python scripts/check_images.py --check --base-path /blog/   # 改子路径（默
 
 ---
 
-## 9. 完整回归结果
+## 9. CI 异常调查：`sw-consistency FAIL 34/35`（`FAIL T1 首访受 SW 控制`）
+
+### 9.1 事实
+
+| 项 | 内容 |
+| --- | --- |
+| Run / Job | `43997014946` / `133751447795` |
+| 结果 | `sw-consistency` 34/35，唯一失败项 `T1 首访受 SW 控制` |
+| 其余项 | T1 的另外两条（首访渲染、版本自洽）通过，T2–T14 全部通过 |
+| 本地复现 | **复现失败**：修复前独立跑 3 次 `python scripts/run_tests.py --only sw-consistency`，3 次均 35/35（94.0s / 89.9s / 89.4s） |
+
+### 9.2 代码审查结论
+
+`T1` 的受控判定链路是 `warm()` → `waitController()`：
+
+```js
+const reg = await navigator.serviceWorker.getRegistration();
+if (!reg) return false;          // ← 只读一次，null 直接判"未受控"，零重试
+while (Date.now() - t0 < ms) { if (navigator.serviceWorker.controller) return true; ... }
+```
+
+而合成站点（`tests/browser/fixtures/swsite/index.html`）与真实站点一致，**在 `load` 回调里才调用
+`navigator.serviceWorker.register('sw.js')`**。注册是异步的：
+`page.goto(waitUntil:'load')` 返回的瞬间，`register()` 可能刚入队、注册记录还没建立，
+此时 `getRegistration()` 返回 `undefined` → 旧实现立刻返回 `false`，
+`T1 首访受 SW 控制` 直接失败，而同一页面的渲染/版本断言不受影响 —— 与云端"只挂 T1"的现象完全一致。
+
+同时确认 `sw.js` 的生命周期链正常（`install` 预缓存 → `skipWaiting()` → `activate` → `clients.claim()`），
+本地 3/3 全绿、CI 其余 34 项通过，因此判定：**这是测试等待条件的竞态缺陷，不是 SW 生产代码缺陷**。
+按任务要求，**没有**对 `sw.js` 做任何猜测性修改，也没有动 T1 断言。
+
+### 9.3 确定性复现（不依赖偶发）
+
+新增两个 fixture 与 T0 用例：
+
+| 新增 | 作用 |
+| --- | --- |
+| `fixtures/swsite/late-sw.html` | load 之后 **1500 ms** 才 `register()`，把"注册晚于 load"的窗口放大到可稳定命中 |
+| `fixtures/swsite/no-sw.html` | 完全不注册 SW，作为"等待必须超时返回未受控"的反向对照 |
+| `spec` 中的 `T0`（2 项） | ① 注册晚于 load 时仍能等到 controller；② 无注册的页面不会被误判为受控 |
+
+用**未修复**的 `waitController` 运行（同一次运行里 T1 仍然 PASS）：
 
 ```
-python scripts/run_tests.py
+FAIL T0 注册晚于 load 时仍能等到 controller  (regAtLoad=false regNow=false)
+PASS T0 页面没有注册 SW 时超时返回未受控（不误报）  (controller=false)
+PASS T1 首访受 SW 控制
+共 37 项，PASS 36，FAIL 1
+```
 
-PASS 57 / FAIL 0 / SKIP 0 / BLOCKED 0
-结论: PASS
+`regAtLoad=false` 正是云端 T1 命中的状态：注册还没出现 → 旧实现直接判 false。
+这条用例把"偶发"变成了"必然可复现"。
+
+### 9.4 最小修复
+
+只改测试等待机制（`waitController`），两段轮询**共用同一个 20 s 超时预算**：
+
+1. 先轮询 `getRegistration()` 直到注册出现（每 50 ms 一次）；
+2. 再轮询 `controller` 是否就绪；
+3. 判定条件不变：**拿不到 controller 仍然返回 false**，T1 断言一字未改，超时预算也未放大。
+
+修复后同一运行：
+
+```
+PASS T0 注册晚于 load 时仍能等到 controller  (regAtLoad=false regNow=true)
+PASS T0 页面没有注册 SW 时超时返回未受控（不误报）  (controller=false)
+共 37 项，PASS 37，FAIL 0
+```
+
+随后独立复跑 3 次：**37/37、37/37、37/37**（93.3 s / 92.6 s / 95.8 s）。
+
+### 9.5 环境差异说明
+
+| 项 | 本地 | CI |
+| --- | --- | --- |
+| 浏览器通道 | `PW_CHANNEL=chrome`（Chrome 157 headless） | `PW_CHANNEL=chromium`（Playwright 内置） |
+| 机器 | 开发机（多核，空闲） | `ubuntu-latest` 2 核，冷启动 + 并行测试 |
+| 注册窗口 | 通常几毫秒内建立注册记录，旧写法恰好躲过 | 负载高时窗口变宽，单次读取命中概率上升 |
+
+即：CI 更容易命中该窗口，但根因与平台无关，是"单次读取 + 零重试"的等待条件不可靠。
+
+### 9.6 影响与边界
+
+- `sw-consistency` 项数 **35 → 37**（只增不减，无删除、无弱化、无跳过）。
+- 其它用到 `warm()` 的用例（T2 / T3 / T10 / T11 / T14 …）共用同一等待函数，行为只变"更稳"，不改变判定语义。
+- **未修改** `sw.js`、`CACHE_VERSION`（仍为 `2026-11-16-3`）、任何阈值与断言。
+
+---
+
+## 10. 完整回归结果
+
+```
+python scripts/check_images.py --check
+→ OK: 图片资源检查通过（ERROR 0 / WARNING 0，未修改任何文件）
+
+python scripts/run_tests.py
+→ PASS 57 / FAIL 0 / SKIP 0 / BLOCKED 0
+→ 结论: PASS
 ```
 
 - 原有 55 套全部通过（含 12 套真实 Chromium：browser / sw-consistency / sw-upgrade / mobile-notes /
   course-seo / papers-deeplink / editor-ux / editor-history / search-ux / search-interaction /
   reading-experience / image-lightbox）。
 - 新增 `test45`（74/74）与 `image-check` 均 PASS。
-- 语法检查：`js/**`、`scripts/*.py`、`tests/*` 全部 OK（新增两个文件也在其中）。
+- `sw-consistency` 修复后 **37/37**（修复前本地 35/35，云端 34/35）。
+- 语法检查：`js/**`、`scripts/*.py`、`tests/*` 全部 OK（新增文件也在其中）。
 
 > **真实数据的事实说明**：`data/posts/*.md` 共 18 篇，当前**没有任何图片引用**（检查器报告"引用 0 个"），
 > 因此不存在"已有文章含失效图片引用"的情况，也没有做任何静默豁免。真实仓库上的检查 0.5 s、退出码 0。
 
 ---
 
-## 10. 已知限制
+## 11. 已知限制
 
 1. **不联网**：外部 https 图片只检查格式；不判断对方是否还活着、是否防盗链、是否返回 200。
 2. **只看"文件在不在"**：不校验像素尺寸、能否解码、是否为 HTML 伪装的 `.png`；也不算图片总量预算。
@@ -264,7 +374,7 @@ PASS 57 / FAIL 0 / SKIP 0 / BLOCKED 0
 
 ---
 
-## 11. 操作方法
+## 12. 操作方法
 
 ```bash
 # 1) 写入配图：把原图按编辑器给出的路径放进仓库（目录不存在时自己建）
@@ -301,24 +411,32 @@ git push -u origin feature/post-<id>
 
 ---
 
-## 12. 变更文件清单
+## 13. 变更文件清单
 
 | 文件 | 类型 | 说明 |
 | --- | --- | --- |
 | `scripts/check_images.py` | 新增 | 只读图片资源检查器（832 行，含规则文档） |
 | `tests/test45_image_assets.py` | 新增 | 74 项契约测试（489 行） |
 | `scripts/run_tests.py` | 改 | 注册 `test45` + `image-check`（55 → 57 套） |
+| `tests/browser/sw-consistency.spec.js` | 改 | `waitController` 改为"先等注册、再等 controller"（共用 20 s 预算）；新增 T0 两项（35 → 37 项） |
+| `tests/browser/fixtures/swsite/late-sw.html` | 新增 | load 后 1500 ms 才注册的确定性 fixture |
+| `tests/browser/fixtures/swsite/no-sw.html` | 新增 | 不注册 SW 的反向对照 fixture |
 | `README.md` | 改 | 结构树补 `images/` 与 `check_images.py`；测试清单补 2 行；第 7 节发布步骤加入图片流程；新增 7.1「文章配图：保存、引用与检查」（保存位置/原图流程/检查器/Pages 路径错误表/完整示例/外链提示）；原 7.1 CI 顺延为 7.2（并修正第 11 节引用）；已知限制补 1 条 |
 | `BATCH8D2B_REPORT.md` | 新增 | 本报告 |
 
 **未改动**：`scripts/import_post.py`、`scripts/build_content.py`、`scripts/split_posts.py`、
-`js/app.js`（含 Lightbox 与图片命名算法）、`js/data.js` 与任何文章正文、`.github/workflows/*`、`tests/` 中的既有断言。
+`js/app.js`（含 Lightbox 与图片命名算法）、`sw.js`（`CACHE_VERSION` 仍为 `2026-11-16-3`）、
+`js/data.js` 与任何文章正文、`.github/workflows/*`、`tests/` 中的既有断言与阈值。
 
 ---
 
-## 13. 交付状态
+## 14. 交付状态
 
-- 本地分支 `feature/batch8d2b-image-assets` 已提交。
+- 本地分支 `feature/batch8d2b-image-assets`，基于 `origin/main@88bfb78`，**2 个本地提交**：
+  1. `28a3fd7` 功能：发布前图片资源检查（B8D2B）—— 图片检查器 + test45 + run_tests 注册 + README
+  2. 修复：SW 一致性用例的 controller 等待机制（B8D2B）—— `waitController` + 2 个 fixture + T0 + 本报告更新
+- 验收复核：`check_images.py --check` 退出码 0；`run_tests.py` **PASS 57 / FAIL 0 / SKIP 0 / BLOCKED 0**；
+  `git status` 干净；`data/posts`、`sw.js`、`js/app.js` 相对 `origin/main` 零改动。
 - **未 Push、未创建 PR、未合并 `main`、未部署**。
 
 `B8D2B_LOCAL_READY`
