@@ -1,0 +1,13 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-ver="{{ver}}">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>SW absent fixture v{{ver}}</title>
+</head>
+<body>
+<div id="app" data-ver="{{ver}}">no registration v{{ver}}</div>
+<!-- Batch 8D-2B：这个页面**不注册** Service Worker，作为反向对照：
+     等待机制必须在超时后返回"未受控"，不能因为重试就误判为受控。 -->
+</body>
+</html>

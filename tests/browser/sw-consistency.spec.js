@@ -79,11 +79,20 @@ function verSummary(v) {
 }
 
 async function waitController(page, timeout = 20000) {
+  // 注册是异步的：真实页面在 load 回调里才调用 register()，所以 load 事件与
+  // "注册记录已存在"之间存在时间差。旧实现只读一次 getRegistration()，一旦命中
+  // 这个窗口就立刻返回 false（Batch 8D-2B 云端 T1「首访受 SW 控制」失败即此原因）。
+  // 现在两段轮询共用同一个超时预算：先等注册出现，再等 controller 就绪；
+  // 判定条件不变——拿不到 controller 仍然返回 false，T1 断言没有被弱化。
   return page.evaluate(async (ms) => {
-    const reg = await navigator.serviceWorker.getRegistration();
+    const deadline = Date.now() + ms;
+    let reg = await navigator.serviceWorker.getRegistration();
+    while (!reg && Date.now() < deadline) {
+      await new Promise(r => setTimeout(r, 50));
+      reg = await navigator.serviceWorker.getRegistration();
+    }
     if (!reg) return false;
-    const t0 = Date.now();
-    while (Date.now() - t0 < ms) {
+    while (Date.now() < deadline) {
       if (navigator.serviceWorker.controller) return true;
       await new Promise(r => setTimeout(r, 50));
     }
@@ -211,6 +220,37 @@ async function main() {
   const newCtx = () => browser.newContext({ serviceWorkers: 'allow' });
 
   try {
+    // ---------------------------------------------------------------- T0 SW 等待机制（B8D-2B 新增）
+    // 背景：云端一次运行里 T1「首访受 SW 控制」失败（其余 34 项通过）。真实页面
+    // （fixtures/swsite/index.html）在 load 回调里才调用 register()，所以 load 事件与
+    // "注册记录已存在"之间存在时间差。等待机制如果只读一次 getRegistration()，
+    // 命中该窗口就会立刻判成"未受控"——这是测试等待条件的缺陷，不是 SW 行为缺陷。
+    // 这里把窗口放大到 1500ms 做确定性回归，并给出"完全不注册"的反向对照。
+    {
+      reset();
+      const ctx = await newCtx();
+      const page = await ctx.newPage();
+      await page.goto(base + PREFIX + '/late-sw.html', { waitUntil: 'load', timeout: 60000 });
+      const regAtLoad = await page.evaluate(
+        () => navigator.serviceWorker.getRegistration().then(r => !!r));
+      const controlled = await waitController(page);
+      const regNow = await page.evaluate(
+        () => navigator.serviceWorker.getRegistration().then(r => !!r));
+      check('T0 注册晚于 load 时仍能等到 controller', controlled,
+        'regAtLoad=' + regAtLoad + ' regNow=' + regNow);
+      await ctx.close();
+
+      const ctx2 = await newCtx();
+      const page2 = await ctx2.newPage();
+      await page2.goto(base + PREFIX + '/no-sw.html', { waitUntil: 'load', timeout: 60000 });
+      const neverControlled = await waitController(page2, 1500);
+      const ctl2 = await page2.evaluate(() => !!navigator.serviceWorker.controller);
+      check('T0 页面没有注册 SW 时超时返回未受控（不误报）', neverControlled === false,
+        'controller=' + ctl2);
+      evidence.T0 = { lateRegAtLoad: regAtLoad, lateControlled: controlled, noSwControlled: neverControlled };
+      await ctx2.close();
+    }
+
     // ---------------------------------------------------------------- T1 首次导航（无缓存）
     {
       reset();
