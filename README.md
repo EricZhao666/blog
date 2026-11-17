@@ -37,6 +37,8 @@ blog/
 │
 ├── notes/                    # 预渲染的课程笔记静态页（脚本生成）+ index.html
 │
+├── images/                   # 文章配图（可选目录，仓库当前可能还不存在；见 7.1）
+│
 ├── tests/                    # 回归测试（见第 5 节）
 │   ├── audit.js              # 全站巡检
 │   ├── test6.js ~ test11.js  # 前端/编辑器回归
@@ -46,6 +48,7 @@ blog/
 └── scripts/
     ├── run_tests.py          # 统一测试入口
     ├── build_content.py      # 统一内容构建（元数据/正文/搜索语料/清单/RSS）
+    ├── check_images.py       # 发布前图片资源检查（存在性/路径安全/大小写/Pages 子路径）
     ├── import_post.py        # 编辑器导出的 JSON → data/posts/<id>.md（只新增）
     ├── scan_courses.py       # 课程目录 → js/courses.js
     ├── scan_papers.py        # Zotero + 学习资料 → js/papers.js
@@ -206,6 +209,8 @@ python scripts/run_tests.py --report /tmp/r.md --json /tmp/r.json
 | `test36_editor_toolbar.js` | B8B2：工具栏插入/快捷键/焦点与选区/原生撤销/状态栏 |
 | `test37_editor_images.js` | B8B2：图片协议白名单/本地文件校验/仅预览提示/XSS 净化 |
 | `test38_draft_history.js` | B8B3：草稿历史（快照/去重/5 分钟节流/隔离/配额/损坏/安全恢复） |
+| `test45_image_assets.py` | B8D2B：图片资源检查器（缺失/大小写/逃逸/符号链接/代码块/Pages 子路径/零写入，74 项） |
+| `scripts/check_images.py` | B8D2B：发布前图片资源门禁（`--check`，ERROR 必须非零退出） |
 | `browser/editor-history.spec.js` | B8B3：真实 IndexedDB 历史、恢复前备份、刷新持久、多标签页、SW 升级 |
 | `browser/editor-ux.spec.js` | B8B2：真实 Chromium 下的工具栏、原生 Undo、375/390/768/1280 布局、SW 升级 |
 | `test12.py` | `scan_codefiles.py` 描述保护（合成 fixture） |
@@ -273,15 +278,17 @@ const CACHE_VERSION = '2026-10-23-3';   // 改成新日期-序号
 
 ```bash
 # 1) 网页编辑器（#/editor）写完 → 点「📤 导出文章」得到 <id>.json
+# 1.1) 有配图时：把原图按编辑器给出的路径放进仓库 images/（见 7.1）
 # 2) 本地校验并导入（只新增，不覆盖历史正文）
 python scripts/import_post.py --file <id>.json --dry-run
 python scripts/import_post.py --file <id>.json --apply
-# 3) 重建派生数据并自检
+# 3) 图片资源 → 派生数据 → 完整回归
+python scripts/check_images.py --check
 python scripts/build_content.py --check
 python scripts/run_tests.py
-# 4) 手动提交 + 手动开 PR
+# 4) 手动提交 + 手动开 PR（文章、图片、派生数据一起提交）
 git checkout -b feature/post-<id>
-git add data/posts/<id>.md js/data.js data/search-index.json data/posts/manifest.json feed.xml
+git add data/posts/<id>.md images/ js/data.js data/search-index.json data/posts/manifest.json feed.xml
 git commit -m "post: <标题>"
 git push -u origin feature/post-<id>
 ```
@@ -312,6 +319,81 @@ python scripts/import_post.py --file <id>.update.json --mode update --apply
   每篇文章最多保留 10 份（优先清理最旧的自动版本，手动版本优先保留），恢复前会**先给当前内容存一份安全快照**，
   快照失败就不恢复。历史只存在本机 IndexedDB，**不是云端备份**，清除站点数据会一并丢失。
 
+### 7.1 文章配图：保存、引用与检查
+
+编辑器只生成仓库内的**路径**（`images/<slug>-<hash>.png`），**不会**把图片文件放进仓库；原图要自己保存并一起提交，
+否则合并后线上就是坏图。`scripts/check_images.py` 就是发布前拦这一步的门禁。
+
+**1) 推荐的保存位置**
+
+- 配图统一放在仓库根的 `images/`（与 `icons/` 同级）。目录不存在时自行 `mkdir images`，检查器不会替你创建。
+- 文件名沿用编辑器给出的 `<slug>-<hash>.<ext>`（ASCII + 短哈希），不要改成中文/空格/大小写混排：
+  本地 Windows 能打开不代表 Linux 上也能，GitHub Pages 的文件系统是**大小写敏感**的。
+- 单张 ≤ 2 MiB，格式 PNG / JPEG / WebP / GIF（与编辑器白名单一致）。
+
+**2) 从编辑器路径到仓库文件**
+
+1. 编辑器 `#/editor` → 图片 → 「选择本地图片」，界面会显示**建议路径**（如 `images/weld-face-8f3a2c.png`）。
+2. 把原图按这个路径另存进本地仓库：`images/weld-face-8f3a2c.png`（文件名一个字符都别改）。
+3. 点「插入图片引用」，正文里得到 `![焊接面宏观照片](images/weld-face-8f3a2c.png)`。
+4. 导出文章 JSON → 本地导入 → 按下面的顺序检查。
+
+**3) 运行检查器**
+
+```bash
+python scripts/check_images.py --check                 # 检查 data/posts/*.md
+python scripts/check_images.py --check --root DIR      # 在临时副本上检查（测试用）
+```
+
+输出逐条给出「文件:行号 / 原始引用 / 结果 / 建议」，末尾汇总 ERROR 与 WARNING：
+
+- **ERROR**（退出码 1，CI 会失败）：图片不存在、路径逃逸（`../`）、指向目录、符号链接跳出仓库、
+  文件名大小写不一致、`/images/…` 这类不在 `/blog/` 子路径下的站内绝对地址、非法协议。
+- **WARNING**（不影响退出码）：没有 alt、超过 2 MiB、外部图片依赖、格式不在白名单、内联 Data URI。
+
+检查器**只读**：不复制、不删除、不重命名任何文件，也不会创建 `images/`；仓库里没有任何图片引用时直接通过。
+
+支持的语法：行内 `![alt](images/a.png)`、`<…>` 包裹的 URL 与标题、参考式 `![alt][label]`、HTML `<img src="…">`；
+围栏/缩进代码块与行内代码里的示例**不会**被当成真实引用。
+
+**4) 常见 GitHub Pages 路径错误**
+
+站点在 `https://ericzhao666.github.io/blog/`（子路径），所以：
+
+| 写法 | 结果 | 说明 |
+| --- | --- | --- |
+| `images/a.png` | ✅ | 相对站点根 `/blog/`，对应仓库 `images/a.png`（**不是** `data/posts/images/`） |
+| `/blog/images/a.png` | ✅ | 去掉 `/blog/` 前缀后按仓库路径检查 |
+| `/images/a.png` | ❌ ERROR | 会解析到 `https://ericzhao666.github.io/images/a.png`，不是本博客 |
+| `../private/a.png` | ❌ ERROR | 跳出站点根目录，浏览器与检查器都拒绝 |
+| `https://…` | ⚠️ WARNING | 外部图片只检查格式：不联网，也无法保证长期有效 |
+| `http://…` | ⚠️ WARNING | GitHub Pages 是 https，混合内容会被浏览器拦截（线上坏图） |
+| `data:image/…` | ⚠️ WARNING | 不落文件、检查器无法确认，还会把正文撑大 |
+
+> 外部图片链接即使今天能打开，也不代表以后还在（对方删除、换域名、防盗链）。
+> 重要配图请放进仓库 `images/` 与文章一起提交，只有确实需要引用的才用 https 外链。
+
+**5) 一个完整示例**
+
+```bash
+# ① 引用：data/posts/my-post.md 里写（alt 必填，读屏与坏图时都靠它）
+#    ![焊接面宏观照片](images/weld-face-8f3a2c.png)
+
+# ② 资源：把原图按建议路径放进仓库
+cp ~/Pictures/weld.png images/weld-face-8f3a2c.png
+
+# ③ 图片检查 → ④ 内容检查 → ⑤ 完整回归
+python scripts/check_images.py --check     # OK: 图片资源检查通过
+python scripts/build_content.py --check    # OK: 元数据/正文/搜索语料/清单/RSS 一致
+python scripts/run_tests.py                # PASS（含 image-check 与 test45）
+
+# ⑥ 文章与图片一起提交，然后手动开 PR
+git add data/posts/my-post.md images/weld-face-8f3a2c.png \
+        js/data.js data/search-index.json data/posts/manifest.json feed.xml
+git commit -m "post: 我的文章（含配图）"
+git push -u origin feature/post-my-post
+```
+
 合并到 `main` 后 GitHub Pages 自动构建（约 30 秒 ~ 2 分钟）。
 
 发布后可按下面方式自检（注意加 cache-buster，边缘缓存会有延迟）：
@@ -321,9 +403,9 @@ python scripts/import_post.py --file <id>.update.json --mode update --apply
 
 ---
 
-### 7.1 持续集成（GitHub Actions）
+### 7.2 持续集成（GitHub Actions）
 
-`.github/workflows/tests.yml`：`push` / `pull_request` / 手动触发，`ubuntu-latest` + Node 22 + Python 3.12，`npm ci` 装依赖后跑 `python scripts/run_tests.py`，报告作为 Artifact 上传，失败即 job 失败。权限仅 `contents: read`，不需要任何 Secrets。
+`.github/workflows/tests.yml`：`push` / `pull_request` / 手动触发，`ubuntu-latest` + Node 22 + Python 3.12，`npm ci` 装依赖后跑 `python scripts/run_tests.py`（其中已注册 `image-check`：文章引用了仓库里不存在的图片会直接让 job 失败），报告作为 Artifact 上传，失败即 job 失败。权限仅 `contents: read`，不需要任何 Secrets。
 
 > **Action 运行时**：三个工作流统一使用 Node.js 24 运行时的 Action 版本 ——
 > `actions/checkout@v5`、`actions/setup-node@v5`、`actions/setup-python@v6`、`actions/upload-artifact@v6`
@@ -387,7 +469,9 @@ python scripts/import_post.py --file <id>.update.json --mode update --apply
 ## 11. 已知限制
 
 - `gen_notes_pages.js` 默认时间仍是“当天”，跨天重跑会产生 diff；需要可重复构建时用 `--now` + `--out-dir`（见 4.5）。
-- 未在真实 Linux 上本地跑过完整套件：CI 首次运行结果才是 Linux 环境的最终验证（见 7.1）。
+- 未在真实 Linux 上本地跑过完整套件：CI 首次运行结果才是 Linux 环境的最终验证（见 7.2）。
 - 生成器的**真实端到端扫描**需要本机存在私人源目录，仓库内只保证合成 fixture 可跑（`test15.py`）。
+- 图片检查器（`scripts/check_images.py`）只看"引用的文件在不在、路径安不安全"：不下载外部图片、不校验像素/尺寸/能否解码，
+  也不做 macOS 的 Unicode 归一化（NFC/NFD）比对；引用写在引用块（`>`）里的围栏代码块按普通正文处理（保守多查）。
 - 测试基于 jsdom，不覆盖真实浏览器的 Service Worker 生命周期与跨域行为。
 - `tests/` 与 `scripts/` 之外，根目录仍保留 `scan_codefiles.py`、`gen_feed.py`、`gen_notes_pages.js`（保持既有调用路径不变）。
