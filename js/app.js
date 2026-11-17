@@ -1148,6 +1148,205 @@ function enhanceTables(root) {
 }
 
 // ============================================
+// 图片放大查看器（Batch 8D-2A）
+// 只处理 Markdown 已渲染且通过 DOMPurify 的正文图片；链接内图片保留原链接行为。
+// ============================================
+const IMAGE_LIGHTBOX_SCOPE = '.article-detail-body, .course-notes .markdown-body';
+let _imageLightbox = null;
+let _lightboxOpen = false;
+let _lightboxTrigger = null;
+let _lightboxScrollY = 0;
+
+function isSafeImageUrl(src) {
+  const value = String(src == null ? '' : src).trim();
+  if (!value) return false;
+  if (/^data:image\/(png|jpe?g|gif|webp|avif|svg\+xml)[;,]/i.test(value)) return true;
+  try {
+    const url = new URL(value, location.href);
+    return url.protocol === 'http:' || url.protocol === 'https:';
+  } catch (e) {
+    return false;
+  }
+}
+
+function enhanceImages(root) {
+  if (!root) return;
+  root.querySelectorAll('img').forEach(function (img) {
+    if (img.dataset.lightboxReady === '1') return;
+    if (!img.closest(IMAGE_LIGHTBOX_SCOPE)) return;   // 不碰图标 / 头像 / 编辑器预览
+    if (img.closest('a')) return;                     // 链接内图片保留原链接行为
+    if (!isSafeImageUrl(img.getAttribute('src'))) return;
+    img.dataset.lightboxReady = '1';
+    img.classList.add('zoomable-image');
+    img.setAttribute('tabindex', '0');
+    img.setAttribute('role', 'button');
+    const alt = String(img.getAttribute('alt') || '').trim();
+    img.setAttribute('aria-label', alt ? '放大图片：' + alt : '放大图片');
+  });
+}
+
+function ensureImageLightbox() {
+  if (_imageLightbox) return _imageLightbox;
+  const dialog = document.createElement('dialog');
+  dialog.id = 'imageLightbox';
+  dialog.className = 'image-lightbox';
+  dialog.setAttribute('aria-label', '图片预览');
+  dialog.setAttribute('aria-modal', 'true');
+
+  const inner = document.createElement('div');
+  inner.className = 'image-lightbox-inner';
+
+  const closeBtn = document.createElement('button');
+  closeBtn.type = 'button';
+  closeBtn.className = 'image-lightbox-close';
+  closeBtn.setAttribute('aria-label', '关闭图片预览');
+  closeBtn.textContent = '×';
+
+  const media = document.createElement('div');
+  media.className = 'image-lightbox-media';
+
+  const img = document.createElement('img');
+  img.className = 'image-lightbox-img';
+  img.alt = '';
+  img.decoding = 'async';
+
+  const error = document.createElement('p');
+  error.className = 'image-lightbox-error';
+  error.hidden = true;
+  error.textContent = '图片加载失败，请稍后重试。';
+
+  const caption = document.createElement('p');
+  caption.className = 'image-lightbox-caption';
+  caption.hidden = true;
+
+  media.appendChild(img);
+  media.appendChild(error);
+  inner.appendChild(closeBtn);
+  inner.appendChild(media);
+  inner.appendChild(caption);
+  dialog.appendChild(inner);
+  document.body.appendChild(dialog);
+
+  closeBtn.addEventListener('click', function () { closeImageLightbox(false); });
+  // 点击半透明背景（dialog 自身）关闭；点击内容不关闭
+  dialog.addEventListener('click', function (e) {
+    if (e.target === dialog) closeImageLightbox(false);
+  });
+  img.addEventListener('error', function () {
+    img.hidden = true;
+    error.hidden = false;
+  });
+  dialog.addEventListener('cancel', function (e) {
+    e.preventDefault();          // 统一走 closeImageLightbox，保证滚动与焦点恢复
+    closeImageLightbox(false);
+  });
+  dialog.addEventListener('close', restoreLightboxUi);
+  _imageLightbox = dialog;
+  return dialog;
+}
+
+function restoreLightboxUi() {
+  _lightboxOpen = false;
+  document.documentElement.classList.remove('lightbox-open');
+  const trigger = _lightboxTrigger;
+  _lightboxTrigger = null;
+  if (trigger && trigger.isConnected) {
+    // 只恢复焦点，不因 focus 触发额外滚动
+    try { trigger.focus({ preventScroll: true }); }
+    catch (e) { try { trigger.focus(); } catch (e2) { /* 忽略 */ } }
+  }
+  const target = _lightboxScrollY;
+  const restoreScroll = function () {
+    if (Math.abs(window.scrollY - target) <= 1) return;
+    const root = document.documentElement;
+    const prev = root.style.scrollBehavior;
+    // 临时关闭全局 smooth，确保关闭查看器后立即回到原位置
+    root.style.scrollBehavior = 'auto';
+    try { window.scrollTo(0, target); } catch (e) { /* 忽略 */ }
+    root.style.scrollBehavior = prev;
+  };
+  restoreScroll();
+  // 原生 dialog 的焦点恢复会在关闭后再次滚动，延迟补两次确保回到原位
+  if (typeof requestAnimationFrame === 'function') requestAnimationFrame(restoreScroll);
+  setTimeout(restoreScroll, 80);
+}
+
+function openImageLightbox(trigger) {
+  if (!trigger || !trigger.isConnected) return;
+  const src = trigger.getAttribute('src');
+  if (!isSafeImageUrl(src)) return;
+  const dialog = ensureImageLightbox();
+  const img = dialog.querySelector('.image-lightbox-img');
+  const error = dialog.querySelector('.image-lightbox-error');
+  const caption = dialog.querySelector('.image-lightbox-caption');
+  img.hidden = false;
+  error.hidden = true;
+  img.setAttribute('src', src);
+  img.setAttribute('alt', String(trigger.getAttribute('alt') || ''));
+  const alt = String(trigger.getAttribute('alt') || '').trim();
+  caption.textContent = alt;       // 只用文本节点，绝不拼接 HTML
+  caption.hidden = !alt;
+  _lightboxTrigger = trigger;
+  _lightboxScrollY = window.scrollY;
+  _lightboxOpen = true;
+  document.documentElement.classList.add('lightbox-open');
+  if (typeof dialog.showModal === 'function') {
+    try { dialog.showModal(); } catch (e) { dialog.setAttribute('open', ''); }
+  } else {
+    dialog.setAttribute('open', '');
+  }
+  const closeBtn = dialog.querySelector('.image-lightbox-close');
+  if (closeBtn) {
+    try { closeBtn.focus(); } catch (e) { /* 忽略 */ }
+  }
+}
+
+function closeImageLightbox(immediate) {
+  const dialog = _imageLightbox;
+  if (!dialog) return;
+  if (immediate) {
+    _lightboxTrigger = null;
+    _lightboxScrollY = window.scrollY;
+  }
+  if (dialog.hasAttribute('open')) {
+    if (typeof dialog.close === 'function') {
+      try { dialog.close(); restoreLightboxUi(); return; } catch (e) { /* 回退 */ }
+    }
+    dialog.removeAttribute('open');
+  }
+  restoreLightboxUi();
+}
+
+function imageLightboxFromEvent(e) {
+  const target = e.target;
+  if (!target || target.tagName !== 'IMG') return null;
+  if (!target.classList.contains('zoomable-image')) return null;
+  if (target.closest('a')) return null;
+  if (!isSafeImageUrl(target.getAttribute('src'))) return null;
+  return target;
+}
+
+document.addEventListener('click', function (e) {
+  const img = imageLightboxFromEvent(e);
+  if (!img) return;
+  e.preventDefault();
+  openImageLightbox(img);
+});
+
+document.addEventListener('keydown', function (e) {
+  if (_lightboxOpen && e.key === 'Escape') {
+    e.preventDefault();
+    closeImageLightbox(false);
+    return;
+  }
+  if (e.key !== 'Enter' && e.key !== ' ') return;
+  const img = imageLightboxFromEvent(e);
+  if (!img) return;
+  e.preventDefault();
+  openImageLightbox(img);
+});
+
+// ============================================
 // Page Renderers
 // ============================================
 
@@ -5156,6 +5355,7 @@ window.exportPost = function() {
 // Router
 // ============================================
 async function router() {
+  closeImageLightbox(true);      // 路由切换：立即关闭并清理查看器，不恢复旧页面焦点
   const token = ++_routeToken;
   const hash = location.hash.slice(1) || '/';
   const app = document.getElementById('app');
@@ -5297,6 +5497,7 @@ async function router() {
           app.innerHTML = renderCourseDetail(id);
           enhanceCodeBlocks(app);
           enhanceTables(app);
+          enhanceImages(app);
           highlightIn(app);
           buildReadingTools();
           // 笔记映射（NOTE_PAGES）此时才到位：canonical / og:url 必须跟着重算，
@@ -5421,6 +5622,7 @@ async function router() {
     perfMark('art:post-start');
     enhanceCodeBlocks(app);
     enhanceTables(app);
+    enhanceImages(app);
     buildReadingTools();
     highlightIn(app);
     perfMark('art:post-end');
