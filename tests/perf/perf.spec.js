@@ -48,7 +48,10 @@ const TBT_TAIL_MS = 2000;      // TBT 近似窗口尾部
 const SEARCH_STABLE_MS = 1200; // 搜索渲染稳定判定
 const THIRD_PARTY_BLOCK = ['*giscus.app*'];
 
-const ALL_SCENARIOS = ['cold-home', 'warm-home', 'long-post', 'post-lazy', 'search'];
+// Batch 8D-4 新增场景：course / papers / editor / note-static / route-loop
+// 既有 5 个场景的定义与口径一字未动，前后对比仍然成立。
+const ALL_SCENARIOS = ['cold-home', 'warm-home', 'long-post', 'post-lazy', 'search',
+  'course', 'papers', 'editor', 'note-static', 'route-loop'];
 const ALL_CONFIGS = ['desktop', 'mobile'];
 
 // ---------------------------------------------------------------- 工具函数
@@ -126,6 +129,16 @@ function longestPostId() {
   });
   const sorted = all.slice().sort((a, b) => (b.content || '').length - (a.content || '').length);
   return { id: sorted[0].id, title: sorted[0].title, contentChars: (sorted[0].content || '').length, totalPosts: all.length };
+}
+
+// Batch 8D-4：确定性地选取"体积最大的静态课程笔记页"（排除索引/材料聚合页），
+// 保证同一环境前后两次测量选中的是同一文件。
+function pickStaticNote() {
+  const dir = path.join(ROOT, 'notes');
+  const files = fs.readdirSync(dir).filter(f => /\.html$/.test(f) && f !== 'index.html' && f !== 'materials.html');
+  const sorted = files.map(f => ({ id: f, bytes: fs.statSync(path.join(dir, f)).size }))
+    .sort((a, b) => b.bytes - a.bytes);
+  return sorted[0] || null;
 }
 
 function parseArgs(argv) {
@@ -457,6 +470,44 @@ async function openPostFn(arg) {
   }
 }
 
+// Batch 8D-4：路由循环稳定性测量——按固定顺序在 SPA 路由间反复切换，
+// 每步记录 DOM 节点数、Resource Timing 条目数、长任务数。
+// 若监听器/Observer/资源随路由循环持续增长，这三个计数会同向增长。
+async function routeLoopFn(arg) {
+  const app = document.getElementById('app');
+  if (!app) return { error: 'no #app' };
+  const steps = arg.steps;
+  const cycles = arg.cycles;
+  const gapMs = arg.gapMs || 300;
+  const st = window.__perf || {};
+  const out = [];
+  for (let c = 0; c < cycles; c++) {
+    for (const h of steps) {
+      let renderAt = null;
+      const obs = new MutationObserver(() => { if (renderAt === null) renderAt = performance.now(); });
+      obs.observe(app, { childList: true });
+      const t0 = performance.now();
+      location.hash = h;
+      const deadline = t0 + 10000;
+      while (performance.now() < deadline && renderAt === null) {
+        await new Promise(r => setTimeout(r, 20));
+      }
+      await new Promise(r => requestAnimationFrame(() => requestAnimationFrame(r)));
+      obs.disconnect();
+      if (gapMs) await new Promise(r => setTimeout(r, gapMs));
+      out.push({
+        cycle: c,
+        hash: h,
+        renderMs: renderAt === null ? null : Math.round((renderAt - t0) * 100) / 100,
+        domNodes: document.getElementsByTagName('*').length,
+        resourceCount: performance.getEntriesByType('resource').length,
+        longTasks: (st.longTasks || []).length
+      });
+    }
+  }
+  return { steps: steps, cycles: cycles, trace: out };
+}
+
 // 搜索测量：一次完整的输入事件 → 结果渲染（含 180ms 防抖），返回首帧/最终帧时间
 async function searchFn(arg) {
   const keyword = arg.keyword;
@@ -576,15 +627,18 @@ async function microFn(arg) {
   if (post && typeof loadPostBody === 'function') {
     try { await loadPostBody(post.id); } catch (e) { out.meta.bodyLoadError = String(e && e.message); }
   }
+  // 6B-2 后正文不在 post.content 上（在 _postBodies / USER_POSTS.content）：
+  // 统一走 cachedPostContent 取回，避免 marked() 收到 undefined（8D-4 修复探针）
+  const diagBody = post ? ((typeof cachedPostContent === 'function' ? cachedPostContent(post) : post.content) || '') : '';
   if (typeof renderHome === 'function') out.bench.renderHome = bench(() => renderHome(), 7);
   if (post && typeof renderPost === 'function') out.bench.renderPost = bench(() => renderPost(post.id), 7);
   if (post && typeof renderMarkdown === 'function') {
-    out.bench.renderMarkdown = bench(() => renderMarkdown(post.content), 7);
+    out.bench.renderMarkdown = bench(() => renderMarkdown(diagBody), 7);
   }
   if (post && typeof marked !== 'undefined') {
-    out.bench.markedParse = bench(() => marked.parse(post.content), 7);
+    out.bench.markedParse = bench(() => marked.parse(diagBody), 7);
     let html = '';
-    try { html = marked.parse(post.content); } catch (e) { /* ignore */ }
+    try { html = marked.parse(diagBody); } catch (e) { /* ignore */ }
     out.meta.rawHtmlChars = html.length;
     if (typeof DOMPurify !== 'undefined') {
       const cfg = typeof SANITIZE_CONFIG !== 'undefined' ? SANITIZE_CONFIG : undefined;
@@ -1345,8 +1399,217 @@ const RUNNERS = {
   'warm-home': runWarmHome,
   'long-post': runLongPost,
   'post-lazy': runPostLazy,
-  'search': runSearch
+  'search': runSearch,
+  'course': runCourse,
+  'papers': runPapers,
+  'editor': runEditor,
+  'note-static': runNoteStatic,
+  'route-loop': runRouteLoop
 };
+
+// Batch 8D-4 通用导航页 runner：预热（SW 接管 + 预取收敛）→ 文档级重载目标路由 →
+// 与 long-post 相同口径采集（load + 2.5s 观测窗），随后测量 首页↔目标页 的 SPA 路由切换。
+function makeNavHashRunner(scenarioKey, hashPath) {
+  return async function runNavHash(config, deps, opt) {
+    const samples = [];
+    let cacheState = null;
+    for (let rep = 1; rep <= opt.repeat; rep++) {
+      const bag = { errors: [] };
+      const startedAt = new Date().toISOString();
+      const ctx = await newContextFor(deps.browser, config, deps);
+      let sample;
+      try {
+        const page = await ctx.newPage();
+        attachDiagnostics(page, bag);
+        const cdp = await attachCDP(page, config, bag);
+        const warm = await warmUp(page, config, deps);
+        if (!cacheState) cacheState = warm;
+        await page.evaluate((h) => { location.hash = h; }, hashPath);
+        await settleLink(page, deps, 6000);
+        const hitsBefore = snapshotHits(deps.state);
+        const pre = await cdpMetrics(cdp);
+        const probeMark = deps.probe ? deps.probe.mark() : null;
+        await page.reload({ waitUntil: 'load', timeout: 60000 });
+        await page.waitForTimeout(SETTLE_MS);
+        sample = await captureNavSample({
+          page, cdp, config, deps, bag, scenario: scenarioKey, rep, pre, hitsBefore, startedAt, probeMark
+        });
+        sample.extra = {
+          hash: hashPath,
+          warmVerified: warm.warmVerified,
+          loadType: '文档级重载（暖 SW 缓存）'
+        };
+
+        // SPA 路由切换：首页 → 目标页 → 首页（与 long-post 相同的测法）
+        await page.evaluate((h) => { location.hash = h; }, '#/');
+        await page.waitForTimeout(400);
+        const preSwitch = await cdpMetrics(cdp);
+        const toTarget = await page.evaluate(routeSwitchFn, hashPath);
+        const postSwitch = await cdpMetrics(cdp);
+        await page.waitForTimeout(600);
+        const preBack = await cdpMetrics(cdp);
+        const toHome = await page.evaluate(routeSwitchFn, '#/');
+        const postBack = await cdpMetrics(cdp);
+
+        const switchCdp = resolveCdp(preSwitch, postSwitch);
+        const backCdp = resolveCdp(preBack, postBack);
+        sample.metrics.routeRenderMs = toTarget.renderMs;
+        sample.metrics.routePaintMs = toTarget.paintMs;
+        sample.metrics.routeBackRenderMs = toHome.renderMs;
+        sample.metrics.routeScriptMs = switchCdp.values ? switchCdp.values.ScriptDuration : null;
+        sample.metrics.routeBackScriptMs = backCdp.values ? backCdp.values.ScriptDuration : null;
+        sample.extra.routeSwitch = { toTarget, toHome };
+      } catch (e) {
+        sample = failedSample(scenarioKey, config, rep, e, bag);
+      }
+      samples.push(sample);
+      await ctx.close();
+      if (!opt.quiet) console.log('    ' + scenarioKey + '/' + config.id + ' rep ' + rep + '/' + opt.repeat + (sample.ok ? ' ok' : ' FAIL: ' + sample.error));
+    }
+    return {
+      samples,
+      cacheState: cacheState ? {
+        mode: 'warm',
+        serviceWorker: '已注册并接管（每次重复均使用全新 BrowserContext 重新预热）',
+        warmVerified: cacheState.warmVerified,
+        coreCacheName: cacheState.coreCacheName,
+        coreEntryCount: cacheState.coreEntryCount,
+        missingRequired: cacheState.missingRequired
+      } : null
+    };
+  };
+}
+
+// 三个导航页场景共用同一 runner（函数声明，避免 TDZ）
+function runCourse(config, deps, opt) { return makeNavHashRunner('course', '#/courses')(config, deps, opt); }
+function runPapers(config, deps, opt) { return makeNavHashRunner('papers', '#/papers')(config, deps, opt); }
+function runEditor(config, deps, opt) { return makeNavHashRunner('editor', '#/editor')(config, deps, opt); }
+
+// Batch 8D-4：静态课程笔记页（预渲染文档，非 SPA 路由）。
+// 预热仍在首页完成（SW 接管 + CORE 缓存收敛），随后直接整页导航到静态页。
+async function runNoteStatic(config, deps, opt) {
+  const samples = [];
+  let cacheState = null;
+  const noteId = opt.note ? opt.note.id : 'grcnn.html';
+  const noteUrl = PREFIX + '/notes/' + noteId;
+  for (let rep = 1; rep <= opt.repeat; rep++) {
+    const bag = { errors: [] };
+    const startedAt = new Date().toISOString();
+    const ctx = await newContextFor(deps.browser, config, deps);
+    let sample;
+    try {
+      const page = await ctx.newPage();
+      attachDiagnostics(page, bag);
+      const cdp = await attachCDP(page, config, bag);
+      const warm = await warmUp(page, config, deps);
+      if (!cacheState) cacheState = warm;
+      const hitsBefore = snapshotHits(deps.state);
+      const pre = await cdpMetrics(cdp);
+      const probeMark = deps.probe ? deps.probe.mark() : null;
+      await page.goto(config.baseUrl + noteUrl, { waitUntil: 'load', timeout: 60000 });
+      await page.waitForTimeout(SETTLE_MS);
+      sample = await captureNavSample({
+        page, cdp, config, deps, bag, scenario: 'note-static', rep, pre, hitsBefore, startedAt, probeMark
+      });
+      sample.extra = {
+        noteId,
+        url: noteUrl,
+        warmVerified: warm.warmVerified,
+        loadType: '文档级导航（暖 SW 缓存，预渲染静态页）'
+      };
+    } catch (e) {
+      sample = failedSample('note-static', config, rep, e, bag);
+    }
+    samples.push(sample);
+    await ctx.close();
+    if (!opt.quiet) console.log('    note-static/' + config.id + ' rep ' + rep + '/' + opt.repeat + (sample.ok ? ' ok' : ' FAIL: ' + sample.error));
+  }
+  return {
+    samples,
+    cacheState: cacheState ? {
+      mode: 'warm',
+      serviceWorker: '已注册并接管（首页预热后导航到静态笔记页）',
+      warmVerified: cacheState.warmVerified,
+      coreCacheName: cacheState.coreCacheName,
+      coreEntryCount: cacheState.coreEntryCount,
+      missingRequired: cacheState.missingRequired
+    } : null
+  };
+}
+
+// Batch 8D-4：路由循环稳定性——固定路由序列重复循环，逐步记录 DOM 节点 / 资源条目 / 长任务，
+// 用于检验监听器、Observer、定时器与缓存是否随路由循环持续增长（Stage 5）。
+async function runRouteLoop(config, deps, opt) {
+  const samples = [];
+  let cacheState = null;
+  const steps = ['/', '/courses', '/papers', '/', '/editor', '/', '/courses', '/papers', '/'];
+  const cycles = 4;
+  for (let rep = 1; rep <= opt.repeat; rep++) {
+    const bag = { errors: [] };
+    const ctx = await newContextFor(deps.browser, config, deps);
+    let sample;
+    try {
+      const page = await ctx.newPage();
+      attachDiagnostics(page, bag);
+      const cdp = await attachCDP(page, config, bag);
+      const warm = await warmUp(page, config, deps);
+      if (!cacheState) cacheState = warm;
+      await page.waitForTimeout(300);
+      const ltBefore = await page.evaluate(() => (window.__perf || { longTasks: [] }).longTasks.length);
+      const loopResult = await page.evaluate(routeLoopFn, { steps, cycles, gapMs: 300 });
+      const finalSnap = await page.evaluate(() => ({
+        domNodes: document.getElementsByTagName('*').length,
+        resourceCount: performance.getEntriesByType('resource').length,
+        longTasks: (window.__perf || { longTasks: [] }).longTasks.length,
+        appChildren: document.getElementById('app') ? document.getElementById('app').children.length : 0
+      }));
+      sample = {
+        rep,
+        scenario: 'route-loop',
+        config: config.id,
+        ok: !loopResult.error,
+        error: loopResult.error || null,
+        metrics: {
+          loopDomNodesFinal: finalSnap.domNodes,
+          loopResourceCountFinal: finalSnap.resourceCount,
+          loopLongTasksTotal: finalSnap.longTasks - ltBefore,
+          loopFirstCycleDomNodes: loopResult.trace && loopResult.trace.length ? loopResult.trace[0].domNodes : null,
+          loopRenderMsMedian: null,
+          loopDomGrowth: null,
+          loopResourceGrowth: null
+        },
+        extra: {
+          steps,
+          cycles,
+          warmVerified: warm.warmVerified,
+          trace: loopResult.trace
+        },
+        errors: bag.errors.slice(0, 20)
+      };
+      if (loopResult.trace && loopResult.trace.length) {
+        const renders = loopResult.trace.map(t => t.renderMs).filter(v => typeof v === 'number').sort((a, b) => a - b);
+        if (renders.length) sample.metrics.loopRenderMsMedian = renders[Math.floor(renders.length / 2)];
+        const doms = loopResult.trace.map(t => t.domNodes);
+        const res0 = loopResult.trace[0].resourceCount;
+        const dom0 = doms[0];
+        const lastN = Math.min(3, doms.length);
+        const domTail = doms.slice(-lastN);
+        const resTail = loopResult.trace.slice(-lastN).map(t => t.resourceCount);
+        sample.metrics.loopDomGrowth = Math.max.apply(null, domTail) - dom0;
+        sample.metrics.loopResourceGrowth = Math.max.apply(null, resTail) - res0;
+      }
+    } catch (e) {
+      sample = failedSample('route-loop', config, rep, e, bag);
+    }
+    samples.push(sample);
+    await ctx.close();
+    if (!opt.quiet) console.log('    route-loop/' + config.id + ' rep ' + rep + '/' + opt.repeat + (sample.ok ? ' ok' : ' FAIL: ' + sample.error));
+  }
+  return {
+    samples,
+    cacheState: cacheState ? { mode: 'warm', serviceWorker: '已注册并接管', warmVerified: cacheState.warmVerified } : null
+  };
+}
 
 const SCENARIO_META = {
   'cold-home': {
@@ -1373,6 +1636,31 @@ const SCENARIO_META = {
     label: 'D. 全局搜索首次/重复输入',
     description: '预热后输入固定关键词：首次输入会触发 courses/papers/notes 懒加载（6B-2 起还包括正文搜索语料），重复输入复用已加载数据。',
     url: HOME + ' + #searchInput'
+  },
+  'course': {
+    label: 'F. 课程列表页（8D-4）',
+    description: '预热后整页重载 #/courses（课程卡片 + 分类归档渲染），并测量首页↔课程页的 SPA 路由切换耗时。',
+    url: '#/courses'
+  },
+  'papers': {
+    label: 'G. 论文与学习资料页（8D-4）',
+    description: '预热后整页重载 #/papers（论文/资料卡片渲染），并测量首页↔论文页的 SPA 路由切换耗时。',
+    url: '#/papers'
+  },
+  'editor': {
+    label: 'H. 编辑器页（8D-4）',
+    description: '预热后整页重载 #/editor（编辑器界面初始化），并测量首页↔编辑器的 SPA 路由切换耗时。',
+    url: '#/editor'
+  },
+  'note-static': {
+    label: 'I. 静态课程笔记页（8D-4）',
+    description: '首页预热后整页导航到体积最大的预渲染静态笔记页 /notes/<id>.html（文档级加载）。',
+    url: '/notes/<id>.html'
+  },
+  'route-loop': {
+    label: 'J. 路由循环稳定性（8D-4）',
+    description: '预热后在固定路由序列（首页/课程/论文/编辑器）上循环 4 轮，逐步记录 DOM 节点、Resource Timing 条目与长任务数量，检验路由循环后是否持续增长。',
+    url: '#/ → #/courses → #/papers → #/editor 循环'
   }
 };
 
@@ -1524,7 +1812,12 @@ function printSummary(baseline) {
     'warm-home': ['fcpMs', 'lcpMs', 'cls', 'loadMs', 'scriptMs', 'tbtMs', 'requestCount', 'encodedBytes', 'serverRequestCount', 'networkBytes', 'swCacheEntries'],
     'long-post': ['fcpMs', 'lcpMs', 'loadMs', 'scriptMs', 'tbtMs', 'encodedBytes', 'routeRenderMs', 'routePaintMs', 'routeBackRenderMs'],
     'post-lazy': ['postFirstReadableMs', 'postFirstPaintMs', 'postBodyBytes', 'postServerRequests', 'postFirstScriptMs', 'postRepeatReadableMs', 'offlinePostReadableMs'],
-    'search': ['searchFirstRenderMs', 'searchFirstFinalMs', 'searchLazyBytes', 'searchRepeatRenderMs', 'searchRepeatScriptMs']
+    'search': ['searchFirstRenderMs', 'searchFirstFinalMs', 'searchLazyBytes', 'searchRepeatRenderMs', 'searchRepeatScriptMs'],
+    'course': ['fcpMs', 'lcpMs', 'cls', 'loadMs', 'scriptMs', 'tbtMs', 'requestCount', 'encodedBytes', 'routeRenderMs', 'routePaintMs'],
+    'papers': ['fcpMs', 'lcpMs', 'cls', 'loadMs', 'scriptMs', 'tbtMs', 'requestCount', 'encodedBytes', 'routeRenderMs', 'routePaintMs'],
+    'editor': ['fcpMs', 'lcpMs', 'cls', 'loadMs', 'scriptMs', 'tbtMs', 'requestCount', 'encodedBytes', 'routeRenderMs', 'routePaintMs'],
+    'note-static': ['fcpMs', 'lcpMs', 'cls', 'loadMs', 'scriptMs', 'tbtMs', 'requestCount', 'encodedBytes'],
+    'route-loop': ['loopDomNodesFinal', 'loopResourceCountFinal', 'loopLongTasksTotal', 'loopDomGrowth', 'loopResourceGrowth', 'loopRenderMsMedian']
   };
   console.log('\n===== 中位数（最小值 ~ 最大值） =====');
   for (const scn of Object.keys(baseline.scenarios)) {
@@ -1559,6 +1852,7 @@ async function main() {
   const post = args.post
     ? { id: args.post, title: '(手动指定)', contentChars: null, totalPosts: autoPost.totalPosts }
     : autoPost;
+  const autoNote = pickStaticNote();
 
   const configs = buildConfigs(args);
   const selected = args.configs.map(c => configs[c]);
@@ -1651,6 +1945,7 @@ async function main() {
   const baseline = {
     meta: {
       batch: '6A',
+      extension: 'Batch 8D-4 新增 course / papers / editor / note-static / route-loop 场景（既有 5 个场景定义与口径未改动）',
       generator: 'tests/perf/perf.spec.js',
       generatedAt: new Date().toISOString(),
       durationSec: null,
@@ -1688,6 +1983,7 @@ async function main() {
       metricMeta: METRIC_META,
       scenarioMeta: SCENARIO_META,
       post,
+      note: Object.assign({ batch: '8D4 场景 note-static 使用' }, autoNote || {}),
       keywords: { first: args.keyword, second: args.keyword2 },
       configs: {}
     },
@@ -1718,12 +2014,20 @@ async function main() {
       baseline.scenarios[scn] = {};
       for (const cfg of selected) {
         console.log('\n-- ' + scn + ' / ' + cfg.id + ' --');
-        const res = await RUNNERS[scn](cfg, deps, { repeat: args.repeat, quiet: args.quiet, post, keyword: args.keyword, keyword2: args.keyword2 });
+        const res = await RUNNERS[scn](cfg, deps, { repeat: args.repeat, quiet: args.quiet, post, note: autoNote, keyword: args.keyword, keyword2: args.keyword2 });
         const summary = summarize(res.samples);
+        const scenarioUrl = (function () {
+          if (scn === 'long-post') return cfg.baseUrl + PREFIX + '/#/post/' + post.id;
+          if (scn === 'note-static') return cfg.baseUrl + PREFIX + '/notes/' + (autoNote ? autoNote.id : '');
+          if (scn === 'course') return cfg.baseUrl + HOME + '#/courses';
+          if (scn === 'papers') return cfg.baseUrl + HOME + '#/papers';
+          if (scn === 'editor') return cfg.baseUrl + HOME + '#/editor';
+          return cfg.baseUrl + HOME;
+        })();
         baseline.scenarios[scn][cfg.id] = {
           label: SCENARIO_META[scn].label,
           description: SCENARIO_META[scn].description,
-          url: scn === 'long-post' ? cfg.baseUrl + PREFIX + '/#/post/' + post.id : cfg.baseUrl + HOME,
+          url: scenarioUrl,
           cacheState: res.cacheState,
           samples: res.samples,
           summary,

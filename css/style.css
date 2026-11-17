@@ -361,6 +361,10 @@ main.container {
 
 .article-card-title a {
   color: var(--color-text);
+  /* 8D-4：LH target-size 实测标题链接高度 22px < 24×24（WCAG 2.5.8）。
+     block + min-height 保住多行标题换行能力，同时保证单行时触控高度达标 */
+  display: block;
+  min-height: 24px;
 }
 
 .article-card-title a:hover {
@@ -475,6 +479,8 @@ main.container {
   width: 100%;
   max-width: var(--measure-wide);
   margin: 0 auto 20px;
+  /* 8D-4：WCAG 2.5.8 触控目标最小 24×24——原实测高度 22px，补足下限 */
+  min-height: 24px;
   font-size: 0.82rem;
   color: var(--color-text-muted);
   font-weight: 500;
@@ -1684,7 +1690,8 @@ html.lightbox-open { overflow: hidden; }
 .footer-sub {
   font-size: 0.74rem;
   margin-top: 4px;
-  opacity: 0.8;
+  /* 8D-4：去掉 0.8 透明度——LH 实测混合后 #818995 on #ffffff 仅 3.53:1（<AA 4.5）；
+     去掉后 --color-text-muted(#626b7a) 在白底 5.7:1，深色主题同样受益 */
 }
 
 /* ============================================
@@ -2407,7 +2414,8 @@ html.lightbox-open { overflow: hidden; }
   margin-left: 2px;
   border-radius: 999px;
   background: var(--color-primary-light);
-  color: var(--color-primary);
+  /* 8D-4：--color-primary(#2563eb) 在 #e7efff 底上 4.48:1 低于 AA，换 primary-dark 后 5.8:1 */
+  color: var(--color-primary-dark);
   font-size: 0.72rem;
   line-height: 1.7;
   text-align: center;
@@ -2749,6 +2757,79 @@ html.lightbox-open { overflow: hidden; }
 [data-theme="dark"] .hljs {
   background: #16181d !important;
   color: #e6e8eb;
+}
+
+/* 浅色模式代码高亮配色（8D-4 无障碍修复）：vendor atom-one-light 的默认 token
+   在 --color-code-bg 系浅底上只有 2.3~3.6:1，低于 WCAG AA 4.5:1。
+   这里覆盖为加深后的 GitHub-Light 系配色（对 #f4f5f7 / #f0f2f5 / #f1f3f5 均 ≥4.5:1）。
+   作用域用 html:not([data-theme="dark"])：深色主题时本块完全不匹配，
+   与下方 [data-theme="dark"] 覆盖块互不竞争。 */
+html:not([data-theme="dark"]) .hljs-comment,
+html:not([data-theme="dark"]) .hljs-quote {
+  color: #57606a;
+}
+
+html:not([data-theme="dark"]) .hljs-keyword,
+html:not([data-theme="dark"]) .hljs-selector-tag,
+html:not([data-theme="dark"]) .hljs-attr,
+html:not([data-theme="dark"]) .hljs-selector-class,
+html:not([data-theme="dark"]) .hljs-selector-attr,
+html:not([data-theme="dark"]) .hljs-selector-pseudo,
+html:not([data-theme="dark"]) .hljs-literal,
+html:not([data-theme="dark"]) .hljs-doctag,
+html:not([data-theme="dark"]) .hljs-formula {
+  color: #7d4bd9;
+}
+
+html:not([data-theme="dark"]) .hljs-string,
+html:not([data-theme="dark"]) .hljs-regexp,
+html:not([data-theme="dark"]) .hljs-addition,
+html:not([data-theme="dark"]) .hljs-meta .hljs-string,
+html:not([data-theme="dark"]) .hljs-tag,
+html:not([data-theme="dark"]) .hljs-name {
+  color: #116329;
+}
+
+html:not([data-theme="dark"]) .hljs-number,
+html:not([data-theme="dark"]) .hljs-symbol,
+html:not([data-theme="dark"]) .hljs-bullet,
+html:not([data-theme="dark"]) .hljs-template-variable,
+html:not([data-theme="dark"]) .hljs-variable {
+  color: #953800;
+}
+
+html:not([data-theme="dark"]) .hljs-title,
+html:not([data-theme="dark"]) .hljs-title.function_,
+html:not([data-theme="dark"]) .hljs-section,
+html:not([data-theme="dark"]) .hljs-selector-id,
+html:not([data-theme="dark"]) .hljs-link,
+html:not([data-theme="dark"]) .hljs-meta {
+  color: #0550ae;
+}
+
+html:not([data-theme="dark"]) .hljs-title.class_,
+html:not([data-theme="dark"]) .hljs-class .hljs-title,
+html:not([data-theme="dark"]) .hljs-type,
+html:not([data-theme="dark"]) .hljs-built_in {
+  color: #6e2c00;
+}
+
+html:not([data-theme="dark"]) .hljs-params,
+html:not([data-theme="dark"]) .hljs-property,
+html:not([data-theme="dark"]) .hljs-attribute {
+  color: #24292f;
+}
+
+html:not([data-theme="dark"]) .hljs-deletion {
+  color: #a40e26;
+}
+
+html:not([data-theme="dark"]) .hljs-emphasis {
+  font-style: italic;
+}
+
+html:not([data-theme="dark"]) .hljs-strong {
+  font-weight: 700;
 }
 
 /* 深色模式代码高亮配色（One Dark 风格，覆盖 atom-one-light 的浅色 token） */
@@ -4138,6 +4219,40 @@ mark.search-hit {
   font-size: 0.82rem;
   color: var(--color-text-muted);
   text-align: center;
+}
+
+/* 8D-4：静态页底部行内链接实测高度仅 17px，低于 WCAG 2.5.8 的 24×24 下限 */
+.notes-static-hint a {
+  display: inline-flex;
+  align-items: center;
+  min-height: 24px;
+}
+
+/* 8D-4：系列导航上一/下一篇链接实测高度 19px，补足 24×24 触控下限 */
+.series-prev-next a {
+  display: inline-flex;
+  align-items: center;
+  min-height: 24px;
+}
+
+/* 8D-4：课程页描述中的行内链接（“静态笔记合集 →”）实测高度 18px */
+.page-desc a {
+  display: inline-flex;
+  align-items: center;
+  min-height: 24px;
+}
+
+/* 8D-4：视觉隐藏（仅供屏幕阅读器与标题层级使用），不参与布局 */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+  border: 0;
 }
 
 /* 暂无笔记的课程卡片弱化显示 */

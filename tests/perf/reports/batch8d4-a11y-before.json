@@ -1,0 +1,650 @@
+{
+  "meta": {
+    "generator": "tests/perf/a11y-audit.js",
+    "generatedAt": "2026-11-17T09:31:26.119Z",
+    "basis": "真实 Chromium DOM/计算样式检查（可自动检测的 WCAG 2.2 AA 子集），viewport 1440×900 @1x",
+    "postId": "deep-learning-in-slam",
+    "noteId": "mech7010.html",
+    "keyword": "SLAM",
+    "checks": [
+      "title/lang/viewport",
+      "h1唯一+层级跳级",
+      "landmark+skip-link",
+      "img alt",
+      "控件可访问名称",
+      "表单标签",
+      "对比度(近似)",
+      "焦点指示样式存在性",
+      "触控目标24px",
+      "reduced-motion 覆盖",
+      "展开控件状态"
+    ]
+  },
+  "pages": {
+    "home": {
+      "title": "Eric's Notebook",
+      "lang": "zh-CN",
+      "hasViewportMeta": true,
+      "headingList": [
+        "H1:文章",
+        "H2:机器学习入门：从线性回归到深度学习",
+        "H2:具身智能：让AI真正\"住进\"物理世界",
+        "H2:Sim-to-Real Gap：具身智能落地的最后一公里",
+        "H2:强化学习入门：从MDP到PPO",
+        "H2:VLA模型入门：从RT-1到OpenVLA",
+        "H2:SLAM技术全景：从滤波到图优化",
+        "H2:VLA模型在工业场景的落地挑战与思考",
+        "H2:强化学习在机器人控制中的应用",
+        "H2:机械臂轨迹规划简述：从多项式到优化方法",
+        "H2:机械臂抓取技术：从解析法到学习方法",
+        "H2:视觉SLAM前端：特征提取与匹配",
+        "H2:深度学习在SLAM中的应用",
+        "H2:从传统产线到智能产线：我做产线智能化三年的总结",
+        "H2:工业通信协议实战笔记：OPC UA、Modbus与Profi",
+        "H2:深圳周末好去处：我的私藏清单",
+        "H2:机械臂力控与柔顺控制：从阻抗控制到导纳控制",
+        "H2:读书笔记：《机器人学导论》前三章重点梳理",
+        "H2:数字孪生在产线中的应用：不只是好看的3D"
+      ],
+      "h1Count": 1,
+      "headingSkips": [],
+      "landmarks": {
+        "main": true,
+        "nav": true,
+        "header": true,
+        "footer": true
+      },
+      "hasSkipLink": true,
+      "imgCount": 0,
+      "imgMissingAlt": [],
+      "unnamedControls": [],
+      "unlabeledFields": [],
+      "contrastChecked": 144,
+      "contrastFailCount": 0,
+      "contrastFails": [],
+      "contrastBasis": "计算样式近似：不含渐变/图片背景，不覆盖 ::before/::after 伪元素",
+      "focusStyleRules": 18,
+      "focusIndicatorEnabled": true,
+      "smallTouchTargets": [],
+      "smallTouchTargetCount": 0,
+      "hasAnimation": false,
+      "hasReducedMotionBlock": true,
+      "expandablesMissingState": [],
+      "issueCount": 0,
+      "ok": true
+    },
+    "post": {
+      "title": "深度学习在SLAM中的应用 · Eric's Notebook",
+      "lang": "zh-CN",
+      "hasViewportMeta": true,
+      "headingList": [
+        "H1:深度学习在SLAM中的应用",
+        "H1:深度学习在SLAM中的应用",
+        "H2:深度学习在SLAM中的角色",
+        "H2:应用一：深度特征提取",
+        "H3:SuperPoint",
+        "H3:vs ORB",
+        "H2:应用二：深度特征匹配",
+        "H3:SuperGlue",
+        "H3:LightGlue（2023）",
+        "H2:应用三：深度位姿估计",
+        "H3:直接回归位姿",
+        "H3:相对位姿估计（更实用）",
+        "H2:应用四：深度深度估计",
+        "H3:Monodepth2：单目深度估计",
+        "H2:应用五：语义SLAM",
+        "H2:应用六：学习型闭环检测",
+        "H2:端到端SLAM：DROID-SLAM",
+        "H2:落地现状与建议",
+        "H2:总结",
+        "H3:相关文章",
+        "H3:💬 评论与讨论"
+      ],
+      "h1Count": 2,
+      "headingSkips": [],
+      "landmarks": {
+        "main": true,
+        "nav": true,
+        "header": true,
+        "footer": true
+      },
+      "hasSkipLink": true,
+      "imgCount": 0,
+      "imgMissingAlt": [],
+      "unnamedControls": [],
+      "unlabeledFields": [],
+      "contrastChecked": 452,
+      "contrastFailCount": 190,
+      "contrastFails": [
+        {
+          "tag": "SPAN",
+          "cls": "hljs-title class_",
+          "color": "rgb(193, 132, 1)",
+          "bg": "rgb(240,242,245)",
+          "fontSize": "13.44px",
+          "ratio": 2.85,
+          "need": 4.5
+        },
+        {
+          "tag": "SPAN",
+          "cls": "hljs-string",
+          "color": "rgb(80, 161, 79)",
+          "bg": "rgb(240,242,245)",
+          "fontSize": "13.44px",
+          "ratio": 2.86,
+          "need": 4.5
+        },
+        {
+          "tag": "SPAN",
+          "cls": "hljs-title function_",
+          "color": "rgb(64, 120, 242)",
+          "bg": "rgb(240,242,245)",
+          "fontSize": "13.44px",
+          "ratio": 3.61,
+          "need": 4.5
+        },
+        {
+          "tag": "SPAN",
+          "cls": "hljs-built_in",
+          "color": "rgb(193, 132, 1)",
+          "bg": "rgb(240,242,245)",
+          "fontSize": "13.44px",
+          "ratio": 2.85,
+          "need": 4.5
+        },
+        {
+          "tag": "SPAN",
+          "cls": "hljs-comment",
+          "color": "rgb(160, 161, 167)",
+          "bg": "rgb(240,242,245)",
+          "fontSize": "13.44px",
+          "ratio": 2.3,
+          "need": 4.5
+        },
+        {
+          "tag": "SPAN",
+          "cls": "hljs-variable language_",
+          "color": "rgb(152, 104, 1)",
+          "bg": "rgb(240,242,245)",
+          "fontSize": "13.44px",
+          "ratio": 4.34,
+          "need": 4.5
+        },
+        {
+          "tag": "SPAN",
+          "cls": "hljs-comment",
+          "color": "rgb(160, 161, 167)",
+          "bg": "rgb(240,242,245)",
+          "fontSize": "13.44px",
+          "ratio": 2.3,
+          "need": 4.5
+        },
+        {
+          "tag": "SPAN",
+          "cls": "hljs-comment",
+          "color": "rgb(160, 161, 167)",
+          "bg": "rgb(240,242,245)",
+          "fontSize": "13.44px",
+          "ratio": 2.3,
+          "need": 4.5
+        },
+        {
+          "tag": "SPAN",
+          "cls": "hljs-variable language_",
+          "color": "rgb(152, 104, 1)",
+          "bg": "rgb(240,242,245)",
+          "fontSize": "13.44px",
+          "ratio": 4.34,
+          "need": 4.5
+        },
+        {
+          "tag": "SPAN",
+          "cls": "hljs-number",
+          "color": "rgb(152, 104, 1)",
+          "bg": "rgb(240,242,245)",
+          "fontSize": "13.44px",
+          "ratio": 4.34,
+          "need": 4.5
+        },
+        {
+          "tag": "SPAN",
+          "cls": "hljs-number",
+          "color": "rgb(152, 104, 1)",
+          "bg": "rgb(240,242,245)",
+          "fontSize": "13.44px",
+          "ratio": 4.34,
+          "need": 4.5
+        },
+        {
+          "tag": "SPAN",
+          "cls": "hljs-number",
+          "color": "rgb(152, 104, 1)",
+          "bg": "rgb(240,242,245)",
+          "fontSize": "13.44px",
+          "ratio": 4.34,
+          "need": 4.5
+        },
+        {
+          "tag": "SPAN",
+          "cls": "hljs-comment",
+          "color": "rgb(160, 161, 167)",
+          "bg": "rgb(240,242,245)",
+          "fontSize": "13.44px",
+          "ratio": 2.3,
+          "need": 4.5
+        },
+        {
+          "tag": "SPAN",
+          "cls": "hljs-comment",
+          "color": "rgb(160, 161, 167)",
+          "bg": "rgb(240,242,245)",
+          "fontSize": "13.44px",
+          "ratio": 2.3,
+          "need": 4.5
+        },
+        {
+          "tag": "SPAN",
+          "cls": "hljs-variable language_",
+          "color": "rgb(152, 104, 1)",
+          "bg": "rgb(240,242,245)",
+          "fontSize": "13.44px",
+          "ratio": 4.34,
+          "need": 4.5
+        }
+      ],
+      "contrastBasis": "计算样式近似：不含渐变/图片背景，不覆盖 ::before/::after 伪元素",
+      "focusStyleRules": 18,
+      "focusIndicatorEnabled": true,
+      "smallTouchTargets": [
+        {
+          "tag": "A",
+          "cls": "article-back",
+          "w": 760,
+          "h": 22
+        },
+        {
+          "tag": "A",
+          "cls": "",
+          "w": 221,
+          "h": 19
+        }
+      ],
+      "smallTouchTargetCount": 2,
+      "hasAnimation": false,
+      "hasReducedMotionBlock": true,
+      "expandablesMissingState": [],
+      "issueCount": 193,
+      "ok": true
+    },
+    "courses": {
+      "title": "课程笔记 · Eric's Notebook",
+      "lang": "zh-CN",
+      "hasViewportMeta": true,
+      "headingList": [
+        "H1:📚 课程笔记",
+        "H2:🤖 机器人与自动化\n            7 门课程",
+        "H2:🧠 人工智能与机器学习\n            1 门课程",
+        "H2:💻 计算机科学\n            1 门课程",
+        "H2:🔌 电子与硬件\n            1 门课程",
+        "H2:📚 其他课程\n            4 门课程"
+      ],
+      "h1Count": 1,
+      "headingSkips": [],
+      "landmarks": {
+        "main": true,
+        "nav": true,
+        "header": true,
+        "footer": true
+      },
+      "hasSkipLink": true,
+      "imgCount": 0,
+      "imgMissingAlt": [],
+      "unnamedControls": [],
+      "unlabeledFields": [
+        {
+          "tag": "INPUT",
+          "id": "courseSearchInput",
+          "name": "",
+          "type": "text"
+        }
+      ],
+      "contrastChecked": 106,
+      "contrastFailCount": 0,
+      "contrastFails": [],
+      "contrastBasis": "计算样式近似：不含渐变/图片背景，不覆盖 ::before/::after 伪元素",
+      "focusStyleRules": 18,
+      "focusIndicatorEnabled": true,
+      "smallTouchTargets": [
+        {
+          "tag": "A",
+          "cls": "",
+          "w": 97,
+          "h": 18
+        }
+      ],
+      "smallTouchTargetCount": 1,
+      "hasAnimation": false,
+      "hasReducedMotionBlock": true,
+      "expandablesMissingState": [
+        {
+          "tag": "SPAN",
+          "cls": "category-chip active",
+          "id": ""
+        },
+        {
+          "tag": "SPAN",
+          "cls": "category-chip ",
+          "id": ""
+        },
+        {
+          "tag": "SPAN",
+          "cls": "category-chip ",
+          "id": ""
+        },
+        {
+          "tag": "SPAN",
+          "cls": "category-chip ",
+          "id": ""
+        },
+        {
+          "tag": "SPAN",
+          "cls": "category-chip ",
+          "id": ""
+        },
+        {
+          "tag": "SPAN",
+          "cls": "category-chip ",
+          "id": ""
+        }
+      ],
+      "issueCount": 8,
+      "ok": true
+    },
+    "papers": {
+      "title": "论文与学习资料 · Eric's Notebook",
+      "lang": "zh-CN",
+      "hasViewportMeta": true,
+      "headingList": [
+        "H1:📄 论文与学习资料",
+        "H2:🧠 具身智能\n            1 篇",
+        "H2:🦿 双足机器人\n            8 篇",
+        "H2:🪱 软体机器人\n            4 篇",
+        "H2:🎓 港大教授论文\n            5 篇",
+        "H2:📖 课程论文\n            6 篇",
+        "H2:✅ 已读论文\n            6 篇",
+        "H2:🤖 其他机器人\n            2 篇"
+      ],
+      "h1Count": 1,
+      "headingSkips": [],
+      "landmarks": {
+        "main": true,
+        "nav": true,
+        "header": true,
+        "footer": true
+      },
+      "hasSkipLink": true,
+      "imgCount": 0,
+      "imgMissingAlt": [],
+      "unnamedControls": [],
+      "unlabeledFields": [
+        {
+          "tag": "INPUT",
+          "id": "paperSearchInput",
+          "name": "",
+          "type": "text"
+        }
+      ],
+      "contrastChecked": 206,
+      "contrastFailCount": 0,
+      "contrastFails": [],
+      "contrastBasis": "计算样式近似：不含渐变/图片背景，不覆盖 ::before/::after 伪元素",
+      "focusStyleRules": 18,
+      "focusIndicatorEnabled": true,
+      "smallTouchTargets": [],
+      "smallTouchTargetCount": 0,
+      "hasAnimation": false,
+      "hasReducedMotionBlock": true,
+      "expandablesMissingState": [
+        {
+          "tag": "SPAN",
+          "cls": "category-chip active",
+          "id": ""
+        },
+        {
+          "tag": "SPAN",
+          "cls": "category-chip ",
+          "id": ""
+        },
+        {
+          "tag": "SPAN",
+          "cls": "category-chip ",
+          "id": ""
+        },
+        {
+          "tag": "SPAN",
+          "cls": "category-chip ",
+          "id": ""
+        },
+        {
+          "tag": "SPAN",
+          "cls": "category-chip ",
+          "id": ""
+        },
+        {
+          "tag": "SPAN",
+          "cls": "category-chip ",
+          "id": ""
+        },
+        {
+          "tag": "SPAN",
+          "cls": "category-chip ",
+          "id": ""
+        },
+        {
+          "tag": "SPAN",
+          "cls": "category-chip ",
+          "id": ""
+        }
+      ],
+      "issueCount": 9,
+      "ok": true
+    },
+    "search": {
+      "title": "Eric's Notebook",
+      "lang": "zh-CN",
+      "hasViewportMeta": true,
+      "headingList": [
+        "H2:SLAM技术全景：从滤波到图优化",
+        "H2:深度学习在SLAM中的应用",
+        "H2:视觉SLAM前端：特征提取与匹配"
+      ],
+      "h1Count": 0,
+      "headingSkips": [],
+      "landmarks": {
+        "main": true,
+        "nav": true,
+        "header": true,
+        "footer": true
+      },
+      "hasSkipLink": true,
+      "imgCount": 0,
+      "imgMissingAlt": [],
+      "unnamedControls": [],
+      "unlabeledFields": [],
+      "contrastChecked": 103,
+      "contrastFailCount": 0,
+      "contrastFails": [],
+      "contrastBasis": "计算样式近似：不含渐变/图片背景，不覆盖 ::before/::after 伪元素",
+      "focusStyleRules": 18,
+      "focusIndicatorEnabled": true,
+      "smallTouchTargets": [],
+      "smallTouchTargetCount": 0,
+      "hasAnimation": false,
+      "hasReducedMotionBlock": true,
+      "expandablesMissingState": [],
+      "issueCount": 1,
+      "ok": true
+    },
+    "editor": {
+      "title": "编辑器 · Eric's Notebook",
+      "lang": "zh-CN",
+      "hasViewportMeta": true,
+      "headingList": [
+        "H1:✏️ 新建文章"
+      ],
+      "h1Count": 1,
+      "headingSkips": [],
+      "landmarks": {
+        "main": true,
+        "nav": true,
+        "header": true,
+        "footer": true
+      },
+      "hasSkipLink": true,
+      "imgCount": 1,
+      "imgMissingAlt": [],
+      "unnamedControls": [],
+      "unlabeledFields": [
+        {
+          "tag": "INPUT",
+          "id": "editorTitle",
+          "name": "",
+          "type": "text"
+        },
+        {
+          "tag": "INPUT",
+          "id": "editorTags",
+          "name": "",
+          "type": "text"
+        },
+        {
+          "tag": "TEXTAREA",
+          "id": "editorExcerpt",
+          "name": "",
+          "type": ""
+        },
+        {
+          "tag": "TEXTAREA",
+          "id": "editorContent",
+          "name": "",
+          "type": ""
+        }
+      ],
+      "contrastChecked": 47,
+      "contrastFailCount": 1,
+      "contrastFails": [
+        {
+          "tag": "SPAN",
+          "cls": "editor-history-count",
+          "color": "rgb(37, 99, 235)",
+          "bg": "rgb(231,239,255)",
+          "fontSize": "11.52px",
+          "ratio": 4.48,
+          "need": 4.5
+        }
+      ],
+      "contrastBasis": "计算样式近似：不含渐变/图片背景，不覆盖 ::before/::after 伪元素",
+      "focusStyleRules": 18,
+      "focusIndicatorEnabled": true,
+      "smallTouchTargets": [],
+      "smallTouchTargetCount": 0,
+      "hasAnimation": false,
+      "hasReducedMotionBlock": true,
+      "expandablesMissingState": [],
+      "issueCount": 5,
+      "ok": true
+    },
+    "noteStatic": {
+      "title": "MECH7010 机器人学 课程笔记 · Eric's Notebook",
+      "lang": "zh-CN",
+      "hasViewportMeta": true,
+      "headingList": [
+        "H1:MECH7010 机器人学 课程笔记",
+        "H1:MECH7010 当代机器人学 (Contemporary ",
+        "H2:0. 课程概览",
+        "H2:1. 机器人系统模型（Robotic System）",
+        "H2:2. 建模 Modeling（张富）",
+        "H3:2.1 刚体运动与坐标变换",
+        "H3:2.2 欧拉角与奇异性",
+        "H3:2.3 平面运动建模（三类地面车）",
+        "H3:2.4 刚体动力学（Newton-Euler）",
+        "H2:3. 状态估计 Estimation（张富）",
+        "H3:3.1 数学基础",
+        "H3:3.2 传感器模型",
+        "H3:3.3 状态空间与离散化",
+        "H3:3.4 扩展卡尔曼滤波 EKF",
+        "H2:4. 控制 Control（张富）",
+        "H3:4.1 轨迹规划",
+        "H3:4.2 PID 与级联控制",
+        "H3:4.3 四旋翼控制架构（经典 4 环）",
+        "H2:5. 软体机器人 Soft Robotics（陈永华）",
+        "H3:5.1 从刚体到软体",
+        "H3:5.2 气动人工肌肉 PAMs（McKibben）",
+        "H3:5.3 软体气动执行器 SPA / PneuNets",
+        "H3:5.4 刚度调制 Stiffness Modulation",
+        "H2:6. 期末大作业（EKF 状态估计 MATLAB）",
+        "H2:7. 参考资源"
+      ],
+      "h1Count": 2,
+      "headingSkips": [],
+      "landmarks": {
+        "main": true,
+        "nav": true,
+        "header": true,
+        "footer": true
+      },
+      "hasSkipLink": true,
+      "imgCount": 0,
+      "imgMissingAlt": [],
+      "unnamedControls": [],
+      "unlabeledFields": [],
+      "contrastChecked": 249,
+      "contrastFailCount": 0,
+      "contrastFails": [],
+      "contrastBasis": "计算样式近似：不含渐变/图片背景，不覆盖 ::before/::after 伪元素",
+      "focusStyleRules": 18,
+      "focusIndicatorEnabled": true,
+      "smallTouchTargets": [
+        {
+          "tag": "A",
+          "cls": "article-back",
+          "w": 760,
+          "h": 22
+        },
+        {
+          "tag": "A",
+          "cls": "",
+          "w": 156,
+          "h": 17
+        },
+        {
+          "tag": "A",
+          "cls": "",
+          "w": 79,
+          "h": 17
+        }
+      ],
+      "smallTouchTargetCount": 3,
+      "hasAnimation": false,
+      "hasReducedMotionBlock": true,
+      "expandablesMissingState": [],
+      "issueCount": 4,
+      "ok": true
+    }
+  },
+  "summary": {
+    "pagesTotal": 7,
+    "pagesOk": 7,
+    "issueCountTotal": 220,
+    "perPage": {
+      "home": 0,
+      "post": 193,
+      "courses": 8,
+      "papers": 9,
+      "search": 1,
+      "editor": 5,
+      "noteStatic": 4
+    }
+  },
+  "errors": []
+}
