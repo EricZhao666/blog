@@ -114,6 +114,8 @@ TESTS = [
      'desc': 'B8D2A：图片放大 / 说明 / 焦点恢复 / 安全协议 / 路由清理'},
     {'name': 'test45', 'file': 'tests/test45_image_assets.py', 'kind': 'python',
      'desc': 'B8D2B：图片资源存在性 / 路径安全 / 大小写 / Pages 子路径'},
+    {'name': 'inline-handlers', 'file': 'tests/test46_inline_handlers.js', 'kind': 'jsdom',
+     'desc': 'B8E2：inline 事件编码（单引号/双引号/百分号/空格标签 chip 导航与还原、卡片导航不变、handler 可编译）'},
     {'name': 'image-check', 'file': 'scripts/check_images.py', 'kind': 'python', 'args': ['--check'],
      'desc': 'B8D2B：发布前图片资源门禁（缺失图片必须失败，不允许降级为 SKIP/WARNING）',
      'pass_marker': 'OK:'},

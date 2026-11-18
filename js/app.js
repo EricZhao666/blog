@@ -232,6 +232,15 @@ function escapeHtml(text) {
     .replace(/'/g, '&#39;');
 }
 
+// Batch 8E-2（B8E1-001/002）：inline 事件单引号字符串拼接专用。
+// 仅用于「URI 片段 + inline onclick 单引号字符串」这一场景：encodeURIComponent
+// 不会编码单引号，含 ' 的值会把 JS 字符串提前截断（SyntaxError / 错误导航）。
+// 这里在 encodeURIComponent 基础上补转义 '，路由侧 decodeURIComponent 可无损还原。
+// 注意：这不是通用的 HTML/JS 净化函数，禁止当作 XSS 过滤器或用于非 URI 场景。
+function jsInline(value) {
+  return encodeURIComponent(String(value == null ? '' : value)).replace(/'/g, '%27');
+}
+
 // ---- 标题与描述（浏览器标签、历史记录、分享）----
 const SITE_NAME = "Eric's Notebook";
 const SITE_DESC = 'Eric 的个人技术随笔 — 智能制造、机器人、具身智能与生活思考';
@@ -1422,7 +1431,7 @@ function renderHome() {
           ${postMinutes(post)} 分钟阅读
         </span>
         <div class="article-card-tags">
-          ${post.tags.map(t => `<span class="tag" onclick="event.stopPropagation(); location.hash='#/tags/${encodeURIComponent(t)}'">${escapeHtml(t)}</span>`).join('')}
+          ${post.tags.map(t => `<span class="tag" onclick="event.stopPropagation(); location.hash='#/tags/${jsInline(t)}'">${escapeHtml(t)}</span>`).join('')}
         </div>
       </div>
     </article>
@@ -2082,7 +2091,7 @@ function renderPostView(post, content) {
             ${postMinutes(post)} 分钟阅读
           </span>
           <div class="article-card-tags">
-            ${post.tags.map(t => `<span class="tag" onclick="location.hash='#/tags/${encodeURIComponent(t)}'">${escapeHtml(t)}</span>`).join('')}
+            ${post.tags.map(t => `<span class="tag" onclick="location.hash='#/tags/${jsInline(t)}'">${escapeHtml(t)}</span>`).join('')}
           </div>
         </div>
       </div>
@@ -2219,7 +2228,7 @@ function renderTags(tag) {
               ${formatDate(post.date)}
             </span>
             <div class="article-card-tags">
-              ${post.tags.map(t => `<span class="tag" onclick="event.stopPropagation(); location.hash='#/tags/${encodeURIComponent(t)}'">${escapeHtml(t)}</span>`).join('')}
+              ${post.tags.map(t => `<span class="tag" onclick="event.stopPropagation(); location.hash='#/tags/${jsInline(t)}'">${escapeHtml(t)}</span>`).join('')}
             </div>
           </div>
         </article>
@@ -2438,7 +2447,7 @@ function renderCourses() {
         const yearBadge = course.year ? `<span class="course-card-year">${course.year}</span>` : '';
         const statsBadge = stats ? `<span class="meta-item">📝 ${stats.charsLabel} · 约 ${stats.minutes} 分钟</span>` : '';
         html += `
-          <div class="course-card${hasNotes ? '' : ' course-card-muted'}" data-course-id="${escapeHtml(course.id)}" data-href="#/course/${encodeURIComponent(course.id)}" tabindex="0" role="link" onclick="location.hash='#/course/${encodeURIComponent(course.id)}'">
+          <div class="course-card${hasNotes ? '' : ' course-card-muted'}" data-course-id="${escapeHtml(course.id)}" data-href="#/course/${encodeURIComponent(course.id)}" tabindex="0" role="link" onclick="location.hash='#/course/${jsInline(course.id)}'">
             <div class="course-card-header">
               <div class="course-card-title">${escapeHtml(course.name)}</div>
               ${hasNotes ? '<span class="note-badge">📝笔记</span>' : ''}
@@ -2604,7 +2613,7 @@ function renderCode() {
     html += '<div class="course-grid">';
     for (const lib of filtered) {
       html += `
-        <div class="course-card" data-href="#/codelib/${encodeURIComponent(lib.id)}" tabindex="0" role="link" onclick="location.hash='#/codelib/${encodeURIComponent(lib.id)}'">
+        <div class="course-card" data-href="#/codelib/${encodeURIComponent(lib.id)}" tabindex="0" role="link" onclick="location.hash='#/codelib/${jsInline(lib.id)}'">
           <div class="course-card-header">
             <div class="course-card-title">${escapeHtml(lib.name)}</div>
             <span class="course-card-source">${escapeHtml(lib.category)}</span>
