@@ -729,7 +729,7 @@ const POST_ID = 'digital-twin-manufacturing';
       const ver = (/CACHE_VERSION = '([^']+)'/.exec(sw) || [])[1] || '';
       const required = /REQUIRED_ASSETS[\s\S]*?\n\];/.exec(sw) || [''];
       const css = fs.readFileSync(path.join(ROOT, 'css/style.css'), 'utf8');
-      check('U11.1 SW 缓存版本已随本次 CSS/JS 更新递增', /^2026-11-17-\d+$/.test(ver) && required[0].indexOf("'./css/style.css'") >= 0,
+      check('U11.1 SW 缓存版本已随本次 CSS/JS 更新递增', /^2026-11-18-\d+$/.test(ver) && required[0].indexOf("'./css/style.css'") >= 0,
         ver);
       check('U11.2 设计令牌层为单一主题系统（含强调色/表面色/边框色）',
         /--color-primary:\s*#2563eb/.test(css) && /--color-surface:\s*#fff/.test(css) && /--color-border:\s*#e2e6ec/.test(css),

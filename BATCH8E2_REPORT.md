@@ -123,8 +123,69 @@ function jsInline(value) {
 - 回归后复查：无 python/node 残留监听端口、无残留浏览器进程。
 - 工作树：`fix/batch8e2-inline-handlers`，仅包含 §1 所列文件；运行日志与 RED/GREEN 日志均保存在 agent 工作区，不入仓库。
 - 本地 commit：本分支 HEAD，提交说明 `fix: Batch 8E-2 harden inline handler encoding`（未 push / 未 PR / 未合并 / 未部署）。
-- 发布前置条件：**8E-2 发布前必须递增 `sw.js` 的 `CACHE_VERSION`**（见 §7），否则老访客会继续使用旧缓存中的旧 `app.js`。
+- 发布前置条件：**8E-2 发布前必须递增 `sw.js` 的 `CACHE_VERSION`**（见 §7），否则老访客会继续使用旧缓存中的旧 `app.js`。**该条件已由 Batch 8E-2R 解除（见 §11）。**
 
 ## 10. 上一轮审计交付物
 
 `BATCH8E1_AUDIT_REPORT.md`、`BATCH8E1_ISSUES.csv`、`BATCH8E1_NEXT_PLAN.md` 完整保留，并随本次 commit 一同入库（见 §1）。
+
+## 11. Batch 8E-2R：SW 发布门禁解除与 PR 准备
+
+### 11.1 基线确认
+
+- 分支 `fix/batch8e2-inline-handlers`，HEAD `cd6f150`（`fix: Batch 8E-2 harden inline handler encoding`）。
+- `git fetch origin main` 复核：`origin/main` 仍为 `8c188b8`，未变化；本地 ahead 1 / behind 0。
+- 8E-1 三件审计交付物、`tests/test46_inline_handlers.js`、`scripts/run_tests.py` 注册项均完整保留。
+
+### 11.2 CACHE_VERSION 变更
+
+| 位置 | 变更前 | 变更后 |
+|---|---|---|
+| `sw.js:14` | `2026-11-17-2` | `2026-11-18-1` |
+
+- 仅递增版本号；SW 导航决策、缓存策略、离线机制、生命周期全部未改（`install` 的 skipWaiting、`activate` 清理 `blog-*` 旧缓存 + `clients.claim` 均保持原样）。
+- 确有依赖的测试期望同步（2 处，均为版本断言，未放宽强度）：
+  - `tests/browser/image-lightbox.spec.js:322`：R4 精确相等 → `'2026-11-18-1'`。
+  - `tests/browser/ui-refresh.spec.js:732`：U11.1 日期前缀正则 → `/^2026-11-18-\d+$/`。
+- 其余版本引用经核对均为动态读取或 `>` 比较（`sw.spec` / `sw-consistency` / `sw-upgrade` / `search-ux` / `reading-experience` / `editor-*` / `test14 S1` 的 `>= '2026-10-23-3'`），无需改动。
+
+### 11.3 SW 升级验证
+
+现有测试基础设施（单次运行，日志在 agent 工作区）：
+
+| 套件 | 结果 | 耗时 |
+|---|---|---|
+| `tests/browser/sw.spec.js` | 首次 36/37（S12 时序抖动）；单独重跑 **37/37 PASS** | 45.2s / 41.0s |
+| `tests/browser/sw-consistency.spec.js` | **37/37 PASS** | 94.6s |
+| `tests/browser/sw-upgrade.spec.js` | **25/25 PASS** | 32.1s |
+| `tests/browser/image-lightbox.spec.js` | **34/34 PASS**（R4/R5/R6 全部通过） | 17.6s |
+| `tests/browser/ui-refresh.spec.js` | **ALL PASS**（U11.1 通过） | 44.0s |
+| `tests/test46_inline_handlers.js` | **17/17 PASS** | 21.6s |
+
+S12 说明：首次失败瞬间 `cacheKeys(t1)` 仍显示旧版本名，但紧随其后的检查已观测到 `blog-2026-11-18-1-t2`，即「模拟发布 + 换代」实际完成，仅 2500ms 采样早于安装/激活完成；重跑全绿，非版本回归。
+
+**隔离升级验证**（一次性脚本 `b8e2r-upgrade-check.js`，位于 agent 工作区，不入仓库）：构造旧部署 = `git show 8c188b8:js/app.js` + `sw.js` 版本回写 `2026-11-17-2`，客户端安装旧 SW 并接管；随后切换到真实当前仓库文件模拟发版。**结果 14/14 PASS**：
+
+- 旧客户端：`blog-2026-11-17-2` 缓存存在；`typeof window.jsInline === 'undefined'`；点击 `O'Brien` → `#/post/b8e2r-upgrade-fixture`（缺陷重现）。
+- 升级后：新缓存 `blog-2026-11-18-1` 写入；旧版本缓存被清理（仅剩 `blog-2026-11-18-1` / `blog-rt-2026-11-18-1`）；新 SW 接管页面；`window.jsInline === 'function'`；服务端 `app.js`（238081B）含 `function jsInline`；新缓存内的 `app.js` 为修复版。
+- 升级后点击 `O'Brien` → `#/tags/O%27Brien`，页面标题 `标签: O'Brien`（不再进入文章详情）；无新增脚本错误；离线仍可打开首页。
+
+**旧客户端更新行为**：下次导航/刷新时浏览器获取新 `sw.js` → install（skipWaiting）→ activate 删除旧 `blog-*` 缓存并 `clients.claim`。S12 与隔离脚本均证实：旧标签页被新 SW 接管、旧缓存消失，升级后不会继续从旧缓存加载旧 `app.js`。
+
+### 11.4 门禁与测试策略
+
+- `node --check sw.js` / `image-lightbox.spec.js` / `ui-refresh.spec.js`：全部 0；`git diff --check`：0。
+- 静态资源门禁：`check_images.py --check` OK（ERROR 0 / WARNING 0）、`build_content.py --check` OK（18 篇 / 66495 字符）、`gen_feed.py --check` OK（18 条）。
+- 本轮**未重复本地全量回归**：`.github/workflows/tests.yml` 的 PR job 统一执行 `python scripts/run_tests.py --report ... --json ...`（全量 60 套，含 Playwright Chromium），可承担最终全量验收；本地改动仅为版本号与两处期望值，相关专项均已全绿。
+- **PR CI 状态：待创建 PR 后由 CI 执行**；在 CI 完成前不声称已满足全部合并条件。
+
+### 11.5 发布阻塞状态
+
+- 原唯一发布阻塞条件「`js/app.js` 变更未递增 `CACHE_VERSION`」**已解除**。
+- 合并前仍需 PR CI 全量 60 套通过；本轮不合并、不部署。
+
+### 11.6 工作树、残留进程与提交
+
+- 工作树仅含 `sw.js`、`tests/browser/image-lightbox.spec.js`、`tests/browser/ui-refresh.spec.js` 及本报告；临时脚本与日志均在 agent 工作区，未入库。
+- 残留进程复查：`tests/tmp/loop-repro.js` 不存在；8147/8148 端口无监听；无本任务启动的 Chromium/node 子进程残留。
+- 本报告随本轮 `chore: bump service worker cache version for Batch 8E-2` commit 提交（保留 `cd6f150` 历史，不重写）。
