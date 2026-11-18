@@ -23,6 +23,7 @@ const MIME = {
   '.xml': 'application/xml; charset=utf-8', '.png': 'image/png'
 };
 
+let PORT = Number(process.env.TEST_PORT || 0);
 const server = http.createServer((req, res) => {
   let p = decodeURIComponent(req.url.split('?')[0]);
   if (p === '/') p = '/index.html';
@@ -61,14 +62,15 @@ function makeDom(url) {
   }).then(dom => ({ dom, errors }));
 }
 
-server.listen(8134, async () => {
+server.listen(PORT, '127.0.0.1', async () => {
+  PORT = server.address().port;
   const unhandled = [];
   process.on('unhandledRejection', e => unhandled.push(String(e && e.message || e)));
 
   try {
     // ---------- A. #/about 冷加载 ----------
     {
-      const { dom, errors } = await makeDom('http://localhost:8134/index.html#/about');
+      const { dom, errors } = await makeDom('http://localhost:' + PORT + '/index.html#/about');
       const doc = dom.window.document;
       await new Promise(r => dom.window.addEventListener('load', r));
       await wait(600);
@@ -91,7 +93,7 @@ server.listen(8134, async () => {
 
     // ---------- B. 全局搜索覆盖其他路由 ----------
     {
-      const { dom } = await makeDom('http://localhost:8134/index.html#/');
+      const { dom } = await makeDom('http://localhost:' + PORT + '/index.html#/');
       const doc = dom.window.document;
       await new Promise(r => dom.window.addEventListener('load', r));
       await wait(400);
@@ -124,7 +126,7 @@ server.listen(8134, async () => {
 
     // ---------- C. 搜索框重绘后丢失监听器 ----------
     if (!BLOCK) {
-      const { dom, errors } = await makeDom('http://localhost:8134/index.html#/courses');
+      const { dom, errors } = await makeDom('http://localhost:' + PORT + '/index.html#/courses');
       const doc = dom.window.document;
       await new Promise(r => dom.window.addEventListener('load', r));
       await wait(1500);           // 等待 courses + 慢速 notes
@@ -156,7 +158,7 @@ server.listen(8134, async () => {
   // ---------- D. 懒加载失败 ----------
   if (BLOCK) {
     try {
-      const { dom, errors } = await makeDom('http://localhost:8134/index.html#/courses');
+      const { dom, errors } = await makeDom('http://localhost:' + PORT + '/index.html#/courses');
       const doc = dom.window.document;
       await new Promise(r => dom.window.addEventListener('load', r));
       await wait(1500);

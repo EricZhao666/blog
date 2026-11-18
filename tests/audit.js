@@ -12,6 +12,7 @@ const MIME = {
   '.xml': 'application/xml; charset=utf-8', '.png': 'image/png', '.txt': 'text/plain; charset=utf-8'
 };
 const missing = [];
+let PORT = Number(process.env.TEST_PORT || 0);
 const server = http.createServer((req, res) => {
   let p = decodeURIComponent(req.url.split('?')[0]);
   if (p === '/') p = '/index.html';
@@ -44,7 +45,8 @@ function loadData() {
   };
 }
 
-server.listen(8131, async () => {
+server.listen(PORT, '127.0.0.1', async () => {
+  PORT = server.address().port;
   let D;
   try { D = loadData(); } catch (e) { console.error('数据加载失败', e); process.exit(1); }
 
@@ -88,7 +90,7 @@ server.listen(8131, async () => {
   });
   vc.on('error', (...a) => errors.push(String(a[0])));
 
-  const dom = await JSDOM.fromURL('http://localhost:8131/index.html', {
+  const dom = await JSDOM.fromURL('http://localhost:' + PORT + '/index.html', {
     runScripts: 'dangerously', resources: 'usable', pretendToBeVisual: true, virtualConsole: vc
   });
   const { window } = dom;

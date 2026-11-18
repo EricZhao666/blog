@@ -204,7 +204,7 @@ async function loopFnSteps(steps) {
     'return all.find(p => p.id === ' + JSON.stringify(POST_ID) + ').title;')());
 
   const { server } = createServer(ROOT, PREFIX);
-  const base = 'http://127.0.0.1:' + (await listen(server, 8146)) + PREFIX;
+  const base = 'http://127.0.0.1:' + (await listen(server, 0)) + PREFIX;
 
   const browser = await chromium.launch({ headless: true });
   const allErrors = [];

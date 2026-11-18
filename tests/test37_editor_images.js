@@ -23,8 +23,8 @@ const path = require('path');
 const { JSDOM, VirtualConsole } = require('jsdom');
 
 const ROOT = path.resolve(__dirname, '..');
-const PORT = 8182;
-const BASE = 'http://localhost:' + PORT;
+let PORT = Number(process.env.TEST_PORT || 0);
+let BASE = '';
 const TARGET = 'embodied-ai-notes';
 const MIME = {
   '.html': 'text/html; charset=utf-8', '.css': 'text/css; charset=utf-8',
@@ -92,7 +92,10 @@ const clickImg = (window, doc, sel) => {
 };
 
 (async () => {
-  await new Promise(r => server.listen(PORT, r));
+  await new Promise(r => server.listen(PORT, '127.0.0.1', r));
+  PORT = server.address().port;
+  BASE = 'http://localhost:' + PORT;
+
   try {
     // ------------------------------------------------ I1 URL 校验（纯函数）
     {

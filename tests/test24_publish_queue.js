@@ -28,8 +28,8 @@ const path = require('path');
 const { JSDOM, VirtualConsole, requestInterceptor } = require('jsdom');
 
 const ROOT = path.resolve(__dirname, '..');
-const PORT = 8142;
-const BASE = 'http://localhost:' + PORT;
+let PORT = Number(process.env.TEST_PORT || 0);
+let BASE = '';
 const MIME = {
   '.html': 'text/html; charset=utf-8', '.css': 'text/css; charset=utf-8',
   '.js': 'text/javascript; charset=utf-8', '.json': 'application/json; charset=utf-8',
@@ -85,7 +85,10 @@ function fill(doc, title, content) {
 }
 
 (async () => {
-  await new Promise(r => server.listen(PORT, r));
+  await new Promise(r => server.listen(PORT, '127.0.0.1', r));
+  PORT = server.address().port;
+  BASE = 'http://localhost:' + PORT;
+
   try {
     // ------------------------------------------------ N1 静态：直写通道已被移除
     const appSrc = fs.readFileSync(path.join(ROOT, 'js', 'app.js'), 'utf8');

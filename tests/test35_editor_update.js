@@ -31,8 +31,8 @@ const path = require('path');
 const { JSDOM, VirtualConsole } = require('jsdom');
 
 const ROOT = path.resolve(__dirname, '..');
-const PORT = 8161;
-const BASE = 'http://localhost:' + PORT;
+let PORT = Number(process.env.TEST_PORT || 0);
+let BASE = '';
 const TARGET = 'embodied-ai-notes';
 
 const MIME = {
@@ -106,7 +106,10 @@ const bodyOf = id => fs.readFileSync(path.join(ROOT, 'data', 'posts', id + '.md'
 const ctxOf = window => window.editorContext();
 
 (async () => {
-  await new Promise(r => server.listen(PORT, r));
+  await new Promise(r => server.listen(PORT, '127.0.0.1', r));
+  PORT = server.address().port;
+  BASE = 'http://localhost:' + PORT;
+
   try {
     // ------------------------------------------------ E1/E2/E3/E4/E5
     {

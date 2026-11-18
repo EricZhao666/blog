@@ -29,8 +29,8 @@ const { spawnSync } = require('child_process');
 const { JSDOM, VirtualConsole, requestInterceptor } = require('jsdom');
 
 const ROOT = path.resolve(__dirname, '..', '..');
-const PORT = 8141;
-const BASE = 'http://localhost:' + PORT;
+let PORT = Number(process.env.TEST_PORT || 0);
+let BASE = '';
 const MIME = {
   '.html': 'text/html; charset=utf-8', '.css': 'text/css; charset=utf-8',
   '.js': 'text/javascript; charset=utf-8', '.json': 'application/json; charset=utf-8',
@@ -231,7 +231,10 @@ function splitSync(dir, prune) {
 
 // ------------------------------------------------------------------ 主流程
 (async () => {
-  await new Promise(r => server.listen(PORT, r));
+  await new Promise(r => server.listen(PORT, '127.0.0.1', r));
+  PORT = server.address().port;
+  BASE = 'http://localhost:' + PORT;
+
 
   // ============================================================ A. 编辑器发布 P1–P9
   const originUserPosts = fs.readFileSync(path.join(ROOT, 'js', 'user-posts.js'), 'utf8');

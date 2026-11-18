@@ -33,8 +33,8 @@ const path = require('path');
 const { JSDOM, VirtualConsole } = require('jsdom');
 
 const ROOT = path.resolve(__dirname, '..');
-const PORT = 8183;
-const BASE = 'http://localhost:' + PORT;
+let PORT = Number(process.env.TEST_PORT || 0);
+let BASE = '';
 const TARGET = 'embodied-ai-notes';
 const T0 = 1700000000000;          // 固定基准时间，保证断言可复现
 const MIME = {
@@ -100,7 +100,10 @@ function memoryBackend(store) {
 }
 
 (async () => {
-  await new Promise(r => server.listen(PORT, r));
+  await new Promise(r => server.listen(PORT, '127.0.0.1', r));
+  PORT = server.address().port;
+  BASE = 'http://localhost:' + PORT;
+
   try {
     // ------------------------------------------------ H1/H2 基本 + 去重
     {

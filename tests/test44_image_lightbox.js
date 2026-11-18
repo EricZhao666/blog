@@ -7,8 +7,8 @@ const path = require('path');
 const { JSDOM, VirtualConsole, requestInterceptor } = require('jsdom');
 
 const ROOT = path.resolve(__dirname, '..');
-const PORT = 8147;
-const BASE = 'http://localhost:' + PORT;
+let PORT = Number(process.env.TEST_PORT || 0);
+let BASE = '';
 const MIME = {
   '.html': 'text/html; charset=utf-8', '.css': 'text/css; charset=utf-8',
   '.js': 'text/javascript; charset=utf-8', '.json': 'application/json; charset=utf-8',
@@ -94,7 +94,10 @@ async function newPage() {
 }
 
 (async function main() {
-  await new Promise(r => server.listen(PORT, r));
+  await new Promise(r => server.listen(PORT, '127.0.0.1', r));
+  PORT = server.address().port;
+  BASE = 'http://localhost:' + PORT;
+
   let dom = null;
   let win = null, doc = null;
   const allErrors = [];

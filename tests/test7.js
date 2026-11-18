@@ -10,6 +10,7 @@ const MIME = {
   '.js': 'text/javascript; charset=utf-8', '.json': 'application/json; charset=utf-8',
   '.xml': 'application/xml; charset=utf-8', '.png': 'image/png'
 };
+let PORT = Number(process.env.TEST_PORT || 0);
 const server = http.createServer((req, res) => {
   let p = decodeURIComponent(req.url.split('?')[0]);
   if (p === '/') p = '/index.html';
@@ -27,7 +28,8 @@ const check = (name, cond, extra) => {
   if (!cond) pass = false;
 };
 
-server.listen(8132, async () => {
+server.listen(PORT, '127.0.0.1', async () => {
+  PORT = server.address().port;
   // ---------- 静态文件检查 ----------
   const sw = fs.readFileSync(path.join(ROOT, 'sw.js'), 'utf8');
   // Batch 6B：入口页分支改为 shellNavigate（仍以 './index.html' 为缓存键），
@@ -68,7 +70,7 @@ server.listen(8132, async () => {
   vc.on('error', (...a) => errors.push(String(a[0])));
 
   try {
-    const dom = await JSDOM.fromURL('http://localhost:8132/index.html', {
+    const dom = await JSDOM.fromURL('http://localhost:' + PORT + '/index.html', {
       runScripts: 'dangerously', resources: 'usable', pretendToBeVisual: true, virtualConsole: vc
     });
     const { window } = dom;
@@ -151,7 +153,7 @@ server.listen(8132, async () => {
     const vc2 = new VirtualConsole();
     vc2.on('jsdomError', e => staticErrors.push(e.message));
     vc2.on('error', (...a) => staticErrors.push(String(a[0])));
-    const dom2 = await JSDOM.fromURL('http://localhost:8132/notes/cs422.html', {
+    const dom2 = await JSDOM.fromURL('http://localhost:' + PORT + '/notes/cs422.html', {
       runScripts: 'dangerously', resources: 'usable', pretendToBeVisual: true, virtualConsole: vc2
     });
     await new Promise(r => dom2.window.addEventListener('load', r));

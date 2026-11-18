@@ -8,8 +8,8 @@ const path = require('path');
 const { JSDOM, VirtualConsole, requestInterceptor } = require('jsdom');
 
 const ROOT = path.resolve(__dirname, '..');
-const PORT = 8148;                       // 避开 test44 的 8147，串行运行时互不干扰
-const BASE = 'http://localhost:' + PORT;
+let PORT = Number(process.env.TEST_PORT || 0); // 默认由操作系统分配；TEST_PORT 仅用于显式覆盖
+let BASE = '';
 const MIME = {
   '.html': 'text/html; charset=utf-8', '.css': 'text/css; charset=utf-8',
   '.js': 'text/javascript; charset=utf-8', '.json': 'application/json; charset=utf-8',
@@ -132,7 +132,10 @@ function allTagHandlersCompile(doc) {
 }
 
 (async function main() {
-  await new Promise(r => server.listen(PORT, r));
+  await new Promise(r => server.listen(PORT, '127.0.0.1', r));
+  PORT = server.address().port;
+  BASE = 'http://localhost:' + PORT;
+
   let dom = null, win = null, doc = null;
   const allErrors = [];
   let failedByException = null;

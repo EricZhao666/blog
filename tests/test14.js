@@ -8,7 +8,7 @@ const { spawnSync } = require('child_process');
 const { JSDOM, VirtualConsole } = require('jsdom');
 
 const ROOT = path.resolve(__dirname, '..');
-const PORT = Number(process.env.B3_PORT || 8137);
+let PORT = Number(process.env.B3_PORT || 0);
 const TZS = ['Asia/Shanghai', 'America/New_York', 'Europe/London'];
 
 // ---------- 父进程：按 TZ 自我复制 ----------
@@ -17,7 +17,8 @@ if (!process.env.B3_TZ) {
   let total = 0;
   TZS.forEach((tz, idx) => {
     const r = spawnSync(process.execPath, [__filename], {
-      env: Object.assign({}, process.env, { TZ: tz, B3_TZ: tz, B3_PORT: String(PORT + idx) }),
+      env: Object.assign({}, process.env, { TZ: tz, B3_TZ: tz },
+        process.env.B3_PORT ? { B3_PORT: String(Number(process.env.B3_PORT) + idx) } : {}),
       encoding: 'utf8'
     });
     const out = (r.stdout || '').trim();
@@ -58,7 +59,8 @@ const check = (name, cond, extra) => {
   if (!cond) pass = false;
 };
 
-server.listen(PORT, async () => {
+server.listen(PORT, '127.0.0.1', async () => {
+  PORT = server.address().port;
   try {
     const vc = new VirtualConsole();
     const errors = [];

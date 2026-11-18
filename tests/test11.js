@@ -7,8 +7,8 @@ const path = require('path');
 const { JSDOM, VirtualConsole } = require('jsdom');
 
 const ROOT = path.resolve(__dirname, '..');
-const PORT = 8136;
-const BASE = 'http://localhost:' + PORT;
+let PORT = Number(process.env.TEST_PORT || 0);
+let BASE = '';
 const MIME = {
   '.html': 'text/html; charset=utf-8', '.css': 'text/css; charset=utf-8',
   '.js': 'text/javascript; charset=utf-8', '.json': 'application/json; charset=utf-8',
@@ -98,7 +98,10 @@ function stubDownload(window, mode) {
   };
 }
 
-server.listen(PORT, async () => {
+server.listen(PORT, '127.0.0.1', async () => {
+  PORT = server.address().port;
+  BASE = 'http://localhost:' + PORT;
+
   try {
     // S1 修改正文后等待自动保存
     {
