@@ -6,6 +6,7 @@
 // 每个场景使用独立 BrowserContext，互不污染 CacheStorage / SW 注册。
 const path = require('path');
 const fs = require('fs');
+const http = require('http');
 const { chromium } = require('playwright');
 const { createServer, listen } = require('./helpers/server');
 const { createProbe, listen: listenProbe } = require('../perf/http-probe');
@@ -78,6 +79,89 @@ async function cacheKeys(page) {
     }
     return out;
   });
+}
+
+// S12 专用：只读缓存名列表，避免 caches.open 意外创建不存在的缓存
+async function cacheNames(page) {
+  return page.evaluate(() => caches.keys());
+}
+
+// S12 专用：直接从测试服务器读取“当前发布的 sw.js”的版本号。
+// 必须走 Node 直连，不能经过页面（页面请求可能被旧 SW 的缓存策略截获）。
+function fetchSwVersion(baseUrl, timeout = 5000) {
+  return new Promise((resolve, reject) => {
+    const req = http.get(baseUrl + PREFIX + '/sw.js',
+      { headers: { 'Cache-Control': 'no-cache' } }, (res) => {
+        let body = '';
+        res.setEncoding('utf8');
+        res.on('data', (c) => { body += c; });
+        res.on('end', () => {
+          if (res.statusCode !== 200) {
+            return reject(new Error('sw.js HTTP ' + res.statusCode));
+          }
+          const m = /CACHE_VERSION = '([^']+)'/.exec(body);
+          if (m) resolve(m[1]);
+          else reject(new Error('sw.js 未包含 CACHE_VERSION'));
+        });
+      });
+    req.on('error', reject);
+    req.setTimeout(timeout, () => req.destroy(new Error('sw.js 读取超时')));
+  });
+}
+
+// S12 专用：在页面上下文注册 controllerchange 计数（重复注册只用于单次场景）
+async function watchControllerChanges(page) {
+  await page.evaluate(() => {
+    window.__swControllerChanges = 0;
+    navigator.serviceWorker.addEventListener('controllerchange', () => {
+      window.__swControllerChanges = (window.__swControllerChanges || 0) + 1;
+    });
+  });
+}
+
+// S12 专用：无副作用地读取版本缓存、registration 与 controller 状态
+async function readUpgradeState(page, expectedCore) {
+  return page.evaluate(async (expected) => {
+    const names = await caches.keys();
+    const reg = await navigator.serviceWorker.getRegistration();
+    return {
+      names,
+      hasExpectedCore: await caches.has(expected),
+      activeState: reg && reg.active ? reg.active.state : null,
+      waiting: !!(reg && reg.waiting),
+      installing: !!(reg && reg.installing),
+      controlled: !!navigator.serviceWorker.controller,
+      controllerChanges: window.__swControllerChanges || 0
+    };
+  }, expectedCore);
+}
+
+// S12 专用：等待“预期版本 core cache 已安装 + 新 SW 已激活 + 旧标签页已被接管”。
+// 不使用固定 sleep；超时返回最后一次诊断，供断言输出缓存/registration/controller 状态。
+async function waitForUpgrade(page, expectedCore, timeout = 10000) {
+  const t0 = Date.now();
+  let diag = null;
+  while (Date.now() - t0 < timeout) {
+    diag = await readUpgradeState(page, expectedCore);
+    if (diag.hasExpectedCore && diag.activeState === 'activated' &&
+        !diag.waiting && !diag.installing && diag.controllerChanges > 0) {
+      return { ok: true, diag: Object.assign({ elapsedMs: Date.now() - t0 }, diag) };
+    }
+    await sleep(100);
+  }
+  diag = diag || await readUpgradeState(page, expectedCore);
+  return { ok: false, diag: Object.assign({ elapsedMs: Date.now() - t0 }, diag) };
+}
+
+// S12 专用：等待旧缓存被 activate 清理（有界轮询）
+async function waitCacheGone(page, name, timeout = 5000) {
+  const t0 = Date.now();
+  let names = await cacheNames(page);
+  while (Date.now() - t0 < timeout && names.includes(name)) {
+    await sleep(100);
+    names = await cacheNames(page);
+  }
+  return { ok: !names.includes(name), names, elapsedMs: Date.now() - t0 };
 }
 
 async function currentSWScript(page) {
@@ -528,26 +612,41 @@ async function main() {
       const ctx = await newContext(browser);
       const t1 = await ctx.newPage();
       await gotoApp(t1, base);
-      await waitController(t1);
-      const oldNames = Object.keys(await cacheKeys(t1));
+      const controlled1 = await waitController(t1);
+      const oldNames = await cacheNames(t1);
       const oldCache = oldNames.find(n => n.indexOf('blog-rt-') !== 0);
+      await watchControllerChanges(t1);
 
       state.swBump = true;                    // 发布新版本
+      const newVersion = await fetchSwVersion(base);   // 从测试服务器读取新版本号（不经过页面/SW）
+      const expectedCore = 'blog-' + newVersion;       // 预期的新版本 core cache
       const t2 = await ctx.newPage();
       await gotoApp(t2, base);
       const ok2 = await waitController(t2);
-      await sleep(2500);                      // 等 activate + clients.claim
 
-      let names = Object.keys(await cacheKeys(t1));
-      const newCache = names.find(n => n.indexOf('blog-rt-') !== 0 && n.endsWith('-t2'));
-      check('S12 新版本在第二个标签页安装并生效', ok2 && !!newCache, names.join(','));
+      // 状态驱动：预期版本 core cache 已安装 + 新 SW 已激活 + t1 收到 controllerchange
+      const upgrade = await waitForUpgrade(t1, expectedCore, 10000);
+      const d = upgrade.diag;
+      check('S12 新版本在第二个标签页安装并生效',
+        controlled1 && ok2 && upgrade.ok,
+        JSON.stringify({
+          expectedCore,
+          elapsedMs: d.elapsedMs,
+          names: d.names,
+          activeState: d.activeState,
+          waiting: d.waiting,
+          installing: d.installing,
+          t1Controller: d.controlled,
+          controllerChanges: d.controllerChanges,
+          t2Controller: ok2
+        }));
 
-      // activate 的清理是异步的，给它几秒钟收敛
-      for (let i = 0; i < 20 && oldCache && names.includes(oldCache); i++) {
-        await sleep(250);
-        names = Object.keys(await cacheKeys(t1));
-      }
-      check('S12 旧版本缓存被清理', !!oldCache && !names.includes(oldCache), names.join(','));
+      // activate 的清理是异步的，但必须有明确上限；失败时输出当前缓存列表
+      const cleanup = oldCache
+        ? await waitCacheGone(t1, oldCache, 5000)
+        : { ok: false, names: await cacheNames(t1), elapsedMs: 0 };
+      check('S12 旧版本缓存被清理', !!oldCache && cleanup.ok,
+        JSON.stringify({ oldCache, elapsedMs: cleanup.elapsedMs, names: cleanup.names }));
 
       const t1State = await t1.evaluate(async () => {
         const app = document.getElementById('app');

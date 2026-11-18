@@ -1,33 +1,23 @@
 # Batch 8E-3B 下一阶段计划
 
-- 上游：Batch 8E-3A（`B8E3A_PARTIAL`：基础设施完成；全量 60/61，`browser` S12 时序性失败，定向复现 37/37）
-- 基线：`ce27b46` + 本批本地 commit（测试基础设施改造，未 push）
+- 上游：Batch 8E-3A（`B8E3A_PARTIAL`，已由 Batch 8E-3A-R 恢复 61/61；PR 待审核）
+- 基线：`ce27b46` + 8E-3A commit `50bb398` + 本批 S12 修复 commit
 - 原则：按依赖顺序推进，不同时混合“端口隔离”“并行调度”“浏览器资源”三个方向；每完成一个任务即可独立验收。
 - 快速分组（`--group smoke` 等）仅用于开发辅助，**不能替代 full 发布验收**。
 
-## 前置事实（来自 8E-3A）
+## 前置事实（来自 8E-3A / 8E-3A-R）
 
-- 61 套串行 full 实测 1270.4s；历史 60 套逐套合计 1343.7s。
-- 全量唯一失败：`browser` S12（36/37），同一套件单独复现 37/37 PASS，属未复现的固定等待窗口问题。
+- 61 套串行 full：8E-3A-R 后 **61/61 PASS**；8E-3A 基线为 1270.4s。
+- `browser` S12 已改为状态驱动等待：连续 3 次 37/37；不再需要 Task 0。
 - 固定端口冲突已证实：8136（`test11`/`test20`）、8142（`test24`/`test40`）、8146（`test16`/`performance-accessibility`）。
 - 已验证 2-worker 组合：`test16 + test43`，38.3s → 24.3s，结果一致。
 - 其余 38 套为 UNKNOWN（无并发实测）；22 套为 NEED_ISOLATION（固定端口）。
 
-## Task 0：`browser` S12 固定等待窗口（P2，独立，建议最先做）
+## Task 0：`browser` S12 固定等待窗口（P2，已完成）
 
-**目标**：消除 8E-3A 全量中唯一未复现失败，恢复 61/61 绿色门禁；不降低断言标准。
-
-范围建议：
-- 定位 `tests/browser/sw.spec.js` S12 的 `await sleep(2500)` 与 cache 断言；
-- 改为等待确定性信号（如 `registration.waiting/active` 变化、目标 cache 出现或超时上限内的条件轮询），保留同一断言（新版本 cache 必须存在）；
-- 不缩短断言、不增加全局重试、不改 SW 策略。
-
-验收：
-- S12 在单独与 full 中均稳定 PASS；
-- 至少一次 full 61/61；
-- 变更仅限该测试的等待方式，行为语义不变。
-
-风险/复杂度：低—中；若无法找到确定性事件，保留固定上限等待并记录原因，不得删除断言。
+- 完成批次：Batch 8E-3A-R；
+- 方案：预期版本 core cache（`caches.has`）+ `registration.active === 'activated'` + t1 `controllerchange` 的有界等待（10s），旧缓存清理 5s；
+- 证据：`browser` 连续 3 次 37/37；延迟 3s 下旧实现 RED / 新实现 GREEN；全量 61/61。详见 `BATCH8E3AR_REPORT.md`。
 
 ## Task 1：端口租约与动态端口（P1，前置）
 
@@ -123,10 +113,9 @@
 
 ## 推荐顺序与产出
 
-1. Task 0（S12 等待窗口）→ 恢复 full 61/61；
-2. Task 1（端口租约）→ 产出端口改造清单与并发验证；
-3. Task 2（2-worker 调度器）→ 产出可选 `--workers` 与一致性证据；
-4. Task 3（浏览器实验）→ 产出资源结论；
-5. Task 4（报告增强）→ 产出趋势基线。
+1. Task 1（端口租约）→ 产出端口改造清单与并发验证；
+2. Task 2（2-worker 调度器）→ 产出可选 `--workers` 与一致性证据；
+3. Task 3（浏览器实验）→ 产出资源结论；
+4. Task 4（报告增强）→ 产出趋势基线。
 
 每个任务独立 commit、独立报告；Task 2/3 不得在 Task 1 未通过前启动。
