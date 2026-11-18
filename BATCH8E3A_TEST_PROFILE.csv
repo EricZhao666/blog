@@ -1,0 +1,62 @@
+﻿suite,file,kind,timeout_s,historical_s,port_mode,port,shared_resource,parallel_class,evidence,desc
+audit,tests/audit.js,jsdom,240,24.0,fixed,8131,TCP 8131（固定端口）,NEED_ISOLATION,grep const PORT / server.listen；tests/reports/last-run.md 串行通过,全站巡检：路由渲染、死链、静态页一致性、404 资源
+test6,tests/test6.js,jsdom,240,18.6,fixed,8130,TCP 8130（固定端口）,NEED_ISOLATION,grep const PORT / server.listen；tests/reports/last-run.md 串行通过,课程区：笔记视图、分类切换、搜索
+test7,tests/test7.js,jsdom,240,18.6,fixed,8132,TCP 8132（固定端口）,NEED_ISOLATION,grep const PORT / server.listen；tests/reports/last-run.md 串行通过,搜索/主题/静态页/SW/RSS
+test8,tests/test8.js,jsdom,240,15.0,fixed,8133,TCP 8133（固定端口）,NEED_ISOLATION,grep const PORT / server.listen；tests/reports/last-run.md 串行通过,B8A：编辑器不再收藏 Token（旧 Token 可一键清除）
+test9,tests/test9.js,jsdom,240,22.1,fixed,8134,TCP 8134（固定端口）,NEED_ISOLATION,grep const PORT / server.listen；tests/reports/last-run.md 串行通过,Batch 1：路由/搜索/懒加载
+test10,tests/test10.js,jsdom,240,18.4,fixed,8135,TCP 8135（固定端口）,NEED_ISOLATION,grep const PORT / server.listen；tests/reports/last-run.md 串行通过,B8A：导出不联网/不写历史，失败保留草稿
+test11,tests/test11.js,jsdom,240,21.2,fixed,8136,TCP 8136（固定端口）,NEED_ISOLATION,grep const PORT / server.listen；tests/reports/last-run.md 串行通过,Batch 2：草稿自动保存竞态
+test12,tests/test12.py,python,240,2.2,none,0,tempfile.mkdtemp 隔离；部分只读仓库内容,UNKNOWN,tests/*.py 使用 tempfile；tests/reports/last-run.md,Batch 2：代码库描述保护
+test13,tests/test13.py,python,240,3.7,none,0,tempfile.mkdtemp 隔离；部分只读仓库内容,UNKNOWN,tests/*.py 使用 tempfile；tests/reports/last-run.md,Batch 3：RSS 结构化解析与产物安全
+test14,tests/test14.js,jsdom,240,55.7,fixed,8137,TCP 8137（固定端口）,NEED_ISOLATION,grep const PORT / server.listen；tests/reports/last-run.md 串行通过,Batch 3：排序一致性 + 日期时区
+test15,tests/test15.py,python,240,41.1,none,0,tempfile.mkdtemp 隔离；部分只读仓库内容,UNKNOWN,tests/*.py 使用 tempfile；tests/reports/last-run.md,Batch 3.5：生成器合成 Fixture 可复现性
+test16,tests/test16.js,jsdom,240,14.6,fixed,8146,TCP 8146（固定端口）,NEED_ISOLATION,grep const PORT / server.listen；tests/reports/last-run.md 串行通过,B5：Markdown 净化与动态事件编码
+test17,tests/test17.py,python,240,32.2,none,0,tempfile.mkdtemp 隔离；部分只读仓库内容,UNKNOWN,tests/*.py 使用 tempfile；tests/reports/last-run.md,B5：静态笔记页 JSON-LD 与正文安全
+test18,tests/test18.js,jsdom,240,0.2,none,0,无本地服务器（只读仓库数据/纯 jsdom）,UNKNOWN,tests/ 定向检索；tests/reports/last-run.md,B6B2：文章数据拆分完整性（元数据/正文/搜索语料/哈希）
+split-check,scripts/split_posts.py,python,240,0.5,none,0,tempfile.mkdtemp 隔离；部分只读仓库内容,UNKNOWN,tests/*.py 使用 tempfile；tests/reports/last-run.md,B6B2：文章数据产物校验（--check）
+test19,tests/test19_data_lifecycle.py,python,240,10.2,none,0,tempfile.mkdtemp 隔离；部分只读仓库内容,UNKNOWN,tests/*.py 使用 tempfile；tests/reports/last-run.md,B6C：文章数据生命周期（改/增/删/改 id/损坏）
+test20,tests/test20_publish_search.js,jsdom,240,26.2,fixed,8136,TCP 8136（固定端口）,NEED_ISOLATION,grep const PORT / server.listen；tests/reports/last-run.md 串行通过,B6C：发布与搜索一致性（含按需加载与快速切换）
+test21,tests/test21_papers_id_registry.py,python,240,9.7,none,0,tempfile.mkdtemp 隔离；部分只读仓库内容,UNKNOWN,tests/*.py 使用 tempfile；tests/reports/last-run.md,B7B2：学习资料持久 ID Registry 生命周期（重排/删除/改名/迁移/损坏/冲突）
+test22,tests/test22_registry_consistency.py,python,240,0.3,none,0,tempfile.mkdtemp 隔离；部分只读仓库内容,UNKNOWN,tests/*.py 使用 tempfile；tests/reports/last-run.md,B7B2.1：真实 Registry 与 js/papers.js 一致性（74 条 / 无私人路径）
+test23,tests/test23_content_build.py,python,240,21.2,none,0,tempfile.mkdtemp 隔离；部分只读仓库内容,UNKNOWN,tests/*.py 使用 tempfile；tests/reports/last-run.md,B7C2：统一内容构建生命周期（增删改/重复 ID/并发/原子性/兼容）
+test24,tests/test24_publish_queue.js,jsdom,240,24.1,fixed,8142,TCP 8142（固定端口）,NEED_ISOLATION,grep const PORT / server.listen；tests/reports/last-run.md 串行通过,B8A：发布队列入口下线（编辑器零网络/零队列/零 Token）
+test25,tests/test25_release_pipeline.py,python,240,27.5,none,0,tempfile.mkdtemp 隔离；部分只读仓库内容,UNKNOWN,tests/*.py 使用 tempfile；tests/reports/last-run.md,B7C3A：发布候选闸门（隔离重建 / 过期产物 / 失败即无标记）
+test26,tests/test26_queue_processor.py,python,240,27.3,none,0,tempfile.mkdtemp 隔离；部分只读仓库内容,UNKNOWN,tests/*.py 使用 tempfile；tests/reports/last-run.md,B7C3B：内容队列消费（schema/幂等/增删改/陈旧/失败恢复）
+test27,tests/test27_content_workflow.py,python,240,10.9,none,0,tempfile.mkdtemp 隔离；部分只读仓库内容,UNKNOWN,tests/*.py 使用 tempfile；tests/reports/last-run.md,B7C3B：候选 PR 与工作流契约（权限/复用/过期/完整性）
+test28,tests/test28_candidate_state.py,python,240,13.0,none,0,tempfile.mkdtemp 隔离；部分只读仓库内容,UNKNOWN,tests/*.py 使用 tempfile；tests/reports/last-run.md,B7C3B.1：候选状态机（candidate/merge/deploy 分离、幂等、过期、失败恢复）
+test29,tests/test29_workflow_activation.py,python,240,0.9,none,0,tempfile.mkdtemp 隔离；部分只读仓库内容,UNKNOWN,tests/*.py 使用 tempfile；tests/reports/last-run.md,B7C4A：发布工作流启用契约（默认只读/最小权限/不合并/队列缺失降级）
+test30,tests/test30_workflow_gating.py,python,240,0.2,none,0,tempfile.mkdtemp 隔离；部分只读仓库内容,UNKNOWN,tests/*.py 使用 tempfile；tests/reports/last-run.md,B7C4A.1：写入门控组合（dry_run×allow_write×仓库变量）+ 候选目录回归
+test31,tests/test31_gate_contract.py,python,240,0.8,none,0,tempfile.mkdtemp 隔离；部分只读仓库内容,UNKNOWN,tests/*.py 使用 tempfile；tests/reports/last-run.md,B7C4B：门禁触发契约（无 paths 过滤/内部判定/候选 commit status/最小权限）
+test32,tests/test32_editor_export.js,jsdom,240,19.4,fixed,8151,TCP 8151（固定端口）,NEED_ISOLATION,grep const PORT / server.listen；tests/reports/last-run.md 串行通过,B8A：编辑器导出契约（UTF-8/代码块/特殊字符/空正文/重复 ID）
+test33,tests/test33_import_post.py,python,240,20.4,none,0,tempfile.mkdtemp 隔离；部分只读仓库内容,UNKNOWN,tests/*.py 使用 tempfile；tests/reports/last-run.md,B8A：本地导入器（冲突/恶意路径/中断回滚/一致性/RSS/搜索索引）
+test34,tests/test34_post_update.py,python,240,19.0,none,0,tempfile.mkdtemp 隔离；部分只读仓库内容,UNKNOWN,tests/*.py 使用 tempfile；tests/reports/last-run.md,B8B1：已有文章更新（版本校验/锁定/回滚/id 不变/其他文章不变）
+test35,tests/test35_editor_update.js,jsdom,240,47.0,fixed,8161,TCP 8161（固定端口）,NEED_ISOLATION,grep const PORT / server.listen；tests/reports/last-run.md 串行通过,B8B1：编辑器编辑模式（回填/固定 id/更新稿/草稿隔离/前进后退）
+test36,tests/test36_editor_toolbar.js,jsdom,240,19.9,fixed,8181,TCP 8181（固定端口）,NEED_ISOLATION,grep const PORT / server.listen；tests/reports/last-run.md 串行通过,B8B2：Markdown 工具栏 / 快捷键 / 原生撤销 / 状态栏
+test37,tests/test37_editor_images.js,jsdom,240,17.4,fixed,8182,TCP 8182（固定端口）,NEED_ISOLATION,grep const PORT / server.listen；tests/reports/last-run.md 串行通过,B8B2：图片插入与预览（协议白名单/本地文件/仅预览提示/净化）
+test38,tests/test38_draft_history.js,jsdom,240,21.3,fixed,8183,TCP 8183（固定端口）,NEED_ISOLATION,grep const PORT / server.listen；tests/reports/last-run.md 串行通过,B8B3：草稿历史（快照/去重/节流/隔离/配额/损坏/安全恢复）
+test39,tests/test39_search_ranking.js,jsdom,240,13.6,fixed,8141,TCP 8141（固定端口）,NEED_ISOLATION,grep const PORT / server.listen；tests/reports/last-run.md 串行通过,B8C1：统一结果模型 / 相关性评分 / 中文混合 / XSS / 稳定深链
+test40,tests/test40_search_sources.js,jsdom,240,29.0,fixed,8142,TCP 8142（固定端口）,NEED_ISOLATION,grep const PORT / server.listen；tests/reports/last-run.md 串行通过,B8C1：多数据源按需加载 / 失败恢复 / 竞态 / IME / 历史恢复
+test41,tests/test41_search_filters.js,jsdom,240,19.4,fixed,8143,TCP 8143（固定端口）,NEED_ISOLATION,grep const PORT / server.listen；tests/reports/last-run.md 串行通过,B8C2：分类筛选 / 排序 / 折叠 / 键盘导航 / 安全与稳定深链
+test42,tests/test42_search_history.js,jsdom,240,22.7,fixed,8144,TCP 8144（固定端口）,NEED_ISOLATION,grep const PORT / server.listen；tests/reports/last-run.md 串行通过,B8C2：最近搜索历史 / localStorage 降级 / 竞态 / 部分失败
+test43,tests/test43_reading_tools.js,jsdom,240,20.4,fixed,8145,TCP 8145（固定端口）,PARALLEL_SAFE,grep const PORT / server.listen；tests/reports/last-run.md 串行通过,B8D1：目录 / 正文阅读进度 / 代码复制降级 / 表格局部滚动
+test44,tests/test44_image_lightbox.js,jsdom,240,19.9,fixed,8147,TCP 8147（固定端口）,NEED_ISOLATION,grep const PORT / server.listen；tests/reports/last-run.md 串行通过,B8D2A：图片放大 / 说明 / 焦点恢复 / 安全协议 / 路由清理
+test45,tests/test45_image_assets.py,python,240,5.1,none,0,tempfile.mkdtemp 隔离；部分只读仓库内容,UNKNOWN,tests/*.py 使用 tempfile；tests/reports/last-run.md,B8D2B：图片资源存在性 / 路径安全 / 大小写 / Pages 子路径
+inline-handlers,tests/test46_inline_handlers.js,jsdom,240,18.8,none,0,无本地服务器（只读仓库数据/纯 jsdom）,UNKNOWN,tests/ 定向检索；tests/reports/last-run.md,B8E2：inline 事件编码（单引号/双引号/百分号/空格标签 chip 导航与还原、卡片导航不变、handler 可编译）
+runner-infrastructure,tests/test47_runner_infrastructure.py,python,240,6.7,none,0,tempfile.mkdtemp 隔离；部分只读仓库内容,UNKNOWN,tests/*.py 使用 tempfile；tests/reports/last-run.md,B8E3A：测试运行器（选择/BLOCKED 汇总/超时进程树/中断清理/耗时报告）
+image-check,scripts/check_images.py,python,240,0.3,none,0,tempfile.mkdtemp 隔离；部分只读仓库内容,UNKNOWN,tests/*.py 使用 tempfile；tests/reports/last-run.md,B8D2B：发布前图片资源门禁（缺失图片必须失败，不允许降级为 SKIP/WARNING）
+content-check,scripts/build_content.py,python,240,0.3,none,0,tempfile.mkdtemp 隔离；部分只读仓库内容,UNKNOWN,tests/*.py 使用 tempfile；tests/reports/last-run.md,B7C2：发布前内容一致性门禁（元数据/正文/搜索语料/清单/RSS）
+feed-check,gen_feed.py,python,240,0.3,none,0,tempfile.mkdtemp 隔离；部分只读仓库内容,UNKNOWN,tests/*.py 使用 tempfile；tests/reports/last-run.md,B6C：RSS 产物与数据一致（--check）
+browser,tests/browser/sw.spec.js,browser,600,39.8,ephemeral,0,临时端口 + 独立临时 Chromium profile + 独立 artifacts 文件名,UNKNOWN,"tests/browser/helpers/*-server.js: listen(server,0)；tests/reports/last-run.md",B4：真实 Chromium 下的 SW 安装 / 离线 / 更新 / 容量
+sw-consistency,tests/browser/sw-consistency.spec.js,browser,600,93.7,ephemeral,0,临时端口 + 独立临时 Chromium profile + 独立 artifacts 文件名,UNKNOWN,"tests/browser/helpers/*-server.js: listen(server,0)；tests/reports/last-run.md",B6B1.1：版本一致性 / 慢网 / 离线 / HTTP 错误 / SW 重启
+sw-upgrade,tests/browser/sw-upgrade.spec.js,browser,600,33.4,ephemeral,0,临时端口 + 独立临时 Chromium profile + 独立 artifacts 文件名,UNKNOWN,"tests/browser/helpers/*-server.js: listen(server,0)；tests/reports/last-run.md",B6C：旧版安装 → 新版部署 / 安装失败回退 / 多标签页 / 混部
+mobile-notes,tests/browser/mobile-notes.spec.js,browser,600,45.7,ephemeral,0,临时端口 + 独立临时 Chromium profile + 独立 artifacts 文件名,UNKNOWN,"tests/browser/helpers/*-server.js: listen(server,0)；tests/reports/last-run.md",B7A：静态笔记移动端菜单 / 键盘 / 断点 / 深色 / 无溢出
+course-seo,tests/browser/course-seo.spec.js,browser,600,40.2,ephemeral,0,临时端口 + 独立临时 Chromium profile + 独立 artifacts 文件名,UNKNOWN,"tests/browser/helpers/*-server.js: listen(server,0)；tests/reports/last-run.md",B7A：课程 canonical / og:url / 异步竞态 / 静态 HTML SEO
+papers-deeplink,tests/browser/papers-deeplink.spec.js,browser,600,57.9,ephemeral,0,临时端口 + 独立临时 Chromium profile + 独立 artifacts 文件名,UNKNOWN,"tests/browser/helpers/*-server.js: listen(server,0)；tests/reports/last-run.md",B7B2：论文/学习资料深链（身份稳定/焦点/滚动/历史/降级/视口/慢网 SW）
+editor-ux,tests/browser/editor-ux.spec.js,browser,600,22.7,ephemeral,0,临时端口 + 独立临时 Chromium profile + 独立 artifacts 文件名,UNKNOWN,"tests/browser/helpers/*-server.js: listen(server,0)；tests/reports/last-run.md",B8B2：真实 Chromium 下的工具栏/快捷键/原生撤销/移动端切换/无溢出/SW 升级
+editor-history,tests/browser/editor-history.spec.js,browser,600,26.3,ephemeral,0,临时端口 + 独立临时 Chromium profile + 独立 artifacts 文件名,UNKNOWN,"tests/browser/helpers/*-server.js: listen(server,0)；tests/reports/last-run.md",B8B3：真实 IndexedDB 历史/恢复备份/刷新持久/多标签页/移动端/SW 升级
+search-ux,tests/browser/search-ux.spec.js,browser,600,27.0,ephemeral,0,临时端口 + 独立临时 Chromium profile + 独立 artifacts 文件名,UNKNOWN,"tests/browser/helpers/*-server.js: listen(server,0)；tests/reports/last-run.md",B8C1：真实 Chromium 下四类命中 / XSS / 稳定深链 / 竞态 / 移动端 / 性能
+search-interaction,tests/browser/search-interaction.spec.js,browser,600,25.6,ephemeral,0,临时端口 + 独立临时 Chromium profile + 独立 artifacts 文件名,UNKNOWN,"tests/browser/helpers/*-server.js: listen(server,0)；tests/reports/last-run.md",B8C2：真实 Chromium 下筛选/排序/折叠/键盘/历史/多视口/SW 升级
+reading-experience,tests/browser/reading-experience.spec.js,browser,600,28.6,ephemeral,0,临时端口 + 独立临时 Chromium profile + 独立 artifacts 文件名,UNKNOWN,"tests/browser/helpers/*-server.js: listen(server,0)；tests/reports/last-run.md",B8D1：真实 Chromium 下目录/进度/复制/移动端/动态高度/深链与 SW
+image-lightbox,tests/browser/image-lightbox.spec.js,browser,600,21.4,ephemeral,0,临时端口 + 独立临时 Chromium profile + 独立 artifacts 文件名,UNKNOWN,"tests/browser/helpers/*-server.js: listen(server,0)；tests/reports/last-run.md",B8D2A：真实 Chromium 下图片放大 / 焦点 / 滚动锁定 / 移动端 / SW
+ui-refresh,tests/browser/ui-refresh.spec.js,browser,600,45.8,ephemeral,0,临时端口 + 独立临时 Chromium profile + 独立 artifacts 文件名,UNKNOWN,"tests/browser/helpers/*-server.js: listen(server,0)；tests/reports/last-run.md",B8D3：全站 UI 2.0（页面渲染/导航/双主题/五档视口/长文本/键盘/目录与灯箱/编辑器/静态笔记）
+performance-accessibility,tests/browser/performance-accessibility.spec.js,browser,600,61.0,fixed,8146,TCP 8146（固定端口）,NEED_ISOLATION,grep const PORT / server.listen；tests/reports/last-run.md 串行通过,B8D4：性能与无障碍（chips aria-pressed/编辑器与搜索框可访问名称/浅色高亮对比度/键盘与 skip link/触控目标/六档视口+缩放+横屏/路由循环资源清理/passive 滚动/回归冒烟）
