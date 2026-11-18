@@ -100,14 +100,33 @@ if (typeof DOMPurify !== 'undefined') {
   });
 }
 
+// Batch 8D-4：renderMarkdown 结果缓存（marked.parse + DOMPurify.sanitize 是路由切换
+// 中最贵的同步 CPU 工作；同一正文在返回/刷新/往返路由时内容不变，直接复用净化后的 HTML）。
+// 有界 FIFO（40 条）防止编辑器预览等高频调用场景内存无上限。
+const _renderMarkdownCache = new Map();
+const RENDER_MARKDOWN_CACHE_MAX = 40;
+
 function renderMarkdown(src) {
-  const raw = marked.parse(src || '');
+  const source = String(src == null ? '' : src);
+  const cached = _renderMarkdownCache.get(source);
+  if (cached !== undefined) return cached;
+
+  const raw = marked.parse(source);
+  let html;
   if (typeof DOMPurify === 'undefined') {
     // 净化库没加载时不冒险渲染原始 HTML（宁可显示转义文本）
     console.warn('[security] DOMPurify 未加载，Markdown 输出已降级为纯文本');
-    return '<pre class="markdown-fallback">' + escapeHtml(String(src || '')) + '</pre>';
+    html = '<pre class="markdown-fallback">' + escapeHtml(source) + '</pre>';
+  } else {
+    html = DOMPurify.sanitize(raw, SANITIZE_CONFIG);
   }
-  return DOMPurify.sanitize(raw, SANITIZE_CONFIG);
+
+  if (_renderMarkdownCache.size >= RENDER_MARKDOWN_CACHE_MAX) {
+    const oldest = _renderMarkdownCache.keys().next().value;
+    _renderMarkdownCache.delete(oldest);
+  }
+  _renderMarkdownCache.set(source, html);
+  return html;
 }
 
 function getAllPosts() {
@@ -986,6 +1005,9 @@ function updateReadingUi(force) {
 }
 
 function onReadingScroll() {
+  // Batch 8D-4：监听器常驻 window，离开文章页后（如首页/搜索滚动）直接跳过，
+  // 不再为无效更新安排 rAF 帧
+  if (!_readingState || !_readingState.body || !_readingState.body.isConnected) return;
   if (_readingRaf) return;
   _readingRaf = requestAnimationFrame(function () {
     _readingRaf = 0;
@@ -1381,7 +1403,7 @@ function renderHome() {
   `;
 
   const cards = filtered.map(post => `
-    <article class="article-card" data-href="#/post/${post.id}" tabindex="0" role="link" onclick="location.hash = '#/post/${post.id}'">
+    <article class="article-card" data-href="#/post/${post.id}" tabindex="0" onclick="location.hash = '#/post/${post.id}'">
       <h2 class="article-card-title">
         <a href="#/post/${post.id}">${escapeHtml(post.title)}</a>
       </h2>
@@ -1878,7 +1900,7 @@ function renderSearchPostResult(r, query) {
   const excerptHtml = (r.snippet && r.snippet.source === '摘要')
     ? r.snippet.html : highlightMatch(r.description, q);
   const bodySnippet = (r.snippet && r.snippet.source === '正文') ? searchSnippetHtml(r) : '';
-  return '<article class="article-card"' + attrs + ' data-href="' + escapeHtml(r.targetUrl) + '" tabindex="0" role="link">' +
+  return '<article class="article-card"' + attrs + ' data-href="' + escapeHtml(r.targetUrl) + '" tabindex="0">' +
     '<h2 class="article-card-title"><a href="' + escapeHtml(r.targetUrl) + '">' +
     highlightMatch(r.title, q) + '</a></h2>' +
     '<p class="article-card-excerpt">' + excerptHtml + '</p>' +
@@ -1972,8 +1994,11 @@ function buildGlobalSearchHtml(query) {
 function renderGlobalSearch(query) {
   const display = (query && typeof query === 'object') ? query.raw : String(query == null ? '' : query);
   // 属性值只放百分号编码后的查询键，绝不把原始用户输入（含 HTML 特殊字符）拼进属性
+  // Batch 8D-4：搜索结果会整体替换 #app（首页 h1 一并消失），补一个视觉隐藏的 H1
+  // 保持文档标题层级完整（WCAG 1.3.1），不改变任何可见布局。
   return '<div class="search-results" id="searchResults" data-search-root="1" data-query="' +
-    escapeHtml(encodeURIComponent(display)) + '">' + buildGlobalSearchHtml(display) + '</div>';
+    escapeHtml(encodeURIComponent(display)) + '">' +
+    '<h1 class="sr-only">搜索结果</h1>' + buildGlobalSearchHtml(display) + '</div>';
 }
 
 function renderPostMissing() {
@@ -2012,10 +2037,25 @@ function renderPostError(id) {
     `;
 }
 
+// Batch 8D-4：正文 Markdown 以与页面标题相同的 H1 开头时去重。
+// 页面已渲染 <h1 class="article-detail-title">，正文再输出一个相同文字的 H1 会让
+// 文档出现两个 H1（WCAG 1.3.1 标题层级问题，8D-4 审计在长文页实测命中）。
+// 只比较并移除第一个 H1，其余标题结构不动；标题不同则保持原样。
+function stripDuplicateLeadingH1(html, title) {
+  const m = /^\s*<h1(\s[^>]*)?>([\s\S]*?)<\/h1>/i.exec(html);
+  if (!m) return html;
+  const norm = (s) => String(s || '').replace(/<[^>]+>/g, '').replace(/\s+/g, ' ').trim();
+  const text = norm(m[2]);
+  if (text && text === norm(title)) {
+    return html.slice(m[0].length);
+  }
+  return html;
+}
+
 // 有正文之后的文章详情渲染（原 renderPost 的主体）
 function renderPostView(post, content) {
   perfMark('art:md-start');
-  const html = renderMarkdown(content);
+  const html = stripDuplicateLeadingH1(renderMarkdown(content), post.title);
   perfMark('art:md-end');
 
   return `
@@ -2166,7 +2206,7 @@ function renderTags(tag) {
       `;
     } else {
       body = `<div class="article-list">${filtered.map(post => `
-        <article class="article-card" data-href="#/post/${post.id}" tabindex="0" role="link" onclick="location.hash = '#/post/${post.id}'">
+        <article class="article-card" data-href="#/post/${post.id}" tabindex="0" onclick="location.hash = '#/post/${post.id}'">
           <h2 class="article-card-title">
             <a href="#/post/${post.id}">${escapeHtml(post.title)}</a>
           </h2>
@@ -2322,11 +2362,11 @@ function renderCourses() {
   // Category filter
   const categoryOrder = COURSE_CATEGORY_ORDER;
   html += '<div class="category-filter">';
-  html += `<span class="category-chip ${!activeCategory ? 'active' : ''}" data-category="" role="button" tabindex="0">全部</span>`;
+  html += `<span class="category-chip ${!activeCategory ? 'active' : ''}" data-category="" role="button" tabindex="0" aria-pressed="${!activeCategory}">全部</span>`;
   for (const cat of categoryOrder) {
     const count = base.filter(c => c.category === cat).length;
     if (count > 0) {
-      html += `<span class="category-chip ${activeCategory === cat ? 'active' : ''}" data-category="${escapeHtml(cat)}" role="button" tabindex="0">
+      html += `<span class="category-chip ${activeCategory === cat ? 'active' : ''}" data-category="${escapeHtml(cat)}" role="button" tabindex="0" aria-pressed="${activeCategory === cat}">
         ${getCategoryIcon(cat)} ${escapeHtml(cat)}
         <span class="chip-count">${count}</span>
       </span>`;
@@ -2340,7 +2380,7 @@ function renderCourses() {
       <svg class="search-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
         <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
       </svg>
-      <input type="text" id="courseSearchInput" placeholder="搜索课程..." class="search-input" value="${escapeHtml(courseSearchQuery)}">
+      <input type="text" id="courseSearchInput" placeholder="搜索课程..." aria-label="搜索课程" class="search-input" value="${escapeHtml(courseSearchQuery)}">
     </div>
   `;
 
@@ -2925,15 +2965,15 @@ function renderPapersTab() {
       <svg class="search-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
         <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
       </svg>
-      <input type="text" id="paperSearchInput" placeholder="搜索论文标题/作者/摘要..." class="search-input" value="${escapeHtml(paperSearchQuery)}">
+      <input type="text" id="paperSearchInput" placeholder="搜索论文标题/作者/摘要..." aria-label="搜索论文（标题/作者/摘要）" class="search-input" value="${escapeHtml(paperSearchQuery)}">
     </div>
     <div class="category-filter">
-      <span class="category-chip ${!activePaperCategory ? 'active' : ''}" data-paper-category="" role="button" tabindex="0">全部</span>
+      <span class="category-chip ${!activePaperCategory ? 'active' : ''}" data-paper-category="" role="button" tabindex="0" aria-pressed="${!activePaperCategory}">全部</span>
   `;
 
   for (const cat of categoryOrder) {
     if (PAPER_CATEGORIES[cat]) {
-      html += `<span class="category-chip ${activePaperCategory === cat ? 'active' : ''}" data-paper-category="${escapeHtml(cat)}" role="button" tabindex="0">
+      html += `<span class="category-chip ${activePaperCategory === cat ? 'active' : ''}" data-paper-category="${escapeHtml(cat)}" role="button" tabindex="0" aria-pressed="${activePaperCategory === cat}">
         ${getPaperCategoryIcon(cat)} ${escapeHtml(cat)}
         <span class="chip-count">${PAPER_CATEGORIES[cat].count}</span>
       </span>`;
@@ -3009,7 +3049,7 @@ function renderMaterialsTab() {
       <svg class="search-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
         <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
       </svg>
-      <input type="text" id="paperSearchInput" placeholder="搜索学习资料..." class="search-input" value="${escapeHtml(paperSearchQuery)}">
+      <input type="text" id="paperSearchInput" placeholder="搜索学习资料..." aria-label="搜索学习资料" class="search-input" value="${escapeHtml(paperSearchQuery)}">
     </div>
   `;
 
@@ -4172,9 +4212,9 @@ function renderEditor(editId) {
         '<button class="editor-btn editor-btn-ghost" onclick="exitEditorEdit()">\u2716 \u9000\u51FA\u7F16\u8F91</button>'
       : '<span class="editor-badge">\u65B0\u589E\u6A21\u5F0F</span>') +
     '    </div>' +
-    '    <input type="text" id="editorTitle" class="editor-input editor-input-title" placeholder="\u6587\u7AE0\u6807\u9898" value="' + escapeHtml(state.title || '') + '">' +
-    '    <input type="text" id="editorTags" class="editor-input editor-input-tags" placeholder="\u6807\u7B7E\uFF08\u9017\u53F7\u5206\u9694\uFF09\uFF0C\u5982\uFF1A\u673A\u68B0\u81C2, VLA, \u6280\u672F\u7B14\u8BB0" value="' + escapeHtml(state.tags || '') + '">' +
-    '    <textarea id="editorExcerpt" class="editor-input editor-textarea-excerpt" placeholder="\u6458\u8981\uFF08\u53EF\u9009\uFF0C\u7559\u7A7A\u81EA\u52A8\u751F\u6210\uFF09" rows="2">' + escapeHtml(state.excerpt || '') + '</textarea>' +
+    '    <input type="text" id="editorTitle" class="editor-input editor-input-title" placeholder="\u6587\u7AE0\u6807\u9898" aria-label="\u6587\u7AE0\u6807\u9898" value="' + escapeHtml(state.title || '') + '">' +
+    '    <input type="text" id="editorTags" class="editor-input editor-input-tags" placeholder="\u6807\u7B7E\uFF08\u9017\u53F7\u5206\u9694\uFF09\uFF0C\u5982\uFF1A\u673A\u68B0\u81C2, VLA, \u6280\u672F\u7B14\u8BB0" aria-label="\u6807\u7B7E\uFF08\u9017\u53F7\u5206\u9694\uFF09" value="' + escapeHtml(state.tags || '') + '">' +
+    '    <textarea id="editorExcerpt" class="editor-input editor-textarea-excerpt" placeholder="\u6458\u8981\uFF08\u53EF\u9009\uFF0C\u7559\u7A7A\u81EA\u52A8\u751F\u6210\uFF09" aria-label="\u6458\u8981\uFF08\u53EF\u9009\uFF0C\u7559\u7A7A\u81EA\u52A8\u751F\u6210\uFF09" rows="2">' + escapeHtml(state.excerpt || '') + '</textarea>' +
     (isEdit
       ? '    <div class="editor-date-row">' +
         '      <span>\u53D1\u5E03\u65E5\u671F</span>' +
@@ -4190,7 +4230,7 @@ function renderEditor(editId) {
     '    <div class="editor-split" id="editorSplit" data-view="edit">' +
     '      <div class="editor-pane editor-pane-edit">' +
     '        <div class="editor-pane-label">Markdown \u7F16\u8F91</div>' +
-    '        <textarea id="editorContent" class="editor-textarea-content" placeholder="\u5728\u8FD9\u91CC\u8F93\u5165 Markdown \u5185\u5BB9...\n\n# \u6807\u9898\n\n\u6B63\u6587...\n\n```python\nprint(\"hello\")\n```">' + escapeHtml(state.content || '') + '</textarea>' +
+    '        <textarea id="editorContent" class="editor-textarea-content" placeholder="\u5728\u8FD9\u91CC\u8F93\u5165 Markdown \u5185\u5BB9...\n\n# \u6807\u9898\n\n\u6B63\u6587...\n\n```python\nprint(\"hello\")\n```" aria-label="Markdown \u6B63\u6587\u5185\u5BB9">' + escapeHtml(state.content || '') + '</textarea>' +
     '      </div>' +
     '      <div class="editor-pane editor-pane-preview">' +
     '        <div class="editor-pane-label">\u5B9E\u65F6\u9884\u89C8</div>' +
@@ -6056,14 +6096,21 @@ if (mobileNavQuery) {
 window.addEventListener('resize', resetMenuOnDesktop);
 
 // Back to top
+// Batch 8D-4：scroll 是最高频事件之一——原实现在每个 scroll 事件里同步读写 classList。
+// 改为 rAF 合帧 + 仅在阈值跨越时写 DOM，并显式 passive（滚动主线程不再被阻塞）。
 const backToTopBtn = document.getElementById('backToTop');
-window.addEventListener('scroll', () => {
-  if (window.scrollY > 300) {
-    backToTopBtn.classList.add('visible');
-  } else {
-    backToTopBtn.classList.remove('visible');
+let _backTopRaf = 0;
+function updateBackToTop() {
+  _backTopRaf = 0;
+  const shouldShow = window.scrollY > 300;
+  if (backToTopBtn.classList.contains('visible') !== shouldShow) {
+    backToTopBtn.classList.toggle('visible', shouldShow);
   }
-});
+}
+window.addEventListener('scroll', () => {
+  if (_backTopRaf) return;
+  _backTopRaf = requestAnimationFrame(updateBackToTop);
+}, { passive: true });
 backToTopBtn.addEventListener('click', () => {
   window.scrollTo({ top: 0, behavior: 'smooth' });
 });
