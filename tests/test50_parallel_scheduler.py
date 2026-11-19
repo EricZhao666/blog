@@ -290,7 +290,13 @@ def main():
                        ('fake-tree-b', os.path.join(tmp, 'fake_tree_b.py'), 'B8E3B2_CHILD_B')]
             for name, script, env_name in scripts:
                 env = dict(os.environ, **{env_name: os.path.join(tmp, name + '.pid')})
-                proc = subprocess.Popen([sys.executable, script], env=env)
+                popen_kwargs = {'env': env}
+                if os.name == 'nt':
+                    popen_kwargs['creationflags'] = getattr(
+                        subprocess, 'CREATE_NEW_PROCESS_GROUP', 0)
+                else:
+                    popen_kwargs['start_new_session'] = True
+                proc = subprocess.Popen([sys.executable, script], **popen_kwargs)
                 mod._register_proc(proc)
                 interrupt_pids.append(proc)
             # 等待两个 fixture 都完成孙进程创建，确保中断时确有两条活动进程树。
