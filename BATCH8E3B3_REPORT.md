@@ -1,8 +1,9 @@
 # Batch 8E-3B-3 报告：实际全量并行加速与测试基础设施收尾
 
-- 状态：**B8E3B3_PR_READY**（本地验收完成；PR 创建后由默认串行 CI 最终验收）
+- 状态：**B8E3B3_PR_READY**（本地验收完成；PR #25 已创建，等待默认串行 CI 与人工审核）
 - 基线：`origin/main = f4ebe34`（PR #24 squash 合并，`perf(test): add opt-in safe two-worker scheduler`）
 - 分支：`perf/batch8e3b3-effective-parallelism`
+- 本地提交：`1475031`（PR #25：https://github.com/EricZhao666/blog/pull/25）
 - 本轮范围：只扩展已验证的**相邻精确配对**，并完成 8E-3 阶段收尾；默认仍为串行，不实现通用并行池、跨屏障搜索、3+ 并发或任意浏览器并发。
 
 ## 1. 变更摘要

@@ -1,7 +1,8 @@
 # Batch 8E-3 最终总结：测试基础设施收尾
 
-- 阶段状态：**B8E3B3_PR_READY**（本轮 PR 等待默认串行 CI 与人工审核）
+- 阶段状态：**B8E3B3_PR_READY**（本轮 PR #25 等待默认串行 CI 与人工审核）
 - 覆盖范围：Batch 8E-3A / 8E-3A-R / 8E-3B-1 / 8E-3B-R / 8E-3B-2 / 8E-3B-3
+- 本轮 PR：#25 https://github.com/EricZhao666/blog/pull/25
 - 原则：默认串行不变；并行是显式 opt-in，只对已验证的精确配对生效；不以牺牲测试语义换取性能。
 
 ## 1. 阶段成果
