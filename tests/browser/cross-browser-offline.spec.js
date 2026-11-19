@@ -410,7 +410,7 @@ async function scenarioD(env) {
 }
 
 // ---------------------------------------------------------------- Phase E
-// B8E1-003：snapshotReady 只计算一次；失败态在 SW 生命周期内不可自愈。
+// B8E4-001 / B8E1-003：snapshotReady 的失败态必须在同一 SW 生命周期内可自愈。
 // 观测手段（引擎无关）：
 //   - 给 /index.html 注入 600ms 延迟；
 //   - 快照可用时 shellNavigate 在 NAV_TIMEOUT_MS(150ms) 后就交付快照 → 导航 < 450ms；
@@ -421,7 +421,15 @@ async function scenarioE(env) {
   const r = env.reporter;
   const probeUrl = '/js/projects.js';      // 属于 FIRST_SCREEN_ASSETS，但不在 REQUIRED_ASSETS
 
-  // E0：基线（快照完整时应当命中 cache-mode），用于确认计时判据有效
+  // 状态判据：cache-mode 下首屏资源由安装期快照直接返回，不会产生网络请求；
+  // network-mode 下这些资源必须走网络。比单纯计时更不受系统负载影响。
+  function assetHits() {
+    return ['/css/style.css', '/js/app.js', '/js/data.js'].reduce(function (a, k) {
+      return a + (state.hits[k] || 0);
+    }, 0);
+  }
+
+  // E0：基线（快照完整时应当命中快照）
   const base = await newSession(env.browser);
   try {
     await gotoHome(base.page);
@@ -430,9 +438,11 @@ async function scenarioE(env) {
     const core0 = cacheUrls(info0, CACHE_NAME);
     r.check('E0', '基线：安装期快照完整', hasUrl(core0, probeUrl), 'entries=' + core0.length);
     state.delays['/index.html'] = 600;
+    const h0 = assetHits();
     const d0 = await measureReload(base.page);
-    r.check('E0', '基线：快照可用时导航走 cache-mode', timeBand(d0) === 'cache-mode',
-      d0 + 'ms (' + timeBand(d0) + ')');
+    const hits0 = assetHits() - h0;
+    r.check('E0', '基线：快照可用时不产生首屏资源网络请求', hits0 === 0,
+      'assetHits=' + hits0 + ' ' + d0 + 'ms (' + timeBand(d0) + ')');
   } catch (e) {
     r.fail('E0', '基线：快照可用时导航走 cache-mode', e.message);
   } finally {
@@ -458,10 +468,12 @@ async function scenarioE(env) {
     r.check('E1', '异常注入：从安装期快照移除首屏资源', removed, probeUrl);
 
     state.delays['/index.html'] = 600;
+    const h1 = assetHits();
     const d1 = await measureReload(s.page);
     await s.page.waitForSelector('#searchInput', { state: 'visible', timeout: 20000 });
-    r.check('E1', '快照不完整时导航降级为 network-mode', timeBand(d1) === 'network-mode',
-      d1 + 'ms (' + timeBand(d1) + ')');
+    const hits1 = assetHits() - h1;
+    r.check('E1', '快照不完整时导航降级为 network-mode', hits1 > 0,
+      'assetHits=' + hits1 + ' ' + d1 + 'ms (' + timeBand(d1) + ')');
 
     // 解除异常：把资源重新写回同一个安装期缓存
     const restored = await s.page.evaluate(function (argsObj) {
@@ -480,21 +492,27 @@ async function scenarioE(env) {
       '/js/user-posts.js', '/js/projects.js'].every(function (k) { return hasUrl(core1, k); });
     r.check('E1', '异常解除后快照条目完整', completeNow, 'entries=' + core1.length);
 
+    // 自愈判据（状态优先）：恢复资源后，下一次导航应重新命中安装期快照，
+    // 因此首屏资源不应再产生网络请求；计时仅作为辅助证据（系统负载可能影响）。
+    const h2 = assetHits();
     const d2 = await measureReload(s.page);
     await s.page.waitForSelector('#searchInput', { state: 'visible', timeout: 20000 });
+    const hits2 = assetHits() - h2;
     const band2 = timeBand(d2);
-    // 期望确认：仍为 network-mode（_readyPromise 缓存了 false，生命周期内不自愈）
-    r.check('E1', '异常解除后同一 SW 生命周期未自愈（B8E1-003 仍存在）',
-      band2 === 'network-mode', d2 + 'ms (' + band2 + ')');
 
-    // 离线兜底是否仍可用（判断影响等级：降级而非完全不可用）
+    // 修复后的正确行为：恢复全部首屏资源后，下一次导航重新命中快照。
+    r.check('E1', '异常解除后下一次导航重新使用快照模式（自愈）',
+      hits2 === 0,
+      'assetHits=' + hits2 + ' ' + d2 + 'ms (' + band2 + ')');
+
+    // 离线兜底是否仍可用
     state.delays['/index.html'] = 0;
     setNetworkDown(true);
     try {
       await s.page.reload({ waitUntil: 'load', timeout: 60000 });
       await s.page.waitForSelector('#searchInput', { state: 'visible', timeout: 20000 });
       const posts = await s.page.locator('#app a[href^="#/post/"]').count();
-      r.check('E1', '失败态下离线导航仍由快照兜底', posts > 0, 'post_links=' + posts);
+      r.check('E1', '自愈前后离线导航仍由快照兜底', posts > 0, 'post_links=' + posts);
     } catch (e) {
       r.fail('E1', '失败态下离线导航仍由快照兜底', e.message);
     }
