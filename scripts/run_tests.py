@@ -38,6 +38,28 @@ TIMEOUT = 240
 BROWSER_TIMEOUT = 600
 HEARTBEAT_SECONDS = 30      # 长套件低频心跳：只在超过 30s 后每 30s 一行
 
+# 已由 Batch 8E-3B-1 / 8E-3B-R 实测过的非浏览器配对。
+# 只允许精确配对，不能把“每个成员曾与别处并行”推导成任意组合安全。
+PAIR_LICENSES = {
+    frozenset(('test11', 'test20')): {
+        'evidence': 'BATCH8E3B1_PARALLEL_RESULTS.csv + B8E3B2: test11 exit 0 / test20 24/24；105.7s→28.9s',
+    },
+    frozenset(('test24', 'test40')): {
+        'evidence': 'BATCH8E3B1_PARALLEL_RESULTS.csv + B8E3B2: 22/22、35/35；54.2s→35.7s',
+    },
+    frozenset(('test16', 'test43')): {
+        'evidence': 'BATCH8E3A_PARALLEL_RESULTS.csv / B8E3B2: 20/20、40/40；44.4s→28.2s',
+    },
+}
+
+# 这些套件即使出现在配对清单旁边，也必须独占串行；浏览器套件一律独占。
+EXPLICIT_SERIAL = {'test23', 'build-lock', 'runner-infrastructure'}
+PORT_ENV_NAMES = ('TEST_PORT', 'B3_PORT')
+
+_ACTIVE_LOCK = threading.Lock()
+_ACTIVE_PROCS = {}
+
+
 # 开发辅助分组：用于局部调试，**不代表发布验收**。
 # 发布/CI 默认仍是 full（不传 --group 即 full），避免把快速测试当成全量门禁。
 GROUPS = {
@@ -156,6 +178,8 @@ TESTS = [
      'desc': 'B8E3B1：动态端口分配 / TEST_PORT 覆盖 / 端口释放与启动失败'},
     {'name': 'build-lock', 'file': 'tests/test49_content_build_lock.py', 'kind': 'python',
      'desc': 'B8E3BR：构建锁覆盖完整 sync 临界区 / replace 失败临时文件清理 / 只读契约 / 锁超时'},
+    {'name': 'parallel-scheduler', 'file': 'tests/test50_parallel_scheduler.py', 'kind': 'python',
+     'desc': 'B8E3B2：可选 2-worker 安全调度 / 配对许可 / 中断与进程树清理'},
     {'name': 'image-check', 'file': 'scripts/check_images.py', 'kind': 'python', 'args': ['--check'],
      'desc': 'B8D2B：发布前图片资源门禁（缺失图片必须失败，不允许降级为 SKIP/WARNING）',
      'pass_marker': 'OK:'},
@@ -214,10 +238,84 @@ def which(cmd):
     return shutil.which(cmd)
 
 
+def _win_descendant_pids(root_pid):
+    """用 Toolhelp32 明确枚举 root_pid 的后代 PID（不按进程名筛选）。
+
+    该快照在终止前获取，用于补偿 Windows taskkill /T 在“父进程先退、子进程
+    被孤儿化”时可能漏杀的情况。失败时返回空列表，由调用方保留 taskkill /T
+    作为兜底并记录限制。
+    """
+    if os.name != 'nt':
+        return []
+    try:
+        import ctypes
+        from ctypes import wintypes
+
+        class PROCESSENTRY32W(ctypes.Structure):
+            _fields_ = [
+                ('dwSize', wintypes.DWORD),
+                ('cntUsage', wintypes.DWORD),
+                ('th32ProcessID', wintypes.DWORD),
+                ('th32DefaultHeapID', ctypes.POINTER(wintypes.ULONG)),
+                ('th32ModuleID', wintypes.DWORD),
+                ('cntThreads', wintypes.DWORD),
+                ('th32ParentProcessID', wintypes.DWORD),
+                ('pcPriClassBase', ctypes.c_long),
+                ('dwFlags', wintypes.DWORD),
+                ('szExeFile', wintypes.WCHAR * 260),
+            ]
+
+        kernel32 = ctypes.windll.kernel32
+        kernel32.CreateToolhelp32Snapshot.restype = ctypes.c_void_p
+        kernel32.CreateToolhelp32Snapshot.argtypes = [wintypes.DWORD, wintypes.DWORD]
+        kernel32.Process32FirstW.restype = wintypes.BOOL
+        kernel32.Process32FirstW.argtypes = [ctypes.c_void_p,
+                                             ctypes.POINTER(PROCESSENTRY32W)]
+        kernel32.Process32NextW.restype = wintypes.BOOL
+        kernel32.Process32NextW.argtypes = [ctypes.c_void_p,
+                                            ctypes.POINTER(PROCESSENTRY32W)]
+        kernel32.CloseHandle.argtypes = [ctypes.c_void_p]
+
+        TH32CS_SNAPPROCESS = 0x00000002
+        snapshot = kernel32.CreateToolhelp32Snapshot(TH32CS_SNAPPROCESS, 0)
+        if snapshot in (None, ctypes.c_void_p(-1).value):
+            return []
+        try:
+            entries = []
+            entry = PROCESSENTRY32W()
+            entry.dwSize = ctypes.sizeof(PROCESSENTRY32W)
+            ok = kernel32.Process32FirstW(snapshot, ctypes.byref(entry))
+            while ok:
+                entries.append((int(entry.th32ProcessID),
+                                int(entry.th32ParentProcessID)))
+                ok = kernel32.Process32NextW(snapshot, ctypes.byref(entry))
+        finally:
+            kernel32.CloseHandle(snapshot)
+
+        children = {}
+        for pid, ppid in entries:
+            children.setdefault(ppid, []).append(pid)
+        out = []
+        pending = [int(root_pid)]
+        seen = set(pending)
+        while pending:
+            parent = pending.pop(0)
+            for child in children.get(parent, []):
+                if child in seen:
+                    continue
+                seen.add(child)
+                out.append(child)
+                pending.append(child)
+        return out
+    except Exception:
+        return []
+
+
 def _terminate_tree(proc):
     """只终止该子进程及其后代（不按进程名批量杀）。
 
-    Windows: taskkill /PID <pid> /T /F —— 目标是明确的 PID 树；
+    Windows: 先枚举明确的后代 PID，再 taskkill /PID <pid> /T /F；若 taskkill
+    因父进程先退出而漏掉孤儿后代，按枚举到的明确 PID 逐个补杀。
     POSIX:   killpg(进程组) —— 子进程以 start_new_session 启动，组内只有自己。
     返回是否执行过终止动作（已退出则 False）。
     """
@@ -229,10 +327,19 @@ def _terminate_tree(proc):
     except Exception:
         return False
     pid = proc.pid
+    descendants = _win_descendant_pids(pid) if os.name == 'nt' else []
     try:
         if os.name == 'nt':
             subprocess.run(['taskkill', '/PID', str(pid), '/T', '/F'],
                            capture_output=True, timeout=15)
+            for child_pid in descendants:
+                if child_pid == pid:
+                    continue
+                try:
+                    subprocess.run(['taskkill', '/PID', str(child_pid), '/T', '/F'],
+                                   capture_output=True, timeout=10)
+                except Exception:
+                    pass
         else:
             try:
                 os.killpg(os.getpgid(pid), signal.SIGTERM)
@@ -257,12 +364,51 @@ def _terminate_tree(proc):
     return True
 
 
-def run(cmd, cwd=ROOT, timeout=TIMEOUT, extra_env=None, label=None, meta=None):
+def _register_proc(proc):
+    if proc is None:
+        return
+    try:
+        with _ACTIVE_LOCK:
+            _ACTIVE_PROCS[proc.pid] = proc
+    except Exception:
+        pass
+
+
+def _unregister_proc(proc):
+    if proc is None:
+        return
+    try:
+        with _ACTIVE_LOCK:
+            _ACTIVE_PROCS.pop(proc.pid, None)
+    except Exception:
+        pass
+
+
+def _terminate_active():
+    """只终止本运行器注册过的子进程树；不按进程名批量杀。"""
+    with _ACTIVE_LOCK:
+        procs = list(_ACTIVE_PROCS.values())
+    for proc in procs:
+        _terminate_tree(proc)
+    # 清掉已经退出的登记，避免中断后活动表残留导致后续误杀/误报。
+    with _ACTIVE_LOCK:
+        for pid, proc in list(_ACTIVE_PROCS.items()):
+            try:
+                if proc.poll() is not None:
+                    _ACTIVE_PROCS.pop(pid, None)
+            except Exception:
+                pass
+    return len(procs)
+
+
+def run(cmd, cwd=ROOT, timeout=TIMEOUT, extra_env=None, label=None, meta=None,
+        log_prefix=''):
     """运行子进程，返回 (exit_code, output, wall_seconds)。
 
     - 超时：终止整个进程树（含孙进程），exit=124；
     - KeyboardInterrupt：先清理进程树，再向上抛出；
     - label 非空时每 HEARTBEAT_SECONDS 打一行低频心跳（只在该套件仍在运行时）。
+    - 所有子进程都登记到本运行器的活动表，供主线程中断/并行调度统一清理。
     """
     env = dict(os.environ, PYTHONIOENCODING='utf-8', PYTHONUTF8='1')
     if extra_env:
@@ -279,12 +425,15 @@ def run(cmd, cwd=ROOT, timeout=TIMEOUT, extra_env=None, label=None, meta=None):
     stop = threading.Event()
     proc = None
 
+    def _emit(message):
+        print('%s%s' % (log_prefix, message), flush=True)
+
     def _beat():
         while not stop.wait(HEARTBEAT_SECONDS):
             try:
                 if proc is not None and proc.poll() is None:
-                    print('    [heartbeat] %s 仍在运行 %.0fs' %
-                          (label, time.monotonic() - t0), flush=True)
+                    _emit('[heartbeat] %s 仍在运行 %.0fs' %
+                          (label, time.monotonic() - t0))
             except Exception:
                 return
 
@@ -300,6 +449,7 @@ def run(cmd, cwd=ROOT, timeout=TIMEOUT, extra_env=None, label=None, meta=None):
             code = 125
             out = 'OSError: %s' % e
         else:
+            _register_proc(proc)
             try:
                 out = proc.communicate(timeout=timeout)[0]
                 code = proc.returncode
@@ -314,8 +464,8 @@ def run(cmd, cwd=ROOT, timeout=TIMEOUT, extra_env=None, label=None, meta=None):
                     meta['timeout'] = True
                     meta['reason'] = 'timeout after %ds' % timeout
                     meta['tree_terminated'] = killed
-                print('    [TIMEOUT] %s 超过 %ds，已终止该进程树' %
-                      (label or os.path.basename(str(cmd[0])), timeout), flush=True)
+                _emit('[TIMEOUT] %s 超过 %ds，已终止该进程树' %
+                      (label or os.path.basename(str(cmd[0])), timeout))
     except KeyboardInterrupt:
         _terminate_tree(proc)
         if meta is not None:
@@ -325,6 +475,7 @@ def run(cmd, cwd=ROOT, timeout=TIMEOUT, extra_env=None, label=None, meta=None):
         stop.set()
         if th is not None:
             th.join(timeout=1)
+        _unregister_proc(proc)
     if meta is not None:
         meta.setdefault('timeout', False)
     return code, out or '', time.monotonic() - t0
@@ -405,11 +556,12 @@ def check_env(selected):
     return blocked, notes
 
 
-def run_test(t):
+def run_test(t, log_prefix=''):
     cmd = ([sys.executable] if t['kind'] == 'python' else ['node']) + [t['file']] + list(t.get('args') or [])
     timeout = t.get('timeout') or (BROWSER_TIMEOUT if t['kind'] == 'browser' else TIMEOUT)
     meta = {}
-    code, out, dur = run(cmd, timeout=timeout, label=t['name'], meta=meta)
+    code, out, dur = run(cmd, timeout=timeout, label=t['name'], meta=meta,
+                         log_prefix=log_prefix)
     # 退出码 2 在全部种类里都表示"环境/前置产物不可用"（浏览器缺 Chromium、
     # jsdom 缺产物等），统一标记 BLOCKED，不能混进 FAIL 或静默丢失。
     blocked = (code == 2)
@@ -422,7 +574,8 @@ def run_test(t):
         ok = code == 0
     if not ok and not blocked:
         head = [ln.strip() for ln in out.splitlines() if ln.strip().startswith('FAIL')][:5]
-        print('    [FAIL] %s (exit %s) %s' % (t['name'], code, ('; '.join(head))[:400]), flush=True)
+        print('%s[FAIL] %s (exit %s) %s' %
+              (log_prefix, t['name'], code, ('; '.join(head))[:400]), flush=True)
     m = COUNT_RE.search(out)
     counts = None
     if m:
@@ -434,6 +587,232 @@ def run_test(t):
         'fails': fails, 'timeout': bool(meta.get('timeout')), 'reason': meta.get('reason', ''),
         'tail': '\n'.join(out.strip().splitlines()[-12:]),
     }
+
+
+def _pair_license(t1, t2):
+    return PAIR_LICENSES.get(frozenset((t1['name'], t2['name'])))
+
+
+def _port_env_conflict():
+    found = [name for name in PORT_ENV_NAMES if os.environ.get(name)]
+    if found:
+        return '显式端口环境变量: %s' % ', '.join(found)
+    return ''
+
+
+def _serial_fallback_reason(t, env_conflict=''):
+    if t['kind'] == 'browser':
+        return 'browser_exclusive'
+    if t['name'] in EXPLICIT_SERIAL:
+        return 'explicit_serial'
+    if env_conflict:
+        return 'port_env_explicit'
+    return 'no_verified_adjacent_pair'
+
+
+def plan_execution(selected, workers):
+    """把选中套件拆成执行单元。
+
+    workers=1 时保持旧的逐套串行循环；workers=2 只把“选中顺序中相邻、
+    且属于精确配对许可”的两个套件放进同一并行单元。这样不会为了凑并行
+    跨过独占串行屏障或依赖阶段，也不会运行同一套件的多个实例。
+    """
+    if workers == 1:
+        return ([{'mode': 'serial', 'tests': [t], 'reason': 'workers=1'}
+                for t in selected], [], [], [])
+
+    env_conflict = _port_env_conflict()
+    jobs = []
+    pairs = []
+    serial_suites = []
+    serial_reasons = []
+    i = 0
+    while i < len(selected):
+        t = selected[i]
+        if i + 1 < len(selected):
+            a, b = selected[i], selected[i + 1]
+            lic = _pair_license(a, b)
+            if (lic and not env_conflict
+                    and a['kind'] != 'browser' and b['kind'] != 'browser'
+                    and a['name'] not in EXPLICIT_SERIAL
+                    and b['name'] not in EXPLICIT_SERIAL):
+                jobs.append({'mode': 'parallel', 'tests': [a, b], 'license': lic})
+                pairs.append('%s+%s' % (a['name'], b['name']))
+                i += 2
+                continue
+
+        reason = _serial_fallback_reason(t, env_conflict)
+        jobs.append({'mode': 'serial', 'tests': [t], 'reason': reason})
+        serial_suites.append(t['name'])
+        serial_reasons.append('%s: %s' % (t['name'], reason))
+        i += 1
+    return jobs, pairs, serial_suites, serial_reasons
+
+
+def _interrupted_result(t, started_offset=0.0):
+    return {
+        'name': t['name'], 'file': t['file'], 'desc': t['desc'], 'kind': t['kind'],
+        'ok': False, 'blocked': False, 'exit': 130, 'dur': 0.0, 'counts': None,
+        'fails': ['INTERRUPTED'], 'timeout': False, 'reason': 'interrupted',
+        'tail': 'run interrupted before suite completed',
+        'start_offset': started_offset, 'end_offset': started_offset,
+    }
+
+
+def execute_jobs(jobs, total, selected):
+    """执行执行单元，返回 (按注册顺序排列的结果, 调度元数据)。
+
+    并行单元只由两个独立外部测试进程组成；主线程是唯一的汇总者。
+    任何 Ctrl+C 都在主线程捕获，先终止本运行器登记的活动进程树，再生成
+    可识别的中断结果，不依赖 worker 线程收到 KeyboardInterrupt。
+    """
+    execution_start = time.monotonic()
+    results_by_name = {}
+    suite_execution_order = []
+    parallel_pairs = []
+    serial_suites = []
+    serial_reasons = []
+    active = 0
+    peak = 0
+    lock = threading.Lock()
+    interrupted = False
+
+    def _start(name):
+        nonlocal active, peak
+        with lock:
+            active += 1
+            peak = max(peak, active)
+            suite_execution_order.append(name)
+
+    def _finish(name):
+        nonlocal active
+        with lock:
+            active = max(0, active - 1)
+
+    def _timed_run(t, prefix):
+        start = time.monotonic() - execution_start
+        _start(t['name'])
+        try:
+            r = run_test(t, log_prefix=prefix)
+        except Exception as e:
+            r = {
+                'name': t['name'], 'file': t['file'], 'desc': t['desc'],
+                'kind': t['kind'], 'ok': False, 'blocked': False, 'exit': 125,
+                'dur': 0.0, 'counts': None, 'fails': ['worker exception: %s' % e],
+                'timeout': False, 'reason': 'worker exception', 'tail': str(e),
+            }
+        finally:
+            _finish(t['name'])
+        end = time.monotonic() - execution_start
+        r['start_offset'] = start
+        r['end_offset'] = end
+        return r
+
+    def _worker(t, prefix):
+        try:
+            r = _timed_run(t, prefix)
+            with lock:
+                results_by_name[t['name']] = r
+        except BaseException as e:
+            r = {
+                'name': t['name'], 'file': t['file'], 'desc': t['desc'],
+                'kind': t['kind'], 'ok': False, 'blocked': False, 'exit': 125,
+                'dur': 0.0, 'counts': None, 'fails': ['worker exception: %s' % e],
+                'timeout': False, 'reason': 'worker exception', 'tail': str(e),
+                'start_offset': time.monotonic() - execution_start,
+                'end_offset': time.monotonic() - execution_start,
+            }
+            with lock:
+                results_by_name[t['name']] = r
+
+    try:
+        done = 0
+        for job in jobs:
+            job_tests = job['tests']
+            if job['mode'] == 'serial':
+                t = job_tests[0]
+                done += 1
+                print('  [%d/%d] %s (%s) 开始 %s' %
+                      (done, total, t['name'], t['kind'],
+                       datetime.datetime.now().strftime('%H:%M:%S')), flush=True)
+                r = _timed_run(t, '')
+                results_by_name[t['name']] = r
+                serial_suites.append(t['name'])
+                serial_reasons.append('%s: %s' % (t['name'], job.get('reason', 'serial')))
+                cnt = ' (%d/%d)' % (r['counts'][1], r['counts'][0]) if r['counts'] else ''
+                status = 'BLOCK' if r.get('blocked') else ('PASS' if r['ok'] else 'FAIL')
+                print('  [%d/%d] %-10s %-5s %6.1fs%s  剩余 %d  %s' %
+                      (done, total, r['name'], status, r['dur'], cnt,
+                       total - done, r['desc']), flush=True)
+                if not r['ok'] and not r.get('blocked'):
+                    for f in r['fails']:
+                        print('        - ' + f, flush=True)
+                continue
+
+            a, b = job_tests
+            done += 2
+            parallel_pairs.append('%s+%s' % (a['name'], b['name']))
+            print('  [%d-%d/%d] %s + %s (parallel) 开始 %s' %
+                  (done - 1, done, total, a['name'], b['name'],
+                   datetime.datetime.now().strftime('%H:%M:%S')), flush=True)
+            threads = [threading.Thread(target=_worker, args=(a, '    [p1] '),
+                                        name='suite-' + a['name'], daemon=True),
+                       threading.Thread(target=_worker, args=(b, '    [p2] '),
+                                        name='suite-' + b['name'], daemon=True)]
+            for th in threads:
+                th.start()
+            while any(th.is_alive() for th in threads):
+                try:
+                    for th in threads:
+                        th.join(timeout=0.5)
+                except KeyboardInterrupt:
+                    interrupted = True
+                    print('\n  [INTERRUPTED] 正在清理本运行器活动进程树...', flush=True)
+                    _terminate_active()
+                    for th in threads:
+                        th.join(timeout=10)
+                    break
+            for offset, (name, t) in enumerate(((a['name'], a), (b['name'], b)), 1):
+                r = results_by_name.get(name)
+                if r is None:
+                    r = _interrupted_result(t)
+                    results_by_name[name] = r
+                cnt = ' (%d/%d)' % (r['counts'][1], r['counts'][0]) if r['counts'] else ''
+                status = 'BLOCK' if r.get('blocked') else ('PASS' if r['ok'] else 'FAIL')
+                print('  [%d/%d] %-10s %-5s %6.1fs%s  %s' %
+                      (done - 2 + offset, total, r['name'], status, r['dur'], cnt,
+                       r['desc']), flush=True)
+                if not r['ok'] and not r.get('blocked'):
+                    for f in r['fails']:
+                        print('        - ' + f, flush=True)
+            if interrupted:
+                break
+    except KeyboardInterrupt:
+        interrupted = True
+        print('\n  [INTERRUPTED] 正在清理本运行器活动进程树...', flush=True)
+        _terminate_active()
+    finally:
+        if interrupted:
+            _terminate_active()
+        # 中断时，未开始的选中套件不会伪造 PASS/FAIL；由 main 计入 SKIP 并标记 INTERRUPTED。
+        for t in selected:
+            if t['name'] not in results_by_name:
+                results_by_name[t['name']] = _interrupted_result(t)
+
+    ordered = [results_by_name[t['name']] for t in selected]
+    meta = {
+        'parallel_pairs': parallel_pairs,
+        'serial_suites': serial_suites,
+        'serial_fallback_reasons': serial_reasons,
+        'suite_execution_order': suite_execution_order,
+        'peak_active_suites': peak,
+        'effective_workers': peak,
+        'summed_suite_seconds': sum(r['dur'] for r in ordered),
+        'test_wall_seconds': time.monotonic() - execution_start,
+        'interrupted': interrupted,
+        'execution_start': execution_start,
+    }
+    return ordered, meta
 
 
 def write_report(path, payload):
@@ -457,6 +836,44 @@ def write_report(path, payload):
         lines.append('- 分类耗时：' + ' / '.join(
             '%s %.1f s' % (k, v) for k, v in sorted(by_kind.items())))
     lines.append('')
+
+    if payload.get('requested_workers') is not None:
+        lines.append('## 并行调度')
+        lines.append('')
+        lines.append('- workers：请求 %s / 实际峰值 %s'
+                     % (payload.get('requested_workers', 1),
+                        payload.get('effective_workers', 0)))
+        lines.append('- 并行配对：%s'
+                     % (', '.join(payload.get('parallel_pairs') or []) or '无'))
+        lines.append('- 串行套件：%d 套' % len(payload.get('serial_suites') or []))
+        reasons = {}
+        for item in payload.get('serial_fallback_reasons') or []:
+            reason = item.rsplit(': ', 1)[-1]
+            reasons[reason] = reasons.get(reason, 0) + 1
+        if reasons:
+            lines.append('- 串行原因：' + ' / '.join(
+                '%s %d' % (k, v) for k, v in sorted(reasons.items())))
+        lines.append('- 实测 wall：%.1fs；套件累计：%.1fs；重叠：%.1fs'
+                     % (payload.get('test_wall_seconds', 0.0),
+                        payload.get('summed_suite_seconds', 0.0),
+                        payload.get('parallel_overlap_seconds', 0.0)))
+        order = payload.get('suite_execution_order') or []
+        if order:
+            lines.append('- 实际开始顺序：%s' % ' → '.join(order))
+        intervals = payload.get('parallel_intervals') or []
+        pair_names = set()
+        for pair in payload.get('parallel_pairs') or []:
+            pair_names.update(pair.split('+'))
+        shown = [x for x in intervals if x['name'] in pair_names]
+        if shown:
+            lines.append('')
+            lines.append('| 配对套件 | 开始(相对) | 结束(相对) | 结果 |')
+            lines.append('| --- | --- | --- | --- |')
+            for x in shown:
+                lines.append('| `%s` | %.2fs | %.2fs | %s |'
+                             % (x['name'], x['start'], x['end'],
+                                'PASS' if x['ok'] else ('exit %s' % x['exit'])))
+        lines.append('')
 
     if payload['blocked']:
         lines.append('## 阻塞项（环境）')
@@ -586,6 +1003,16 @@ def select_tests(only=None, group='full'):
     return selected, unknown
 
 
+def _parse_workers(value):
+    try:
+        n = int(value)
+    except (TypeError, ValueError):
+        raise argparse.ArgumentTypeError('workers 必须是整数 1 或 2')
+    if n not in (1, 2):
+        raise argparse.ArgumentTypeError('workers 只支持 1 或 2（默认 1，串行）')
+    return n
+
+
 def main(argv=None):
     _ensure_utf8_stdout()
 
@@ -599,6 +1026,8 @@ def main(argv=None):
     ap.add_argument('--skip-syntax', action='store_true', help='跳过语法检查')
     ap.add_argument('--report', default=DEFAULT_REPORT, help='报告输出路径')
     ap.add_argument('--json', help='额外输出一份 JSON 结果')
+    ap.add_argument('--workers', type=_parse_workers, default=1,
+                    help='并行 worker 数：默认 1（完全串行）；2 只在已验证的相邻非浏览器配对并行')
     args = ap.parse_args(argv)
 
     if args.list_groups:
@@ -620,11 +1049,18 @@ def main(argv=None):
         print('未选中任何用例（分组: %s）' % args.group)
         return 2
 
+    jobs, planned_pairs, planned_serial, planned_reasons = plan_execution(selected, args.workers)
+
     wall_start = time.monotonic()
     started = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
 
     print('== 运行器 ==')
-    print('  分组: %s；套件: %d' % (args.group, len(selected)), flush=True)
+    print('  分组: %s；套件: %d；workers: %d（请求）' %
+          (args.group, len(selected), args.workers), flush=True)
+    if args.workers == 2 and not planned_pairs:
+        print('  并行: 没有相邻的已验证配对，安全回退为串行', flush=True)
+    elif planned_pairs:
+        print('  并行配对: ' + ', '.join(planned_pairs), flush=True)
 
     t0 = time.monotonic()
     blocked, notes = check_env(selected)
@@ -650,33 +1086,32 @@ def main(argv=None):
                 print('      ' + str(e))
     syntax_seconds = time.monotonic() - t0
 
-    results = []
     total = len(selected)
-    if not blocked:
+    if blocked:
+        results = []
+        sched_meta = {
+            'parallel_pairs': [], 'serial_suites': [t['name'] for t in selected],
+            'serial_fallback_reasons': ['environment blocked'],
+            'suite_execution_order': [], 'peak_active_suites': 0,
+            'effective_workers': 0, 'summed_suite_seconds': 0.0,
+            'test_wall_seconds': 0.0, 'interrupted': False,
+        }
+    else:
         print('\n== 测试 == 共 %d 套' % total, flush=True)
-        for i, t in enumerate(selected, 1):
-            print('  [%d/%d] %s (%s) 开始 %s' %
-                  (i, total, t['name'], t['kind'],
-                   datetime.datetime.now().strftime('%H:%M:%S')), flush=True)
-            r = run_test(t)
-            results.append(r)
-            cnt = ''
-            if r['counts']:
-                cnt = ' (%d/%d)' % (r['counts'][1], r['counts'][0])
-            status = 'BLOCK' if r.get('blocked') else ('PASS' if r['ok'] else 'FAIL')
-            print('  [%d/%d] %-10s %-5s %6.1fs%s  剩余 %d  %s' %
-                  (i, total, r['name'], status, r['dur'], cnt, total - i, r['desc']),
-                  flush=True)
-            if not r['ok'] and not r.get('blocked'):
-                for f in r['fails']:
-                    print('        - ' + f, flush=True)
+        results, sched_meta = execute_jobs(jobs, total, selected)
 
+    interrupted = bool(sched_meta.get('interrupted'))
     n_blocked_tests = len([r for r in results if r.get('blocked')])
-    n_fail = len([r for r in results if not r['ok'] and not r.get('blocked')])
+    n_fail = len([r for r in results if not r['ok'] and not r.get('blocked')
+                  and r.get('exit') != 130])
     n_pass = len([r for r in results if r['ok']])
-    n_skip = total - len(results)
+    n_interrupted = len([r for r in results if r.get('exit') == 130])
+    n_skip = total - len([r for r in results if r.get('exit') != 130])
     blocked_total = len(blocked) + n_blocked_tests
-    if blocked or n_blocked_tests:
+    if interrupted:
+        verdict = 'INTERRUPTED'
+        exit_code = 130
+    elif blocked or n_blocked_tests:
         verdict = 'BLOCKED'
         exit_code = 2
     elif n_fail or (not args.skip_syntax and not syntax_ok):
@@ -687,6 +1122,9 @@ def main(argv=None):
         exit_code = 0
 
     wall_seconds = time.monotonic() - wall_start
+    summed_suite_seconds = sum(r['dur'] for r in results)
+    test_wall_seconds = sched_meta.get('test_wall_seconds', 0.0)
+    parallel_overlap_seconds = max(0.0, summed_suite_seconds - test_wall_seconds)
     by_kind = {}
     for r in results:
         by_kind[r['kind']] = by_kind.get(r['kind'], 0.0) + r['dur']
@@ -695,13 +1133,25 @@ def main(argv=None):
                 for r in results if r.get('timeout')]
     blocked_tests = [{'name': r['name'], 'exit': r['exit'], 'desc': r['desc'],
                       'file': r['file']} for r in results if r.get('blocked')]
+    parallel_intervals = [
+        {'name': r['name'], 'start': round(r.get('start_offset', 0.0), 3),
+         'end': round(r.get('end_offset', 0.0), 3), 'ok': r['ok'],
+         'exit': r['exit']}
+        for r in results if 'start_offset' in r
+    ]
 
     print('\n== 汇总 ==')
-    print('  PASS %d / FAIL %d / SKIP %d / BLOCKED %d'
-          % (n_pass, n_fail, n_skip, blocked_total))
+    print('  PASS %d / FAIL %d / SKIP %d / BLOCKED %d%s'
+          % (n_pass, n_fail, n_skip, blocked_total,
+             (' / INTERRUPTED %d' % n_interrupted) if n_interrupted else ''))
     print('  结论: %s' % verdict)
     print('  总耗时: %.1fs（环境 %.1fs / 语法 %.1fs）'
           % (wall_seconds, env_seconds, syntax_seconds))
+    print('  测试阶段 wall: %.1fs；套件累计: %.1fs；并行重叠: %.1fs'
+          % (test_wall_seconds, summed_suite_seconds, parallel_overlap_seconds))
+    print('  workers: 请求 %d / 实际峰值 %d；并行配对: %s'
+          % (args.workers, sched_meta.get('effective_workers', 0),
+             ', '.join(sched_meta.get('parallel_pairs') or []) or '无'))
     if by_kind:
         print('  分类耗时: ' + ' / '.join('%s %.1fs' % (k, v)
                                           for k, v in sorted(by_kind.items())))
@@ -717,6 +1167,19 @@ def main(argv=None):
         'syntax_seconds': syntax_seconds, 'by_kind': by_kind,
         'slowest': slowest, 'timeouts': timeouts,
         'group': args.group, 'selection': [t['name'] for t in selected],
+        'requested_workers': args.workers,
+        'effective_workers': sched_meta.get('effective_workers', 0),
+        'parallel_pairs': sched_meta.get('parallel_pairs') or [],
+        'serial_suites': sched_meta.get('serial_suites') or [],
+        'suite_execution_order': sched_meta.get('suite_execution_order') or [],
+        'peak_active_suites': sched_meta.get('peak_active_suites', 0),
+        'serial_fallback_reasons': sched_meta.get('serial_fallback_reasons') or [],
+        'summed_suite_seconds': summed_suite_seconds,
+        'test_wall_seconds': test_wall_seconds,
+        'parallel_overlap_seconds': parallel_overlap_seconds,
+        'parallel_intervals': parallel_intervals,
+        'interrupted': interrupted,
+        'interrupted_count': n_interrupted,
     }
     write_report(args.report, payload)
     print('  报告: %s' % _safe_rel(args.report))

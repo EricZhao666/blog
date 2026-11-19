@@ -77,6 +77,16 @@
 
 风险/复杂度：中高；调度、日志聚合、失败传播是主要风险，必须保留串行回退。
 
+### Task 2 执行状态（Batch 8E-3B-2，2026-11-19）
+
+- 基线：`b3f88ed`（PR #23 squash 合并）；分支 `perf/batch8e3b2-parallel-runner`。
+- **已完成**：`run_tests.py` 新增 `--workers 1/2`（默认 1）；`workers=2` 只并行“选中顺序相邻 + 精确配对许可”的两个非浏览器套件，其他套件保持独占串行。配对许可为 `test11+test20`、`test24+test40`、`test16+test43`；test16+performance-accessibility 的历史证据不启用，因为本轮所有 Chromium 套件必须独占。
+- 新增 `tests/test50_parallel_scheduler.py`（注册名 `parallel-scheduler`，20/20 PASS）；full 由 63 套变为 **64 套**。`runner-infrastructure` 18/18 PASS；默认 `workers=1` 行为保持不变。
+- 真实配对实验（同一环境、串行/2-worker 紧邻执行）：`test11+test20` 105.7s→28.9s（3.65x）；`test24+test40` 54.2s→35.7s（1.52x）；`test16+test43` 44.4s→28.2s（1.57x）；三组退出码 0、计数一致。
+- 全量回归 `--workers 2`：64 PASS / 0 FAIL / 0 SKIP / 0 BLOCKED，1398.5s；因 full 顺序中没有相邻的已许可配对，实际 peak=1、重叠 0.0s，属于安全回退，不是全量并行加速。测试阶段 1392.6s，套件累计 1392.6s。
+- 未完成/限制：配对许可不具传递性；全局并行安全未证明；其他 47 个非浏览器套件仍无并发实测；浏览器套件保持独占。Task 3 可继续做 Chromium 双实例资源实验，但不得把本轮保守结论当成浏览器并行许可。
+- 交付：`BATCH8E3B2_REPORT.md`、`BATCH8E3B2_PARALLEL_RESULTS.csv`；矩阵已更新。
+
 ## Task 3：浏览器并发资源实验（P2，依赖 Task 1）
 
 **目标**：判断 Chromium 套件能否安全并发，而不是直接启用。
@@ -117,7 +127,7 @@
 2. 运行器专项 `runner-infrastructure`；
 3. 受影响套件单独运行；
 4. `git diff --check`；
-5. 一次 full（当前 63 套）PASS 63 / FAIL 0 / SKIP 0 / BLOCKED 0；
+5. 一次 full（当前 64 套）PASS 64 / FAIL 0 / SKIP 0 / BLOCKED 0；
 6. 检查固定端口无监听、无本任务遗留 Chromium/Node 子进程；
 7. 不 push、不建 PR、不部署，等待用户审核。
 
