@@ -13,6 +13,15 @@
 - 已验证 2-worker 组合：`test16 + test43`，38.3s → 24.3s，结果一致。
 - 其余 38 套为 UNKNOWN（无并发实测）；22 套为 NEED_ISOLATION（固定端口）。
 
+## 当前状态更新（Batch 8E-3B-R，2026-11-19）
+
+- 合并后基线：`1e6da65`（PR #22 squash 合并，8E-3B-1 端口隔离已进入 main）。
+- 本轮分支：`fix/batch8e3br-content-build-concurrency`；只修复 C17 内容构建并发缺陷，不实现并行调度。
+- C17 根因已修复：`--sync` 的 `BuildLock` 现在覆盖“读取权威源 → 计算派生产物 → diff → 写入/回读”；`write_artifacts` 在 `os.replace`/回读失败时清理 staged `.tmp-build-*.part`。
+- 新增 `build-lock` 专项（`tests/test49_content_build_lock.py`，25/25 PASS）；full 由 62 套变为 **63 套**，原有套件全部保留。
+- `test23` C17 修复后 20/20 定向采样无 `[0,1]` 异常；但因尚未与其他套件做组合并发验证，矩阵状态维持 `NEED_ISOLATION`，不标记 `PARALLEL_SAFE`。
+- 未解决：`--check` / `--dry-run` 保持无锁只读，与 `--sync` 并发时可能读到中间/旧产物；逐文件 `os.replace` 仍不是多文件事务；`_lock_is_stale` 对 `OSError` 的保守性待真实权限异常证据。详见 `BATCH8E3BR_REPORT.md`。
+
 ## Task 0：`browser` S12 固定等待窗口（P2，已完成）
 
 - 完成批次：Batch 8E-3A-R；
@@ -32,7 +41,7 @@
 验收：
 - 每个固定端口套件单独运行仍 PASS；
 - 冲突组在 2 进程并发下均 PASS，无 `EADDRINUSE`；
-- 全量串行 61/61 PASS；
+- 全量串行：8E-3B-1 为 62/62 PASS；8E-3B-R 新增 `build-lock` 后为 63/63（以本批报告为准）；
 - 新增端口分配的 fixture 级测试；
 - 文档记录“哪些套件已改为可注入端口”。
 
@@ -62,7 +71,7 @@
 
 验收：
 - 选定子集串行 vs 2-worker：结果逐套一致；
-- 全量仍默认串行 61/61 PASS；
+- 全量仍默认串行 63/63 PASS；
 - 超时/中断/残留进程测试通过；
 - 报告中记录实际 wall、各 worker 耗时与并行套件清单。
 
@@ -108,7 +117,7 @@
 2. 运行器专项 `runner-infrastructure`；
 3. 受影响套件单独运行；
 4. `git diff --check`；
-5. 一次 full（61 套）PASS 61 / FAIL 0 / SKIP 0 / BLOCKED 0；
+5. 一次 full（当前 63 套）PASS 63 / FAIL 0 / SKIP 0 / BLOCKED 0；
 6. 检查固定端口无监听、无本任务遗留 Chromium/Node 子进程；
 7. 不 push、不建 PR、不部署，等待用户审核。
 

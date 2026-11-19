@@ -198,6 +198,29 @@ def _parse_now(p):
     return p.get('now')
 
 
+def _build_bundle(p, args):
+    """读取权威源并计算全部派生产物（不含任何写盘动作）。
+
+    调用方负责决定临界区：--sync 必须在 BuildLock 内调用本函数，确保
+    读取权威源、解析 manifest、计算产物与后续 diff 不被另一个 sync 的
+    os.replace 打断；--check / --dry-run 保持原有只读、无锁契约。
+    """
+    state = collect(p)
+    if state['orphans'] and not args.allow_orphans:
+        raise BuildError('存在没有元数据引用的正文文件（不会被自动删除）：' +
+                         '、'.join('data/posts/%s.md' % o for o in state['orphans']))
+
+    # source 块：沿用磁盘上的那份（与 split_posts 保持一致，避免"改过 data.js 但没 --sync"时
+    # 产生与 split-check 不一致的判定）
+    source_info = resolve_source_info(p, state['source_info'])
+    artifacts, manifest = build_artifacts(p, state, source_info)
+    ids = [post['id'] for post in state['all']]
+    summary = ('文章 %d 篇（内置 %d + 旧编辑器 %d），正文 %d 字符'
+               % (len(ids), len(state['built_in']), len(state['legacy']),
+                  sum(len(post['content']) for post in state['all'])))
+    return artifacts, manifest, ids, summary
+
+
 # --------------------------------------------------------------------- 落盘
 def diff_artifacts(root, artifacts):
     """返回 [(rel, old_bytes|None, new_bytes)]，顺序稳定。"""
@@ -250,14 +273,24 @@ def write_artifacts(root, artifacts):
             except OSError:
                 pass
         raise
-    for tmp, target in staged:
-        os.replace(tmp, target)
-    # 回读校验：写进去的必须和算出来的一致
-    for rel in sorted(artifacts):
-        path = os.path.join(root, rel.replace('/', os.sep))
-        with open(path, 'rb') as f:
-            if f.read() != artifacts[rel]:
-                raise BuildError('写入后校验失败：%s' % rel)
+    try:
+        for tmp, target in staged:
+            os.replace(tmp, target)
+        # 回读校验：写进去的必须和算出来的一致
+        for rel in sorted(artifacts):
+            path = os.path.join(root, rel.replace('/', os.sep))
+            with open(path, 'rb') as f:
+                if f.read() != artifacts[rel]:
+                    raise BuildError('写入后校验失败：%s' % rel)
+    except BaseException:
+        # 单文件原子替换不是多文件事务：已替换的目标保持现状，未替换的
+        # staged 临时文件必须清理，避免异常退出后留下 .tmp-build-*.part。
+        for tmp, _ in staged:
+            try:
+                os.unlink(tmp)
+            except OSError:
+                pass
+        raise
 
 
 # --------------------------------------------------------------------- 锁
@@ -339,61 +372,51 @@ def main(argv=None):
     p = paths(root)
     p['now'] = g.parse_now(args.now) if args.now else None
 
-    try:
-        state = collect(p)
-    except BuildError as e:
-        print('[FAIL] ' + str(e), file=sys.stderr)
-        return 1
-
-    orphans = state['orphans']
-    if orphans and not args.allow_orphans:
-        print('[FAIL] 存在没有元数据引用的正文文件（不会被自动删除）：' +
-              '、'.join('data/posts/%s.md' % o for o in orphans), file=sys.stderr)
-        return 1
-
-    # source 块：沿用磁盘上的那份（与 split_posts 保持一致，避免"改过 data.js 但没 --sync"时
-    # 产生与 split-check 不一致的判定）
-    source_info = resolve_source_info(p, state['source_info'])
-
-    try:
-        artifacts, manifest = build_artifacts(p, state, source_info)
-    except (BuildError, sp.SplitError, g.FeedError) as e:
-        print('[FAIL] ' + str(e), file=sys.stderr)
-        return 1
-
-    ids = [post['id'] for post in state['all']]
-    summary = ('文章 %d 篇（内置 %d + 旧编辑器 %d），正文 %d 字符'
-               % (len(ids), len(state['built_in']), len(state['legacy']),
-                  sum(len(post['content']) for post in state['all'])))
-
-    if args.mode == 'check':
-        changes = diff_artifacts(root, artifacts)
-        if changes:
-            print('校验对象: ' + summary)
-            for rel, _old, _new in changes:
-                print('  [FAIL] 产物与当前输入不一致（请跑 --sync）：' + rel)
+    # 只读模式保持原契约：不取构建锁，不写任何文件。
+    if args.mode in ('check', 'dry-run'):
+        try:
+            artifacts, manifest, ids, summary = _build_bundle(p, args)
+        except (BuildError, sp.SplitError, g.FeedError) as e:
+            print('[FAIL] ' + str(e), file=sys.stderr)
             return 1
-        print('校验对象: ' + summary)
-        print('OK: 元数据 / 正文 / 搜索语料 / 完整性清单 / feed 一致，且可由当前输入重新生成')
-        return 0
 
-    changes = diff_artifacts(root, artifacts)
-    print('%s：%s' % ('预演' if args.mode == 'dry-run' else '重建', summary))
-    print('  待更新 %d 个文件' % len(changes))
-    for rel, _old, new in changes:
-        print('    %-32s %8d B' % (rel, len(new)))
-    if args.mode == 'dry-run':
+        changes = diff_artifacts(root, artifacts)
+        if args.mode == 'check':
+            if changes:
+                print('校验对象: ' + summary)
+                for rel, _old, _new in changes:
+                    print('  [FAIL] 产物与当前输入不一致（请跑 --sync）：' + rel)
+                return 1
+            print('校验对象: ' + summary)
+            print('OK: 元数据 / 正文 / 搜索语料 / 完整性清单 / feed 一致，且可由当前输入重新生成')
+            return 0
+
+        print('预演：%s' % summary)
+        print('  待更新 %d 个文件' % len(changes))
+        for rel, _old, new in changes:
+            print('    %-32s %8d B' % (rel, len(new)))
         print('（--dry-run，未写入）')
         return 0
 
+    # --sync：锁覆盖完整构建临界区（读取权威源 → 计算 → diff → 写入/回读）。
+    # 锁内重新读取状态，不能复用锁外预计算结果；锁外不读取任何受保护产物。
     try:
         with BuildLock(p['lock'], args.lock_timeout):
+            artifacts, manifest, ids, summary = _build_bundle(p, args)
+            changes = diff_artifacts(root, artifacts)
+            print('重建：%s' % summary)
+            print('  待更新 %d 个文件' % len(changes))
+            for rel, _old, new in changes:
+                print('    %-32s %8d B' % (rel, len(new)))
             write_artifacts(root, artifacts)
     except LockBusy as e:
         print('[BUSY] ' + str(e), file=sys.stderr)
         return 3
-    except (BuildError, OSError) as e:
-        print('[FAIL] 写入失败：%s' % e, file=sys.stderr)
+    except (BuildError, sp.SplitError, g.FeedError) as e:
+        print('[FAIL] ' + str(e), file=sys.stderr)
+        return 1
+    except OSError as e:
+        print('[FAIL] 构建失败：%s' % e, file=sys.stderr)
         return 1
 
     if not changes:
