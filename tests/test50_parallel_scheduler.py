@@ -143,6 +143,7 @@ def make_fakes(mod, tmp):
         {'name': 'fake-c', 'file': c, 'kind': 'python', 'desc': 'unverified c'},
         {'name': 'fake-d', 'file': d, 'kind': 'python', 'desc': 'unverified d'},
         {'name': 'fake-browser', 'file': a, 'kind': 'browser', 'desc': 'exclusive browser-like'},
+        {'name': 'fake-browser2', 'file': a, 'kind': 'browser', 'desc': 'second browser-like'},
     ]
     return tests
 
@@ -175,6 +176,24 @@ def main():
     check('P3 浏览器套件独占串行，不进入并行单元',
           [j['mode'] for j in jobs3] == ['serial', 'serial']
           and pairs3 == [], serial3)
+
+    # 浏览器配对只有显式 browser_pair 许可才允许；默认仍独占。
+    mod.PAIR_LICENSES[frozenset(('fake-browser', 'fake-browser2'))] = {
+        'evidence': 'test50 synthetic browser pair', 'browser_pair': True,
+    }
+    selected3b, _ = mod.select_tests(['fake-browser', 'fake-browser2'], 'full')
+    jobs3b, pairs3b, _, _ = mod.plan_execution(selected3b, 2)
+    check('P3b 显式 browser_pair 许可允许指定浏览器配对',
+          [j['mode'] for j in jobs3b] == ['parallel'] and pairs3b == ['fake-browser+fake-browser2'],
+          pairs3b)
+    mod.PAIR_LICENSES[frozenset(('fake-browser2', 'fake-b'))] = {
+        'evidence': 'test50 browser pair without explicit flag',
+    }
+    selected3c, _ = mod.select_tests(['fake-browser2', 'fake-b'], 'full')
+    jobs3c, pairs3c, _, _ = mod.plan_execution(selected3c, 2)
+    check('P3c 缺少 browser_pair 的浏览器组合仍串行',
+          [j['mode'] for j in jobs3c] == ['serial', 'serial'] and pairs3c == [],
+          pairs3c)
 
     # 默认串行兼容
     rep = os.path.join(tmp, 'report.md')

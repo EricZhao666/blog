@@ -148,3 +148,15 @@
 4. Task 4（报告增强）→ 产出趋势基线。
 
 每个任务独立 commit、独立报告；Task 2/3 不得在 Task 1 未通过前启动。
+
+## Batch 8E-3B-3 完成状态（2026-11-19）
+
+- 基线：`f4ebe34`（PR #24 squash 合并）；分支 `perf/batch8e3b3-effective-parallelism`。
+- 完成 Task 2 后续的**相邻配对优化**：在 `PAIR_LICENSES` 中新增 11 组非浏览器配对和 2 组 Chromium 配对；`_pair_kind_allowed()` 要求浏览器配对双方均为 browser 且显式 `browser_pair=True`。默认串行和旧命令不变。
+- `test50_parallel_scheduler.py` 由 20 项增至 **22/22 PASS**，新增 P3b（显式浏览器配对许可）和 P3c（缺省时浏览器组合仍串行）。
+- 真实配对实验：11 组非浏览器全部通过（1.487x–2.919x 表观加速）；2 组浏览器各复测两次均通过（1.621x–1.884x）。
+- 全量 `--workers 2`：**64 PASS / 0 FAIL / 0 SKIP / 0 BLOCKED**，wall **1209.7s**，测试阶段 **1200.6s**，套件累计 **1551.4s**，实际重叠 **350.8s**，peak=2，13 个并行单元；对比 8E-3B-2 串行 1398.5s，节省 188.8s（13.5%）。
+- 保留边界：只有 13 个精确相邻配对；`test23`、`build-lock`、`runner-infrastructure`、`parallel-scheduler` 和正式内容门禁串行；除两个浏览器配对外的所有浏览器套件独占串行；不实现通用并行池、跨屏障搜索、3+ 并发、自动重试或浏览器池。
+- Task 3（浏览器资源实验）已完成有限验证，但只许可 `editor-ux+editor-history` 与 `reading-experience+image-lightbox` 两个精确配对；Task 4（历史趋势工具）未实施，不视为本阶段交付。
+- 交付：`BATCH8E3B3_REPORT.md`、`BATCH8E3B3_PARALLEL_RESULTS.csv`、`BATCH8E3_FINAL_SUMMARY.md`；矩阵与计划已更新。
+- 状态：**B8E3B3_PR_READY**。本轮结束后不再开启新的调度器优化批次；后续扩大并行需独立资源实验与精确配对证据。

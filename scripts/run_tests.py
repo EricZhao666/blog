@@ -50,6 +50,49 @@ PAIR_LICENSES = {
     frozenset(('test16', 'test43')): {
         'evidence': 'BATCH8E3A_PARALLEL_RESULTS.csv / B8E3B2: 20/20、40/40；44.4s→28.2s',
     },
+    # Batch 8E-3B-3：注册顺序相邻的非浏览器组合，串行/2-worker 对照通过。
+    frozenset(('audit', 'test6')): {
+        'evidence': 'BATCH8E3B3_PARALLEL_RESULTS.csv: audit exit 0 / test6 exit 0；parallel overlap 29.4s',
+    },
+    frozenset(('test8', 'test9')): {
+        'evidence': 'BATCH8E3B3_PARALLEL_RESULTS.csv: exit 0/0；overlap 22.0s',
+    },
+    frozenset(('test10', 'test11')): {
+        'evidence': 'BATCH8E3B3_PARALLEL_RESULTS.csv: exit 0/0；overlap 22.1s',
+    },
+    frozenset(('test14', 'test15')): {
+        'evidence': 'BATCH8E3B3_PARALLEL_RESULTS.csv: test15 32/32、exit 0/0；overlap 70.5s',
+    },
+    frozenset(('test16', 'test17')): {
+        'evidence': 'BATCH8E3B3_PARALLEL_RESULTS.csv: 20/20、11/11；exit 0/0；overlap 24.2s',
+    },
+    frozenset(('test25', 'test26')): {
+        'evidence': 'BATCH8E3B3_PARALLEL_RESULTS.csv: 13/13、21/21；exit 0/0；overlap 21.6s',
+    },
+    frozenset(('test32', 'test33')): {
+        'evidence': 'BATCH8E3B3_PARALLEL_RESULTS.csv: 42/42、68/68；exit 0/0；overlap 22.6s',
+    },
+    frozenset(('test34', 'test35')): {
+        'evidence': 'BATCH8E3B3_PARALLEL_RESULTS.csv: 67/67、78/78；exit 0/0；overlap 16.5s',
+    },
+    frozenset(('test37', 'test38')): {
+        'evidence': 'BATCH8E3B3_PARALLEL_RESULTS.csv: 66/66、59/59；exit 0/0；overlap 21.4s',
+    },
+    frozenset(('test40', 'test41')): {
+        'evidence': 'BATCH8E3B3_PARALLEL_RESULTS.csv: 35/35、44/44；exit 0/0；overlap 22.2s',
+    },
+    frozenset(('test42', 'test43')): {
+        'evidence': 'BATCH8E3B3_PARALLEL_RESULTS.csv: 29/29、40/40；exit 0/0；overlap 28.9s',
+    },
+    # 浏览器配对必须显式允许；默认仍全部串行。
+    frozenset(('editor-ux', 'editor-history')): {
+        'evidence': 'BATCH8E3B3_PARALLEL_RESULTS.csv / browser run1+run2: 66/66、39/39；两次并发通过',
+        'browser_pair': True,
+    },
+    frozenset(('reading-experience', 'image-lightbox')): {
+        'evidence': 'BATCH8E3B3_PARALLEL_RESULTS.csv / browser run1+run2: 47/47、34/34；两次并发通过',
+        'browser_pair': True,
+    },
 }
 
 # 这些套件即使出现在配对清单旁边，也必须独占串行；浏览器套件一律独占。
@@ -593,6 +636,14 @@ def _pair_license(t1, t2):
     return PAIR_LICENSES.get(frozenset((t1['name'], t2['name'])))
 
 
+def _pair_kind_allowed(a, b, lic):
+    """浏览器套件只能进入显式 browser_pair 许可；其他套件仍按原规则。"""
+    browser = a['kind'] == 'browser' or b['kind'] == 'browser'
+    if not browser:
+        return True
+    return bool(lic.get('browser_pair')) and a['kind'] == 'browser' and b['kind'] == 'browser'
+
+
 def _port_env_conflict():
     found = [name for name in PORT_ENV_NAMES if os.environ.get(name)]
     if found:
@@ -633,7 +684,7 @@ def plan_execution(selected, workers):
             a, b = selected[i], selected[i + 1]
             lic = _pair_license(a, b)
             if (lic and not env_conflict
-                    and a['kind'] != 'browser' and b['kind'] != 'browser'
+                    and _pair_kind_allowed(a, b, lic)
                     and a['name'] not in EXPLICIT_SERIAL
                     and b['name'] not in EXPLICIT_SERIAL):
                 jobs.append({'mode': 'parallel', 'tests': [a, b], 'license': lic})
