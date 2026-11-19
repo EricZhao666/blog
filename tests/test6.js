@@ -10,6 +10,7 @@ const MIME = {
   '.js': 'text/javascript; charset=utf-8', '.json': 'application/json; charset=utf-8',
   '.xml': 'application/xml; charset=utf-8', '.png': 'image/png'
 };
+let PORT = Number(process.env.TEST_PORT || 0);
 const server = http.createServer((req, res) => {
   let p = decodeURIComponent(req.url.split('?')[0]);
   if (p === '/') p = '/index.html';
@@ -21,7 +22,8 @@ const server = http.createServer((req, res) => {
 });
 const wait = ms => new Promise(r => setTimeout(r, ms));
 
-server.listen(8130, async () => {
+server.listen(PORT, '127.0.0.1', async () => {
+  PORT = server.address().port;
   const vc = new VirtualConsole();
   const errors = [];
   vc.on('jsdomError', e => {
@@ -36,7 +38,7 @@ server.listen(8130, async () => {
   };
 
   try {
-    const dom = await JSDOM.fromURL('http://localhost:8130/index.html', {
+    const dom = await JSDOM.fromURL('http://localhost:' + PORT + '/index.html', {
       runScripts: 'dangerously', resources: 'usable', pretendToBeVisual: true, virtualConsole: vc
     });
     const { window } = dom;

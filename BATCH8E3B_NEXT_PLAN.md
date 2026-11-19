@@ -38,6 +38,16 @@
 
 风险/复杂度：中；涉及多个测试文件与运行器契约，但改动局限于测试基础设施。
 
+### Task 1 执行状态（Batch 8E-3B-1，2026-11-18）
+
+- 基线：`a0157f1`（PR #21 squash 合并）；分支 `perf/batch8e3b1-test-isolation`。
+- **已完成**：25 个固定端口测试文件迁移为 OS 动态端口（`listen(0)` + 回写真实端口）；新增 `tests/helpers/port.js`、`tests/helpers/port-fixture-server.js`、`tests/test48_port_isolation.py`（12/12 PASS）；`scripts/run_tests.py` 注册 `port-isolation`，full 由 61 套变为 62 套。
+- 冲突组实测：`test11+test20`、`test24+test40`、`test16+performance-accessibility` 串行与双进程并发均 exit 0，无 `EADDRINUSE`；并发实际端口 `54617/54545`（第三组）。组合级 PASS 不等于全局并行安全。
+- `test16` 的旧 `test16+test43` 并行证据仍保留；本轮不实现 `--workers`，默认 full 仍串行。
+- **C17 诊断**：20 次合成 fixture 采样中 2 次 `[0,1]`；根因是 `diff_artifacts` 在 BuildLock 外读取，与另一进程 `os.replace` 在 Windows 上发生共享冲突。`test23` 标记 `SERIAL_REQUIRED`，待独立修复，详见 `BATCH8E3B1_C17_DIAGNOSTIC.md`。
+- 未完成/移交：全局并行安全矩阵仍以组合级证据为主；`tests/batch7c1/publish_scenarios.js` 已迁移但不在 full 注册清单；Task 2（2-worker 调度器）未启动。
+- 验收：受影响套件 PASS；新增端口专项 12/12；full 62 套结果见 `BATCH8E3B1_REPORT.md`。
+
 ## Task 2：2-worker 调度器（仅已验证安全子集）（P1，依赖 Task 1）
 
 **目标**：把已验证的并行能力产品化，但默认仍串行。

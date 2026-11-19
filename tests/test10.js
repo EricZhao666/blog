@@ -25,8 +25,8 @@ const path = require('path');
 const { JSDOM, VirtualConsole } = require('jsdom');
 
 const ROOT = path.resolve(__dirname, '..');
-const PORT = 8135;
-const BASE = 'http://localhost:' + PORT;
+let PORT = Number(process.env.TEST_PORT || 0);
+let BASE = '';
 const MIME = {
   '.html': 'text/html; charset=utf-8', '.css': 'text/css; charset=utf-8',
   '.js': 'text/javascript; charset=utf-8', '.json': 'application/json; charset=utf-8',
@@ -103,7 +103,10 @@ const snapshotPosts = window0 => window0.eval(
   'JSON.stringify({ posts: POSTS.map(function (p) { return p.id; }),' +
   ' user: USER_POSTS.map(function (p) { return p.id; }) })');
 
-server.listen(PORT, async () => {
+server.listen(PORT, '127.0.0.1', async () => {
+  PORT = server.address().port;
+  BASE = 'http://localhost:' + PORT;
+
   try {
     // ---------------------------------------------------------------- C1/C2/C9/C10
     {

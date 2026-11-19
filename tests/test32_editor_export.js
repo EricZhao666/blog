@@ -27,8 +27,8 @@ const path = require('path');
 const { JSDOM, VirtualConsole } = require('jsdom');
 
 const ROOT = path.resolve(__dirname, '..');
-const PORT = 8151;
-const BASE = 'http://localhost:' + PORT;
+let PORT = Number(process.env.TEST_PORT || 0);
+let BASE = '';
 const MIME = {
   '.html': 'text/html; charset=utf-8', '.css': 'text/css; charset=utf-8',
   '.js': 'text/javascript; charset=utf-8', '.json': 'application/json; charset=utf-8',
@@ -97,7 +97,10 @@ const CODE_BLOCK = '```python\n' +
 const SPECIAL = '行内 `code` 与 <b>标签</b>、引号 "双" 与 \'单\'、反斜杠 \\、& 与 emoji 🚀🇨🇳。';
 
 (async () => {
-  await new Promise(r => server.listen(PORT, r));
+  await new Promise(r => server.listen(PORT, '127.0.0.1', r));
+  PORT = server.address().port;
+  BASE = 'http://localhost:' + PORT;
+
   try {
     // ------------------------------------------------ E1/E2/E3/E4 正常导出
     {

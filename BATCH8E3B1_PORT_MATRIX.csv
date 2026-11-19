@@ -1,0 +1,64 @@
+suite,file,kind,old_port_mode,old_port,new_port_mode,new_port,override,shared_temp_dir,browser_profile,artifact_conflict,status,evidence,limitations
+audit,tests/audit.js,jsdom,fixed,8131,OS ephemeral,listen(0),TEST_PORT,none,none,none observed,MIGRATED,listen(0) + 真实端口回写；受影响套件 PASS,端口已隔离；全局并行安全未验证
+test6,tests/test6.js,jsdom,fixed,8130,OS ephemeral,listen(0),TEST_PORT,none,none,none observed,MIGRATED,listen(0) + 真实端口回写；受影响套件 PASS,端口已隔离；全局并行安全未验证
+test7,tests/test7.js,jsdom,fixed,8132,OS ephemeral,listen(0),TEST_PORT,none,none,none observed,MIGRATED,listen(0) + 真实端口回写；受影响套件 PASS,端口已隔离；全局并行安全未验证
+test8,tests/test8.js,jsdom,fixed,8133,OS ephemeral,listen(0),TEST_PORT,none,none,none observed,MIGRATED,listen(0) + 真实端口回写；受影响套件 PASS,端口已隔离；全局并行安全未验证
+test9,tests/test9.js,jsdom,fixed,8134,OS ephemeral,listen(0),TEST_PORT,none,none,none observed,MIGRATED,listen(0) + 真实端口回写；受影响套件 PASS,端口已隔离；全局并行安全未验证
+test10,tests/test10.js,jsdom,fixed,8135,OS ephemeral,listen(0),TEST_PORT,none,none,none observed,MIGRATED,listen(0) + 真实端口回写；受影响套件 PASS,端口已隔离；全局并行安全未验证
+test11,tests/test11.js,jsdom,fixed,8136,OS ephemeral,listen(0),TEST_PORT,none,none,none observed,MIGRATED,listen(0) + 真实端口回写；受影响套件 PASS,端口已隔离；全局并行安全未验证
+test12,tests/test12.py,python,none,0,none,none,none,per-suite tempfile.mkdtemp,none,none observed,UNCHANGED,无监听端口；Python 临时目录隔离,无并发实测
+test13,tests/test13.py,python,none,0,none,none,none,per-suite tempfile.mkdtemp,none,none observed,UNCHANGED,无监听端口；Python 临时目录隔离,无并发实测
+test14,tests/test14.js,jsdom,fixed,8137,OS ephemeral,listen(0),B3_PORT,none,none,none observed,MIGRATED,listen(0) + 真实端口回写；受影响套件 PASS,端口已隔离；全局并行安全未验证
+test15,tests/test15.py,python,none,0,none,none,none,per-suite tempfile.mkdtemp,none,none observed,UNCHANGED,无监听端口；Python 临时目录隔离,无并发实测
+test16,tests/test16.js,jsdom,fixed,8146,OS ephemeral,listen(0),TEST_PORT,none,none,none observed,MIGRATED,listen(0) + 真实端口回写；受影响套件 PASS,端口已隔离；全局并行安全未验证
+test17,tests/test17.py,python,none,0,none,none,none,per-suite tempfile.mkdtemp,none,none observed,UNCHANGED,无监听端口；Python 临时目录隔离,无并发实测
+test18,tests/test18.js,jsdom,none,0,none,none,none,none,none,none observed,UNCHANGED,无监听端口；Python 临时目录隔离,无并发实测
+split-check,scripts/split_posts.py,python,none,0,none,none,none,per-suite tempfile.mkdtemp,none,none observed,UNCHANGED,无监听端口；Python 临时目录隔离,无并发实测
+test19,tests/test19_data_lifecycle.py,python,none,0,none,none,none,per-suite tempfile.mkdtemp,none,none observed,UNCHANGED,无监听端口；Python 临时目录隔离,无并发实测
+test20,tests/test20_publish_search.js,jsdom,fixed,8136,OS ephemeral,listen(0),TEST_PORT,none,none,none observed,MIGRATED,listen(0) + 真实端口回写；受影响套件 PASS,端口已隔离；全局并行安全未验证
+test21,tests/test21_papers_id_registry.py,python,none,0,none,none,none,per-suite tempfile.mkdtemp,none,none observed,UNCHANGED,无监听端口；Python 临时目录隔离,无并发实测
+test22,tests/test22_registry_consistency.py,python,none,0,none,none,none,per-suite tempfile.mkdtemp,none,none observed,UNCHANGED,无监听端口；Python 临时目录隔离,无并发实测
+test23,tests/test23_content_build.py,python,none,0,none,none,none,per-suite tempfile.mkdtemp,none,BuildLock / C17 race,SERIAL_REQUIRED,无监听端口；Python 临时目录隔离,"C17 20 次采样 2 次 [0,1]；不得进入并行池"
+test24,tests/test24_publish_queue.js,jsdom,fixed,8142,OS ephemeral,listen(0),TEST_PORT,none,none,none observed,MIGRATED,listen(0) + 真实端口回写；受影响套件 PASS,端口已隔离；全局并行安全未验证
+test25,tests/test25_release_pipeline.py,python,none,0,none,none,none,per-suite tempfile.mkdtemp,none,none observed,UNCHANGED,无监听端口；Python 临时目录隔离,无并发实测
+test26,tests/test26_queue_processor.py,python,none,0,none,none,none,per-suite tempfile.mkdtemp,none,none observed,UNCHANGED,无监听端口；Python 临时目录隔离,无并发实测
+test27,tests/test27_content_workflow.py,python,none,0,none,none,none,per-suite tempfile.mkdtemp,none,none observed,UNCHANGED,无监听端口；Python 临时目录隔离,无并发实测
+test28,tests/test28_candidate_state.py,python,none,0,none,none,none,per-suite tempfile.mkdtemp,none,none observed,UNCHANGED,无监听端口；Python 临时目录隔离,无并发实测
+test29,tests/test29_workflow_activation.py,python,none,0,none,none,none,per-suite tempfile.mkdtemp,none,none observed,UNCHANGED,无监听端口；Python 临时目录隔离,无并发实测
+test30,tests/test30_workflow_gating.py,python,none,0,none,none,none,per-suite tempfile.mkdtemp,none,none observed,UNCHANGED,无监听端口；Python 临时目录隔离,无并发实测
+test31,tests/test31_gate_contract.py,python,none,0,none,none,none,per-suite tempfile.mkdtemp,none,none observed,UNCHANGED,无监听端口；Python 临时目录隔离,无并发实测
+test32,tests/test32_editor_export.js,jsdom,fixed,8151,OS ephemeral,listen(0),TEST_PORT,none,none,none observed,MIGRATED,listen(0) + 真实端口回写；受影响套件 PASS,端口已隔离；全局并行安全未验证
+test33,tests/test33_import_post.py,python,none,0,none,none,none,per-suite tempfile.mkdtemp,none,none observed,UNCHANGED,无监听端口；Python 临时目录隔离,无并发实测
+test34,tests/test34_post_update.py,python,none,0,none,none,none,per-suite tempfile.mkdtemp,none,none observed,UNCHANGED,无监听端口；Python 临时目录隔离,无并发实测
+test35,tests/test35_editor_update.js,jsdom,fixed,8161,OS ephemeral,listen(0),TEST_PORT,none,none,none observed,MIGRATED,listen(0) + 真实端口回写；受影响套件 PASS,端口已隔离；全局并行安全未验证
+test36,tests/test36_editor_toolbar.js,jsdom,fixed,8181,OS ephemeral,listen(0),TEST_PORT,none,none,none observed,MIGRATED,listen(0) + 真实端口回写；受影响套件 PASS,端口已隔离；全局并行安全未验证
+test37,tests/test37_editor_images.js,jsdom,fixed,8182,OS ephemeral,listen(0),TEST_PORT,none,none,none observed,MIGRATED,listen(0) + 真实端口回写；受影响套件 PASS,端口已隔离；全局并行安全未验证
+test38,tests/test38_draft_history.js,jsdom,fixed,8183,OS ephemeral,listen(0),TEST_PORT,none,none,none observed,MIGRATED,listen(0) + 真实端口回写；受影响套件 PASS,端口已隔离；全局并行安全未验证
+test39,tests/test39_search_ranking.js,jsdom,fixed,8141,OS ephemeral,listen(0),TEST_PORT,none,none,none observed,MIGRATED,listen(0) + 真实端口回写；受影响套件 PASS,端口已隔离；全局并行安全未验证
+test40,tests/test40_search_sources.js,jsdom,fixed,8142,OS ephemeral,listen(0),TEST_PORT,none,none,none observed,MIGRATED,listen(0) + 真实端口回写；受影响套件 PASS,端口已隔离；全局并行安全未验证
+test41,tests/test41_search_filters.js,jsdom,fixed,8143,OS ephemeral,listen(0),TEST_PORT,none,none,none observed,MIGRATED,listen(0) + 真实端口回写；受影响套件 PASS,端口已隔离；全局并行安全未验证
+test42,tests/test42_search_history.js,jsdom,fixed,8144,OS ephemeral,listen(0),TEST_PORT,none,none,none observed,MIGRATED,listen(0) + 真实端口回写；受影响套件 PASS,端口已隔离；全局并行安全未验证
+test43,tests/test43_reading_tools.js,jsdom,fixed,8145,OS ephemeral,listen(0),TEST_PORT,none,none,none observed,MIGRATED,listen(0) + 真实端口回写；受影响套件 PASS,端口已隔离；全局并行安全未验证
+test44,tests/test44_image_lightbox.js,jsdom,fixed,8147,OS ephemeral,listen(0),TEST_PORT,none,none,none observed,MIGRATED,listen(0) + 真实端口回写；受影响套件 PASS,端口已隔离；全局并行安全未验证
+test45,tests/test45_image_assets.py,python,none,0,none,none,none,per-suite tempfile.mkdtemp,none,none observed,UNCHANGED,无监听端口；Python 临时目录隔离,无并发实测
+inline-handlers,tests/test46_inline_handlers.js,jsdom,fixed,8148,OS ephemeral,listen(0),TEST_PORT,none,none,none observed,MIGRATED,listen(0) + 真实端口回写；受影响套件 PASS,端口已隔离；全局并行安全未验证
+runner-infrastructure,tests/test47_runner_infrastructure.py,python,none,0,none,none,none,per-suite tempfile.mkdtemp,none,none observed,UNCHANGED,无监听端口；Python 临时目录隔离,无并发实测
+image-check,scripts/check_images.py,python,none,0,none,none,none,per-suite tempfile.mkdtemp,none,none observed,UNCHANGED,无监听端口；Python 临时目录隔离,无并发实测
+content-check,scripts/build_content.py,python,none,0,none,none,none,per-suite tempfile.mkdtemp,none,none observed,UNCHANGED,无监听端口；Python 临时目录隔离,无并发实测
+feed-check,gen_feed.py,python,none,0,none,none,none,per-suite tempfile.mkdtemp,none,none observed,UNCHANGED,无监听端口；Python 临时目录隔离,无并发实测
+browser,tests/browser/sw.spec.js,browser,ephemeral,0,ephemeral,listen(0),none,none,per-suite BrowserContext profile,none observed,UNCHANGED,既有动态端口；本次未改,Chromium CPU/内存竞争未量化
+sw-consistency,tests/browser/sw-consistency.spec.js,browser,ephemeral,0,ephemeral,listen(0),none,none,per-suite BrowserContext profile,none observed,UNCHANGED,既有动态端口；本次未改,Chromium CPU/内存竞争未量化
+sw-upgrade,tests/browser/sw-upgrade.spec.js,browser,ephemeral,0,ephemeral,listen(0),none,none,per-suite BrowserContext profile,none observed,UNCHANGED,既有动态端口；本次未改,Chromium CPU/内存竞争未量化
+mobile-notes,tests/browser/mobile-notes.spec.js,browser,ephemeral,0,ephemeral,listen(0),none,none,per-suite BrowserContext profile,none observed,UNCHANGED,既有动态端口；本次未改,Chromium CPU/内存竞争未量化
+course-seo,tests/browser/course-seo.spec.js,browser,ephemeral,0,ephemeral,listen(0),none,none,per-suite BrowserContext profile,none observed,UNCHANGED,既有动态端口；本次未改,Chromium CPU/内存竞争未量化
+papers-deeplink,tests/browser/papers-deeplink.spec.js,browser,ephemeral,0,ephemeral,listen(0),none,none,per-suite BrowserContext profile,none observed,UNCHANGED,既有动态端口；本次未改,Chromium CPU/内存竞争未量化
+editor-ux,tests/browser/editor-ux.spec.js,browser,ephemeral,0,ephemeral,listen(0),none,none,per-suite BrowserContext profile,none observed,UNCHANGED,既有动态端口；本次未改,Chromium CPU/内存竞争未量化
+editor-history,tests/browser/editor-history.spec.js,browser,ephemeral,0,ephemeral,listen(0),none,none,per-suite BrowserContext profile,none observed,UNCHANGED,既有动态端口；本次未改,Chromium CPU/内存竞争未量化
+search-ux,tests/browser/search-ux.spec.js,browser,ephemeral,0,ephemeral,listen(0),none,none,per-suite BrowserContext profile,none observed,UNCHANGED,既有动态端口；本次未改,Chromium CPU/内存竞争未量化
+search-interaction,tests/browser/search-interaction.spec.js,browser,ephemeral,0,ephemeral,listen(0),none,none,per-suite BrowserContext profile,none observed,UNCHANGED,既有动态端口；本次未改,Chromium CPU/内存竞争未量化
+reading-experience,tests/browser/reading-experience.spec.js,browser,ephemeral,0,ephemeral,listen(0),none,none,per-suite BrowserContext profile,none observed,UNCHANGED,既有动态端口；本次未改,Chromium CPU/内存竞争未量化
+image-lightbox,tests/browser/image-lightbox.spec.js,browser,ephemeral,0,ephemeral,listen(0),none,none,per-suite BrowserContext profile,none observed,UNCHANGED,既有动态端口；本次未改,Chromium CPU/内存竞争未量化
+ui-refresh,tests/browser/ui-refresh.spec.js,browser,ephemeral,0,ephemeral,listen(0),none,none,per-suite BrowserContext profile,none observed,UNCHANGED,既有动态端口；本次未改,Chromium CPU/内存竞争未量化
+performance-accessibility,tests/browser/performance-accessibility.spec.js,browser,fixed,8146,OS ephemeral,listen(0),TEST_PORT,none,per-suite BrowserContext profile,none observed,MIGRATED,listen(0) + 真实端口回写；受影响套件 PASS,端口已隔离；全局并行安全未验证
+port-isolation,tests/test48_port_isolation.py,python,none,0,OS ephemeral fixture,listen(0),TEST_PORT (failure case only),per-run tempfile.mkdtemp,none,none observed,NEW,12/12 PASS；动态端口 54899/54900；显式占用返回 EADDRINUSE,fixture 级验证，不代表任意套件全局并行安全
+

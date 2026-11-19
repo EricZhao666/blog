@@ -6,7 +6,7 @@ const path = require('path');
 const { JSDOM, VirtualConsole } = require('jsdom');
 
 const ROOT = path.resolve(__dirname, '..');
-const PORT = 8146;
+let PORT = Number(process.env.TEST_PORT || 0);
 const MIME = { '.html': 'text/html; charset=utf-8', '.css': 'text/css; charset=utf-8', '.js': 'text/javascript; charset=utf-8', '.json': 'application/json; charset=utf-8', '.xml': 'application/xml; charset=utf-8', '.png': 'image/png', '.txt': 'text/plain' };
 
 const server = http.createServer((req, res) => {
@@ -26,7 +26,9 @@ function check(name, cond, extra) {
 }
 const wait = ms => new Promise(r => setTimeout(r, ms));
 
-server.listen(PORT, async () => {
+server.listen(PORT, '127.0.0.1', async () => {
+  PORT = server.address().port;
+
   const vc = new VirtualConsole();
   const errors = [];
   vc.on('jsdomError', e => { if (!/Not implemented|Could not load script/i.test(e.message)) errors.push(e.message); });

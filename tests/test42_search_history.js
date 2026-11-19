@@ -7,8 +7,8 @@ const path = require('path');
 const { JSDOM, VirtualConsole, requestInterceptor } = require('jsdom');
 
 const ROOT = path.resolve(__dirname, '..');
-const PORT = 8144;
-const BASE = 'http://localhost:' + PORT;
+let PORT = Number(process.env.TEST_PORT || 0);
+let BASE = '';
 const HISTORY_KEY = 'blog.searchHistory.v1';
 const MIME = {
   '.html': 'text/html; charset=utf-8', '.css': 'text/css; charset=utf-8',
@@ -131,7 +131,10 @@ function queryKey(doc) {
 }
 
 (async function main() {
-  await new Promise(r => server.listen(PORT, r));
+  await new Promise(r => server.listen(PORT, '127.0.0.1', r));
+  PORT = server.address().port;
+  BASE = 'http://localhost:' + PORT;
+
   const unhandled = [];
   process.on('unhandledRejection', e => unhandled.push(String(e && e.message || e)));
   let opened = null;

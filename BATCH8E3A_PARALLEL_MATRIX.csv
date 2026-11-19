@@ -1,62 +1,63 @@
-﻿suite,kind,port_mode,class,evidence,verified_with,blocking_resource,next_action
-audit,jsdom,fixed,NEED_ISOLATION,固定端口 8131（grep const PORT / server.listen）；未被并发实测覆盖,,TCP 8131 固定占用,端口租约/动态分配后再评估并行
-test6,jsdom,fixed,NEED_ISOLATION,固定端口 8130（grep const PORT / server.listen）；未被并发实测覆盖,,TCP 8130 固定占用,端口租约/动态分配后再评估并行
-test7,jsdom,fixed,NEED_ISOLATION,固定端口 8132（grep const PORT / server.listen）；未被并发实测覆盖,,TCP 8132 固定占用,端口租约/动态分配后再评估并行
-test8,jsdom,fixed,NEED_ISOLATION,固定端口 8133（grep const PORT / server.listen）；未被并发实测覆盖,,TCP 8133 固定占用,端口租约/动态分配后再评估并行
-test9,jsdom,fixed,NEED_ISOLATION,固定端口 8134（grep const PORT / server.listen）；未被并发实测覆盖,,TCP 8134 固定占用,端口租约/动态分配后再评估并行
-test10,jsdom,fixed,NEED_ISOLATION,固定端口 8135（grep const PORT / server.listen）；未被并发实测覆盖,,TCP 8135 固定占用,端口租约/动态分配后再评估并行
-test11,jsdom,fixed,NEED_ISOLATION,固定端口 8136（grep const PORT / server.listen）；未被并发实测覆盖,,TCP 8136 与 test20/test11 共用,端口租约/动态分配后再评估并行
-test12,python,none,UNKNOWN,tempfile 隔离，无端口；但共享仓库只读数据/生成产物的并发一致性未验证,,共享仓库内容只读，理论无冲突；未实测,优先纳入轻量 python 组做 2-worker 实验
-test13,python,none,UNKNOWN,tempfile 隔离，无端口；但共享仓库只读数据/生成产物的并发一致性未验证,,共享仓库内容只读，理论无冲突；未实测,优先纳入轻量 python 组做 2-worker 实验
-test14,jsdom,fixed,NEED_ISOLATION,固定端口 8137（grep const PORT / server.listen）；未被并发实测覆盖,,TCP 8137 固定占用,端口租约/动态分配后再评估并行
-test15,python,none,UNKNOWN,tempfile 隔离，无端口；但共享仓库只读数据/生成产物的并发一致性未验证,,共享仓库内容只读，理论无冲突；未实测,优先纳入轻量 python 组做 2-worker 实验
-test16,jsdom,fixed,NEED_ISOLATION,实测与 test43 并发通过（20/20 PASS，14.7s 不变），但固定端口 8146 与 performance-accessibility 冲突（grep tests/test16.js:9 / performance-accessibility.spec.js:207）,test43,TCP 8146 与 performance-accessibility 共用,先做端口租约/动态分配，再判定可并行
-test17,python,none,UNKNOWN,tempfile 隔离，无端口；但共享仓库只读数据/生成产物的并发一致性未验证,,共享仓库内容只读，理论无冲突；未实测,优先纳入轻量 python 组做 2-worker 实验
-test18,jsdom,none,UNKNOWN,jsdom 轻量、无端口或只读数据；未做并发实测,,无已证实冲突，但无并发证据,可纳入 8E-3B 轻量组合实验
-split-check,python,none,UNKNOWN,tempfile 隔离，无端口；但共享仓库只读数据/生成产物的并发一致性未验证,,共享仓库内容只读，理论无冲突；未实测,优先纳入轻量 python 组做 2-worker 实验
-test19,python,none,UNKNOWN,tempfile 隔离，无端口；但共享仓库只读数据/生成产物的并发一致性未验证,,共享仓库内容只读，理论无冲突；未实测,优先纳入轻量 python 组做 2-worker 实验
-test20,jsdom,fixed,NEED_ISOLATION,固定端口 8136（grep const PORT / server.listen）；未被并发实测覆盖,,TCP 8136 与 test20/test11 共用,端口租约/动态分配后再评估并行
-test21,python,none,UNKNOWN,tempfile 隔离，无端口；但共享仓库只读数据/生成产物的并发一致性未验证,,共享仓库内容只读，理论无冲突；未实测,优先纳入轻量 python 组做 2-worker 实验
-test22,python,none,UNKNOWN,tempfile 隔离，无端口；但共享仓库只读数据/生成产物的并发一致性未验证,,共享仓库内容只读，理论无冲突；未实测,优先纳入轻量 python 组做 2-worker 实验
-test23,python,none,UNKNOWN,tempfile 隔离，无端口；但共享仓库只读数据/生成产物的并发一致性未验证,,共享仓库内容只读，理论无冲突；未实测,优先纳入轻量 python 组做 2-worker 实验
-test24,jsdom,fixed,NEED_ISOLATION,固定端口 8142（grep const PORT / server.listen）；未被并发实测覆盖,,TCP 8142 与 test40/test24 共用,端口租约/动态分配后再评估并行
-test25,python,none,UNKNOWN,tempfile 隔离，无端口；但共享仓库只读数据/生成产物的并发一致性未验证,,共享仓库内容只读，理论无冲突；未实测,优先纳入轻量 python 组做 2-worker 实验
-test26,python,none,UNKNOWN,tempfile 隔离，无端口；但共享仓库只读数据/生成产物的并发一致性未验证,,共享仓库内容只读，理论无冲突；未实测,优先纳入轻量 python 组做 2-worker 实验
-test27,python,none,UNKNOWN,tempfile 隔离，无端口；但共享仓库只读数据/生成产物的并发一致性未验证,,共享仓库内容只读，理论无冲突；未实测,优先纳入轻量 python 组做 2-worker 实验
-test28,python,none,UNKNOWN,tempfile 隔离，无端口；但共享仓库只读数据/生成产物的并发一致性未验证,,共享仓库内容只读，理论无冲突；未实测,优先纳入轻量 python 组做 2-worker 实验
-test29,python,none,UNKNOWN,tempfile 隔离，无端口；但共享仓库只读数据/生成产物的并发一致性未验证,,共享仓库内容只读，理论无冲突；未实测,优先纳入轻量 python 组做 2-worker 实验
-test30,python,none,UNKNOWN,tempfile 隔离，无端口；但共享仓库只读数据/生成产物的并发一致性未验证,,共享仓库内容只读，理论无冲突；未实测,优先纳入轻量 python 组做 2-worker 实验
-test31,python,none,UNKNOWN,tempfile 隔离，无端口；但共享仓库只读数据/生成产物的并发一致性未验证,,共享仓库内容只读，理论无冲突；未实测,优先纳入轻量 python 组做 2-worker 实验
-test32,jsdom,fixed,NEED_ISOLATION,固定端口 8151（grep const PORT / server.listen）；未被并发实测覆盖,,TCP 8151 固定占用,端口租约/动态分配后再评估并行
-test33,python,none,UNKNOWN,tempfile 隔离，无端口；但共享仓库只读数据/生成产物的并发一致性未验证,,共享仓库内容只读，理论无冲突；未实测,优先纳入轻量 python 组做 2-worker 实验
-test34,python,none,UNKNOWN,tempfile 隔离，无端口；但共享仓库只读数据/生成产物的并发一致性未验证,,共享仓库内容只读，理论无冲突；未实测,优先纳入轻量 python 组做 2-worker 实验
-test35,jsdom,fixed,NEED_ISOLATION,固定端口 8161（grep const PORT / server.listen）；未被并发实测覆盖,,TCP 8161 固定占用,端口租约/动态分配后再评估并行
-test36,jsdom,fixed,NEED_ISOLATION,固定端口 8181（grep const PORT / server.listen）；未被并发实测覆盖,,TCP 8181 固定占用,端口租约/动态分配后再评估并行
-test37,jsdom,fixed,NEED_ISOLATION,固定端口 8182（grep const PORT / server.listen）；未被并发实测覆盖,,TCP 8182 固定占用,端口租约/动态分配后再评估并行
-test38,jsdom,fixed,NEED_ISOLATION,固定端口 8183（grep const PORT / server.listen）；未被并发实测覆盖,,TCP 8183 固定占用,端口租约/动态分配后再评估并行
-test39,jsdom,fixed,NEED_ISOLATION,固定端口 8141（grep const PORT / server.listen）；未被并发实测覆盖,,TCP 8141 固定占用,端口租约/动态分配后再评估并行
-test40,jsdom,fixed,NEED_ISOLATION,固定端口 8142（grep const PORT / server.listen）；未被并发实测覆盖,,TCP 8142 与 test40/test24 共用,端口租约/动态分配后再评估并行
-test41,jsdom,fixed,NEED_ISOLATION,固定端口 8143（grep const PORT / server.listen）；未被并发实测覆盖,,TCP 8143 固定占用,端口租约/动态分配后再评估并行
-test42,jsdom,fixed,NEED_ISOLATION,固定端口 8144（grep const PORT / server.listen）；未被并发实测覆盖,,TCP 8144 固定占用,端口租约/动态分配后再评估并行
-test43,jsdom,fixed,PARALLEL_SAFE,2026-11-18 实测：与 test16 双进程并发，wall 24.3s vs 串行 38.3s；test43 40/40 PASS 且耗时 23.6→24.3s；临时端口 8145 无冲突,test16,,可纳入 8E-3B 首批 2-worker 候选；仍需在调度器中保留端口/Profile 隔离
-test44,jsdom,fixed,NEED_ISOLATION,固定端口 8147（grep const PORT / server.listen）；未被并发实测覆盖,,TCP 8147 固定占用,端口租约/动态分配后再评估并行
-test45,python,none,UNKNOWN,tempfile 隔离，无端口；但共享仓库只读数据/生成产物的并发一致性未验证,,共享仓库内容只读，理论无冲突；未实测,优先纳入轻量 python 组做 2-worker 实验
-inline-handlers,jsdom,none,UNKNOWN,jsdom 轻量、无端口或只读数据；未做并发实测,,无已证实冲突，但无并发证据,可纳入 8E-3B 轻量组合实验
-runner-infrastructure,python,none,UNKNOWN,tempfile 隔离，无端口；但共享仓库只读数据/生成产物的并发一致性未验证,,共享仓库内容只读，理论无冲突；未实测,优先纳入轻量 python 组做 2-worker 实验
-image-check,python,none,UNKNOWN,tempfile 隔离，无端口；但共享仓库只读数据/生成产物的并发一致性未验证,,共享仓库内容只读，理论无冲突；未实测,优先纳入轻量 python 组做 2-worker 实验
-content-check,python,none,UNKNOWN,tempfile 隔离，无端口；但共享仓库只读数据/生成产物的并发一致性未验证,,共享仓库内容只读，理论无冲突；未实测,优先纳入轻量 python 组做 2-worker 实验
-feed-check,python,none,UNKNOWN,tempfile 隔离，无端口；但共享仓库只读数据/生成产物的并发一致性未验证,,共享仓库内容只读，理论无冲突；未实测,优先纳入轻量 python 组做 2-worker 实验
-browser,browser,ephemeral,UNKNOWN,"临时端口 listen(server,0) + 独立临时 Chromium profile；无并发实测，浏览器 CPU/内存竞争未量化",,Chromium 资源竞争未验证,8E-3B 小规模 2-worker 浏览器实验（含超时/残留/结果一致性）
-sw-consistency,browser,ephemeral,UNKNOWN,"临时端口 listen(server,0) + 独立临时 Chromium profile；无并发实测，浏览器 CPU/内存竞争未量化",,Chromium 资源竞争未验证,8E-3B 小规模 2-worker 浏览器实验（含超时/残留/结果一致性）
-sw-upgrade,browser,ephemeral,UNKNOWN,"临时端口 listen(server,0) + 独立临时 Chromium profile；无并发实测，浏览器 CPU/内存竞争未量化",,Chromium 资源竞争未验证,8E-3B 小规模 2-worker 浏览器实验（含超时/残留/结果一致性）
-mobile-notes,browser,ephemeral,UNKNOWN,"临时端口 listen(server,0) + 独立临时 Chromium profile；无并发实测，浏览器 CPU/内存竞争未量化",,Chromium 资源竞争未验证,8E-3B 小规模 2-worker 浏览器实验（含超时/残留/结果一致性）
-course-seo,browser,ephemeral,UNKNOWN,"临时端口 listen(server,0) + 独立临时 Chromium profile；无并发实测，浏览器 CPU/内存竞争未量化",,Chromium 资源竞争未验证,8E-3B 小规模 2-worker 浏览器实验（含超时/残留/结果一致性）
-papers-deeplink,browser,ephemeral,UNKNOWN,"临时端口 listen(server,0) + 独立临时 Chromium profile；无并发实测，浏览器 CPU/内存竞争未量化",,Chromium 资源竞争未验证,8E-3B 小规模 2-worker 浏览器实验（含超时/残留/结果一致性）
-editor-ux,browser,ephemeral,UNKNOWN,"临时端口 listen(server,0) + 独立临时 Chromium profile；无并发实测，浏览器 CPU/内存竞争未量化",,Chromium 资源竞争未验证,8E-3B 小规模 2-worker 浏览器实验（含超时/残留/结果一致性）
-editor-history,browser,ephemeral,UNKNOWN,"临时端口 listen(server,0) + 独立临时 Chromium profile；无并发实测，浏览器 CPU/内存竞争未量化",,Chromium 资源竞争未验证,8E-3B 小规模 2-worker 浏览器实验（含超时/残留/结果一致性）
-search-ux,browser,ephemeral,UNKNOWN,"临时端口 listen(server,0) + 独立临时 Chromium profile；无并发实测，浏览器 CPU/内存竞争未量化",,Chromium 资源竞争未验证,8E-3B 小规模 2-worker 浏览器实验（含超时/残留/结果一致性）
-search-interaction,browser,ephemeral,UNKNOWN,"临时端口 listen(server,0) + 独立临时 Chromium profile；无并发实测，浏览器 CPU/内存竞争未量化",,Chromium 资源竞争未验证,8E-3B 小规模 2-worker 浏览器实验（含超时/残留/结果一致性）
-reading-experience,browser,ephemeral,UNKNOWN,"临时端口 listen(server,0) + 独立临时 Chromium profile；无并发实测，浏览器 CPU/内存竞争未量化",,Chromium 资源竞争未验证,8E-3B 小规模 2-worker 浏览器实验（含超时/残留/结果一致性）
-image-lightbox,browser,ephemeral,UNKNOWN,"临时端口 listen(server,0) + 独立临时 Chromium profile；无并发实测，浏览器 CPU/内存竞争未量化",,Chromium 资源竞争未验证,8E-3B 小规模 2-worker 浏览器实验（含超时/残留/结果一致性）
-ui-refresh,browser,ephemeral,UNKNOWN,"临时端口 listen(server,0) + 独立临时 Chromium profile；无并发实测，浏览器 CPU/内存竞争未量化",,Chromium 资源竞争未验证,8E-3B 小规模 2-worker 浏览器实验（含超时/残留/结果一致性）
-performance-accessibility,browser,fixed,NEED_ISOLATION,"固定 listen(server, 8146) 与 test16 冲突（spec.js:207）",,TCP 8146 与 test16 共用,端口租约后再评估；当前保持串行
+suite,kind,port_mode,class,evidence,verified_with,blocking_resource,next_action,validated_pair,limitations
+audit,jsdom,OS ephemeral,NEED_ISOLATION,listen(0) + 真实端口回写；受影响套件 PASS,,固定端口已消除；全局并发未验证,待 8E-3B-2 组合实验,,端口已隔离；全局并行安全未验证
+test6,jsdom,OS ephemeral,NEED_ISOLATION,listen(0) + 真实端口回写；受影响套件 PASS,,固定端口已消除；全局并发未验证,待 8E-3B-2 组合实验,,端口已隔离；全局并行安全未验证
+test7,jsdom,OS ephemeral,NEED_ISOLATION,listen(0) + 真实端口回写；受影响套件 PASS,,固定端口已消除；全局并发未验证,待 8E-3B-2 组合实验,,端口已隔离；全局并行安全未验证
+test8,jsdom,OS ephemeral,NEED_ISOLATION,listen(0) + 真实端口回写；受影响套件 PASS,,固定端口已消除；全局并发未验证,待 8E-3B-2 组合实验,,端口已隔离；全局并行安全未验证
+test9,jsdom,OS ephemeral,NEED_ISOLATION,listen(0) + 真实端口回写；受影响套件 PASS,,固定端口已消除；全局并发未验证,待 8E-3B-2 组合实验,,端口已隔离；全局并行安全未验证
+test10,jsdom,OS ephemeral,NEED_ISOLATION,listen(0) + 真实端口回写；受影响套件 PASS,,固定端口已消除；全局并发未验证,待 8E-3B-2 组合实验,,端口已隔离；全局并行安全未验证
+test11,jsdom,OS ephemeral,NEED_ISOLATION,listen(0) + 真实端口回写；受影响套件 PASS,test11 + test20,固定端口已消除；组合级无 EADDRINUSE,仅允许在已验证组合中试验；不得全局并行,test11 + test20,端口已隔离；全局并行安全未验证
+test12,python,none,UNKNOWN,无监听端口；Python 临时目录隔离,,无并发实测,保持现状,,无并发实测
+test13,python,none,UNKNOWN,无监听端口；Python 临时目录隔离,,无并发实测,保持现状,,无并发实测
+test14,jsdom,OS ephemeral,NEED_ISOLATION,listen(0) + 真实端口回写；受影响套件 PASS,,固定端口已消除；全局并发未验证,待 8E-3B-2 组合实验,,端口已隔离；全局并行安全未验证
+test15,python,none,UNKNOWN,无监听端口；Python 临时目录隔离,,无并发实测,保持现状,,无并发实测
+test16,jsdom,OS ephemeral,NEED_ISOLATION,listen(0) + 真实端口回写；受影响套件 PASS,test16 + performance-accessibility; test16 + test43,固定端口已消除；组合级无 EADDRINUSE,仅允许在已验证组合中试验；不得全局并行,test16 + performance-accessibility; test16 + test43,端口已隔离；全局并行安全未验证
+test17,python,none,UNKNOWN,无监听端口；Python 临时目录隔离,,无并发实测,保持现状,,无并发实测
+test18,jsdom,none,UNKNOWN,无监听端口；Python 临时目录隔离,,无并发实测,保持现状,,无并发实测
+split-check,python,none,UNKNOWN,无监听端口；Python 临时目录隔离,,无并发实测,保持现状,,无并发实测
+test19,python,none,UNKNOWN,无监听端口；Python 临时目录隔离,,无并发实测,保持现状,,无并发实测
+test20,jsdom,OS ephemeral,NEED_ISOLATION,listen(0) + 真实端口回写；受影响套件 PASS,test11 + test20,固定端口已消除；组合级无 EADDRINUSE,仅允许在已验证组合中试验；不得全局并行,test11 + test20,端口已隔离；全局并行安全未验证
+test21,python,none,UNKNOWN,无监听端口；Python 临时目录隔离,,无并发实测,保持现状,,无并发实测
+test22,python,none,UNKNOWN,无监听端口；Python 临时目录隔离,,无并发实测,保持现状,,无并发实测
+test23,python,none,SERIAL_REQUIRED,无监听端口；Python 临时目录隔离,,Windows 文件共享冲突,保持串行，先修复 C17,,"C17 20 次采样 2 次 [0,1]；不得进入并行池"
+test24,jsdom,OS ephemeral,NEED_ISOLATION,listen(0) + 真实端口回写；受影响套件 PASS,test24 + test40,固定端口已消除；组合级无 EADDRINUSE,仅允许在已验证组合中试验；不得全局并行,test24 + test40,端口已隔离；全局并行安全未验证
+test25,python,none,UNKNOWN,无监听端口；Python 临时目录隔离,,无并发实测,保持现状,,无并发实测
+test26,python,none,UNKNOWN,无监听端口；Python 临时目录隔离,,无并发实测,保持现状,,无并发实测
+test27,python,none,UNKNOWN,无监听端口；Python 临时目录隔离,,无并发实测,保持现状,,无并发实测
+test28,python,none,UNKNOWN,无监听端口；Python 临时目录隔离,,无并发实测,保持现状,,无并发实测
+test29,python,none,UNKNOWN,无监听端口；Python 临时目录隔离,,无并发实测,保持现状,,无并发实测
+test30,python,none,UNKNOWN,无监听端口；Python 临时目录隔离,,无并发实测,保持现状,,无并发实测
+test31,python,none,UNKNOWN,无监听端口；Python 临时目录隔离,,无并发实测,保持现状,,无并发实测
+test32,jsdom,OS ephemeral,NEED_ISOLATION,listen(0) + 真实端口回写；受影响套件 PASS,,固定端口已消除；全局并发未验证,待 8E-3B-2 组合实验,,端口已隔离；全局并行安全未验证
+test33,python,none,UNKNOWN,无监听端口；Python 临时目录隔离,,无并发实测,保持现状,,无并发实测
+test34,python,none,UNKNOWN,无监听端口；Python 临时目录隔离,,无并发实测,保持现状,,无并发实测
+test35,jsdom,OS ephemeral,NEED_ISOLATION,listen(0) + 真实端口回写；受影响套件 PASS,,固定端口已消除；全局并发未验证,待 8E-3B-2 组合实验,,端口已隔离；全局并行安全未验证
+test36,jsdom,OS ephemeral,NEED_ISOLATION,listen(0) + 真实端口回写；受影响套件 PASS,,固定端口已消除；全局并发未验证,待 8E-3B-2 组合实验,,端口已隔离；全局并行安全未验证
+test37,jsdom,OS ephemeral,NEED_ISOLATION,listen(0) + 真实端口回写；受影响套件 PASS,,固定端口已消除；全局并发未验证,待 8E-3B-2 组合实验,,端口已隔离；全局并行安全未验证
+test38,jsdom,OS ephemeral,NEED_ISOLATION,listen(0) + 真实端口回写；受影响套件 PASS,,固定端口已消除；全局并发未验证,待 8E-3B-2 组合实验,,端口已隔离；全局并行安全未验证
+test39,jsdom,OS ephemeral,NEED_ISOLATION,listen(0) + 真实端口回写；受影响套件 PASS,,固定端口已消除；全局并发未验证,待 8E-3B-2 组合实验,,端口已隔离；全局并行安全未验证
+test40,jsdom,OS ephemeral,NEED_ISOLATION,listen(0) + 真实端口回写；受影响套件 PASS,test24 + test40,固定端口已消除；组合级无 EADDRINUSE,仅允许在已验证组合中试验；不得全局并行,test24 + test40,端口已隔离；全局并行安全未验证
+test41,jsdom,OS ephemeral,NEED_ISOLATION,listen(0) + 真实端口回写；受影响套件 PASS,,固定端口已消除；全局并发未验证,待 8E-3B-2 组合实验,,端口已隔离；全局并行安全未验证
+test42,jsdom,OS ephemeral,NEED_ISOLATION,listen(0) + 真实端口回写；受影响套件 PASS,,固定端口已消除；全局并发未验证,待 8E-3B-2 组合实验,,端口已隔离；全局并行安全未验证
+test43,jsdom,OS ephemeral,PARALLEL_SAFE,listen(0) + 真实端口回写；受影响套件 PASS,test16 + test43,固定端口已消除；组合级无 EADDRINUSE,仅允许在已验证组合中试验；不得全局并行,test16 + test43,端口已隔离；全局并行安全未验证
+test44,jsdom,OS ephemeral,NEED_ISOLATION,listen(0) + 真实端口回写；受影响套件 PASS,,固定端口已消除；全局并发未验证,待 8E-3B-2 组合实验,,端口已隔离；全局并行安全未验证
+test45,python,none,UNKNOWN,无监听端口；Python 临时目录隔离,,无并发实测,保持现状,,无并发实测
+inline-handlers,jsdom,OS ephemeral,NEED_ISOLATION,listen(0) + 真实端口回写；受影响套件 PASS,,固定端口已消除；全局并发未验证,待 8E-3B-2 组合实验,,端口已隔离；全局并行安全未验证
+runner-infrastructure,python,none,UNKNOWN,无监听端口；Python 临时目录隔离,,无并发实测,保持现状,,无并发实测
+image-check,python,none,UNKNOWN,无监听端口；Python 临时目录隔离,,无并发实测,保持现状,,无并发实测
+content-check,python,none,UNKNOWN,无监听端口；Python 临时目录隔离,,无并发实测,保持现状,,无并发实测
+feed-check,python,none,UNKNOWN,无监听端口；Python 临时目录隔离,,无并发实测,保持现状,,无并发实测
+browser,browser,ephemeral,UNKNOWN,既有动态端口；本次未改,,无并发实测,保持现状,,Chromium CPU/内存竞争未量化
+sw-consistency,browser,ephemeral,UNKNOWN,既有动态端口；本次未改,,无并发实测,保持现状,,Chromium CPU/内存竞争未量化
+sw-upgrade,browser,ephemeral,UNKNOWN,既有动态端口；本次未改,,无并发实测,保持现状,,Chromium CPU/内存竞争未量化
+mobile-notes,browser,ephemeral,UNKNOWN,既有动态端口；本次未改,,无并发实测,保持现状,,Chromium CPU/内存竞争未量化
+course-seo,browser,ephemeral,UNKNOWN,既有动态端口；本次未改,,无并发实测,保持现状,,Chromium CPU/内存竞争未量化
+papers-deeplink,browser,ephemeral,UNKNOWN,既有动态端口；本次未改,,无并发实测,保持现状,,Chromium CPU/内存竞争未量化
+editor-ux,browser,ephemeral,UNKNOWN,既有动态端口；本次未改,,无并发实测,保持现状,,Chromium CPU/内存竞争未量化
+editor-history,browser,ephemeral,UNKNOWN,既有动态端口；本次未改,,无并发实测,保持现状,,Chromium CPU/内存竞争未量化
+search-ux,browser,ephemeral,UNKNOWN,既有动态端口；本次未改,,无并发实测,保持现状,,Chromium CPU/内存竞争未量化
+search-interaction,browser,ephemeral,UNKNOWN,既有动态端口；本次未改,,无并发实测,保持现状,,Chromium CPU/内存竞争未量化
+reading-experience,browser,ephemeral,UNKNOWN,既有动态端口；本次未改,,无并发实测,保持现状,,Chromium CPU/内存竞争未量化
+image-lightbox,browser,ephemeral,UNKNOWN,既有动态端口；本次未改,,无并发实测,保持现状,,Chromium CPU/内存竞争未量化
+ui-refresh,browser,ephemeral,UNKNOWN,既有动态端口；本次未改,,无并发实测,保持现状,,Chromium CPU/内存竞争未量化
+performance-accessibility,browser,OS ephemeral,NEED_ISOLATION,listen(0) + 真实端口回写；受影响套件 PASS,test16 + performance-accessibility,固定端口已消除；组合级无 EADDRINUSE,仅允许在已验证组合中试验；不得全局并行,test16 + performance-accessibility,端口已隔离；全局并行安全未验证
+port-isolation,python,OS ephemeral fixture,UNKNOWN,12/12 PASS；两实例动态端口不同,,仅 fixture 级验证,可加入后续并行实验候选,,未与真实测试套件组合并发

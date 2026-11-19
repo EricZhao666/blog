@@ -1,0 +1,5 @@
+group,serial_a_exit,serial_b_exit,serial_wall_s,serial_pass,serial_fail,serial_skip,serial_blocked,parallel_a_exit,parallel_b_exit,parallel_wall_s,parallel_pass,parallel_fail,parallel_skip,parallel_blocked,actual_ports,addr_in_use,residual_processes,result,evidence
+test11+test20,0,0,57.5,"19/19,24/24",0,0,0,0,0,25.9,"19/19,24/24",0,0,0,"60731,60734",none,none,PAIR_SAFE,"conf-test11-serial.out / conf-test20-serial.out / par-test11-par.out / par-test20-par.out; supplemental sample 24.0s"
+test24+test40,0,0,46.3,"22/22,35/35",0,0,0,0,0,36.7,"22/22,35/35",0,0,0,"60859,60856",none,none,PAIR_SAFE,"conf-test24-serial.out / conf-test40-serial.out / par-test24-par.out / par-test40-par.out; supplemental sample 33.1s"
+test16+performance-accessibility,0,0,86.7,"20/20,59/59",0,0,0,0,0,63.0,"20/20,59/59",0,0,0,"54617,54545",none,none,PAIR_SAFE,"conf-test16-serial.out / conf-perf-serial.out / par-test16.out / par-perf.out"
+port-isolation,0,0,1.6,"12/12",0,0,0,0,0,1.6,"12/12",0,0,0,"54899,54900",none,none,FIXTURE_PASS,"tests/test48_port_isolation.py"
