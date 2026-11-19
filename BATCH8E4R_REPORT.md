@@ -112,7 +112,40 @@ GREEN 汇总：**27 PASS / 0 FAIL**（三引擎 E 场景全部通过）。
 - 进程清理：运行结束后无 Playwright / 浏览器残留；临时诊断脚本已删除；`tests/reports/` 与 artifacts 均在 `.gitignore` 内。
 - PR：`gh` CLI 不可用，分支 push 后需人工创建 PR（链接见提交说明）。
 
-## 6. 复现命令
+## 6. PR #27 CI 失败修复（tests #97）
+
+**现象**：PR #27 的 push CI `tests #97` 结果为 63 PASS / 1 FAIL，唯一失败为 `tests/browser/ui-refresh.spec.js:732` 的 `U11.1`。
+
+**根因**：该断言把“当前发布日期”写死为 `/^2026-11-18-\d+$/`，而本轮按发布契约把 `CACHE_VERSION` 升到 `2026-11-19-1`，正常递增必然让断言失败。属于**测试自身缺陷**（CONFIRMED_TEST_BUG，阻塞 PR 合并），不是产品缺陷；生产 `sw.js` 行为与离线验证均正常。
+
+**修复**：
+
+```js
+// 上一次发布版本：只作为“已递增”的下界，不钉死当前发布日期
+const PREV_RELEASE_VERSION = '2026-11-18-1';
+
+check('U11.1 SW 缓存版本格式合法且相对上一版递增',
+  /^\d{4}-\d{2}-\d{2}-\d+$/.test(ver) && ver > PREV_RELEASE_VERSION &&
+  required[0].indexOf("'./css/style.css'") >= 0,
+  ver);
+```
+
+- 校验“格式合法 + 相对上一版递增”，不再硬编码当前日期；
+- 保留 `REQUIRED_ASSETS` 必须包含 `./css/style.css` 的原有断言；
+- 未修改生产 `sw.js`，未再次递增 `CACHE_VERSION`。
+
+**同类问题排查**：扫描 `tests/**`、`scripts/**` 的日期字面量，其余均为“上一版下界”常量（`OLD_CACHE_VERSION`、`PREV_VERSION` 等）配合 `>` 比较，正常递增不会失效；已无其他把当前版本钉死的断言。
+
+**验证**：
+
+| 项目 | 结果 |
+| --- | --- |
+| `python scripts/run_tests.py --only ui-refresh` | **59/59 PASS**（41.4s，套件 PASS） |
+| `git diff --check` | 退出码 0 |
+| 本地 64 套全量 | 未重复执行（按要求交由 PR CI） |
+| 生产代码 | 未修改 |
+
+## 7. 复现命令
 
 ```powershell
 node tests/browser/sw-snapshot-unit.spec.js
@@ -120,4 +153,5 @@ node tests/browser/cross-browser-offline.spec.js --engines=chromium,firefox,webk
 node tests/browser/cross-browser-offline.spec.js --engines=chromium,firefox,webkit
 python scripts/run_tests.py --group sw
 python scripts/run_tests.py --only image-lightbox
+python scripts/run_tests.py --only ui-refresh
 ```

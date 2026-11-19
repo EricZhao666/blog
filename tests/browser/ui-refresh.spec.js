@@ -24,6 +24,10 @@ const { createServer, listen } = require('./helpers/server');
 const ROOT = path.resolve(__dirname, '..', '..');
 const PREFIX = '/blog';
 
+// 上一次发布版本：只作为“已递增”的下界，不钉死当前发布日期。
+// Batch 8E-4R：CACHE_VERSION 正常递增不应让 U11.1 失败（CI tests #97）。
+const PREV_RELEASE_VERSION = '2026-11-18-1';
+
 let passCount = 0;
 const failures = [];
 
@@ -729,7 +733,10 @@ const POST_ID = 'digital-twin-manufacturing';
       const ver = (/CACHE_VERSION = '([^']+)'/.exec(sw) || [])[1] || '';
       const required = /REQUIRED_ASSETS[\s\S]*?\n\];/.exec(sw) || [''];
       const css = fs.readFileSync(path.join(ROOT, 'css/style.css'), 'utf8');
-      check('U11.1 SW 缓存版本已随本次 CSS/JS 更新递增', /^2026-11-18-\d+$/.test(ver) && required[0].indexOf("'./css/style.css'") >= 0,
+      // 校验：格式合法（YYYY-MM-DD-N）且相对上一版递增；仍要求 css/style.css 属于必需资源。
+      check('U11.1 SW 缓存版本格式合法且相对上一版递增',
+        /^\d{4}-\d{2}-\d{2}-\d+$/.test(ver) && ver > PREV_RELEASE_VERSION &&
+        required[0].indexOf("'./css/style.css'") >= 0,
         ver);
       check('U11.2 设计令牌层为单一主题系统（含强调色/表面色/边框色）',
         /--color-primary:\s*#2563eb/.test(css) && /--color-surface:\s*#fff/.test(css) && /--color-border:\s*#e2e6ec/.test(css),
