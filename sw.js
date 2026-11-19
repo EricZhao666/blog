@@ -11,7 +11,7 @@
 //   - vendor / 静态资源：stale-while-revalidate（先快后新）
 //   - 第三方（giscus 等）：不拦截
 // 每次发布请递增 CACHE_VERSION。
-const CACHE_VERSION = '2026-11-18-1';
+const CACHE_VERSION = '2026-11-19-1';
 // CACHE：安装期预缓存的核心资源（只随版本整体替换）
 // CACHE_RT：运行期按需缓存（页面/数据/静态笔记页），带条数上限防止无限增长
 const CACHE = 'blog-' + CACHE_VERSION;
@@ -258,17 +258,28 @@ function matchCore(key) {
 
 // 快照是否完整（外壳 + 五份首屏资源都在 CACHE 里）。
 // 只要缺一个就整份文档放弃缓存模式 —— 否则缺失的那份会改走网络，从而混版。
+// Batch 8E-4R：只缓存“完整”这一结论；缺失或检查异常时立即释放，下一次导航重新判定，
+// 避免一次瞬时故障把否定结论锁死到 SW 生命周期结束。并发调用仍共享同一个进行中的
+// Promise；释放时用身份比较，旧 Promise 不会清掉后来创建的新 Promise。
 let _readyPromise = null;
 function snapshotReady() {
-  if (!_readyPromise) {
-    const keys = ['index.html'].concat(FIRST_SCREEN_ASSETS);
-    _readyPromise = Promise.all(keys.map(function (k) { return matchCore(k).then(Boolean); }))
+  if (_readyPromise) return _readyPromise;
+  const keys = ['index.html'].concat(FIRST_SCREEN_ASSETS);
+  const pending = Promise.resolve().then(function () {
+    // 包一层 Promise.resolve().then：caches 不可用导致的同步抛错也走 reject 清理分支
+    return Promise.all(keys.map(function (k) { return matchCore(k).then(Boolean); }))
       .then(function (flags) {
         return flags.every(Boolean);
-      })
-      .catch(function () { return false; });
-  }
-  return _readyPromise;
+      });
+  }).then(function (ready) {
+    if (!ready && _readyPromise === pending) _readyPromise = null;
+    return ready;
+  }).catch(function () {
+    if (_readyPromise === pending) _readyPromise = null;
+    return false;
+  });
+  _readyPromise = pending;
+  return pending;
 }
 
 // 网络优先，失败回退到安装期快照；用于"已确定要新内容"的路径
