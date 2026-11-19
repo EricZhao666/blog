@@ -2,9 +2,9 @@
 
 ## 1. 状态与基线
 
-- 最终状态：**B8E3B2_LOCAL_READY**（本地验收通过；PR 创建与 CI 结果见文末更新）。
+- 最终状态：**B8E3B2_PR_READY**（PR #24 已创建；GitHub CI 已独立确认 64/64 PASS）。
 - 正式基线：`b3f88ed`（PR #23 squash 合并，`fix(content): protect full sync lifecycle with build lock (#23)`）。
-- 工作分支：`perf/batch8e3b2-parallel-runner`。
+- 工作分支：`perf/batch8e3b2-parallel-runner`；PR：https://github.com/EricZhao666/blog/pull/24。
 - 上游 8E-3B-R 已完成 C17 修复；本批不修改 `scripts/build_content.py`、业务代码、UI/CSS、正式内容、SW、CACHE_VERSION、CI 或发布工作流。
 - 本批只实现 `BATCH8E3B_NEXT_PLAN.md` 的 Task 2，不启动 Task 3 的 Chromium 双实例实验。
 
@@ -137,3 +137,17 @@ python scripts/run_tests.py --workers 2 --json tests/reports/b8e3b2-full.json
 - `BATCH8E3B_NEXT_PLAN.md`：Task 2 状态与 64 套基线更新。
 
 计划提交信息：`perf(test): add opt-in safe two-worker scheduler`。提交后 push 并创建 PR，由默认串行 GitHub CI 完成最终验证；不自动合并、不部署、不进入 Task 3。
+
+## 10. PR 与 GitHub CI 结果
+
+- PR：**#24**，`perf(test): add opt-in safe two-worker scheduler` → `main`。
+- 分支包含两个提交：
+  - `7f8a714 perf(test): add opt-in safe two-worker scheduler`；
+  - `26cb12c test: isolate scheduler interrupt fixture process groups`。
+- 第一次 CI（`7f8a714`）唯一失败为 `parallel-scheduler` **exit -15**：Linux 上 P16 fixture 由 `subprocess.Popen` 直接创建，与测试进程同组，`killpg` 误向测试自身发送 SIGTERM。修复方式是让 fixture 在 POSIX 使用 `start_new_session=True`、Windows 使用 `CREATE_NEW_PROCESS_GROUP`，与调度器实际子进程启动方式一致；本地重跑专项 **20/20 PASS**。
+- 第二次 CI（`26cb12c`）：
+  - `tests #84`（push）：**PASS 64 / FAIL 0 / SKIP 0 / BLOCKED 0**，总耗时 **572.2s**（环境 0.1s / 语法 1.0s），测试阶段 571.1s，并行重叠 0.0s；`parallel-scheduler` 20/20。
+  - `content-gate #19`（pull_request）：**PASS**，13s。
+- CI 使用默认 `python scripts/run_tests.py`（`workers=1`），未使用 `--workers 2`，因此 CI 验证的是旧命令兼容性；并发配对收益只在本报告第 4 节的定向实验中有实测证据。
+- PR 保持 Open，不自动合并、不部署。
+
