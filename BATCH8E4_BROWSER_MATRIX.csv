@@ -1,0 +1,253 @@
+﻿spec,engine,engine_version,playwright,scenario,check,status,detail,ms
+cross-browser,chromium,156.0.8078.4,1.64.1,C1,首页正常加载并渲染文章卡片,PASS,post_links=18,0
+cross-browser,chromium,156.0.8078.4,1.64.1,C1,文章详情正常渲染,PASS,body_chars=4871,0
+cross-browser,chromium,156.0.8078.4,1.64.1,C1,中文文章渲染,PASS,chips=3,0
+cross-browser,chromium,156.0.8078.4,1.64.1,C1,特殊字符标签渲染,PASS,chips=3,0
+cross-browser,chromium,156.0.8078.4,1.64.1,C1,O'Brien 标签导航到标签页（未冒泡到文章）,PASS,#/tags/O'Brien,0
+cross-browser,chromium,156.0.8078.4,1.64.1,C1,标签页内容包含该标签,PASS,,0
+cross-browser,chromium,156.0.8078.4,1.64.1,C1,课程页面渲染,PASS,cards=14,0
+cross-browser,chromium,156.0.8078.4,1.64.1,C1,代码库页面渲染,PASS,cards=6,0
+cross-browser,chromium,156.0.8078.4,1.64.1,C1,深链接直接访问文章,PASS,#/post/ml-fundamentals-overview chars=4935,0
+cross-browser,chromium,156.0.8078.4,1.64.1,C1,浏览器后退回到首页,PASS,,0
+cross-browser,chromium,156.0.8078.4,1.64.1,C1,浏览器前进回到文章,PASS,,0
+cross-browser,chromium,156.0.8078.4,1.64.1,C1,刷新后文章仍渲染,PASS,,0
+cross-browser,chromium,156.0.8078.4,1.64.1,C1,无未处理运行时异常,PASS,none,0
+cross-browser,chromium,156.0.8078.4,1.64.1,C2,中文搜索返回结果,PASS,q=机器学 results=7,0
+cross-browser,chromium,156.0.8078.4,1.64.1,C2,英文搜索返回结果,PASS,q=Batch results=3,0
+cross-browser,chromium,156.0.8078.4,1.64.1,C2,多种类型结果同时渲染,PASS,q=模型 sections=3 📝 文章 (显示 6 / 共 14)/📚 课程 (显示 6 / 共 12)/📎 学习资料 (显示 6 / 共 43),0
+cross-browser,chromium,156.0.8078.4,1.64.1,C2,搜索分类筛选生效,PASS,filters=5 pressed=true results=6,0
+cross-browser,chromium,156.0.8078.4,1.64.1,C2,键盘 ArrowDown 选中首条结果,PASS,href=#/post/vla-model-intro,0
+cross-browser,chromium,156.0.8078.4,1.64.1,C2,键盘 Enter 打开选中结果,PASS,hash=#/post/vla-model-intro,0
+cross-browser,chromium,156.0.8078.4,1.64.1,C2,点击搜索结果跳转,PASS,hash=#/post/vla-model-intro,0
+cross-browser,chromium,156.0.8078.4,1.64.1,C2,真实操作系统输入法,SKIP,本轮只验证合成键盘事件与组合期守卫；真实 IME 输入未在自动化环境验证,0
+cross-browser,chromium,156.0.8078.4,1.64.1,C2,搜索流程无未处理运行时异常,PASS,none,0
+cross-browser,chromium,156.0.8078.4,1.64.1,C3,编辑器页面加载,PASS,,0
+cross-browser,chromium,156.0.8078.4,1.64.1,C3,Markdown 预览渲染标题/加粗/列表/代码,PASS,"{""view"":""preview"",""h1"":true,""strong"":true,""li"":2,""code"":true}",0
+cross-browser,chromium,156.0.8078.4,1.64.1,C3,工具栏加粗插入标记,PASS,**工具栏文本**,0
+cross-browser,chromium,156.0.8078.4,1.64.1,C3,工具栏标题插入标记,PASS,"""## """,0
+cross-browser,chromium,156.0.8078.4,1.64.1,C3,草稿写入 localStorage,PASS,key=blog_draft,0
+cross-browser,chromium,156.0.8078.4,1.64.1,C3,刷新后草稿恢复,PASS,chars=27,0
+cross-browser,chromium,156.0.8078.4,1.64.1,C3,IndexedDB 历史库创建,PASS,blog-draft-history,0
+cross-browser,chromium,156.0.8078.4,1.64.1,C3,导出 JSON 内容与中文编码正确,PASS,post.json hasCjk=true,0
+cross-browser,chromium,156.0.8078.4,1.64.1,C3,特殊字符与长文本预览渲染,PASS,preview_chars=3725 stats=2884 字,0
+cross-browser,chromium,156.0.8078.4,1.64.1,C3,编辑器流程无未处理运行时异常,PASS,none,0
+cross-browser,chromium,156.0.8078.4,1.64.1,C4,目录生成,PASS,links=8,0
+cross-browser,chromium,156.0.8078.4,1.64.1,C4,目录点击跳转,PASS,scrollY=947,0
+cross-browser,chromium,156.0.8078.4,1.64.1,C4,阅读进度条更新,PASS,"{""found"":true,""width"":""100%"",""ratio"":100}",0
+cross-browser,chromium,156.0.8078.4,1.64.1,C4,代码复制有明确成功/降级反馈,PASS,state=ok,0
+cross-browser,chromium,156.0.8078.4,1.64.1,C4,图片灯箱打开,PASS,,0
+cross-browser,chromium,156.0.8078.4,1.64.1,C4,Esc 关闭灯箱,PASS,,0
+cross-browser,chromium,156.0.8078.4,1.64.1,C4,关闭后焦点回到触发图片,PASS,"{""tag"":""IMG"",""cls"":""zoomable-image""}",0
+cross-browser,chromium,156.0.8078.4,1.64.1,C4,静态笔记页可读,PASS,"{""title"":""计算机辅助产品设计 (CAPD) 课程笔记 · Eric's Notebook"",""h1"":2,""chars"":3756}",0
+cross-browser,chromium,156.0.8078.4,1.64.1,C4,静态笔记页无未处理异常,PASS,none,0
+cross-browser,chromium,156.0.8078.4,1.64.1,C4,阅读流程无未处理运行时异常,PASS,none,0
+cross-browser,chromium,156.0.8078.4,1.64.1,C5,首页无横向溢出 @390px,PASS,doc=390 win=390,0
+cross-browser,chromium,156.0.8078.4,1.64.1,C5,文章页无横向溢出 @390px,PASS,doc=390 win=390,0
+cross-browser,chromium,156.0.8078.4,1.64.1,C5,正文可读 @390px,PASS,"{""chars"":1053,""font"":15}",0
+cross-browser,chromium,156.0.8078.4,1.64.1,C5,移动端主题按钮可见,PASS,,0
+cross-browser,chromium,156.0.8078.4,1.64.1,C5,移动端菜单按钮可见,PASS,,0
+cross-browser,chromium,156.0.8078.4,1.64.1,C5,移动端菜单可展开,PASS,"{""open"":true,""expanded"":""true"",""visible"":true}",0
+cross-browser,chromium,156.0.8078.4,1.64.1,C5,移动端菜单可导航,PASS,,0
+cross-browser,chromium,156.0.8078.4,1.64.1,C5,移动端文章卡片可点击,PASS,hash=#/post/b8e4-responsive,0
+cross-browser,chromium,156.0.8078.4,1.64.1,C5,首页无横向溢出 @768px,PASS,doc=768 win=768,0
+cross-browser,chromium,156.0.8078.4,1.64.1,C5,文章页无横向溢出 @768px,PASS,doc=768 win=768,0
+cross-browser,chromium,156.0.8078.4,1.64.1,C5,正文可读 @768px,PASS,"{""chars"":1053,""font"":16}",0
+cross-browser,chromium,156.0.8078.4,1.64.1,C5,首页无横向溢出 @1440px,PASS,doc=1440 win=1440,0
+cross-browser,chromium,156.0.8078.4,1.64.1,C5,文章页无横向溢出 @1440px,PASS,doc=1440 win=1440,0
+cross-browser,chromium,156.0.8078.4,1.64.1,C5,正文可读 @1440px,PASS,"{""chars"":1053,""font"":16}",0
+cross-browser,chromium,156.0.8078.4,1.64.1,C5,主题切换生效,PASS,light -> dark,0
+cross-browser,chromium,156.0.8078.4,1.64.1,C5,主题选择刷新后保持,PASS,persisted=dark,0
+cross-browser,chromium,156.0.8078.4,1.64.1,C5,响应式/主题流程无未处理异常,PASS,none,0
+cross-browser,firefox,157.0,1.64.1,C1,首页正常加载并渲染文章卡片,PASS,post_links=18,0
+cross-browser,firefox,157.0,1.64.1,C1,文章详情正常渲染,PASS,body_chars=4935,0
+cross-browser,firefox,157.0,1.64.1,C1,中文文章渲染,PASS,chips=3,0
+cross-browser,firefox,157.0,1.64.1,C1,特殊字符标签渲染,PASS,chips=3,0
+cross-browser,firefox,157.0,1.64.1,C1,O'Brien 标签导航到标签页（未冒泡到文章）,PASS,#/tags/O'Brien,0
+cross-browser,firefox,157.0,1.64.1,C1,标签页内容包含该标签,PASS,,0
+cross-browser,firefox,157.0,1.64.1,C1,课程页面渲染,PASS,cards=14,0
+cross-browser,firefox,157.0,1.64.1,C1,代码库页面渲染,PASS,cards=6,0
+cross-browser,firefox,157.0,1.64.1,C1,深链接直接访问文章,PASS,#/post/ml-fundamentals-overview chars=4935,0
+cross-browser,firefox,157.0,1.64.1,C1,浏览器后退回到首页,PASS,,0
+cross-browser,firefox,157.0,1.64.1,C1,浏览器前进回到文章,PASS,,0
+cross-browser,firefox,157.0,1.64.1,C1,刷新后文章仍渲染,PASS,,0
+cross-browser,firefox,157.0,1.64.1,C1,无未处理运行时异常,PASS,none,0
+cross-browser,firefox,157.0,1.64.1,C2,中文搜索返回结果,PASS,q=机器学 results=7,0
+cross-browser,firefox,157.0,1.64.1,C2,英文搜索返回结果,PASS,q=Batch results=3,0
+cross-browser,firefox,157.0,1.64.1,C2,多种类型结果同时渲染,PASS,q=模型 sections=3 📝 文章 (显示 6 / 共 14)/📚 课程 (显示 6 / 共 12)/📎 学习资料 (显示 6 / 共 43),0
+cross-browser,firefox,157.0,1.64.1,C2,搜索分类筛选生效,PASS,filters=5 pressed=true results=6,0
+cross-browser,firefox,157.0,1.64.1,C2,键盘 ArrowDown 选中首条结果,PASS,href=#/post/vla-model-intro,0
+cross-browser,firefox,157.0,1.64.1,C2,键盘 Enter 打开选中结果,PASS,hash=#/post/vla-model-intro,0
+cross-browser,firefox,157.0,1.64.1,C2,点击搜索结果跳转,PASS,hash=#/post/vla-model-intro,0
+cross-browser,firefox,157.0,1.64.1,C2,真实操作系统输入法,SKIP,本轮只验证合成键盘事件与组合期守卫；真实 IME 输入未在自动化环境验证,0
+cross-browser,firefox,157.0,1.64.1,C2,搜索流程无未处理运行时异常,PASS,none,0
+cross-browser,firefox,157.0,1.64.1,C3,编辑器页面加载,PASS,,0
+cross-browser,firefox,157.0,1.64.1,C3,Markdown 预览渲染标题/加粗/列表/代码,PASS,"{""view"":""preview"",""h1"":true,""strong"":true,""li"":2,""code"":true}",0
+cross-browser,firefox,157.0,1.64.1,C3,工具栏加粗插入标记,PASS,**工具栏文本**,0
+cross-browser,firefox,157.0,1.64.1,C3,工具栏标题插入标记,PASS,"""## """,0
+cross-browser,firefox,157.0,1.64.1,C3,草稿写入 localStorage,PASS,key=blog_draft,0
+cross-browser,firefox,157.0,1.64.1,C3,刷新后草稿恢复,PASS,chars=27,0
+cross-browser,firefox,157.0,1.64.1,C3,IndexedDB 历史库创建,PASS,blog-draft-history,0
+cross-browser,firefox,157.0,1.64.1,C3,导出 JSON 内容与中文编码正确,PASS,post.json hasCjk=true,0
+cross-browser,firefox,157.0,1.64.1,C3,特殊字符与长文本预览渲染,PASS,preview_chars=3725 stats=2884 字,0
+cross-browser,firefox,157.0,1.64.1,C3,编辑器流程无未处理运行时异常,PASS,none,0
+cross-browser,firefox,157.0,1.64.1,C4,目录生成,PASS,links=8,0
+cross-browser,firefox,157.0,1.64.1,C4,目录点击跳转,PASS,scrollY=943,0
+cross-browser,firefox,157.0,1.64.1,C4,阅读进度条更新,PASS,"{""found"":true,""width"":""100%"",""ratio"":100}",0
+cross-browser,firefox,157.0,1.64.1,C4,代码复制有明确成功/降级反馈,PASS,state=ok,0
+cross-browser,firefox,157.0,1.64.1,C4,图片灯箱打开,PASS,,0
+cross-browser,firefox,157.0,1.64.1,C4,Esc 关闭灯箱,PASS,,0
+cross-browser,firefox,157.0,1.64.1,C4,关闭后焦点回到触发图片,PASS,"{""tag"":""IMG"",""cls"":""zoomable-image""}",0
+cross-browser,firefox,157.0,1.64.1,C4,静态笔记页可读,PASS,"{""title"":""计算机辅助产品设计 (CAPD) 课程笔记 · Eric's Notebook"",""h1"":2,""chars"":3756}",0
+cross-browser,firefox,157.0,1.64.1,C4,静态笔记页无未处理异常,PASS,none,0
+cross-browser,firefox,157.0,1.64.1,C4,阅读流程无未处理运行时异常,PASS,none,0
+cross-browser,firefox,157.0,1.64.1,C5,首页无横向溢出 @390px,PASS,doc=390 win=390,0
+cross-browser,firefox,157.0,1.64.1,C5,文章页无横向溢出 @390px,PASS,doc=390 win=390,0
+cross-browser,firefox,157.0,1.64.1,C5,正文可读 @390px,PASS,"{""chars"":1053,""font"":15}",0
+cross-browser,firefox,157.0,1.64.1,C5,移动端主题按钮可见,PASS,,0
+cross-browser,firefox,157.0,1.64.1,C5,移动端菜单按钮可见,PASS,,0
+cross-browser,firefox,157.0,1.64.1,C5,移动端菜单可展开,PASS,"{""open"":true,""expanded"":""true"",""visible"":true}",0
+cross-browser,firefox,157.0,1.64.1,C5,移动端菜单可导航,PASS,,0
+cross-browser,firefox,157.0,1.64.1,C5,移动端文章卡片可点击,PASS,hash=#/post/b8e4-responsive,0
+cross-browser,firefox,157.0,1.64.1,C5,首页无横向溢出 @768px,PASS,doc=768 win=768,0
+cross-browser,firefox,157.0,1.64.1,C5,文章页无横向溢出 @768px,PASS,doc=768 win=768,0
+cross-browser,firefox,157.0,1.64.1,C5,正文可读 @768px,PASS,"{""chars"":1053,""font"":16}",0
+cross-browser,firefox,157.0,1.64.1,C5,首页无横向溢出 @1440px,PASS,doc=1440 win=1440,0
+cross-browser,firefox,157.0,1.64.1,C5,文章页无横向溢出 @1440px,PASS,doc=1440 win=1440,0
+cross-browser,firefox,157.0,1.64.1,C5,正文可读 @1440px,PASS,"{""chars"":1053,""font"":16}",0
+cross-browser,firefox,157.0,1.64.1,C5,主题切换生效,PASS,light -> dark,0
+cross-browser,firefox,157.0,1.64.1,C5,主题选择刷新后保持,PASS,persisted=dark,0
+cross-browser,firefox,157.0,1.64.1,C5,响应式/主题流程无未处理异常,PASS,none,0
+cross-browser,webkit,27.2,1.64.1,C1,首页正常加载并渲染文章卡片,PASS,post_links=18,0
+cross-browser,webkit,27.2,1.64.1,C1,文章详情正常渲染,PASS,body_chars=4871,0
+cross-browser,webkit,27.2,1.64.1,C1,中文文章渲染,PASS,chips=3,0
+cross-browser,webkit,27.2,1.64.1,C1,特殊字符标签渲染,PASS,chips=3,0
+cross-browser,webkit,27.2,1.64.1,C1,O'Brien 标签导航到标签页（未冒泡到文章）,PASS,#/tags/O'Brien,0
+cross-browser,webkit,27.2,1.64.1,C1,标签页内容包含该标签,PASS,,0
+cross-browser,webkit,27.2,1.64.1,C1,课程页面渲染,PASS,cards=14,0
+cross-browser,webkit,27.2,1.64.1,C1,代码库页面渲染,PASS,cards=6,0
+cross-browser,webkit,27.2,1.64.1,C1,深链接直接访问文章,PASS,#/post/ml-fundamentals-overview chars=4871,0
+cross-browser,webkit,27.2,1.64.1,C1,浏览器后退回到首页,PASS,,0
+cross-browser,webkit,27.2,1.64.1,C1,浏览器前进回到文章,PASS,,0
+cross-browser,webkit,27.2,1.64.1,C1,刷新后文章仍渲染,PASS,,0
+cross-browser,webkit,27.2,1.64.1,C1,无未处理运行时异常,PASS,none,0
+cross-browser,webkit,27.2,1.64.1,C2,中文搜索返回结果,PASS,q=机器学 results=7,0
+cross-browser,webkit,27.2,1.64.1,C2,英文搜索返回结果,PASS,q=Batch results=3,0
+cross-browser,webkit,27.2,1.64.1,C2,多种类型结果同时渲染,PASS,q=模型 sections=3 📝 文章 (显示 6 / 共 14)/📚 课程 (显示 6 / 共 12)/📎 学习资料 (显示 6 / 共 43),0
+cross-browser,webkit,27.2,1.64.1,C2,搜索分类筛选生效,PASS,filters=5 pressed=true results=6,0
+cross-browser,webkit,27.2,1.64.1,C2,键盘 ArrowDown 选中首条结果,PASS,href=#/post/vla-model-intro,0
+cross-browser,webkit,27.2,1.64.1,C2,键盘 Enter 打开选中结果,PASS,hash=#/post/vla-model-intro,0
+cross-browser,webkit,27.2,1.64.1,C2,点击搜索结果跳转,PASS,hash=#/post/vla-model-intro,0
+cross-browser,webkit,27.2,1.64.1,C2,真实操作系统输入法,SKIP,本轮只验证合成键盘事件与组合期守卫；真实 IME 输入未在自动化环境验证,0
+cross-browser,webkit,27.2,1.64.1,C2,搜索流程无未处理运行时异常,PASS,none,0
+cross-browser,webkit,27.2,1.64.1,C3,编辑器页面加载,PASS,,0
+cross-browser,webkit,27.2,1.64.1,C3,Markdown 预览渲染标题/加粗/列表/代码,PASS,"{""view"":""preview"",""h1"":true,""strong"":true,""li"":2,""code"":true}",0
+cross-browser,webkit,27.2,1.64.1,C3,工具栏加粗插入标记,PASS,**工具栏文本**,0
+cross-browser,webkit,27.2,1.64.1,C3,工具栏标题插入标记,PASS,"""## """,0
+cross-browser,webkit,27.2,1.64.1,C3,草稿写入 localStorage,PASS,key=blog_draft,0
+cross-browser,webkit,27.2,1.64.1,C3,刷新后草稿恢复,PASS,chars=27,0
+cross-browser,webkit,27.2,1.64.1,C3,IndexedDB 历史库创建,PASS,blog-draft-history,0
+cross-browser,webkit,27.2,1.64.1,C3,导出 JSON 内容与中文编码正确,PASS,post.json hasCjk=true,0
+cross-browser,webkit,27.2,1.64.1,C3,特殊字符与长文本预览渲染,PASS,preview_chars=3725 stats=2884 字,0
+cross-browser,webkit,27.2,1.64.1,C3,编辑器流程无未处理运行时异常,PASS,none,0
+cross-browser,webkit,27.2,1.64.1,C4,目录生成,PASS,links=8,0
+cross-browser,webkit,27.2,1.64.1,C4,目录点击跳转,PASS,scrollY=946,0
+cross-browser,webkit,27.2,1.64.1,C4,阅读进度条更新,PASS,"{""found"":true,""width"":""100%"",""ratio"":100}",0
+cross-browser,webkit,27.2,1.64.1,C4,代码复制有明确成功/降级反馈,PASS,state=ok,0
+cross-browser,webkit,27.2,1.64.1,C4,图片灯箱打开,PASS,,0
+cross-browser,webkit,27.2,1.64.1,C4,Esc 关闭灯箱,PASS,,0
+cross-browser,webkit,27.2,1.64.1,C4,关闭后焦点回到触发图片,PASS,"{""tag"":""IMG"",""cls"":""zoomable-image""}",0
+cross-browser,webkit,27.2,1.64.1,C4,静态笔记页可读,PASS,"{""title"":""计算机辅助产品设计 (CAPD) 课程笔记 · Eric's Notebook"",""h1"":2,""chars"":3756}",0
+cross-browser,webkit,27.2,1.64.1,C4,静态笔记页无未处理异常,PASS,none,0
+cross-browser,webkit,27.2,1.64.1,C4,阅读流程无未处理运行时异常,PASS,none,0
+cross-browser,webkit,27.2,1.64.1,C5,首页无横向溢出 @390px,PASS,doc=390 win=390,0
+cross-browser,webkit,27.2,1.64.1,C5,文章页无横向溢出 @390px,PASS,doc=390 win=390,0
+cross-browser,webkit,27.2,1.64.1,C5,正文可读 @390px,PASS,"{""chars"":1054,""font"":15}",0
+cross-browser,webkit,27.2,1.64.1,C5,移动端主题按钮可见,PASS,,0
+cross-browser,webkit,27.2,1.64.1,C5,移动端菜单按钮可见,PASS,,0
+cross-browser,webkit,27.2,1.64.1,C5,移动端菜单可展开,PASS,"{""open"":true,""expanded"":""true"",""visible"":true}",0
+cross-browser,webkit,27.2,1.64.1,C5,移动端菜单可导航,PASS,,0
+cross-browser,webkit,27.2,1.64.1,C5,移动端文章卡片可点击,PASS,hash=#/post/b8e4-responsive,0
+cross-browser,webkit,27.2,1.64.1,C5,首页无横向溢出 @768px,PASS,doc=768 win=768,0
+cross-browser,webkit,27.2,1.64.1,C5,文章页无横向溢出 @768px,PASS,doc=768 win=768,0
+cross-browser,webkit,27.2,1.64.1,C5,正文可读 @768px,PASS,"{""chars"":1054,""font"":16}",0
+cross-browser,webkit,27.2,1.64.1,C5,首页无横向溢出 @1440px,PASS,doc=1440 win=1440,0
+cross-browser,webkit,27.2,1.64.1,C5,文章页无横向溢出 @1440px,PASS,doc=1440 win=1440,0
+cross-browser,webkit,27.2,1.64.1,C5,正文可读 @1440px,PASS,"{""chars"":1054,""font"":16}",0
+cross-browser,webkit,27.2,1.64.1,C5,主题切换生效,PASS,light -> dark,0
+cross-browser,webkit,27.2,1.64.1,C5,主题选择刷新后保持,PASS,persisted=dark,0
+cross-browser,webkit,27.2,1.64.1,C5,响应式/主题流程无未处理异常,PASS,none,0
+cross-browser-offline,chromium,156.0.8078.4,1.64.1,D1,首次在线访问完成 SW 注册与接管,PASS,"{""active"":true,""script"":""http://127.0.0.1:55152/blog/sw.js"",""controlled"":true}",0
+cross-browser-offline,chromium,156.0.8078.4,1.64.1,D2,安装期缓存包含外壳与首屏资源,PASS,cache=blog-2026-11-18-1 entries=12,0
+cross-browser-offline,chromium,156.0.8078.4,1.64.1,D3,离线访问已缓存首页,PASS,post_links=18,0
+cross-browser-offline,chromium,156.0.8078.4,1.64.1,D4,离线读取已缓存文章,PASS,online=4923 offline=4923,0
+cross-browser-offline,chromium,156.0.8078.4,1.64.1,D5,目标资源离线前确实未缓存,PASS,cached=false,0
+cross-browser-offline,chromium,156.0.8078.4,1.64.1,D5,未缓存页面离线时走明确兜底页,PASS,"status=503 fromSW=true serverHits=0->7 {""flag"":""1"",""title"":""当前离线"",""chars"":30,""controlled"":true}",0
+cross-browser-offline,chromium,156.0.8078.4,1.64.1,D6,网络恢复后重新访问正常,PASS,,0
+cross-browser-offline,chromium,156.0.8078.4,1.64.1,D7,新版本 SW 激活并切换缓存版本,PASS,"blog-2026-11-18-1-t2,blog-rt-2026-11-18-1-t2",0
+cross-browser-offline,chromium,156.0.8078.4,1.64.1,D7,新版本激活后旧版本缓存被清理,PASS,"caches=blog-2026-11-18-1-t2,blog-rt-2026-11-18-1-t2 reg={""active"":""http://127.0.0.1:55152/blog/sw.js"",""waiting"":false,""installing"":false,""ctrlChanges"":1} waitMs=1555",0
+cross-browser-offline,chromium,156.0.8078.4,1.64.1,D7,版本切换后页面仍可正常使用,PASS,,0
+cross-browser-offline,chromium,156.0.8078.4,1.64.1,D8,新版本安装失败时不产生半成品缓存,PASS,"before=blog-2026-11-18-1,blog-rt-2026-11-18-1 after=blog-2026-11-18-1,blog-rt-2026-11-18-1",0
+cross-browser-offline,chromium,156.0.8078.4,1.64.1,D8,旧版本 SW 仍为激活状态,PASS,http://127.0.0.1:55152/blog/sw.js,0
+cross-browser-offline,chromium,156.0.8078.4,1.64.1,D8,安装失败后离线仍由旧版本兜底,PASS,,0
+cross-browser-offline,chromium,156.0.8078.4,1.64.1,D9,多标签页升级后均保持受控,PASS,updated=true ctrl=true/true,0
+cross-browser-offline,chromium,156.0.8078.4,1.64.1,D9,多标签页升级后均能正常刷新,PASS,,0
+cross-browser-offline,chromium,156.0.8078.4,1.64.1,D10,存储不可用时首页与编辑器仍可用,PASS,post_links=18 draft=true,0
+cross-browser-offline,chromium,156.0.8078.4,1.64.1,E0,基线：安装期快照完整,PASS,entries=12,0
+cross-browser-offline,chromium,156.0.8078.4,1.64.1,E0,基线：快照可用时导航走 cache-mode,PASS,208ms (cache-mode),0
+cross-browser-offline,chromium,156.0.8078.4,1.64.1,E1,异常注入：从安装期快照移除首屏资源,PASS,/js/projects.js,0
+cross-browser-offline,chromium,156.0.8078.4,1.64.1,E1,快照不完整时导航降级为 network-mode,PASS,685ms (network-mode),0
+cross-browser-offline,chromium,156.0.8078.4,1.64.1,E1,异常解除：首屏资源已回写快照,PASS,cache=blog-2026-11-18-1,0
+cross-browser-offline,chromium,156.0.8078.4,1.64.1,E1,异常解除后快照条目完整,PASS,entries=12,0
+cross-browser-offline,chromium,156.0.8078.4,1.64.1,E1,异常解除后同一 SW 生命周期未自愈（B8E1-003 仍存在）,PASS,687ms (network-mode),0
+cross-browser-offline,chromium,156.0.8078.4,1.64.1,E1,失败态下离线导航仍由快照兜底,PASS,post_links=18,0
+cross-browser-offline,chromium,156.0.8078.4,1.64.1,E1,复现过程无未处理运行时异常,PASS,none,0
+cross-browser-offline,firefox,157.0,1.64.1,D1,首次在线访问完成 SW 注册与接管,PASS,"{""active"":true,""script"":""http://127.0.0.1:55152/blog/sw.js"",""controlled"":true}",0
+cross-browser-offline,firefox,157.0,1.64.1,D2,安装期缓存包含外壳与首屏资源,PASS,cache=blog-2026-11-18-1 entries=12,0
+cross-browser-offline,firefox,157.0,1.64.1,D3,离线访问已缓存首页,PASS,post_links=18,0
+cross-browser-offline,firefox,157.0,1.64.1,D4,离线读取已缓存文章,PASS,online=4923 offline=4923,0
+cross-browser-offline,firefox,157.0,1.64.1,D5,目标资源离线前确实未缓存,PASS,cached=false,0
+cross-browser-offline,firefox,157.0,1.64.1,D5,未缓存页面离线时走明确兜底页,PASS,"status=503 fromSW=true serverHits=7->17 {""flag"":""1"",""title"":""当前离线"",""chars"":30,""controlled"":true}",0
+cross-browser-offline,firefox,157.0,1.64.1,D6,网络恢复后重新访问正常,PASS,,0
+cross-browser-offline,firefox,157.0,1.64.1,D7,新版本 SW 激活并切换缓存版本,PASS,"blog-2026-11-18-1-t2,blog-rt-2026-11-18-1-t2",0
+cross-browser-offline,firefox,157.0,1.64.1,D7,新版本激活后旧版本缓存被清理,PASS,"caches=blog-2026-11-18-1-t2,blog-rt-2026-11-18-1-t2 reg={""active"":""http://127.0.0.1:55152/blog/sw.js"",""waiting"":false,""installing"":false,""ctrlChanges"":1} waitMs=525",0
+cross-browser-offline,firefox,157.0,1.64.1,D7,版本切换后页面仍可正常使用,PASS,,0
+cross-browser-offline,firefox,157.0,1.64.1,D8,新版本安装失败时不产生半成品缓存,PASS,"before=blog-2026-11-18-1,blog-rt-2026-11-18-1 after=blog-2026-11-18-1,blog-rt-2026-11-18-1",0
+cross-browser-offline,firefox,157.0,1.64.1,D8,旧版本 SW 仍为激活状态,PASS,http://127.0.0.1:55152/blog/sw.js,0
+cross-browser-offline,firefox,157.0,1.64.1,D8,安装失败后离线仍由旧版本兜底,PASS,,0
+cross-browser-offline,firefox,157.0,1.64.1,D9,多标签页升级后均保持受控,PASS,updated=true ctrl=true/true,0
+cross-browser-offline,firefox,157.0,1.64.1,D9,多标签页升级后均能正常刷新,PASS,,0
+cross-browser-offline,firefox,157.0,1.64.1,D10,存储不可用时首页与编辑器仍可用,PASS,post_links=18 draft=true,0
+cross-browser-offline,firefox,157.0,1.64.1,E0,基线：安装期快照完整,PASS,entries=12,0
+cross-browser-offline,firefox,157.0,1.64.1,E0,基线：快照可用时导航走 cache-mode,PASS,302ms (cache-mode),0
+cross-browser-offline,firefox,157.0,1.64.1,E1,异常注入：从安装期快照移除首屏资源,PASS,/js/projects.js,0
+cross-browser-offline,firefox,157.0,1.64.1,E1,快照不完整时导航降级为 network-mode,PASS,770ms (network-mode),0
+cross-browser-offline,firefox,157.0,1.64.1,E1,异常解除：首屏资源已回写快照,PASS,cache=blog-2026-11-18-1,0
+cross-browser-offline,firefox,157.0,1.64.1,E1,异常解除后快照条目完整,PASS,entries=12,0
+cross-browser-offline,firefox,157.0,1.64.1,E1,异常解除后同一 SW 生命周期未自愈（B8E1-003 仍存在）,PASS,770ms (network-mode),0
+cross-browser-offline,firefox,157.0,1.64.1,E1,失败态下离线导航仍由快照兜底,PASS,post_links=18,0
+cross-browser-offline,firefox,157.0,1.64.1,E1,复现过程无未处理运行时异常,PASS,none,0
+cross-browser-offline,webkit,27.2,1.64.1,D1,首次在线访问完成 SW 注册与接管,PASS,"{""active"":true,""script"":""http://127.0.0.1:55152/blog/sw.js"",""controlled"":true}",0
+cross-browser-offline,webkit,27.2,1.64.1,D2,安装期缓存包含外壳与首屏资源,PASS,cache=blog-2026-11-18-1 entries=12,0
+cross-browser-offline,webkit,27.2,1.64.1,D3,离线访问已缓存首页,PASS,post_links=18,0
+cross-browser-offline,webkit,27.2,1.64.1,D4,离线读取已缓存文章,PASS,online=4837 offline=4837,0
+cross-browser-offline,webkit,27.2,1.64.1,D5,目标资源离线前确实未缓存,PASS,cached=false,0
+cross-browser-offline,webkit,27.2,1.64.1,D5,未缓存页面离线时走明确兜底页,PASS,"status=503 fromSW=true serverHits=17->22 {""flag"":""1"",""title"":""当前离线"",""chars"":30,""controlled"":true}",0
+cross-browser-offline,webkit,27.2,1.64.1,D6,网络恢复后重新访问正常,PASS,,0
+cross-browser-offline,webkit,27.2,1.64.1,D7,新版本 SW 激活并切换缓存版本,PASS,"blog-2026-11-18-1-t2,blog-rt-2026-11-18-1-t2",0
+cross-browser-offline,webkit,27.2,1.64.1,D7,新版本激活后旧版本缓存被清理,PASS,"caches=blog-2026-11-18-1-t2,blog-rt-2026-11-18-1-t2 reg={""active"":""http://127.0.0.1:55152/blog/sw.js"",""waiting"":false,""installing"":false,""ctrlChanges"":1} waitMs=540",0
+cross-browser-offline,webkit,27.2,1.64.1,D7,版本切换后页面仍可正常使用,PASS,,0
+cross-browser-offline,webkit,27.2,1.64.1,D8,新版本安装失败时不产生半成品缓存,PASS,"before=blog-2026-11-18-1,blog-rt-2026-11-18-1 after=blog-2026-11-18-1,blog-rt-2026-11-18-1",0
+cross-browser-offline,webkit,27.2,1.64.1,D8,旧版本 SW 仍为激活状态,PASS,http://127.0.0.1:55152/blog/sw.js,0
+cross-browser-offline,webkit,27.2,1.64.1,D8,安装失败后离线仍由旧版本兜底,PASS,,0
+cross-browser-offline,webkit,27.2,1.64.1,D9,多标签页升级后均保持受控,PASS,updated=true ctrl=true/true,0
+cross-browser-offline,webkit,27.2,1.64.1,D9,多标签页升级后均能正常刷新,PASS,,0
+cross-browser-offline,webkit,27.2,1.64.1,D10,存储不可用时首页与编辑器仍可用,PASS,post_links=18 draft=true,0
+cross-browser-offline,webkit,27.2,1.64.1,E0,基线：安装期快照完整,PASS,entries=12,0
+cross-browser-offline,webkit,27.2,1.64.1,E0,基线：快照可用时导航走 cache-mode,PASS,208ms (cache-mode),0
+cross-browser-offline,webkit,27.2,1.64.1,E1,异常注入：从安装期快照移除首屏资源,PASS,/js/projects.js,0
+cross-browser-offline,webkit,27.2,1.64.1,E1,快照不完整时导航降级为 network-mode,PASS,685ms (network-mode),0
+cross-browser-offline,webkit,27.2,1.64.1,E1,异常解除：首屏资源已回写快照,PASS,cache=blog-2026-11-18-1,0
+cross-browser-offline,webkit,27.2,1.64.1,E1,异常解除后快照条目完整,PASS,entries=12,0
+cross-browser-offline,webkit,27.2,1.64.1,E1,异常解除后同一 SW 生命周期未自愈（B8E1-003 仍存在）,PASS,684ms (network-mode),0
+cross-browser-offline,webkit,27.2,1.64.1,E1,失败态下离线导航仍由快照兜底,PASS,post_links=18,0
+cross-browser-offline,webkit,27.2,1.64.1,E1,复现过程无未处理运行时异常,PASS,none,0
