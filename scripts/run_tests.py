@@ -154,6 +154,8 @@ TESTS = [
      'desc': 'B8E3A：测试运行器（选择/BLOCKED 汇总/超时进程树/中断清理/耗时报告）'},
     {'name': 'port-isolation', 'file': 'tests/test48_port_isolation.py', 'kind': 'python',
      'desc': 'B8E3B1：动态端口分配 / TEST_PORT 覆盖 / 端口释放与启动失败'},
+    {'name': 'build-lock', 'file': 'tests/test49_content_build_lock.py', 'kind': 'python',
+     'desc': 'B8E3BR：构建锁覆盖完整 sync 临界区 / replace 失败临时文件清理 / 只读契约 / 锁超时'},
     {'name': 'image-check', 'file': 'scripts/check_images.py', 'kind': 'python', 'args': ['--check'],
      'desc': 'B8D2B：发布前图片资源门禁（缺失图片必须失败，不允许降级为 SKIP/WARNING）',
      'pass_marker': 'OK:'},

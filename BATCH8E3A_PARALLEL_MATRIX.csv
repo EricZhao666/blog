@@ -1,63 +1,64 @@
-suite,kind,port_mode,class,evidence,verified_with,blocking_resource,next_action,validated_pair,limitations
-audit,jsdom,OS ephemeral,NEED_ISOLATION,listen(0) + 真实端口回写；受影响套件 PASS,,固定端口已消除；全局并发未验证,待 8E-3B-2 组合实验,,端口已隔离；全局并行安全未验证
-test6,jsdom,OS ephemeral,NEED_ISOLATION,listen(0) + 真实端口回写；受影响套件 PASS,,固定端口已消除；全局并发未验证,待 8E-3B-2 组合实验,,端口已隔离；全局并行安全未验证
-test7,jsdom,OS ephemeral,NEED_ISOLATION,listen(0) + 真实端口回写；受影响套件 PASS,,固定端口已消除；全局并发未验证,待 8E-3B-2 组合实验,,端口已隔离；全局并行安全未验证
-test8,jsdom,OS ephemeral,NEED_ISOLATION,listen(0) + 真实端口回写；受影响套件 PASS,,固定端口已消除；全局并发未验证,待 8E-3B-2 组合实验,,端口已隔离；全局并行安全未验证
-test9,jsdom,OS ephemeral,NEED_ISOLATION,listen(0) + 真实端口回写；受影响套件 PASS,,固定端口已消除；全局并发未验证,待 8E-3B-2 组合实验,,端口已隔离；全局并行安全未验证
-test10,jsdom,OS ephemeral,NEED_ISOLATION,listen(0) + 真实端口回写；受影响套件 PASS,,固定端口已消除；全局并发未验证,待 8E-3B-2 组合实验,,端口已隔离；全局并行安全未验证
-test11,jsdom,OS ephemeral,NEED_ISOLATION,listen(0) + 真实端口回写；受影响套件 PASS,test11 + test20,固定端口已消除；组合级无 EADDRINUSE,仅允许在已验证组合中试验；不得全局并行,test11 + test20,端口已隔离；全局并行安全未验证
-test12,python,none,UNKNOWN,无监听端口；Python 临时目录隔离,,无并发实测,保持现状,,无并发实测
-test13,python,none,UNKNOWN,无监听端口；Python 临时目录隔离,,无并发实测,保持现状,,无并发实测
-test14,jsdom,OS ephemeral,NEED_ISOLATION,listen(0) + 真实端口回写；受影响套件 PASS,,固定端口已消除；全局并发未验证,待 8E-3B-2 组合实验,,端口已隔离；全局并行安全未验证
-test15,python,none,UNKNOWN,无监听端口；Python 临时目录隔离,,无并发实测,保持现状,,无并发实测
-test16,jsdom,OS ephemeral,NEED_ISOLATION,listen(0) + 真实端口回写；受影响套件 PASS,test16 + performance-accessibility; test16 + test43,固定端口已消除；组合级无 EADDRINUSE,仅允许在已验证组合中试验；不得全局并行,test16 + performance-accessibility; test16 + test43,端口已隔离；全局并行安全未验证
-test17,python,none,UNKNOWN,无监听端口；Python 临时目录隔离,,无并发实测,保持现状,,无并发实测
-test18,jsdom,none,UNKNOWN,无监听端口；Python 临时目录隔离,,无并发实测,保持现状,,无并发实测
-split-check,python,none,UNKNOWN,无监听端口；Python 临时目录隔离,,无并发实测,保持现状,,无并发实测
-test19,python,none,UNKNOWN,无监听端口；Python 临时目录隔离,,无并发实测,保持现状,,无并发实测
-test20,jsdom,OS ephemeral,NEED_ISOLATION,listen(0) + 真实端口回写；受影响套件 PASS,test11 + test20,固定端口已消除；组合级无 EADDRINUSE,仅允许在已验证组合中试验；不得全局并行,test11 + test20,端口已隔离；全局并行安全未验证
-test21,python,none,UNKNOWN,无监听端口；Python 临时目录隔离,,无并发实测,保持现状,,无并发实测
-test22,python,none,UNKNOWN,无监听端口；Python 临时目录隔离,,无并发实测,保持现状,,无并发实测
-test23,python,none,SERIAL_REQUIRED,无监听端口；Python 临时目录隔离,,Windows 文件共享冲突,保持串行，先修复 C17,,"C17 20 次采样 2 次 [0,1]；不得进入并行池"
-test24,jsdom,OS ephemeral,NEED_ISOLATION,listen(0) + 真实端口回写；受影响套件 PASS,test24 + test40,固定端口已消除；组合级无 EADDRINUSE,仅允许在已验证组合中试验；不得全局并行,test24 + test40,端口已隔离；全局并行安全未验证
-test25,python,none,UNKNOWN,无监听端口；Python 临时目录隔离,,无并发实测,保持现状,,无并发实测
-test26,python,none,UNKNOWN,无监听端口；Python 临时目录隔离,,无并发实测,保持现状,,无并发实测
-test27,python,none,UNKNOWN,无监听端口；Python 临时目录隔离,,无并发实测,保持现状,,无并发实测
-test28,python,none,UNKNOWN,无监听端口；Python 临时目录隔离,,无并发实测,保持现状,,无并发实测
-test29,python,none,UNKNOWN,无监听端口；Python 临时目录隔离,,无并发实测,保持现状,,无并发实测
-test30,python,none,UNKNOWN,无监听端口；Python 临时目录隔离,,无并发实测,保持现状,,无并发实测
-test31,python,none,UNKNOWN,无监听端口；Python 临时目录隔离,,无并发实测,保持现状,,无并发实测
-test32,jsdom,OS ephemeral,NEED_ISOLATION,listen(0) + 真实端口回写；受影响套件 PASS,,固定端口已消除；全局并发未验证,待 8E-3B-2 组合实验,,端口已隔离；全局并行安全未验证
-test33,python,none,UNKNOWN,无监听端口；Python 临时目录隔离,,无并发实测,保持现状,,无并发实测
-test34,python,none,UNKNOWN,无监听端口；Python 临时目录隔离,,无并发实测,保持现状,,无并发实测
-test35,jsdom,OS ephemeral,NEED_ISOLATION,listen(0) + 真实端口回写；受影响套件 PASS,,固定端口已消除；全局并发未验证,待 8E-3B-2 组合实验,,端口已隔离；全局并行安全未验证
-test36,jsdom,OS ephemeral,NEED_ISOLATION,listen(0) + 真实端口回写；受影响套件 PASS,,固定端口已消除；全局并发未验证,待 8E-3B-2 组合实验,,端口已隔离；全局并行安全未验证
-test37,jsdom,OS ephemeral,NEED_ISOLATION,listen(0) + 真实端口回写；受影响套件 PASS,,固定端口已消除；全局并发未验证,待 8E-3B-2 组合实验,,端口已隔离；全局并行安全未验证
-test38,jsdom,OS ephemeral,NEED_ISOLATION,listen(0) + 真实端口回写；受影响套件 PASS,,固定端口已消除；全局并发未验证,待 8E-3B-2 组合实验,,端口已隔离；全局并行安全未验证
-test39,jsdom,OS ephemeral,NEED_ISOLATION,listen(0) + 真实端口回写；受影响套件 PASS,,固定端口已消除；全局并发未验证,待 8E-3B-2 组合实验,,端口已隔离；全局并行安全未验证
-test40,jsdom,OS ephemeral,NEED_ISOLATION,listen(0) + 真实端口回写；受影响套件 PASS,test24 + test40,固定端口已消除；组合级无 EADDRINUSE,仅允许在已验证组合中试验；不得全局并行,test24 + test40,端口已隔离；全局并行安全未验证
-test41,jsdom,OS ephemeral,NEED_ISOLATION,listen(0) + 真实端口回写；受影响套件 PASS,,固定端口已消除；全局并发未验证,待 8E-3B-2 组合实验,,端口已隔离；全局并行安全未验证
-test42,jsdom,OS ephemeral,NEED_ISOLATION,listen(0) + 真实端口回写；受影响套件 PASS,,固定端口已消除；全局并发未验证,待 8E-3B-2 组合实验,,端口已隔离；全局并行安全未验证
-test43,jsdom,OS ephemeral,PARALLEL_SAFE,listen(0) + 真实端口回写；受影响套件 PASS,test16 + test43,固定端口已消除；组合级无 EADDRINUSE,仅允许在已验证组合中试验；不得全局并行,test16 + test43,端口已隔离；全局并行安全未验证
-test44,jsdom,OS ephemeral,NEED_ISOLATION,listen(0) + 真实端口回写；受影响套件 PASS,,固定端口已消除；全局并发未验证,待 8E-3B-2 组合实验,,端口已隔离；全局并行安全未验证
-test45,python,none,UNKNOWN,无监听端口；Python 临时目录隔离,,无并发实测,保持现状,,无并发实测
-inline-handlers,jsdom,OS ephemeral,NEED_ISOLATION,listen(0) + 真实端口回写；受影响套件 PASS,,固定端口已消除；全局并发未验证,待 8E-3B-2 组合实验,,端口已隔离；全局并行安全未验证
-runner-infrastructure,python,none,UNKNOWN,无监听端口；Python 临时目录隔离,,无并发实测,保持现状,,无并发实测
-image-check,python,none,UNKNOWN,无监听端口；Python 临时目录隔离,,无并发实测,保持现状,,无并发实测
-content-check,python,none,UNKNOWN,无监听端口；Python 临时目录隔离,,无并发实测,保持现状,,无并发实测
-feed-check,python,none,UNKNOWN,无监听端口；Python 临时目录隔离,,无并发实测,保持现状,,无并发实测
-browser,browser,ephemeral,UNKNOWN,既有动态端口；本次未改,,无并发实测,保持现状,,Chromium CPU/内存竞争未量化
-sw-consistency,browser,ephemeral,UNKNOWN,既有动态端口；本次未改,,无并发实测,保持现状,,Chromium CPU/内存竞争未量化
-sw-upgrade,browser,ephemeral,UNKNOWN,既有动态端口；本次未改,,无并发实测,保持现状,,Chromium CPU/内存竞争未量化
-mobile-notes,browser,ephemeral,UNKNOWN,既有动态端口；本次未改,,无并发实测,保持现状,,Chromium CPU/内存竞争未量化
-course-seo,browser,ephemeral,UNKNOWN,既有动态端口；本次未改,,无并发实测,保持现状,,Chromium CPU/内存竞争未量化
-papers-deeplink,browser,ephemeral,UNKNOWN,既有动态端口；本次未改,,无并发实测,保持现状,,Chromium CPU/内存竞争未量化
-editor-ux,browser,ephemeral,UNKNOWN,既有动态端口；本次未改,,无并发实测,保持现状,,Chromium CPU/内存竞争未量化
-editor-history,browser,ephemeral,UNKNOWN,既有动态端口；本次未改,,无并发实测,保持现状,,Chromium CPU/内存竞争未量化
-search-ux,browser,ephemeral,UNKNOWN,既有动态端口；本次未改,,无并发实测,保持现状,,Chromium CPU/内存竞争未量化
-search-interaction,browser,ephemeral,UNKNOWN,既有动态端口；本次未改,,无并发实测,保持现状,,Chromium CPU/内存竞争未量化
-reading-experience,browser,ephemeral,UNKNOWN,既有动态端口；本次未改,,无并发实测,保持现状,,Chromium CPU/内存竞争未量化
-image-lightbox,browser,ephemeral,UNKNOWN,既有动态端口；本次未改,,无并发实测,保持现状,,Chromium CPU/内存竞争未量化
-ui-refresh,browser,ephemeral,UNKNOWN,既有动态端口；本次未改,,无并发实测,保持现状,,Chromium CPU/内存竞争未量化
-performance-accessibility,browser,OS ephemeral,NEED_ISOLATION,listen(0) + 真实端口回写；受影响套件 PASS,test16 + performance-accessibility,固定端口已消除；组合级无 EADDRINUSE,仅允许在已验证组合中试验；不得全局并行,test16 + performance-accessibility,端口已隔离；全局并行安全未验证
-port-isolation,python,OS ephemeral fixture,UNKNOWN,12/12 PASS；两实例动态端口不同,,仅 fixture 级验证,可加入后续并行实验候选,,未与真实测试套件组合并发
+suite,kind,port_mode,shared_files,temp_directory,browser_profile,artifact_conflict,validated_pair,serial_result,parallel_result,parallel_status,evidence,limitations
+audit,jsdom,OS ephemeral,none (mutable files),per-suite tempfile,n/a,none/unknown,,PASS (B8E3BR full),NOT_RUN,NEED_ISOLATION,listen(0) + 真实端口回写；受影响套件 PASS,端口已隔离；全局并行安全未验证
+test6,jsdom,OS ephemeral,none (mutable files),per-suite tempfile,n/a,none/unknown,,PASS (B8E3BR full),NOT_RUN,NEED_ISOLATION,listen(0) + 真实端口回写；受影响套件 PASS,端口已隔离；全局并行安全未验证
+test7,jsdom,OS ephemeral,none (mutable files),per-suite tempfile,n/a,none/unknown,,PASS (B8E3BR full),NOT_RUN,NEED_ISOLATION,listen(0) + 真实端口回写；受影响套件 PASS,端口已隔离；全局并行安全未验证
+test8,jsdom,OS ephemeral,none (mutable files),per-suite tempfile,n/a,none/unknown,,PASS (B8E3BR full),NOT_RUN,NEED_ISOLATION,listen(0) + 真实端口回写；受影响套件 PASS,端口已隔离；全局并行安全未验证
+test9,jsdom,OS ephemeral,none (mutable files),per-suite tempfile,n/a,none/unknown,,PASS (B8E3BR full),NOT_RUN,NEED_ISOLATION,listen(0) + 真实端口回写；受影响套件 PASS,端口已隔离；全局并行安全未验证
+test10,jsdom,OS ephemeral,none (mutable files),per-suite tempfile,n/a,none/unknown,,PASS (B8E3BR full),NOT_RUN,NEED_ISOLATION,listen(0) + 真实端口回写；受影响套件 PASS,端口已隔离；全局并行安全未验证
+test11,jsdom,OS ephemeral,none (mutable files),per-suite tempfile,n/a,none/unknown,test11 + test20,PASS (B8E3BR full),PAIR_PASS,NEED_ISOLATION,listen(0) + 真实端口回写；受影响套件 PASS；verified_with=test11 + test20,端口已隔离；全局并行安全未验证
+test12,python,none,none (mutable files),tempfile.mkdtemp,n/a,none/unknown,,PASS (B8E3BR full),NOT_RUN,UNKNOWN,无监听端口；Python 临时目录隔离,无并发实测
+test13,python,none,none (mutable files),tempfile.mkdtemp,n/a,none/unknown,,PASS (B8E3BR full),NOT_RUN,UNKNOWN,无监听端口；Python 临时目录隔离,无并发实测
+test14,jsdom,OS ephemeral,none (mutable files),per-suite tempfile,n/a,none/unknown,,PASS (B8E3BR full),NOT_RUN,NEED_ISOLATION,listen(0) + 真实端口回写；受影响套件 PASS,端口已隔离；全局并行安全未验证
+test15,python,none,none (mutable files),tempfile.mkdtemp,n/a,none/unknown,,PASS (B8E3BR full),NOT_RUN,UNKNOWN,无监听端口；Python 临时目录隔离,无并发实测
+test16,jsdom,OS ephemeral,none (mutable files),per-suite tempfile,n/a,none/unknown,test16 + performance-accessibility; test16 + test43,PASS (B8E3BR full),PAIR_PASS,NEED_ISOLATION,listen(0) + 真实端口回写；受影响套件 PASS；verified_with=test16 + performance-accessibility; test16 + test43,端口已隔离；全局并行安全未验证
+test17,python,none,none (mutable files),tempfile.mkdtemp,n/a,none/unknown,,PASS (B8E3BR full),NOT_RUN,UNKNOWN,无监听端口；Python 临时目录隔离,无并发实测
+test18,jsdom,none,none (mutable files),per-suite tempfile,n/a,none/unknown,,PASS (B8E3BR full),NOT_RUN,UNKNOWN,无监听端口；Python 临时目录隔离,无并发实测
+split-check,python,none,none,none (read-only repo),n/a,none/unknown,,PASS (B8E3BR full),NOT_RUN,UNKNOWN,无监听端口；Python 临时目录隔离,无并发实测
+test19,python,none,none (mutable files),tempfile.mkdtemp,n/a,none/unknown,,PASS (B8E3BR full),NOT_RUN,UNKNOWN,无监听端口；Python 临时目录隔离,无并发实测
+test20,jsdom,OS ephemeral,none (mutable files),per-suite tempfile,n/a,none/unknown,test11 + test20,PASS (B8E3BR full),PAIR_PASS,NEED_ISOLATION,listen(0) + 真实端口回写；受影响套件 PASS；verified_with=test11 + test20,端口已隔离；全局并行安全未验证
+test21,python,none,none (mutable files),tempfile.mkdtemp,n/a,none/unknown,,PASS (B8E3BR full),NOT_RUN,UNKNOWN,无监听端口；Python 临时目录隔离,无并发实测
+test22,python,none,none (mutable files),tempfile.mkdtemp,n/a,none/unknown,,PASS (B8E3BR full),NOT_RUN,UNKNOWN,无监听端口；Python 临时目录隔离,无并发实测
+test23,python,none,none (mutable files),tempfile.mkdtemp,n/a,none/unknown,,PASS (B8E3BR full),NOT_RUN,NEED_ISOLATION,无监听端口；Python 临时目录隔离,C17 修复只覆盖 --sync 临界区；--check/--dry-run 仍无锁只读
+test24,jsdom,OS ephemeral,none (mutable files),per-suite tempfile,n/a,none/unknown,test24 + test40,PASS (B8E3BR full),PAIR_PASS,NEED_ISOLATION,listen(0) + 真实端口回写；受影响套件 PASS；verified_with=test24 + test40,端口已隔离；全局并行安全未验证
+test25,python,none,none (mutable files),tempfile.mkdtemp,n/a,none/unknown,,PASS (B8E3BR full),NOT_RUN,UNKNOWN,无监听端口；Python 临时目录隔离,无并发实测
+test26,python,none,none (mutable files),tempfile.mkdtemp,n/a,none/unknown,,PASS (B8E3BR full),NOT_RUN,UNKNOWN,无监听端口；Python 临时目录隔离,无并发实测
+test27,python,none,none (mutable files),tempfile.mkdtemp,n/a,none/unknown,,PASS (B8E3BR full),NOT_RUN,UNKNOWN,无监听端口；Python 临时目录隔离,无并发实测
+test28,python,none,none (mutable files),tempfile.mkdtemp,n/a,none/unknown,,PASS (B8E3BR full),NOT_RUN,UNKNOWN,无监听端口；Python 临时目录隔离,无并发实测
+test29,python,none,none (mutable files),tempfile.mkdtemp,n/a,none/unknown,,PASS (B8E3BR full),NOT_RUN,UNKNOWN,无监听端口；Python 临时目录隔离,无并发实测
+test30,python,none,none (mutable files),tempfile.mkdtemp,n/a,none/unknown,,PASS (B8E3BR full),NOT_RUN,UNKNOWN,无监听端口；Python 临时目录隔离,无并发实测
+test31,python,none,none (mutable files),tempfile.mkdtemp,n/a,none/unknown,,PASS (B8E3BR full),NOT_RUN,UNKNOWN,无监听端口；Python 临时目录隔离,无并发实测
+test32,jsdom,OS ephemeral,none (mutable files),per-suite tempfile,n/a,none/unknown,,PASS (B8E3BR full),NOT_RUN,NEED_ISOLATION,listen(0) + 真实端口回写；受影响套件 PASS,端口已隔离；全局并行安全未验证
+test33,python,none,none (mutable files),tempfile.mkdtemp,n/a,none/unknown,,PASS (B8E3BR full),NOT_RUN,UNKNOWN,无监听端口；Python 临时目录隔离,无并发实测
+test34,python,none,none (mutable files),tempfile.mkdtemp,n/a,none/unknown,,PASS (B8E3BR full),NOT_RUN,UNKNOWN,无监听端口；Python 临时目录隔离,无并发实测
+test35,jsdom,OS ephemeral,none (mutable files),per-suite tempfile,n/a,none/unknown,,PASS (B8E3BR full),NOT_RUN,NEED_ISOLATION,listen(0) + 真实端口回写；受影响套件 PASS,端口已隔离；全局并行安全未验证
+test36,jsdom,OS ephemeral,none (mutable files),per-suite tempfile,n/a,none/unknown,,PASS (B8E3BR full),NOT_RUN,NEED_ISOLATION,listen(0) + 真实端口回写；受影响套件 PASS,端口已隔离；全局并行安全未验证
+test37,jsdom,OS ephemeral,none (mutable files),per-suite tempfile,n/a,none/unknown,,PASS (B8E3BR full),NOT_RUN,NEED_ISOLATION,listen(0) + 真实端口回写；受影响套件 PASS,端口已隔离；全局并行安全未验证
+test38,jsdom,OS ephemeral,none (mutable files),per-suite tempfile,n/a,none/unknown,,PASS (B8E3BR full),NOT_RUN,NEED_ISOLATION,listen(0) + 真实端口回写；受影响套件 PASS,端口已隔离；全局并行安全未验证
+test39,jsdom,OS ephemeral,none (mutable files),per-suite tempfile,n/a,none/unknown,,PASS (B8E3BR full),NOT_RUN,NEED_ISOLATION,listen(0) + 真实端口回写；受影响套件 PASS,端口已隔离；全局并行安全未验证
+test40,jsdom,OS ephemeral,none (mutable files),per-suite tempfile,n/a,none/unknown,test24 + test40,PASS (B8E3BR full),PAIR_PASS,NEED_ISOLATION,listen(0) + 真实端口回写；受影响套件 PASS；verified_with=test24 + test40,端口已隔离；全局并行安全未验证
+test41,jsdom,OS ephemeral,none (mutable files),per-suite tempfile,n/a,none/unknown,,PASS (B8E3BR full),NOT_RUN,NEED_ISOLATION,listen(0) + 真实端口回写；受影响套件 PASS,端口已隔离；全局并行安全未验证
+test42,jsdom,OS ephemeral,none (mutable files),per-suite tempfile,n/a,none/unknown,,PASS (B8E3BR full),NOT_RUN,NEED_ISOLATION,listen(0) + 真实端口回写；受影响套件 PASS,端口已隔离；全局并行安全未验证
+test43,jsdom,OS ephemeral,none (mutable files),per-suite tempfile,n/a,none/unknown,test16 + test43,PASS (B8E3BR full),PAIR_PASS (test16+test43),PARALLEL_SAFE,listen(0) + 真实端口回写；受影响套件 PASS；verified_with=test16 + test43,端口已隔离；全局并行安全未验证
+test44,jsdom,OS ephemeral,none (mutable files),per-suite tempfile,n/a,none/unknown,,PASS (B8E3BR full),NOT_RUN,NEED_ISOLATION,listen(0) + 真实端口回写；受影响套件 PASS,端口已隔离；全局并行安全未验证
+test45,python,none,none (mutable files),tempfile.mkdtemp,n/a,none/unknown,,PASS (B8E3BR full),NOT_RUN,UNKNOWN,无监听端口；Python 临时目录隔离,无并发实测
+inline-handlers,jsdom,OS ephemeral,none (mutable files),per-suite tempfile,n/a,none/unknown,,PASS (B8E3BR full),NOT_RUN,NEED_ISOLATION,listen(0) + 真实端口回写；受影响套件 PASS,端口已隔离；全局并行安全未验证
+runner-infrastructure,python,none,none (mutable files),tempfile.mkdtemp,n/a,none/unknown,,PASS (B8E3BR full),NOT_RUN,UNKNOWN,无监听端口；Python 临时目录隔离,无并发实测
+image-check,python,none,none,none (read-only repo),n/a,none/unknown,,PASS (B8E3BR full),NOT_RUN,UNKNOWN,无监听端口；Python 临时目录隔离,无并发实测
+content-check,python,none,none,none (read-only repo),n/a,none/unknown,,PASS (B8E3BR full),NOT_RUN,UNKNOWN,无监听端口；Python 临时目录隔离,无并发实测
+feed-check,python,none,none,none (read-only repo),n/a,none/unknown,,PASS (B8E3BR full),NOT_RUN,UNKNOWN,无监听端口；Python 临时目录隔离,无并发实测
+browser,browser,ephemeral,none (mutable files),per-run BrowserContext profile,unique per run,none/unknown,,PASS (B8E3BR full),NOT_RUN,UNKNOWN,既有动态端口；本次未改,Chromium CPU/内存竞争未量化
+sw-consistency,browser,ephemeral,none (mutable files),per-run BrowserContext profile,unique per run,none/unknown,,PASS (B8E3BR full),NOT_RUN,UNKNOWN,既有动态端口；本次未改,Chromium CPU/内存竞争未量化
+sw-upgrade,browser,ephemeral,none (mutable files),per-run BrowserContext profile,unique per run,none/unknown,,PASS (B8E3BR full),NOT_RUN,UNKNOWN,既有动态端口；本次未改,Chromium CPU/内存竞争未量化
+mobile-notes,browser,ephemeral,none (mutable files),per-run BrowserContext profile,unique per run,none/unknown,,PASS (B8E3BR full),NOT_RUN,UNKNOWN,既有动态端口；本次未改,Chromium CPU/内存竞争未量化
+course-seo,browser,ephemeral,none (mutable files),per-run BrowserContext profile,unique per run,none/unknown,,PASS (B8E3BR full),NOT_RUN,UNKNOWN,既有动态端口；本次未改,Chromium CPU/内存竞争未量化
+papers-deeplink,browser,ephemeral,none (mutable files),per-run BrowserContext profile,unique per run,none/unknown,,PASS (B8E3BR full),NOT_RUN,UNKNOWN,既有动态端口；本次未改,Chromium CPU/内存竞争未量化
+editor-ux,browser,ephemeral,none (mutable files),per-run BrowserContext profile,unique per run,none/unknown,,PASS (B8E3BR full),NOT_RUN,UNKNOWN,既有动态端口；本次未改,Chromium CPU/内存竞争未量化
+editor-history,browser,ephemeral,none (mutable files),per-run BrowserContext profile,unique per run,none/unknown,,PASS (B8E3BR full),NOT_RUN,UNKNOWN,既有动态端口；本次未改,Chromium CPU/内存竞争未量化
+search-ux,browser,ephemeral,none (mutable files),per-run BrowserContext profile,unique per run,none/unknown,,PASS (B8E3BR full),NOT_RUN,UNKNOWN,既有动态端口；本次未改,Chromium CPU/内存竞争未量化
+search-interaction,browser,ephemeral,none (mutable files),per-run BrowserContext profile,unique per run,none/unknown,,PASS (B8E3BR full),NOT_RUN,UNKNOWN,既有动态端口；本次未改,Chromium CPU/内存竞争未量化
+reading-experience,browser,ephemeral,none (mutable files),per-run BrowserContext profile,unique per run,none/unknown,,PASS (B8E3BR full),NOT_RUN,UNKNOWN,既有动态端口；本次未改,Chromium CPU/内存竞争未量化
+image-lightbox,browser,ephemeral,none (mutable files),per-run BrowserContext profile,unique per run,none/unknown,,PASS (B8E3BR full),NOT_RUN,UNKNOWN,既有动态端口；本次未改,Chromium CPU/内存竞争未量化
+ui-refresh,browser,ephemeral,none (mutable files),per-run BrowserContext profile,unique per run,none/unknown,,PASS (B8E3BR full),NOT_RUN,UNKNOWN,既有动态端口；本次未改,Chromium CPU/内存竞争未量化
+performance-accessibility,browser,OS ephemeral,none (mutable files),per-run BrowserContext profile,unique per run,none/unknown,test16 + performance-accessibility,PASS (B8E3BR full),PAIR_PASS,NEED_ISOLATION,listen(0) + 真实端口回写；受影响套件 PASS；verified_with=test16 + performance-accessibility,端口已隔离；全局并行安全未验证
+port-isolation,python,OS ephemeral fixture,none (mutable files),tempfile.mkdtemp,n/a,none/unknown,,PASS (B8E3BR full),NOT_RUN,UNKNOWN,12/12 PASS；两实例动态端口不同,未与真实测试套件组合并发
+build-lock,python,none,none (mutable files),tempfile.mkdtemp,n/a,none/unknown,,PASS (B8E3BR full),NOT_RUN,UNKNOWN,临时 fixture；锁按 root 隔离；25/25 PASS；verified_with=专项内部两实例/不同 root,仅专项内部并发与隔离验证

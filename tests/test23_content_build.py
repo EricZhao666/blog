@@ -29,6 +29,7 @@ import shutil
 import subprocess
 import sys
 import tempfile
+import time
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 BUILD = os.path.join(ROOT, 'scripts', 'build_content.py')
@@ -358,9 +359,38 @@ p2 = subprocess.Popen(cmd, cwd=ROOT, stdout=subprocess.PIPE, stderr=subprocess.P
 o1, e1 = p1.communicate()
 o2, e2 = p2.communicate()
 codes = sorted([p1.returncode, p2.returncode])
+same_after, detail_after = all_same(root7)
+check_after = chk(root7)
 check('C17 并发时不会出现两个都半途而废（0/0 或 0/3）', codes in ([0, 0], [0, 3]), codes)
-check('C17b 并发后产物仍可解析且身份集合一致', all_same(root7)[0] and chk(root7).returncode == 0)
+check('C17b 并发后产物仍可解析且身份集合一致',
+      same_after and check_after.returncode == 0)
 check('C17c 锁文件没有残留', not os.path.exists(os.path.join(root7, '.content-build.lock')))
+
+if codes not in ([0, 0], [0, 3]) or not same_after or check_after.returncode != 0:
+    diag_dir = os.path.join(ROOT, 'tests', 'reports')
+    os.makedirs(diag_dir, exist_ok=True)
+    diag = os.path.join(diag_dir, 'c17-diagnostic-%d.txt' % int(time.time()))
+    with io.open(diag, 'w', encoding='utf-8', newline='\n') as f:
+        f.write('C17 unexpected diagnostic\n')
+        f.write('codes=%r\n' % (codes,))
+        f.write('lock_exists=%r\n' % os.path.exists(os.path.join(root7, '.content-build.lock')))
+        f.write('artifacts=%r\n' % (detail_after,))
+        f.write('--check rc=%r\n' % check_after.returncode)
+        f.write('--check stdout:\n%s\n' % (check_after.stdout or ''))
+        f.write('--check stderr:\n%s\n' % (check_after.stderr or ''))
+        f.write('process 1 stdout:\n%s\n' % (o1 or ''))
+        f.write('process 1 stderr:\n%s\n' % (e1 or ''))
+        f.write('process 2 stdout:\n%s\n' % (o2 or ''))
+        f.write('process 2 stderr:\n%s\n' % (e2 or ''))
+        for base, _dirs, names in os.walk(root7):
+            for name in names:
+                if name.startswith('.tmp-build-') and name.endswith('.part'):
+                    f.write('staged temp: %s\n' % os.path.join(base, name))
+    print('C17_DIAG 已保存完整诊断：%s' % diag)
+    print('C17_DIAG process1 rc=%r stdout=%r stderr=%r'
+          % (p1.returncode, o1, e1))
+    print('C17_DIAG process2 rc=%r stdout=%r stderr=%r'
+          % (p2.returncode, o2, e2))
 
 def user_posts_js(items):
     return 'const USER_POSTS = ' + json.dumps(items, ensure_ascii=False, indent=2) + ';\n'
