@@ -5912,7 +5912,12 @@ document.addEventListener('click', function (e) {
     const name = 'knowledge-' + d.getFullYear() + '-' + pad(d.getMonth() + 1) + '-' + pad(d.getDate()) + '.json';
     if (typeof window.__downloadText === 'function') window.__downloadText(text, name);
     else downloadText(text, name);
-    Knowledge.toast('已导出 ' + data.records.length + ' 条记录', 'success');
+    if (data.complete === false) {
+      Knowledge.toast('已导出 ' + data.records.length + ' 条，但内容不完整：' +
+        (data.warning || '仅包含当前可用数据'), 'error');
+    } else {
+      Knowledge.toast('已导出 ' + data.records.length + ' 条记录', 'success');
+    }
   }).catch(function () { Knowledge.toast('导出失败', 'error'); });
 }, true);
 

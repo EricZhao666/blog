@@ -325,30 +325,49 @@
     });
   }
 
-  function safeMutate(key, updater, noteKey) {
+  // 统一写入结果：ok=已提交 / changed=确实写入或删除 / deleted=整条删除。
+  // 删除提交成功也必须通知其他标签页（旧实现只在 rec 非空时通知）。
+  function mutateWithOutcome(key, updater, noteKey) {
     // init 尚未完成时排队，避免首访详情页的浏览/收藏被静默丢弃
-    if (!backend) return ensureReady().then(function () { return safeMutate(key, updater, noteKey); });
-    return mutateRecord(key, updater).then(function (rec) {
-      if (rec) notify(noteKey ? [key] : [key]);
-      return rec;
-    }).catch(function (err) {
-      if (isQuotaError(err)) {
-        // 配额异常：最多一次符合保护规则的裁剪，然后重试一次
-        return pruneHistory(20).then(function () {
-          return mutateRecord(key, updater).then(function (rec) {
-            if (rec) notify([key]);
-            return rec;
-          });
-        }).catch(function (err2) {
-          switchToMemory('quota: ' + (err2 && err2.message || err2));
-          emit([]);
-          return null;
-        });
+    if (!backend) return ensureReady().then(function () { return mutateWithOutcome(key, updater, noteKey); });
+    var flags = { deleted: false, changed: false };
+    var wrapped = function (cur) {
+      var next = updater(cur);
+      if (next === null) {
+        // 删除不存在的记录 = 无变化；只有真正删掉了一条才广播
+        if (cur) { flags.deleted = true; flags.changed = true; }
+      } else if (next !== undefined) {
+        flags.changed = true;
       }
-      switchToMemory('write failed: ' + (err && err.message || err));
-      emit([]);
-      return null;
-    });
+      return next;
+    };
+    function run(isRetry) {
+      return mutateRecord(key, wrapped).then(function (rec) {
+        if (flags.changed) notify([key]);
+        return { ok: true, changed: flags.changed, deleted: flags.deleted, record: rec };
+      }).catch(function (err) {
+        if (isQuotaError(err) && !isRetry) {
+          // 配额异常：最多一次符合保护规则的裁剪，然后重试一次
+          return pruneHistory(20).then(function () {
+            flags.deleted = false;
+            flags.changed = false;
+            return run(true);
+          }).catch(function (err2) {
+            switchToMemory('quota: ' + (err2 && err2.message || err2));
+            emit([]);
+            return { ok: false, changed: false, deleted: false, record: null };
+          });
+        }
+        if (!isRetry) switchToMemory('write failed: ' + (err && err.message || err));
+        emit([]);
+        return { ok: false, changed: false, deleted: false, record: null };
+      });
+    }
+    return run(false);
+  }
+
+  function safeMutate(key, updater, noteKey) {
+    return mutateWithOutcome(key, updater, noteKey).then(function (r) { return r.record; });
   }
 
   // 历史裁剪：只裁剪"历史字段"；任何长期个人状态都必须保留。
@@ -590,8 +609,8 @@
       next.firstSeenAt = 0;
       next.lastSeenAt = 0;
       next.updatedAt = nowMs();
-      // 只删历史字段；若没有其他个人状态则整条删除
-      if (!next.fav && !next.later && next.readState !== 'reading' && !next.progress) return null;
+      // 只删历史字段；只有不存在任何长期个人状态时才整条删除
+      if (!hasPersonalState(next)) return null;
       return next;
     });
   }
@@ -613,14 +632,25 @@
     return p ? p.then(function () { return null; }) : Promise.resolve();
   }
 
+  var _lastReadOk = false;
+
   function getAllSafe() {
     if (!backend) return ensureReady().then(getAllSafe);
-    return backend.getAll().catch(function () { return Array.from(cache.values()); });
+    return backend.getAll().then(function (all) {
+      _lastReadOk = true;
+      return all;
+    }).catch(function () {
+      _lastReadOk = false;
+      return Array.from(cache.values());
+    });
   }
 
+  // 删除记录：成功时返回 { ok, deleted }；无变化返回 deleted=false；失败返回 ok=false
   function remove(key) {
-    if (!key) return Promise.resolve(null);
-    return safeMutate(key, function () { return null; });
+    if (!key) return Promise.resolve({ ok: false, deleted: false, changed: false });
+    return mutateWithOutcome(key, function () { return null; }).then(function (r) {
+      return { ok: r.ok, deleted: r.deleted, changed: r.changed };
+    });
   }
 
   function list(opts) {
@@ -676,15 +706,23 @@
 
   function exportData() {
     return getAllSafe().then(function (all) {
+      var fromDb = _lastReadOk;
+      var persistence = degraded ? 'memory' : (fromDb ? 'indexeddb' : 'cache');
+      var complete = !degraded && fromDb;
       return {
         app: 'ericzhao-blog',
         kind: 'knowledge',
         schemaVersion: SCHEMA_VERSION,
         exportedAt: new Date().toISOString(),
-        // 降级时导出的是"当前可用数据"，不宣称是完整持久化备份
-        persistence: degraded ? 'memory' : 'indexeddb',
+        // 只有"未降级 + 本次读取成功"才算完整持久化快照；
+        // 内存降级或读取失败时导出的是当前可用数据，必须显式标记为不完整。
+        persistence: persistence,
+        source: fromDb ? 'database' : 'cache',
         degraded: !!degraded,
-        complete: !degraded,
+        complete: complete,
+        warning: complete ? '' : (degraded
+          ? '本地数据库不可用，导出的是本次会话内存数据，刷新后会丢失'
+          : '读取本地数据库失败，导出内容来自缓存回退，可能不完整'),
         records: (all || []).map(publicRecord)
       };
     });

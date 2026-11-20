@@ -28,7 +28,7 @@ function check(name, cond, extra) {
 function makeBackend() {
   const map = new Map();
   const meta = new Map();
-  const state = { failMode: '', matchFail: '', setTimeout: null };
+  const state = { failMode: '', matchFail: '', setTimeout: null, failRead: false };
   let chain = Promise.resolve();
   function enqueue(fn) {
     const p = chain.then(fn, fn);
@@ -40,7 +40,10 @@ function makeBackend() {
     map: map,
     kind: 'memory',
     get(key) { return Promise.resolve(map.has(key) ? JSON.parse(JSON.stringify(map.get(key))) : null); },
-    getAll() { return Promise.resolve(Array.from(map.values()).map(function (r) { return JSON.parse(JSON.stringify(r)); })); },
+    getAll() {
+      if (state.failRead) return Promise.reject(new Error('injected read failure'));
+      return Promise.resolve(Array.from(map.values()).map(function (r) { return JSON.parse(JSON.stringify(r)); }));
+    },
     getMeta(k) { return Promise.resolve(meta.has(k) ? meta.get(k) : null); },
     setMeta(k, v) { meta.set(k, v); return Promise.resolve(); },
     mutate(key, updater) {
@@ -371,6 +374,71 @@ function seed(backend, n, extra) {
   check('T20 导出包含 persistence/complete 且正常时为 indexeddb',
     dump20.persistence === 'indexeddb' && dump20.complete === true && dump20.degraded === false,
     dump20.persistence + '/' + dump20.complete);
+
+  // T21 删除成功：返回 deleted=true 且广播变更
+  const b21 = makeBackend();
+  const m21 = loadModule(b21);
+  await m21.api.init();
+  await m21.api.setFlag('post', 'r21', 'fav', true, { title: 'R21' });
+  let ev21 = 0;
+  m21.api.subscribe(function () { ev21++; });
+  const res21 = await m21.api.remove('post:r21');
+  check('T21 删除记录成功并通知其他标签页',
+    res21.ok === true && res21.deleted === true && !b21.map.has('post:r21') && ev21 > 0,
+    JSON.stringify(res21) + ' events=' + ev21);
+
+  // T22 删除不存在的记录：无变化、不误报删除
+  const b22 = makeBackend();
+  const m22 = loadModule(b22);
+  await m22.api.init();
+  let ev22 = 0;
+  m22.api.subscribe(function () { ev22++; });
+  const res22 = await m22.api.remove('post:not-exist');
+  check('T22 删除不存在记录返回无变化',
+    res22.ok === true && res22.deleted === false && res22.changed === false && ev22 === 0,
+    JSON.stringify(res22) + ' events=' + ev22);
+
+  // T23 删除失败：不宣称成功，原记录仍在
+  const b23 = makeBackend();
+  const m23 = loadModule(b23);
+  await m23.api.init();
+  await m23.api.setFlag('post', 'r23', 'fav', true, { title: 'R23' });
+  b23.state.failMode = 'throw';
+  const res23 = await m23.api.remove('post:r23');
+  check('T23 删除失败不宣称成功且数据保留',
+    res23.ok === false && res23.deleted === false && b23.map.has('post:r23'),
+    JSON.stringify(res23));
+
+  // T24 手动清理历史保留已完成与有进度的记录
+  const b24 = makeBackend();
+  const m24 = loadModule(b24);
+  await m24.api.init();
+  await m24.api.recordView('post', 'done24', { title: 'D' });
+  await m24.api.recordView('post', 'prog24', { title: 'P' });
+  await m24.api.saveProgress('post', 'done24', 0.99);
+  await m24.api.saveProgress('post', 'prog24', 0.4);
+  await m24.api.clearHistory('post:done24');
+  await m24.api.clearHistory('post:prog24');
+  check('T24 手动清理历史保留 done/进度状态',
+    b24.map.has('post:done24') && b24.map.get('post:done24').readState === 'done' &&
+    b24.map.has('post:prog24') && b24.map.get('post:prog24').progress === 0.4 &&
+    b24.map.get('post:prog24').lastSeenAt === 0,
+    JSON.stringify(Array.from(b24.map.keys())));
+
+  // T25 读取失败时导出标记不完整（缓存回退不得宣称完整备份）
+  const b25 = makeBackend();
+  const m25 = loadModule(b25);
+  await m25.api.init();
+  await m25.api.setFlag('post', 'e25', 'fav', true, { title: 'E25' });
+  b25.state.failRead = true;
+  const dump25 = await m25.api.exportData();
+  b25.state.failRead = false;
+  const dump25b = await m25.api.exportData();
+  check('T25 读取失败导出 complete=false 且给出 warning',
+    dump25.complete === false && dump25.persistence === 'cache' && dump25.source === 'cache' &&
+    !!dump25.warning && dump25.records.length >= 1 &&
+    dump25b.complete === true && dump25b.persistence === 'indexeddb',
+    JSON.stringify({ bad: [dump25.complete, dump25.persistence, !!dump25.warning], good: dump25b.complete }));
 
   console.log('\n合计 ' + (pass + fail) + ' 项，PASS ' + pass + '，FAIL ' + fail);
   if (failures.length) console.log('失败项：' + failures.join(' / '));

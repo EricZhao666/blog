@@ -371,6 +371,34 @@ async function gotoKnowledge(page, tab) {
     }
     await s8.ctx.close();
 
+    // K18 真实双标签：删除记录同步 + 删除不存在记录不误报成功
+    const s9 = await newSession(browser, base);
+    await openFirstPost(s9.page);
+    await gotoKnowledge(s9.page, 'history');
+    const histA = await s9.page.locator('.km-item').count();
+    const B9 = await s9.ctx.newPage();
+    await B9.goto(base + PREFIX + '/index.html#/knowledge?tab=history', { waitUntil: 'load', timeout: 60000 });
+    await B9.waitForSelector('#kmList', { timeout: 20000 });
+    await sleep(700);
+    const histB = await B9.locator('.km-item').count();
+    await s9.page.locator('[data-km-remove="history"]').first().click();
+    let synced = false;
+    try {
+      await B9.waitForFunction(() => {
+        const list = document.getElementById('kmList');
+        return !!list && (list.querySelectorAll('.km-item').length === 0 || !!list.querySelector('.km-empty'));
+      }, null, { timeout: 5000 });
+      synced = true;
+    } catch (e) { synced = false; }
+    check('K18.1 删除记录后另一标签页列表同步', histA === 1 && histB === 1 && synced,
+      histA + '/' + histB + ' synced=' + synced);
+
+    const removeMissing = await B9.evaluate(() => Knowledge.remove('post:b9a1r-not-exist'));
+    check('K18.2 删除不存在记录返回无变化而非成功删除',
+      removeMissing.ok === true && removeMissing.deleted === false && removeMissing.changed === false,
+      JSON.stringify(removeMissing));
+    await s9.ctx.close();
+
     // K14 页面级错误
     check('K14 全流程无未处理运行时异常', s1.errors.length === 0, s1.errors.slice(0, 3).join(' | ') || 'none');
     await s1.ctx.close();

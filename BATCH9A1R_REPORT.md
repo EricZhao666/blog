@@ -40,12 +40,12 @@
 
 | 套件 | 结果 | 说明 |
 | --- | --- | --- |
-| `knowledge-store` | **20/20 PASS** | 原 15 项 + T16–T20（保护/容量/初始化/通知/导出标记） |
-| `knowledge-center` | **27/27 PASS** | 原 21 项 + K15–K17（双标签按钮同步、真实 IDB 并发、失效记录、恢复竞态） |
+| `knowledge-store` | **25/25 PASS** | 原 15 项 + T16–T25（保护/容量/初始化/通知/导出标记/删除语义） |
+| `knowledge-center` | **29/29 PASS** | 原 21 项 + K15–K18（双标签按钮与删除同步、真实 IDB 并发、失效记录、恢复竞态） |
 | `reading-experience` | PASS（47/47） | 继续阅读改动未影响目录/进度/锚点 |
 | 跨引擎 K1 | **12/12 PASS** | Chromium / Firefox / WebKit |
 | 离线 K2 | **15/15 PASS** | 三引擎 |
-| `--only knowledge-store knowledge-center reading-experience` | **PASS 3/3** | 定向回归 69.8s |
+| `--only knowledge-store knowledge-center` | **PASS 2/2** | 审查补充修复后的定向回归 52.2s |
 
 未运行本地 66 套全量：本轮仅修改知识模块与集成代码，按要求交由 PR CI 串行验收；默认命令与并行许可未变。
 
@@ -55,6 +55,16 @@
 - **展示上限**：继续阅读 6 条、浏览历史 100 条（与 MVP 约定一致）。
 - **失效内容**：区分"元数据未加载"（保留链接）与"确实不存在"（不可点击 + 移除）。
 - `js/knowledge.js` 仍是首屏 6 项资源之一，版本保持 `2026-11-20-1`；未改 SW 缓存策略，未删除用户 IndexedDB。
+
+## 5.1 审查补充修复（删除通知与导出完整性）
+
+| 问题 | 根因 | 修复 | 证据 |
+| --- | --- | --- | --- |
+| 删除提交成功后不广播 | `safeMutate` 仅在 `rec` 非空时通知，而整条删除返回 `null`，与失败同形 | 新增 `mutateWithOutcome`：区分 `ok / changed / deleted`；删除提交成功也 `notify([key])`；删除不存在记录记为无变化、不广播 | `T21`（deleted=true, events=1）、`T22`（deleted=false, events=0）、`T23`（失败 ok=false，记录保留）、`K18.1`（双标签删除同步） |
+| 手动清理历史可能误删已完成状态 | `clearHistory` 自带旧的保护条件，未复用 `hasPersonalState` | 统一改用 `hasPersonalState`（fav/later/readState≠none/progress>0/doneAt） | `T24`（done 与 0.4 进度均保留，历史字段清零） |
+| 读取失败时导出仍标记完整 | `getAllSafe` 失败回退缓存，但 `exportData` 只按 `degraded` 判断 | 增加 `_lastReadOk`；导出输出 `persistence:'cache'`、`source:'cache'`、`complete:false` 与明确 `warning`；UI 导出提示改为"内容不完整" | `T25`（缓存回退 complete=false、恢复后 true）、K9 仍为正常路径 |
+
+契约补充：`complete=true` 仅当"未降级 **且** 本次读取成功"；`complete=false` 时导出文件与 UI 都必须显式说明数据来源与限制。
 
 ## 6. 未解决风险
 
