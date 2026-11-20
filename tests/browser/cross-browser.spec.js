@@ -800,7 +800,54 @@ async function scenarioK3(env) {
   }
 }
 
-const SCENARIOS = { C1: scenarioC1, C2: scenarioC2, C3: scenarioC3, C4: scenarioC4, C5: scenarioC5, K1: scenarioK1, K2: scenarioK2, K3: scenarioK3 };
+// ---------------------------------------------------------------- K4 知识库分类/批量/导入（Batch 9A-2）
+async function scenarioK4(env) {
+  const r = env.reporter;
+  const s = await newSession(env.browser);
+  try {
+    const ok = await s.page.evaluate(async function () {
+      if (!window.Knowledge) return { ready: false };
+      await Knowledge.init();
+      const cat = await Knowledge.addCategory('跨引擎分类');
+      const ids = ['vla-model-intro', 'rl-from-mdp-to-ppo', 'slam-overview-filtering-to-graph'];
+      for (const id of ids) {
+        await Knowledge.recordView('post', id, { title: id });
+        await Knowledge.setFlag('post', id, 'fav', true);
+      }
+      await Knowledge.assignCategory('post:vla-model-intro', cat.category.id);
+      const moved = await Knowledge.bulk(['post:vla-model-intro'], 'cat', { catId: cat.category.id });
+      const listed = await Knowledge.list({ flag: 'fav', cat: cat.category.id });
+      const del = await Knowledge.removeCategory(cat.category.id);
+      const after = await Knowledge.list({ flag: 'fav' });
+      const dump = await Knowledge.exportData();
+      const v = Knowledge.validateImport(dump, {});
+      const imp = v.ok ? await Knowledge.applyImport(v.payload, { mode: 'merge', resolve: () => true }) : { ok: false };
+      const bulk = await Knowledge.bulk(['post:rl-from-mdp-to-ppo'], 'read-none');
+      const st = Knowledge.state('post', 'rl-from-mdp-to-ppo') || {};
+      return {
+        ready: true,
+        catName: cat.ok && cat.category.name,
+        moved: moved.ok, listed: listed.length,
+        delOk: del.ok, delMoved: del.moved, after: after.length,
+        dumpCats: dump.categories.length, schema: dump.schemaVersion,
+        importOk: imp.ok && imp.imported === 0,
+        bulkOk: bulk.ok, st: st.readState
+      };
+    });
+    r.check('K4', '分类可创建/移动/删除并迁回归属',
+      ok.ready === true && ok.catName === '跨引擎分类' && ok.moved === true &&
+      ok.listed === 1 && ok.delOk === true && ok.delMoved === 1 && ok.after === 3,
+      JSON.stringify(ok));
+    r.check('K4', '导出含分类且可原样导回（幂等合并）',
+      ok.schema === 2 && ok.dumpCats >= 1 && ok.importOk === true, JSON.stringify({ s: ok.schema, c: ok.dumpCats }));
+    r.check('K4', '批量标记未读生效', ok.bulkOk === true && ok.st === 'none', String(ok.st));
+    r.check('K4', '知识库流程无未处理异常', s.errors.length === 0, s.errors.slice(0, 2).join(' | ') || 'none');
+  } finally {
+    await s.ctx.close();
+  }
+}
+
+const SCENARIOS = { C1: scenarioC1, C2: scenarioC2, C3: scenarioC3, C4: scenarioC4, C5: scenarioC5, K1: scenarioK1, K2: scenarioK2, K3: scenarioK3, K4: scenarioK4 };
 
 (async function main() {
   serverHandle = createServer(ROOT, PREFIX);

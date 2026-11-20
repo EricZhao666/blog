@@ -214,12 +214,14 @@ async function gotoKnowledge(page, tab) {
           if (!captured) return resolve({ ok: false });
           try {
             const data = JSON.parse(captured.text);
-            resolve({ ok: true, kind: data.kind, version: data.schemaVersion, n: data.records.length, name: captured.name });
+            resolve({ ok: true, kind: data.kind, version: data.schemaVersion, cats: (data.categories || []).length, n: data.records.length, name: captured.name });
           } catch (e) { resolve({ ok: false, reason: e.message }); }
         }, 800);
       });
     });
-    check('K9 JSON 导出包含 kind/schemaVersion/records', dump.ok && dump.kind === 'knowledge' && dump.version === 1 && dump.n >= 1 && /\.json$/.test(dump.name),
+    // Batch 9A-2：导出契约升到 schemaVersion 2，并包含 categories
+    check('K9 JSON 导出包含 kind/schemaVersion/categories/records',
+      dump.ok && dump.kind === 'knowledge' && dump.version === 2 && dump.cats >= 1 && dump.n >= 1 && /\.json$/.test(dump.name),
       JSON.stringify(dump));
 
     // K10 多标签同步

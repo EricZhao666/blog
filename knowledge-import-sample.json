@@ -1,0 +1,51 @@
+{
+  "app": "ericzhao-blog",
+  "kind": "knowledge",
+  "schemaVersion": 2,
+  "exportedAt": "2026-11-20T00:00:00.000Z",
+  "persistence": "indexeddb",
+  "source": "database",
+  "degraded": false,
+  "complete": true,
+  "warning": "",
+  "categories": [
+    { "id": "default", "name": "默认分类", "system": true },
+    { "id": "cat-sample-reading", "name": "示例分类·精读", "system": false }
+  ],
+  "records": [
+    {
+      "key": "post:vla-model-intro",
+      "type": "post",
+      "refId": "vla-model-intro",
+      "title": "示例记录：VLA 模型入门",
+      "fav": 1,
+      "favAt": 1728000000000,
+      "favCat": "cat-sample-reading",
+      "later": 0,
+      "laterAt": 0,
+      "readState": "reading",
+      "progress": 0.35,
+      "firstSeenAt": 1728000000000,
+      "lastSeenAt": 1728000600000,
+      "doneAt": 0,
+      "updatedAt": 1728000600000
+    },
+    {
+      "key": "post:rl-from-mdp-to-ppo",
+      "type": "post",
+      "refId": "rl-from-mdp-to-ppo",
+      "title": "示例记录：从 MDP 到 PPO",
+      "fav": 0,
+      "favAt": 0,
+      "favCat": "default",
+      "later": 1,
+      "laterAt": 1728001200000,
+      "readState": "none",
+      "progress": 0,
+      "firstSeenAt": 0,
+      "lastSeenAt": 1728001200000,
+      "doneAt": 0,
+      "updatedAt": 1728001200000
+    }
+  ]
+}

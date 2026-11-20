@@ -28,12 +28,17 @@
 
 ## 3. IndexedDB schema（v1）
 
+> Batch 9A-2 确认：物理结构**未变**（仍 v1），只在 `meta` 里增加 `favCategories` 键，
+> 数据版本升到 2。因此不需要新 store，也不需要升 IDB version。
+
 ```
 DB: blog-knowledge (version 1)
 ├─ records  (keyPath: 'key')
 │    indexes: by_type(type), by_fav(fav), by_later(later),
 │             by_lastSeen(lastSeenAt), by_state(readState)
-└─ meta     (keyPath: 'k')      // { k: 'schemaVersion', v: 1 } / { k:'prefs', v:{...} }
+└─ meta     (keyPath: 'k')
+     { k: 'schemaVersion', v: 2 }
+     { k: 'favCategories', v: [{ id, name, system }] }   // 9A-2
 ```
 
 记录（`records`）字段：
@@ -95,19 +100,39 @@ DB: blog-knowledge (version 1)
 
 新增单文件 `js/knowledge.js`（暴露 `window.Knowledge`），不修改 `DraftHistory`：
 
+> Batch 9A-2 已按**实际导出**校正（此前文档里的 `get` / `importData` / `clearAll` 并不存在）。
+
 ```js
-Knowledge.init()                      // -> Promise<{ok, degraded, reason}>
-Knowledge.recordView(type, refId, meta)          // 浏览即记
+Knowledge.init()                                 // -> Promise<{ok, degraded, reason}>
+Knowledge.recordView(type, refId, meta)          // 浏览即记（30s 去重）
 Knowledge.setFlag(type, refId, flag, on, meta)   // flag: 'fav' | 'later'
-Knowledge.setReadState(type, refId, state, progress)
-Knowledge.get(key)                    // -> record | null
-Knowledge.list({type, flags, limit, offset, sort})
-Knowledge.counts()                    // -> {fav, later, reading, done}
-Knowledge.exportData()                // -> {schemaVersion, exportedAt, records}
-Knowledge.importData(data, {mode})    // mode: 'merge' | 'replace'
-Knowledge.subscribe(fn)               // 本标签页 + 跨标签变更
-Knowledge.clearAll()
+Knowledge.toggleFlag(type, refId, flag, meta)
+Knowledge.saveProgress(type, refId, p)           // 立即写（自动进度）
+Knowledge.scheduleProgress(type, refId, p)       // 节流写（5s / flush）
+Knowledge.flushProgress()
+Knowledge.setReadState(type, refId, state, p)    // 人工状态，优先级高于自动进度
+Knowledge.clearHistory(key) / clearAllHistory()
+Knowledge.remove(key)                            // -> {ok, deleted, changed}
+Knowledge.list({type, flag, cat, limit, offset, sort})
+Knowledge.counts()                               // -> {fav, later, reading, done, history}
+Knowledge.state(type, refId)                     // -> 缓存中的 record | null
+Knowledge.exportData()                           // -> {schemaVersion:2, categories, records, complete, ...}
+Knowledge.subscribe(fn)
+Knowledge.refresh() / status() / relativeTime() / toast()
+
+// ---- Batch 9A-2 新增 ----
+Knowledge.categories()                           // -> [{id, name, system}]
+Knowledge.addCategory(name)                      // -> {ok, category, reason?}
+Knowledge.renameCategory(id, name)               // 保留 id
+Knowledge.removeCategory(id)                     // 原子迁移收藏回 default
+Knowledge.assignCategory(key, catId)
+Knowledge.bulk(keys, action, opts)               // 单事务；action 见下
+Knowledge.validateImport(data, {bytes})          // 纯校验，不写库
+Knowledge.previewImport(payload, {resolve})      // 统计 + token
+Knowledge.applyImport(payload, {mode, confirm, expectToken, resolve})
 ```
+
+`bulk` 动作：`fav-on` / `fav-off` / `later-on` / `later-off` / `cat` / `read-done` / `read-none` / `history-clear`。
 
 约束：
 
@@ -137,12 +162,26 @@ Knowledge.clearAll()
 
 ## 8. schemaVersion 与迁移
 
-- 数据层版本存于 `meta`：`schemaVersion`（当前 1）；IDB 结构版本用 `indexedDB.open(name, version)`。
-- 启动流程：open → 读 `schemaVersion` → 若小于当前，按 `migrations[from→to]` 顺序执行（单事务）→ 写回。
-- 迁移失败：保留原库、进入内存降级、提示"本地数据需要手动导出"；不自动删库。
-- 结构变更（新增 store/index）才升 IDB version；字段新增优先用默认值，不升级结构。
+> **Batch 9A-2 已确认版本**（与实现一致，详见 `KNOWLEDGE_DATA_FORMAT.md`）
+
+| 版本 | 当前值 | 位置 | 何时变更 |
+| --- | --- | --- | --- |
+| IDB 结构版本 `DB_VERSION` | 1 | `indexedDB.open(name, version)` | 仅在新增 store/index 时 +1；9A-2 未变 |
+| 数据版本 `SCHEMA_VERSION` | **2** | `meta.schemaVersion` | 数据语义变化（9A-2 引入收藏分类） |
+| 导入导出格式版本 | **2** | 导出 JSON 的 `schemaVersion` | 文件格式变化；导入端接受 `[1,2]` |
+
+- 启动流程：open → `migrateMeta()`（幂等）→ 写回 `schemaVersion` → `refreshCache()`。
+  迁移**不是**独立的 migrations 表，而是"补齐 + 修复"两类动作：
+  1. 归一化并写回 `meta.favCategories`（缺失补默认分类）；
+  2. `fav=1` 但 `favCat` 指向不存在分类的记录 → 批量改回 `default`；
+  3. `schemaVersion > 2` 时**直接跳过**（不对未来版本做破坏性写入）。
+- 迁移失败：保留原库（所有写操作在事务内），不自动删库、不影响 `blog-draft-history`。
+- 验证方式：真实浏览器先建 v1 库再加载新代码（`knowledge-management.spec.js` K23），
+  不只依赖模拟后端。
 
 ## 9. 导入 / 导出
+
+> **Batch 9A-2 已确认契约**（与实现一致）
 
 导出格式：
 
@@ -150,21 +189,40 @@ Knowledge.clearAll()
 {
   "app": "ericzhao-blog",
   "kind": "knowledge",
-  "schemaVersion": 1,
-  "exportedAt": "2026-11-19T10:00:00.000Z",
+  "schemaVersion": 2,
+  "exportedAt": "2026-11-20T07:00:00.000Z",
+  "persistence": "indexeddb",
+  "source": "database",
+  "degraded": false,
+  "complete": true,
+  "warning": "",
+  "categories": [ { "id": "default", "name": "默认分类", "system": true } ],
   "records": [ { "...": "同 records 字段" } ]
 }
 ```
 
-校验规则（任一不满足则整体拒绝，不做部分写入）：
+- `records` 与 `categories` 由**同一个只读事务**读出（`readAll`），避免"记录新、分类旧"。
+- `complete` 跟随本次读取结果（`{rows, source, complete, warning}`），不再用共享变量；
+  并发导出互不影响。
 
-- 文件 ≤ 2MB、记录 ≤ 5000 条；
-- `kind === 'knowledge'`、`schemaVersion` 为已知版本；
-- 每条：`key` 匹配 `^(post|course|paper|material|lib|project|note):.+`，`refId` 为字符串且 ≤ 300 字符，布尔/数值字段类型正确；
-- 标题快照 ≤ 300 字符，分类 ≤ 50 字符；
-- 未知字段丢弃，不报错；缺失字段补默认值。
+校验规则（任一不满足则整份拒绝，不写库）：
 
-导入模式：`merge`（默认，按 `updatedAt` 取新）/ `replace`（先清空再写，需二次确认）。
+- 文件 ≤ 2MB、记录 ≤ 5000 条、分类 ≤ 200 个、嵌套深度 ≤ 6；
+- `app === 'ericzhao-blog'`、`kind === 'knowledge'`、`schemaVersion ∈ [1,2]`（更高版本明确拒绝）；
+- 每条：`key` 必须是 `type:refId`，type ∈ 7 类枚举，`refId ≤ 200`，且 `type/refId` 与 key 一致；
+- 标题 ≤ 300、分类名 ≤ 40、`favCat` ≤ 64；
+- 枚举：`fav/later ∈ {0,1}`、`readState ∈ {none,reading,done}`；`progress` 有限且 0–1；时间戳非负且不超前 1 天；
+- 重复 `key`、重复分类 id / 名称 → 整份拒绝；
+- 拒绝 `__proto__` / `constructor` / `prototype` 字段（原型污染）。
+
+导入模式（**与规划不同的地方，已按数据完整性优先调整**）：
+
+| 模式 | 实现 | 与规划差异及原因 |
+| --- | --- | --- |
+| `merge`（默认） | 只插入本地缺失且目标仍存在的记录；本地记录原样保留；分类按 id 取并集、本地名称优先 | 规划写"按 `updatedAt` 取新"，但 v1/v2 只有记录级 `updatedAt`，无法做字段级 last-write-wins，整条覆盖会静默丢字段 → 改为保守合并 |
+| `replace`（显式） | 仅接受 `complete=true && source=database && persistence=indexeddb` 的完整备份；二次确认 + 先导出备份；**单事务** clear + put + 写分类；失败整体回滚 | 规划写"先清空再写"，那会留下"已清空但没写入"的窗口 → 改为同一事务 |
+
+导入在内存降级模式下**一律拒绝**。导入成功后刷新缓存、广播通知其他标签页；确认期间快照 token 变化则拒绝。
 
 ## 10. 降级与异常
 
