@@ -311,6 +311,67 @@ function seed(backend, n, extra) {
   await m15.api.recordView('post', 'overflow', { title: 'overflow' });
   check('T15 记录总量达到上限后不新增', !b15.map.has('post:overflow'), 'size=' + b15.map.size);
 
+  // T16 历史裁剪不得删除已完成/有进度的记录（KM-001）
+  const b16 = makeBackend();
+  const m16 = loadModule(b16);
+  await m16.api.init();
+  await seed(b16, 505, {});
+  b16.map.get('post:seed-0').readState = 'done';
+  b16.map.get('post:seed-1').readState = 'done';
+  b16.map.get('post:seed-0').progress = 1;
+  b16.map.get('post:seed-1').progress = 0.4;
+  b16.map.get('post:seed-1').readState = 'none';
+  let t16 = 30000000;
+  m16.api._setNow(function () { return t16++; });
+  await m16.api.recordView('post', 't16-fresh', { title: 'T16' });
+  await new Promise(function (r) { setTimeout(r, 900); });
+  const kept16 = b16.map.get('post:seed-0') && b16.map.get('post:seed-1');
+  const hist16 = Array.from(b16.map.values()).filter(function (r) { return r.lastSeenAt > 0; }).length;
+  check('T16 历史裁剪保留 done 与非零进度记录',
+    !!kept16 && b16.map.get('post:seed-0').readState === 'done' && b16.map.get('post:seed-1').progress === 0.4 &&
+    hist16 <= 500, 'history=' + hist16 + ' kept=' + !!kept16);
+
+  // T17 容量上限只限制"自动新增"，显式收藏仍可创建（KM-006）
+  const b17 = makeBackend();
+  const m17 = loadModule(b17);
+  await m17.api.init();
+  await seed(b17, 2000, { lastSeenAt: 0, firstSeenAt: 0 });
+  await m17.api.refresh();
+  await m17.api.setFlag('post', 'explicit-new', 'fav', true, { title: '显式' });
+  check('T17 记录达上限时显式收藏仍写入', !!b17.map.get('post:explicit-new') && b17.map.get('post:explicit-new').fav === 1,
+    'size=' + b17.map.size);
+
+  // T18 init 未完成时的浏览记录不会丢失
+  const m18 = loadModule(null);
+  const p18 = m18.api.recordView('post', 'early', { title: '早期访问' });
+  await p18;
+  const rows18 = await m18.api.list({ flag: 'history' });
+  check('T18 init 前调用 recordView 不被丢弃', rows18.some(function (r) { return r.key === 'post:early'; }),
+    'rows=' + rows18.length);
+
+  // T19 自动裁剪后发送变更通知（含纯历史删除）
+  const b19 = makeBackend();
+  const m19 = loadModule(b19);
+  await m19.api.init();
+  await seed(b19, 505, {});
+  let changed19 = 0;
+  m19.api.subscribe(function () { changed19++; });
+  let t19 = 40000000;
+  m19.api._setNow(function () { return t19++; });
+  await m19.api.recordView('post', 't19-fresh', { title: 'T19' });
+  await new Promise(function (r) { setTimeout(r, 900); });
+  check('T19 历史裁剪后通知订阅方', changed19 > 0, 'events=' + changed19);
+
+  // T20 导出标记持久化状态
+  const b20 = makeBackend();
+  const m20 = loadModule(b20);
+  await m20.api.init();
+  await m20.api.setFlag('post', 'e20', 'fav', true);
+  const dump20 = await m20.api.exportData();
+  check('T20 导出包含 persistence/complete 且正常时为 indexeddb',
+    dump20.persistence === 'indexeddb' && dump20.complete === true && dump20.degraded === false,
+    dump20.persistence + '/' + dump20.complete);
+
   console.log('\n合计 ' + (pass + fail) + ' 项，PASS ' + pass + '，FAIL ' + fail);
   if (failures.length) console.log('失败项：' + failures.join(' / '));
   process.exit(fail ? 1 : 0);

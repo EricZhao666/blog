@@ -77,8 +77,14 @@
     };
   }
 
+  // 长期状态：只要存在任意一项，就不得因为清理浏览历史而删除整条记录
+  function hasPersonalState(rec) {
+    return !!(rec && (rec.fav || rec.later || rec.readState !== 'none' ||
+      (rec.progress || 0) > 0 || rec.doneAt));
+  }
+
   function isProtected(rec) {
-    return !!(rec && (rec.fav || rec.later || rec.readState === 'reading'));
+    return hasPersonalState(rec);
   }
 
   function sanitizeTitle(v) {
@@ -276,12 +282,25 @@
     } catch (e) { /* storage 事件不可用 */ }
   }
 
+  var _writeGen = 0;
+
   function refreshCache() {
     if (!backend) return Promise.resolve();
+    var gen = _writeGen;
     return backend.getAll().then(function (all) {
+      // 读取期间若有本地写入，快照可能早于最新状态：重读一次，避免缓存回退
+      if (gen !== _writeGen) return refreshCache();
       cache = new Map();
       (all || []).forEach(function (r) { if (r && r.key) cache.set(r.key, r); });
     });
+  }
+
+  function emitStatus() {
+    try {
+      if (typeof document !== 'undefined' && document.dispatchEvent && typeof CustomEvent === 'function') {
+        document.dispatchEvent(new CustomEvent('knowledge:status', { detail: status() }));
+      }
+    } catch (e) { /* 忽略 */ }
   }
 
   function switchToMemory(reason) {
@@ -292,12 +311,14 @@
     usingMemory = true;
     degraded = true;
     degradeReason = String(reason || 'persistence unavailable');
+    emitStatus();
   }
 
   // ---------------------------------------------------------------- 写入
   function mutateRecord(key, updater) {
     if (!backend) return Promise.resolve(null);
     return backend.mutate(key, updater).then(function (rec) {
+      _writeGen++;
       if (rec) cache.set(key, rec);
       else cache.delete(key);
       return rec;
@@ -305,6 +326,8 @@
   }
 
   function safeMutate(key, updater, noteKey) {
+    // init 尚未完成时排队，避免首访详情页的浏览/收藏被静默丢弃
+    if (!backend) return ensureReady().then(function () { return safeMutate(key, updater, noteKey); });
     return mutateRecord(key, updater).then(function (rec) {
       if (rec) notify(noteKey ? [key] : [key]);
       return rec;
@@ -328,33 +351,46 @@
     });
   }
 
-  // 历史裁剪：只清历史字段；仍有收藏/待读/阅读中的记录保留
+  // 历史裁剪：只裁剪"历史字段"；任何长期个人状态都必须保留。
+  // 候选在事务外选出，但最终决定在事务内用最新记录重新判断：
+  //   - 事务内发现已被收藏/待读/有进度/已完成 → 跳过；
+  //   - 事务内发现 lastSeenAt 已变化（另一个标签页刚访问过）→ 跳过，避免误删新历史；
+  //   - 没有任何长期状态时才整条删除。
+  // 契约：历史硬上限 500；受保护记录会突破上限（软上限例外，优先保证数据不丢失）。
   function pruneHistory(target) {
     return backend.getAll().then(function (all) {
-      var list = (all || []).filter(function (r) { return r && r.lastSeenAt > 0; });
+      var list = (all || []).filter(function (r) { return r && r.lastSeenAt > 0 && !isProtected(r); });
       list.sort(function (a, b) { return (a.lastSeenAt || 0) - (b.lastSeenAt || 0); });
-      var overflow = list.length - HISTORY_LIMIT + (target || 0);
+      var overflow = list.length + (all || []).filter(function (r) { return r && r.lastSeenAt > 0 && isProtected(r); }).length
+        - HISTORY_LIMIT + (target || 0);
       if (overflow <= 0) return 0;
       var seq = Promise.resolve();
-      var removed = 0;
-      list.forEach(function (r) {
-        if (overflow <= 0) return;
-        if (isProtected(r)) return;      // 收藏/待读/阅读中一律不因历史上限被删除
-        overflow--;
-        removed++;
+      var changed = [];
+      list.slice(0, overflow).forEach(function (cand) {
         seq = seq.then(function () {
-          return backend.mutate(r.key, function (cur) {
+          return backend.mutate(cand.key, function (cur) {
             if (!cur) return null;
+            if (cur.lastSeenAt !== cand.lastSeenAt) return undefined;  // 过期候选：不误删新历史
+            if (isProtected(cur)) return undefined;                    // 事务内重新检查保护状态
             var next = clone(cur);
             next.firstSeenAt = 0;
             next.lastSeenAt = 0;
             next.updatedAt = nowMs();
-            if (!next.fav && !next.later && next.readState !== 'reading') return null;
+            if (!hasPersonalState(next)) return null;                  // 纯历史记录才整条删除
             return next;
+          }).then(function (rec) {
+            changed.push(cand.key);
+            if (rec) cache.set(cand.key, rec);
+            else cache.delete(cand.key);
           });
         });
       });
-      return seq.then(function () { return removed; });
+      return seq.then(function () {
+        return refreshCache().then(function () {
+          if (changed.length) notify(changed);      // 删除纯历史也要通知其他标签页
+          return changed.length;
+        });
+      });
     });
   }
 
@@ -571,9 +607,20 @@
     }).then(function () { return refreshCache(); }).then(function () { notify([]); });
   }
 
+  function ensureReady() {
+    if (backend) return Promise.resolve();
+    var p = init();
+    return p ? p.then(function () { return null; }) : Promise.resolve();
+  }
+
   function getAllSafe() {
-    return backend ? backend.getAll().catch(function () { return Array.from(cache.values()); })
-      : Promise.resolve(Array.from(cache.values()));
+    if (!backend) return ensureReady().then(getAllSafe);
+    return backend.getAll().catch(function () { return Array.from(cache.values()); });
+  }
+
+  function remove(key) {
+    if (!key) return Promise.resolve(null);
+    return safeMutate(key, function () { return null; });
   }
 
   function list(opts) {
@@ -634,6 +681,10 @@
         kind: 'knowledge',
         schemaVersion: SCHEMA_VERSION,
         exportedAt: new Date().toISOString(),
+        // 降级时导出的是"当前可用数据"，不宣称是完整持久化备份
+        persistence: degraded ? 'memory' : 'indexeddb',
+        degraded: !!degraded,
+        complete: !degraded,
         records: (all || []).map(publicRecord)
       };
     });
@@ -692,6 +743,7 @@
     setReadState: setReadState,
     clearHistory: clearHistory,
     clearAllHistory: clearAllHistory,
+    remove: remove,
     list: list,
     counts: counts,
     exportData: exportData,

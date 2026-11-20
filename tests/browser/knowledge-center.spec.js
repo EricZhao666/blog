@@ -285,6 +285,92 @@ async function gotoKnowledge(page, tab) {
     await s5.ctx.setOffline(false);
     await s5.ctx.close();
 
+    // K15 双标签按钮状态同步 + 真实 IDB 并发字段保留（KM-002 / KM-001）
+    const s6 = await newSession(browser, base);
+    const A = s6.page;
+    await openFirstPost(A);
+    const postHash = await A.evaluate(() => location.hash);
+    const B = await s6.ctx.newPage();
+    await B.goto(base + PREFIX + '/index.html' + postHash, { waitUntil: 'load', timeout: 60000 });
+    await B.waitForSelector('.km-actions [data-km-toggle="fav"]', { timeout: 20000 });
+    await sleep(500);
+    await A.locator('.km-actions [data-km-toggle="fav"]').first().click();
+    let syncedToB = false;
+    try {
+      await B.waitForFunction(() => {
+        const b = document.querySelector('.km-actions [data-km-toggle="fav"]');
+        return !!b && b.getAttribute('aria-pressed') === 'true';
+      }, null, { timeout: 5000 });
+      syncedToB = true;
+    } catch (e) { syncedToB = false; }
+    check('K15.1 A 收藏后 B 已有按钮同步为已收藏', syncedToB);
+
+    await B.locator('.km-actions [data-km-toggle="fav"]').first().click();
+    let syncedToA = false;
+    try {
+      await A.waitForFunction(() => {
+        const b = document.querySelector('.km-actions [data-km-toggle="fav"]');
+        return !!b && b.getAttribute('aria-pressed') === 'false';
+      }, null, { timeout: 5000 });
+      syncedToA = true;
+    } catch (e) { syncedToA = false; }
+    check('K15.2 B 取消收藏后 A 按钮恢复', syncedToA);
+
+    // 并发：A 收藏，B 更新阅读进度；两字段都保留
+    await A.locator('.km-actions [data-km-toggle="fav"]').first().click();
+    await B.evaluate(() => window.scrollTo(0, document.body.scrollHeight * 0.5));
+    await sleep(600);
+    await B.evaluate(() => { location.hash = '#/knowledge?tab=continue'; });
+    await sleep(900);
+    const merged = await A.evaluate((h) => {
+      const id = h.replace('#/post/', '');
+      return Knowledge.list({ type: 'post' }).then(rows => {
+        const r = rows.filter(x => x.refId === id)[0];
+        return r ? { fav: r.fav, progress: r.progress } : null;
+      });
+    }, postHash);
+    check('K15.3 双标签并发更新保留收藏与进度', !!merged && merged.fav === 1 && merged.progress > 0.05,
+      JSON.stringify(merged));
+    await s6.ctx.close();
+
+    // K16 失效内容：保留标题快照、不可打开、可移除（KM-005）
+    const s7 = await newSession(browser, base);
+    await s7.page.evaluate(() => Knowledge.setFlag('post', 'b9a1-missing', 'fav', true, { title: '已删除的合成文章' }));
+    await gotoKnowledge(s7.page, 'favorites');
+    const missing = s7.page.locator('.km-item-missing').first();
+    const hasMissing = (await missing.count()) > 0;
+    const missingLinks = hasMissing ? await missing.locator('a').count() : -1;
+    check('K16.1 失效记录显示提示且不可打开', hasMissing && missingLinks === 0, 'missing=' + hasMissing + ' links=' + missingLinks);
+    if (hasMissing) {
+      await missing.locator('[data-km-remove="record"]').click();
+      await sleep(600);
+      check('K16.2 失效记录可移除', (await s7.page.locator('.km-item-missing').count()) === 0);
+    } else {
+      check('K16.2 失效记录可移除', false, 'no-row');
+    }
+    await s7.ctx.close();
+
+    // K17 继续阅读的延迟恢复必须绑定路由（KM-004）
+    const s8 = await newSession(browser, base);
+    await openFirstPost(s8.page);
+    await s8.page.evaluate(() => window.scrollTo(0, document.body.scrollHeight * 0.5));
+    await sleep(600);
+    await gotoKnowledge(s8.page, 'continue');
+    const resumeBtn = s8.page.locator('[data-km-resume]').first();
+    if ((await resumeBtn.count()) > 0) {
+      await resumeBtn.click();
+      // 恢复回调尚未执行就立即切走
+      await s8.page.evaluate(() => { location.hash = '#/'; });
+      await sleep(900);
+      const scroll = await s8.page.evaluate(() => window.scrollY);
+      const hash = await s8.page.evaluate(() => location.hash);
+      check('K17 继续阅读后立即切路由不会误恢复', hash === '#/' && scroll < 100,
+        'hash=' + hash + ' scrollY=' + Math.round(scroll));
+    } else {
+      check('K17 继续阅读后立即切路由不会误恢复', false, 'no-continue-item');
+    }
+    await s8.ctx.close();
+
     // K14 页面级错误
     check('K14 全流程无未处理运行时异常', s1.errors.length === 0, s1.errors.slice(0, 3).join(' | ') || 'none');
     await s1.ctx.close();

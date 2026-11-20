@@ -5555,7 +5555,34 @@ function kmRefreshAll() {
 
 function kmRerenderIfKnowledge() {
   if (isKnowledgeRoute(location.hash.slice(1) || '/')) {
+    kmSyncBanner();
     fillKnowledgeTab(kmTabFromHash(location.hash));
+  }
+}
+
+// 数据变化统一走一次去抖刷新：按钮状态 + 知识页列表（避免重复渲染与焦点抖动）
+let _kmDataTimer = 0;
+function kmScheduleDataRefresh() {
+  if (_kmDataTimer) return;
+  _kmDataTimer = setTimeout(function () {
+    _kmDataTimer = 0;
+    kmScheduleEnhance();
+    kmRefreshAll();
+    kmRerenderIfKnowledge();
+  }, 80);
+}
+
+function kmSyncBanner() {
+  if (!kmAvailable()) return;
+  if (!isKnowledgeRoute(location.hash.slice(1) || '/')) return;
+  const host = document.getElementById('kmList');
+  if (!host) return;
+  const existing = document.querySelector('.km-banner');
+  if (Knowledge.status().degraded) {
+    if (existing) existing.outerHTML = kmBannerHtml();
+    else host.insertAdjacentHTML('beforebegin', kmBannerHtml());
+  } else if (existing) {
+    existing.remove();
   }
 }
 
@@ -5647,10 +5674,47 @@ function renderKnowledgeShell(tab) {
     '</div>';
 }
 
+// 判断记录指向的内容是否仍然存在：区分"元数据尚未加载"（unknown）与"确实不存在"（missing）
+function kmResolve(type, refId) {
+  let found = null;
+  if (type === 'post') {
+    const p = getAllPosts().find(x => x.id === refId);
+    return p ? { state: 'exists', title: p.title } : { state: 'missing', title: '' };
+  }
+  if (type === 'course') {
+    if (typeof COURSES === 'undefined') return { state: 'unknown', title: '' };
+    found = COURSES.find(x => x.id === refId);
+    return found ? { state: 'exists', title: found.name } : { state: 'missing', title: '' };
+  }
+  if (type === 'paper' || type === 'material') {
+    if (typeof PAPERS === 'undefined') return { state: 'unknown', title: '' };
+    found = PAPERS.find(x => x.id === refId);
+    return found ? { state: 'exists', title: found.title } : { state: 'missing', title: '' };
+  }
+  if (type === 'lib') {
+    if (typeof CODE_LIBS === 'undefined') return { state: 'unknown', title: '' };
+    found = CODE_LIBS.find(x => x.id === refId);
+    return found ? { state: 'exists', title: found.name } : { state: 'missing', title: '' };
+  }
+  return { state: 'unknown', title: '' };
+}
+
 function kmItemHtml(rec, tab) {
   const href = kmHrefFor(rec.type, rec.refId);
-  const title = rec.title || kmTitleOf(rec.type, rec.refId) || rec.refId;
+  const resolved = kmResolve(rec.type, rec.refId);
+  const title = rec.title || resolved.title || rec.refId;
   const typeLabel = KM_LABELS[rec.type] || rec.type;
+  if (resolved.state === 'missing') {
+    return '<article class="km-item km-item-missing" data-km-row="' + escapeHtml(rec.key) + '">' +
+      '<span class="km-item-main">' +
+      '  <span class="km-item-type">' + escapeHtml(typeLabel) + '</span>' +
+      '  <span class="km-item-title">' + escapeHtml(title) + '</span>' +
+      '  <span class="km-item-meta">内容已删除或迁移，无法打开</span>' +
+      '</span>' +
+      '<span class="km-item-actions"><button type="button" class="km-row-btn" data-km-remove="record" data-km-key="' +
+      escapeHtml(rec.key) + '" aria-label="移除这条失效记录">移除</button></span>' +
+      '</article>';
+  }
   let meta = typeLabel;
   if (rec.type === 'post') {
     meta += ' · 进度 ' + Math.round((rec.progress || 0) * 100) + '%';
@@ -5738,6 +5802,10 @@ function kmHandleRowAction(btn) {
     Knowledge.clearHistory(key).then(function () { fillKnowledgeTab('history'); });
     return;
   }
+  if (remove === 'record') {
+    Knowledge.remove(key).then(function () { fillKnowledgeTab(kmTabFromHash(location.hash)); });
+    return;
+  }
   if (btn.hasAttribute('data-km-resume')) {
     const rec = Knowledge.state(parsed.type, parsed.refId) || {};
     try {
@@ -5757,13 +5825,23 @@ function kmMaybeResume(type, refId) {
   try { sessionStorage.removeItem('blog.km.resume'); } catch (e) { /* 忽略 */ }
   const p = Number(pending.progress) || 0;
   if (p < 0.05 || p >= 0.95) return;
-  setTimeout(function () {
+  // 绑定本次路由生命周期与目标文章：路由切走 / 换成另一篇时立即放弃，
+  // 用"内容挂载完成"的状态条件轮询代替固定 sleep。
+  const token = _routeToken;
+  const target = 'post:' + refId;
+  let tries = 0;
+  (function attempt() {
+    if (tries++ > 24) return;
+    if (_routeToken !== token || _kmActiveKey !== target) return;
     const s = _readingState;
-    if (!s || !s.body || !s.body.isConnected) return;
+    if (!s || !s.body || !s.body.isConnected || !s.bodyHeight) {
+      setTimeout(attempt, 50);
+      return;
+    }
     const span = Math.max(0, s.bodyHeight - window.innerHeight);
     window.scrollTo(0, Math.max(0, s.bodyTop + span * p));
     Knowledge.toast('已恢复到上次阅读位置', 'info');
-  }, 450);
+  })();
 }
 
 function kmMount(hash) {
@@ -5816,6 +5894,9 @@ document.addEventListener('click', function (e) {
       return;
     }
     kmRefreshButtons(type, id);
+    if (Knowledge.status().degraded) {
+      Knowledge.toast('本地存储不可用：本次更改仅本会话生效，未永久保存', 'error');
+    }
   });
 }, true);
 
@@ -5844,8 +5925,14 @@ function kmBoot() {
       const mo = new MutationObserver(function () { kmScheduleEnhance(); });
       mo.observe(app, { childList: true, subtree: true });
     }
-    Knowledge.subscribe(function () { kmScheduleEnhance(); kmRerenderIfKnowledge(); });
-    document.addEventListener('knowledge:changed', function () { kmScheduleEnhance(); kmRerenderIfKnowledge(); });
+    // 本地写入与远端通知都走 Knowledge.subscribe（emit 同时触发订阅与 DOM 事件，
+    // 此处只订阅一次，避免同一变更触发两轮列表渲染）
+    Knowledge.subscribe(function () { kmScheduleDataRefresh(); });
+    document.addEventListener('knowledge:status', function () {
+      kmSyncBanner();
+      const st = Knowledge.status();
+      if (st && st.degraded) Knowledge.toast('本地存储不可用：本次更改仅本会话生效', 'error');
+    });
     window.addEventListener('pagehide', function () {
       try { Knowledge.flushProgress(); } catch (e) { /* 忽略 */ }
     });
@@ -5855,16 +5942,10 @@ function kmBoot() {
       }
     });
     const start = function () {
-      Knowledge.init().then(function (st) {
+      Knowledge.init().then(function () {
         kmScheduleEnhance();
         kmRefreshAll();
         kmRerenderIfKnowledge();
-        if (st && st.degraded && isKnowledgeRoute(location.hash.slice(1) || '/')) {
-          const host = document.getElementById('kmList');
-          if (host && !document.querySelector('.km-banner')) {
-            host.insertAdjacentHTML('beforebegin', kmBannerHtml());
-          }
-        }
       });
     };
     if (window.requestIdleCallback) requestIdleCallback(start, { timeout: 1500 });
