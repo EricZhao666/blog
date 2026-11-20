@@ -1,6 +1,9 @@
 # Batch 9B-1 报告：可解释的内容关联与相关推荐
 
-- 状态：**B9B1_PR_READY**（本地专项、三引擎与受影响回归全部通过；未合并、未部署）
+- 状态：**B9B1_PR_READY**（本地专项、三引擎与受影响回归全部通过；分支已推送，未合并、未部署）
+- 提交：`a907424`（+ 本报告修订提交）；PR 待创建：
+  https://github.com/EricZhao666/blog/pull/new/feat/batch9b1-related-content
+  （本机没有 `gh` CLI，无法自动建 PR，已按 push 输出给出链接）
 - 基线：`main = 5257948`（PR #28 "Feat/batch9a1 knowledge center" 已合并，仓库 `EricZhao666/blog`）
 - 分支：`feat/batch9b1-related-content`（创建于 `5257948`，2026-11-20 11:34:45 +0800）
 - 版本：`CACHE_VERSION 2026-11-20-1 → 2026-11-20-2`（新增一个首屏脚本，属发布契约要求的递增）
@@ -232,8 +235,9 @@ python scripts/run_tests.py --only related-content related-reading knowledge-sto
 
 ## 11. 实际执行耗时与平台成本
 
-- 分支创建（2026-11-20 11:34:45 +0800）→ 本地验收完成约 **26 分钟**（含三引擎与 SW 一致性回归）。
-- 工具调用约 **62 次**；改动文件 11 个（新增 4、修改 7）。
+- 分支创建（2026-11-20 11:34:45 +0800）→ 提交 `a907424`（11:54:18）= **19.6 分钟**，
+  含 Phase A–G 全部工作与三引擎、SW 一致性回归。
+- 工具调用约 **66 次**；改动文件 **17 个**（新增 8、修改 9）。
 - 测试耗时：算法专项 <1s；浏览器专项 34s；三引擎 K2 12.4s；`sw-consistency` 约 2 分 40 秒；
   `reading-experience` 约 1 分 20 秒；`knowledge-center` 约 1 分 10 秒。
 - 平台未提供积分/token 计费口径，**未编造数值**；未新增依赖、未访问外部服务、未上传任何数据。
