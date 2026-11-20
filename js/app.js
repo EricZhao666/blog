@@ -990,6 +990,11 @@ function updateReadingUi(force) {
   s.bodyHeight = rect.height;
 
   const pct = readingProgressPercent(s, window.scrollY, window.innerHeight);
+  // Batch 9A-1：阅读进度持久化（节流与去重由 Knowledge 内部处理）
+  if (_kmActiveKey && _kmActiveKey.indexOf('post:') === 0 && kmAvailable()) {
+    try { Knowledge.scheduleProgress('post', _kmActiveKey.slice('post:'.length), pct / 100); }
+    catch (e) { /* 进度写入失败不影响阅读 */ }
+  }
   const rounded = Math.round(pct * 10) / 10;
   if (force || rounded !== _readingLastPct) {
     _readingLastPct = rounded;
@@ -5436,6 +5441,441 @@ window.exportPost = function() {
 };
 
 // ============================================
+// Batch 9A-1：个人知识库（收藏 / 待读 / 历史 / 继续阅读）
+// ============================================
+const KM_LABELS = {
+  post: '文章', course: '课程', paper: '论文', material: '资料',
+  lib: '代码库', project: '项目', note: '笔记'
+};
+const KM_TABS = [
+  { key: 'continue', label: '继续阅读' },
+  { key: 'favorites', label: '收藏' },
+  { key: 'readlater', label: '待读' },
+  { key: 'history', label: '浏览历史' }
+];
+let _kmActiveKey = null;
+let _kmEnhanceRaf = 0;
+
+function kmAvailable() { return typeof window !== 'undefined' && !!window.Knowledge; }
+
+function kmState(type, refId) {
+  try { return kmAvailable() ? Knowledge.state(type, refId) : null; } catch (e) { return null; }
+}
+
+function kmHrefFor(type, refId) {
+  if (type === 'post') return '#/post/' + encodeURIComponent(refId);
+  if (type === 'course') return '#/course/' + encodeURIComponent(refId);
+  if (type === 'lib') return '#/codelib/' + encodeURIComponent(refId);
+  if (type === 'paper') return '#/papers?kind=paper&target=' + encodeURIComponent(refId);
+  if (type === 'material') return '#/papers?kind=material&target=' + encodeURIComponent(refId);
+  if (type === 'project') return '#/projects';
+  return '#/';
+}
+
+function kmButtonHtml(kind, type, refId, title) {
+  const st = kmState(type, refId) || {};
+  const on = kind === 'fav' ? !!st.fav : !!st.later;
+  const label = kind === 'fav'
+    ? (on ? '已收藏' : '收藏')
+    : (on ? '已加入待读' : '待读');
+  const icon = kind === 'fav' ? (on ? '★' : '☆') : '⏱';
+  return '<button type="button" class="km-btn' + (on ? ' is-on' : '') + '"' +
+    ' data-km-toggle="' + kind + '" data-km-type="' + escapeHtml(type) + '"' +
+    ' data-km-id="' + escapeHtml(String(refId)) + '" data-km-title="' + escapeHtml(title || '') + '"' +
+    ' aria-pressed="' + (on ? 'true' : 'false') + '"' +
+    ' aria-label="' + escapeHtml(label + '：' + (title || '')) + '">' +
+    '<span class="km-btn-icon" aria-hidden="true">' + icon + '</span>' +
+    '<span class="km-btn-text">' + escapeHtml(label) + '</span></button>';
+}
+
+function kmActionBarHtml(type, refId, title) {
+  return '<div class="km-actions" data-km-bar="' + escapeHtml(type + ':' + refId) + '">' +
+    kmButtonHtml('fav', type, refId, title) +
+    kmButtonHtml('later', type, refId, title) +
+    '</div>';
+}
+
+// 卡片/搜索结果上的浮动操作；点击在捕获阶段被拦截，不会触发外层卡片导航
+function kmCardActionsHtml(type, refId, title) {
+  return '<span class="km-card-actions">' +
+    kmButtonHtml('fav', type, refId, title).replace('class="km-btn', 'class="km-btn km-btn-sm') +
+    kmButtonHtml('later', type, refId, title).replace('class="km-btn', 'class="km-btn km-btn-sm') +
+    '</span>';
+}
+
+function kmParseHref(href) {
+  if (!href) return null;
+  let m = /^#\/post\/(.+)$/.exec(href);
+  if (m) return { type: 'post', id: decodeURIComponent(m[1]) };
+  m = /^#\/course\/(.+)$/.exec(href);
+  if (m) return { type: 'course', id: decodeURIComponent(m[1]) };
+  m = /^#\/codelib\/(.+)$/.exec(href);
+  if (m) return { type: 'lib', id: decodeURIComponent(m[1]) };
+  m = /^#\/papers\?([^#]*)$/.exec(href);
+  if (m) {
+    const q = m[1];
+    const kind = (/kind=([^&]+)/.exec(q) || [])[1];
+    const target = (/target=([^&]+)/.exec(q) || [])[1];
+    if (kind && target) {
+      return { type: kind === 'material' ? 'material' : 'paper', id: decodeURIComponent(target) };
+    }
+  }
+  return null;
+}
+
+function kmTitleOf(type, refId) {
+  try {
+    if (type === 'post') {
+      const p = getAllPosts().find(x => x.id === refId);
+      return p ? p.title : '';
+    }
+    if (type === 'course') {
+      const c = (typeof COURSES !== 'undefined' ? COURSES : []).find(x => x.id === refId);
+      return c ? c.name : '';
+    }
+    if (type === 'paper' || type === 'material') {
+      const list = (typeof PAPERS !== 'undefined' ? PAPERS : []);
+      const p = list.find(x => x.id === refId);
+      return p ? (p.title || '') : '';
+    }
+    if (type === 'lib') {
+      const list = (typeof CODE_LIBS !== 'undefined' ? CODE_LIBS : []);
+      const l = list.find(x => x.id === refId);
+      return l ? (l.name || '') : '';
+    }
+  } catch (e) { /* 数据未就绪 */ }
+  return '';
+}
+
+function kmRefreshAll() {
+  document.querySelectorAll('[data-km-toggle]').forEach(function (btn) {
+    kmRefreshButtons(btn.getAttribute('data-km-type'), btn.getAttribute('data-km-id'));
+  });
+}
+
+function kmRerenderIfKnowledge() {
+  if (isKnowledgeRoute(location.hash.slice(1) || '/')) {
+    fillKnowledgeTab(kmTabFromHash(location.hash));
+  }
+}
+
+function kmRefreshButtons(type, refId) {
+  const st = kmState(type, refId) || {};
+  document.querySelectorAll('[data-km-toggle][data-km-type="' + type + '"]').forEach(function (btn) {
+    if (btn.getAttribute('data-km-id') !== String(refId)) return;
+    const kind = btn.getAttribute('data-km-toggle');
+    const on = kind === 'fav' ? !!st.fav : !!st.later;
+    const label = kind === 'fav'
+      ? (on ? '已收藏' : '收藏')
+      : (on ? '已加入待读' : '待读');
+    btn.classList.toggle('is-on', on);
+    btn.setAttribute('aria-pressed', on ? 'true' : 'false');
+    btn.setAttribute('aria-label', label + '：' + (btn.getAttribute('data-km-title') || ''));
+    const icon = btn.querySelector('.km-btn-icon');
+    const text = btn.querySelector('.km-btn-text');
+    if (icon) icon.textContent = kind === 'fav' ? (on ? '★' : '☆') : '⏱';
+    if (text) text.textContent = label;
+  });
+}
+
+// 给现有卡片 / 搜索结果挂上个人操作（不修改原模板，避免影响既有渲染契约）
+function kmEnhance() {
+  _kmEnhanceRaf = 0;
+  if (!kmAvailable()) return;
+  if (!document.getElementById('app')) return;
+  document.querySelectorAll('#app [data-href]:not([data-km-ready])').forEach(function (el) {
+    const parsed = kmParseHref(el.getAttribute('data-href'));
+    if (!parsed) return;
+    if (el.closest('#kmList')) return;
+    el.setAttribute('data-km-ready', '1');
+    el.classList.add('km-has-actions');
+    const title = kmTitleOf(parsed.type, parsed.id) || (el.textContent || '').trim().slice(0, 80);
+    el.insertAdjacentHTML('beforeend', kmCardActionsHtml(parsed.type, parsed.id, title));
+  });
+}
+
+function kmScheduleEnhance() {
+  if (_kmEnhanceRaf) return;
+  _kmEnhanceRaf = requestAnimationFrame(function () { kmEnhance(); });
+}
+
+function kmInjectBar(type, refId, title) {
+  const header = document.querySelector('.article-detail-header, .course-detail-header');
+  if (!header) return;
+  const old = header.querySelector('.km-actions');
+  if (old) old.remove();
+  const meta = header.querySelector('.article-detail-meta, .course-detail-meta');
+  const html = kmActionBarHtml(type, refId, title);
+  if (meta) meta.insertAdjacentHTML('beforebegin', html);
+  else header.insertAdjacentHTML('beforeend', html);
+}
+
+function isKnowledgeRoute(hash) {
+  return hash === '/knowledge' || hash.indexOf('/knowledge?') === 0;
+}
+
+function kmTabFromHash(hash) {
+  const m = /[?&]tab=([a-z]+)/.exec(hash || '');
+  const key = m ? m[1] : 'continue';
+  return KM_TABS.some(t => t.key === key) ? key : 'continue';
+}
+
+function kmBannerHtml() {
+  if (!kmAvailable()) return '';
+  const st = Knowledge.status();
+  if (!st.degraded) return '';
+  return '<div class="km-banner" role="status">本地存储不可用，本次会话的收藏与进度不会永久保存（' +
+    escapeHtml(st.reason || 'unknown') + '）。建议尽快导出数据。</div>';
+}
+
+function renderKnowledgeShell(tab) {
+  const tabs = KM_TABS.map(function (t) {
+    const on = t.key === tab;
+    return '<a class="km-tab' + (on ? ' active' : '') + '" role="tab" aria-selected="' + (on ? 'true' : 'false') + '"' +
+      ' href="#/knowledge?tab=' + t.key + '" data-km-tab="' + t.key + '">' + escapeHtml(t.label) + '</a>';
+  }).join('');
+  return '' +
+    '<div class="km-page">' +
+    '  <div class="km-head">' +
+    '    <h1 class="page-title">📚 知识库</h1>' +
+    '    <button type="button" class="editor-btn" id="kmExport">导出 JSON</button>' +
+    '  </div>' +
+    '  <div class="km-stats" id="kmStats" aria-live="polite">正在读取本地数据…</div>' +
+    kmBannerHtml() +
+    '  <div class="km-tabs" role="tablist" aria-label="知识库分类">' + tabs + '</div>' +
+    '  <div class="km-list" id="kmList"><div class="km-loading">加载中…</div></div>' +
+    '</div>';
+}
+
+function kmItemHtml(rec, tab) {
+  const href = kmHrefFor(rec.type, rec.refId);
+  const title = rec.title || kmTitleOf(rec.type, rec.refId) || rec.refId;
+  const typeLabel = KM_LABELS[rec.type] || rec.type;
+  let meta = typeLabel;
+  if (rec.type === 'post') {
+    meta += ' · 进度 ' + Math.round((rec.progress || 0) * 100) + '%';
+    if (rec.lastSeenAt) meta += ' · ' + Knowledge.relativeTime(rec.lastSeenAt);
+  } else if (rec.lastSeenAt) {
+    meta += ' · ' + Knowledge.relativeTime(rec.lastSeenAt);
+  }
+  let actions = '';
+  if (tab === 'favorites') {
+    actions += '<button type="button" class="km-row-btn" data-km-remove="fav" data-km-key="' + escapeHtml(rec.key) + '"' +
+      ' aria-label="取消收藏">取消收藏</button>';
+  } else if (tab === 'readlater') {
+    actions += '<button type="button" class="km-row-btn" data-km-remove="later" data-km-key="' + escapeHtml(rec.key) + '"' +
+      ' aria-label="移出待读">移出待读</button>';
+  } else if (tab === 'history') {
+    actions += '<button type="button" class="km-row-btn" data-km-remove="history" data-km-key="' + escapeHtml(rec.key) + '"' +
+      ' aria-label="删除这条历史">删除历史</button>';
+  } else if (tab === 'continue') {
+    actions += '<button type="button" class="km-row-btn km-row-primary" data-km-resume="' + escapeHtml(rec.key) + '"' +
+      ' aria-label="继续阅读">继续阅读</button>';
+  }
+  return '<article class="km-item" data-km-row="' + escapeHtml(rec.key) + '">' +
+    '<a class="km-item-main" href="' + escapeHtml(href) + '">' +
+    '  <span class="km-item-type">' + escapeHtml(typeLabel) + '</span>' +
+    '  <span class="km-item-title">' + escapeHtml(title) + '</span>' +
+    '  <span class="km-item-meta">' + escapeHtml(meta) + '</span>' +
+    '</a>' +
+    '<span class="km-item-actions">' + actions + '</span>' +
+    '</article>';
+}
+
+function kmGroupHtml(rows, tab) {
+  const order = ['post', 'course', 'paper', 'material', 'lib', 'project', 'note'];
+  const groups = {};
+  rows.forEach(function (r) { (groups[r.type] = groups[r.type] || []).push(r); });
+  return order.filter(t => groups[t]).map(function (t) {
+    return '<section class="km-group"><h2 class="km-group-title">' + escapeHtml(KM_LABELS[t] || t) +
+      ' <span class="km-group-count">' + groups[t].length + '</span></h2>' +
+      groups[t].map(r => kmItemHtml(r, tab)).join('') + '</section>';
+  }).join('');
+}
+
+function fillKnowledgeTab(tab) {
+  const host = document.getElementById('kmList');
+  const stats = document.getElementById('kmStats');
+  if (!host || !kmAvailable()) return;
+  const query = tab === 'continue' ? Knowledge.list({ flag: 'continue', limit: 6 })
+    : tab === 'favorites' ? Knowledge.list({ flag: 'fav', sort: 'fav' })
+      : tab === 'readlater' ? Knowledge.list({ flag: 'later', sort: 'later' })
+        : Knowledge.list({ flag: 'history', sort: 'recent', limit: 100 });
+  Promise.all([query, Knowledge.counts()]).then(function (res) {
+    const rows = res[0] || [];
+    const c = res[1] || {};
+    if (stats) {
+      stats.textContent = '收藏 ' + (c.fav || 0) + ' · 待读 ' + (c.later || 0) +
+        ' · 阅读中 ' + (c.reading || 0) + ' · 已完成 ' + (c.done || 0);
+    }
+    if (!rows.length) {
+      const emptyText = tab === 'favorites' ? '还没有收藏。把值得回看的内容加进来吧。'
+        : tab === 'readlater' ? '待读清单是空的。'
+          : tab === 'history' ? '还没有浏览记录。' : '暂时没有未读完的内容。';
+      host.innerHTML = '<div class="km-empty"><div class="km-empty-icon">🗂️</div><p>' +
+        escapeHtml(emptyText) + '</p><p><a href="#/">去首页看看</a></p></div>';
+      return;
+    }
+    host.innerHTML = kmGroupHtml(rows, tab);
+  }).catch(function () {
+    host.innerHTML = '<div class="km-empty"><p>读取本地数据失败。</p></div>';
+  });
+}
+
+function kmHandleRowAction(btn) {
+  const key = btn.getAttribute('data-km-key') || btn.getAttribute('data-km-resume');
+  const parsed = Knowledge.splitKey(key);
+  if (!parsed) return;
+  const remove = btn.getAttribute('data-km-remove');
+  if (remove === 'fav' || remove === 'later') {
+    Knowledge.setFlag(parsed.type, parsed.refId, remove, false).then(function (rec) {
+      if (!rec) return Knowledge.toast('保存失败，请稍后重试', 'error');
+      fillKnowledgeTab(kmTabFromHash(location.hash));
+    });
+    return;
+  }
+  if (remove === 'history') {
+    Knowledge.clearHistory(key).then(function () { fillKnowledgeTab('history'); });
+    return;
+  }
+  if (btn.hasAttribute('data-km-resume')) {
+    const rec = Knowledge.state(parsed.type, parsed.refId) || {};
+    try {
+      sessionStorage.setItem('blog.km.resume', JSON.stringify({
+        key: key, progress: rec.progress || 0
+      }));
+    } catch (e) { /* 隐私模式忽略 */ }
+    location.hash = kmHrefFor(parsed.type, parsed.refId);
+  }
+}
+
+function kmMaybeResume(type, refId) {
+  if (type !== 'post') return;
+  let pending = null;
+  try { pending = JSON.parse(sessionStorage.getItem('blog.km.resume') || 'null'); } catch (e) { pending = null; }
+  if (!pending || pending.key !== 'post:' + refId) return;
+  try { sessionStorage.removeItem('blog.km.resume'); } catch (e) { /* 忽略 */ }
+  const p = Number(pending.progress) || 0;
+  if (p < 0.05 || p >= 0.95) return;
+  setTimeout(function () {
+    const s = _readingState;
+    if (!s || !s.body || !s.body.isConnected) return;
+    const span = Math.max(0, s.bodyHeight - window.innerHeight);
+    window.scrollTo(0, Math.max(0, s.bodyTop + span * p));
+    Knowledge.toast('已恢复到上次阅读位置', 'info');
+  }, 450);
+}
+
+function kmMount(hash) {
+  _kmActiveKey = null;
+  if (!kmAvailable()) return;
+  const mPost = /^\/post\/(.+)$/.exec(hash);
+  const mCourse = /^\/course\/(.+)$/.exec(hash);
+  if (mPost && document.querySelector('.article-detail-body')) {
+    let id = mPost[1];
+    try { id = decodeURIComponent(id); } catch (e) { /* 保持原值 */ }
+    const post = getAllPosts().find(p => p.id === id);
+    if (!post) return;
+    _kmActiveKey = 'post:' + id;
+    Knowledge.recordView('post', id, { title: post.title });
+    kmInjectBar('post', id, post.title);
+    kmMaybeResume('post', id);
+    return;
+  }
+  if (mCourse && document.querySelector('.course-detail')) {
+    let cid = mCourse[1];
+    try { cid = decodeURIComponent(cid); } catch (e) { /* 保持原值 */ }
+    const course = (typeof COURSES !== 'undefined' ? COURSES : []).find(c => c.id === cid);
+    if (!course) return;
+    _kmActiveKey = 'course:' + cid;
+    Knowledge.recordView('course', cid, { title: course.name });
+    kmInjectBar('course', cid, course.name);
+  }
+}
+
+// 个人操作：捕获阶段拦截，避免触发卡片本身的导航
+document.addEventListener('click', function (e) {
+  const rowBtn = e.target && e.target.closest ? e.target.closest('[data-km-remove], [data-km-resume]') : null;
+  if (rowBtn) {
+    e.preventDefault();
+    e.stopPropagation();
+    kmHandleRowAction(rowBtn);
+    return;
+  }
+  const toggle = e.target && e.target.closest ? e.target.closest('[data-km-toggle]') : null;
+  if (!toggle || !kmAvailable()) return;
+  e.preventDefault();
+  e.stopPropagation();
+  const type = toggle.getAttribute('data-km-type');
+  const id = toggle.getAttribute('data-km-id');
+  const flag = toggle.getAttribute('data-km-toggle');
+  const title = toggle.getAttribute('data-km-title') || kmTitleOf(type, id);
+  Knowledge.toggleFlag(type, id, flag, { title: title }).then(function (rec) {
+    if (!rec) {
+      Knowledge.toast('保存失败，请稍后重试', 'error');
+      return;
+    }
+    kmRefreshButtons(type, id);
+  });
+}, true);
+
+document.addEventListener('click', function (e) {
+  const btn = e.target && e.target.closest ? e.target.closest('#kmExport') : null;
+  if (!btn) return;
+  e.preventDefault();
+  if (!kmAvailable()) return;
+  Knowledge.exportData().then(function (data) {
+    const text = JSON.stringify(data, null, 2) + '\n';
+    const d = new Date();
+    function pad(n) { return n < 10 ? '0' + n : String(n); }
+    const name = 'knowledge-' + d.getFullYear() + '-' + pad(d.getMonth() + 1) + '-' + pad(d.getDate()) + '.json';
+    if (typeof window.__downloadText === 'function') window.__downloadText(text, name);
+    else downloadText(text, name);
+    Knowledge.toast('已导出 ' + data.records.length + ' 条记录', 'success');
+  }).catch(function () { Knowledge.toast('导出失败', 'error'); });
+}, true);
+
+// 初始化：空闲时装载数据层，避免阻塞首屏
+function kmBoot() {
+  if (!kmAvailable()) return;
+  try {
+    const app = document.getElementById('app');
+    if (app && typeof MutationObserver === 'function') {
+      const mo = new MutationObserver(function () { kmScheduleEnhance(); });
+      mo.observe(app, { childList: true, subtree: true });
+    }
+    Knowledge.subscribe(function () { kmScheduleEnhance(); kmRerenderIfKnowledge(); });
+    document.addEventListener('knowledge:changed', function () { kmScheduleEnhance(); kmRerenderIfKnowledge(); });
+    window.addEventListener('pagehide', function () {
+      try { Knowledge.flushProgress(); } catch (e) { /* 忽略 */ }
+    });
+    document.addEventListener('visibilitychange', function () {
+      if (document.visibilityState === 'hidden') {
+        try { Knowledge.flushProgress(); } catch (e) { /* 忽略 */ }
+      }
+    });
+    const start = function () {
+      Knowledge.init().then(function (st) {
+        kmScheduleEnhance();
+        kmRefreshAll();
+        kmRerenderIfKnowledge();
+        if (st && st.degraded && isKnowledgeRoute(location.hash.slice(1) || '/')) {
+          const host = document.getElementById('kmList');
+          if (host && !document.querySelector('.km-banner')) {
+            host.insertAdjacentHTML('beforebegin', kmBannerHtml());
+          }
+        }
+      });
+    };
+    if (window.requestIdleCallback) requestIdleCallback(start, { timeout: 1500 });
+    else setTimeout(start, 0);
+  } catch (e) { /* 知识库初始化失败不影响站点 */ }
+}
+
+if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', kmBoot);
+else setTimeout(kmBoot, 0);
+
+// ============================================
 // Router
 // ============================================
 async function router() {
@@ -5455,6 +5895,9 @@ async function router() {
     flushDraft(true);
   }
   _currentRoute = hash;
+
+  // 离开当前内容前落盘阅读进度（异步事务不保证一定完成，但会尽力提交）
+  if (kmAvailable()) { try { Knowledge.flushProgress(); } catch (e) { /* 忽略 */ } }
 
   // 搜索状态契约（Batch 7B-2，见 BATCH7B2_REPORT.md）：
   //   1) 浏览器前进/后退 → 该历史条目记过关键词就恢复（后退能拿回原搜索上下文）；
@@ -5513,6 +5956,9 @@ async function router() {
     if (route === '/archive' && hash.startsWith('/archive')) {
       link.classList.add('active');
     }
+    if (route === '/knowledge' && hash.startsWith('/knowledge')) {
+      link.classList.add('active');
+    }
     if (link.classList.contains('active')) link.setAttribute('aria-current', 'page');
   });
 
@@ -5541,6 +5987,17 @@ async function router() {
         app.innerHTML = bodyFailed ? renderPostError(id) : renderPost(id);
       }
       loadGiscus(id);
+    } else if (isKnowledgeRoute(hash)) {
+      const tab = kmTabFromHash(hash);
+      app.innerHTML = renderKnowledgeShell(tab);
+      document.title = '知识库 · Eric\'s Notebook';
+      fillKnowledgeTab(tab);
+      // 进入知识页前先把节流中的阅读进度落盘，避免"刚读完却不在继续阅读里"
+      if (kmAvailable()) {
+        try {
+          Knowledge.flushProgress().then(function () { kmRerenderIfKnowledge(); });
+        } catch (e) { /* 忽略 */ }
+      }
     } else if (hash.startsWith('/tags')) {
       const parts = hash.split('/');
       const tag = parts.length > 2 ? decodeURIComponent(parts[2]) : null;
@@ -5699,6 +6156,8 @@ async function router() {
   // 标题/描述同步更新（便宜）；代码工具条/目录/高亮都属于"非首屏必需"，
   // 延后到首帧之后执行：先让第一段文字画出来，再做这些同步 DOM 重建。
   updateMetaForRoute(hash);
+  // 内容渲染成功后挂载个人知识入口（失败/加载态不会进入这里）
+  kmMount(hash);
   // 记录本条历史条目对应的关键词：后退回来时据此恢复搜索上下文
   rememberEntryState(hash);
   perfMark('art:html-end');
@@ -6228,6 +6687,24 @@ window.toggleTheme = toggleTheme;
     }
     if ((e.key === 't' || e.key === 'T') && !e.ctrlKey && !e.metaKey && !e.altKey) {
       toggleTheme();
+    }
+    // Batch 9A-1：详情页快捷收藏 / 待读
+    if ((e.key === 'f' || e.key === 'F') && !e.ctrlKey && !e.metaKey && !e.altKey &&
+      _kmActiveKey && kmAvailable()) {
+      const parsed = Knowledge.splitKey(_kmActiveKey);
+      if (parsed) {
+        Knowledge.toggleFlag(parsed.type, parsed.refId, 'fav', { title: kmTitleOf(parsed.type, parsed.refId) })
+          .then(function (rec) { if (rec) kmRefreshButtons(parsed.type, parsed.refId); });
+      }
+      return;
+    }
+    if ((e.key === 'r' || e.key === 'R') && !e.ctrlKey && !e.metaKey && !e.altKey &&
+      _kmActiveKey && kmAvailable()) {
+      const parsed = Knowledge.splitKey(_kmActiveKey);
+      if (parsed) {
+        Knowledge.toggleFlag(parsed.type, parsed.refId, 'later', { title: kmTitleOf(parsed.type, parsed.refId) })
+          .then(function (rec) { if (rec) kmRefreshButtons(parsed.type, parsed.refId); });
+      }
     }
   });
 })();

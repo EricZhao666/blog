@@ -637,7 +637,43 @@ async function scenarioC5(env) {
   await s.ctx.close();
 }
 
-const SCENARIOS = { C1: scenarioC1, C2: scenarioC2, C3: scenarioC3, C4: scenarioC4, C5: scenarioC5 };
+// ---------------------------------------------------------------- K1 知识库（Batch 9A-1）
+// 三引擎一致：详情页收藏 → 知识页出现 → 取消收藏 → 空状态
+async function scenarioK1(env) {
+  const r = env.reporter;
+  const s = await newSession(env.browser);
+  const post = mkPost('b9a1-k1', {
+    title: '知识库跨引擎验收',
+    tags: ['知识库'],
+    content: '# 跨引擎\n\n正文内容。\n'
+  });
+  try {
+    await mountPost(s.page, post);
+    await s.page.waitForSelector('.km-actions [data-km-toggle="fav"]', { timeout: 20000 });
+    const fav = s.page.locator('.km-actions [data-km-toggle="fav"]').first();
+    await fav.click();
+    await sleep(400);
+    r.check('K1', '详情页收藏状态生效', (await fav.getAttribute('aria-pressed')) === 'true');
+
+    await s.page.evaluate(function () { location.hash = '#/knowledge?tab=favorites'; });
+    await s.page.waitForSelector('#kmList', { timeout: 20000 });
+    await sleep(800);
+    const items = await s.page.locator('.km-item').count();
+    r.check('K1', '收藏出现在知识中心', items >= 1, 'items=' + items);
+
+    const remove = s.page.locator('[data-km-remove="fav"]').first();
+    if ((await remove.count()) > 0) {
+      await remove.click();
+      await sleep(700);
+    }
+    r.check('K1', '取消收藏后回到空状态', (await s.page.locator('.km-empty').count()) === 1);
+    r.check('K1', '知识库流程无未处理异常', s.errors.length === 0, s.errors.slice(0, 2).join(' | ') || 'none');
+  } finally {
+    await s.ctx.close();
+  }
+}
+
+const SCENARIOS = { C1: scenarioC1, C2: scenarioC2, C3: scenarioC3, C4: scenarioC4, C5: scenarioC5, K1: scenarioK1 };
 
 (async function main() {
   serverHandle = createServer(ROOT, PREFIX);

@@ -131,6 +131,7 @@ GROUPS = {
         'search-interaction', 'reading-experience', 'image-lightbox',
         'ui-refresh', 'performance-accessibility',
     ],
+    'knowledge': ['knowledge-store', 'knowledge-center'],
     'full': [],
 }
 
@@ -223,6 +224,8 @@ TESTS = [
      'desc': 'B8E3BR：构建锁覆盖完整 sync 临界区 / replace 失败临时文件清理 / 只读契约 / 锁超时'},
     {'name': 'parallel-scheduler', 'file': 'tests/test50_parallel_scheduler.py', 'kind': 'python',
      'desc': 'B8E3B2：可选 2-worker 安全调度 / 配对许可 / 中断与进程树清理'},
+    {'name': 'knowledge-store', 'file': 'tests/test51_knowledge_store.js', 'kind': 'jsdom',
+     'desc': 'B9A1：知识库数据层（稳定键/字段级并发/历史裁剪/降级/导出）'},
     {'name': 'image-check', 'file': 'scripts/check_images.py', 'kind': 'python', 'args': ['--check'],
      'desc': 'B8D2B：发布前图片资源门禁（缺失图片必须失败，不允许降级为 SKIP/WARNING）',
      'pass_marker': 'OK:'},
@@ -259,6 +262,8 @@ TESTS = [
      'desc': 'B8D3：全站 UI 2.0（页面渲染/导航/双主题/五档视口/长文本/键盘/目录与灯箱/编辑器/静态笔记）'},
     {'name': 'performance-accessibility', 'file': 'tests/browser/performance-accessibility.spec.js', 'kind': 'browser',
      'desc': 'B8D4：性能与无障碍（chips aria-pressed/编辑器与搜索框可访问名称/浅色高亮对比度/键盘与 skip link/触控目标/六档视口+缩放+横屏/路由循环资源清理/passive 滚动/回归冒烟）'},
+    {'name': 'knowledge-center', 'file': 'tests/browser/knowledge-center.spec.js', 'kind': 'browser',
+     'desc': 'B9A1：知识中心（收藏/待读/历史/继续阅读/导出/降级/移动端/键盘）'},
 ]
 
 COUNT_RE = re.compile(r'共\s*(\d+)\s*项[，,]\s*PASS\s*(\d+)[，,]\s*FAIL\s*(\d+)')

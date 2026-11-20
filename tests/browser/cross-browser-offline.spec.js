@@ -527,7 +527,58 @@ async function scenarioE(env) {
   }
 }
 
-const SCENARIOS = { D: scenarioD, E: scenarioE };
+// ---------------------------------------------------------------- K2 知识库离线（Batch 9A-1）
+// 个人记录可离线读取；不承诺"收藏目标内容"一定可离线打开。
+async function scenarioK2(env) {
+  const r = env.reporter;
+  const s = await newSession(env.browser);
+  try {
+    await gotoHome(s.page);
+    await waitSwActive(s.page);
+    await s.page.waitForSelector('#app a[href^="#/post/"]', { timeout: 20000 });
+    await s.page.locator('#app a[href^="#/post/"]').first().click();
+    await s.page.waitForSelector('.article-detail-body', { timeout: 20000 });
+    await s.page.waitForSelector('.km-actions [data-km-toggle="fav"]', { timeout: 20000 });
+    await s.page.locator('.km-actions [data-km-toggle="fav"]').first().click();
+    await sleep(500);
+    const onlineItems = await s.page.evaluate(function () {
+      return Knowledge.list({ flag: 'fav' }).then(function (rows) { return rows.length; });
+    });
+    r.check('K2', '在线收藏写入本地', onlineItems >= 1, 'fav=' + onlineItems);
+
+    setNetworkDown(true);
+    try {
+      await s.page.goto(BASE + PREFIX + '/index.html#/knowledge?tab=favorites', { waitUntil: 'load', timeout: 30000 });
+      await s.page.waitForSelector('#kmList', { timeout: 20000 });
+      await sleep(900);
+      const offlineItems = await s.page.locator('.km-item').count();
+      r.check('K2', '离线可读取已保存的个人记录', offlineItems >= 1, 'items=' + offlineItems);
+      const canCancel = await s.page.evaluate(function () {
+        return Knowledge.list({ flag: 'fav' }).then(function (rows) { return rows.length; });
+      });
+      r.check('K2', '离线时数据层可读', canCancel >= 1, 'fav=' + canCancel);
+    } catch (e) {
+      r.fail('K2', '离线可读取已保存的个人记录', e.message.split('\n')[0]);
+    }
+    setNetworkDown(false);
+    try {
+      await s.page.reload({ waitUntil: 'load', timeout: 30000 });
+      await s.page.waitForSelector('#kmList', { timeout: 20000 });
+      await sleep(500);
+      const after = await s.page.evaluate(function () {
+        return Knowledge.list({ flag: 'fav' }).then(function (rows) { return rows.length; });
+      });
+      r.check('K2', '网络恢复后个人记录保持', after >= 1, 'fav=' + after);
+    } catch (e) {
+      r.fail('K2', '网络恢复后个人记录保持', e.message.split('\n')[0]);
+    }
+    r.check('K2', '离线知识库无未处理异常', s.errors.length === 0, s.errors.slice(0, 2).join(' | ') || 'none');
+  } finally {
+    await s.ctx.close();
+  }
+}
+
+const SCENARIOS = { D: scenarioD, E: scenarioE, K2: scenarioK2 };
 
 (async function main() {
   const server = createServer(ROOT, PREFIX);
