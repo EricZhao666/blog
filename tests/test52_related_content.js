@@ -313,6 +313,42 @@ const index = Related.buildIndex(BASE);
   check('T19 恶意标题原样输出给渲染层转义', list[0] && list[0].title === payload, list[0] && list[0].title.slice(0, 12));
 })();
 
+// T20 显式关联（rank=0）在"三种以上理由"时仍排第一（B9B1 回归：0 曾被当成缺失抬到 9）
+(function () {
+  // 直接构造乱序理由，专门验证 formatReasons 的排序而不是生成顺序
+  const shuffled = [
+    { kind: 'tag', label: '共同标签：SLAM' },
+    { kind: 'text', label: '标题主题相近：slam' },
+    { kind: 'explicit', label: '正文已关联此内容' },
+    { kind: 'series', label: '同系列「SLAM 技术系列」' }
+  ];
+  const all = Related.formatReasons(shuffled, 9);
+  check('T20 四种理由时显式关联仍排第一', all.indexOf('正文已关联此内容') === 0, all);
+  check('T20.1 完整顺序为 显式 > 系列 > 标签 > 标题',
+    all === '正文已关联此内容 · 同系列「SLAM 技术系列」 · 共同标签：SLAM · 标题主题相近：slam', all);
+  check('T20.2 截断到 2 条时显式关联不会被挤掉',
+    Related.formatReasons(shuffled, 2).indexOf('正文已关联此内容') === 0, Related.formatReasons(shuffled, 2));
+  check('T20.3 截断到 1 条时就是显式关联',
+    Related.formatReasons(shuffled, 1) === '正文已关联此内容', Related.formatReasons(shuffled, 1));
+
+  // 端到端：候选同时具备 显式 + 同系列 + 共同标签，只显示 1 条时必须是显式关联
+  const idx = Related.buildIndex([
+    { type: 'post', refId: 's', title: 'SLAM 全景', tags: ['SLAM', '机器人'], series: 'SLAM 技术系列' },
+    { type: 'post', refId: 't', title: 'SLAM 实践', tags: ['SLAM', '机器人'], series: 'SLAM 技术系列' }
+  ]);
+  const hit = Related.recommend(idx, 'post:s', { explicit: ['post:t'] })[0];
+  check('T20.4 三理由候选只显示 1 条时输出显式关联',
+    !!hit && hit.reasons.length >= 3 && Related.formatReasons(hit.reasons, 1) === '正文已关联此内容',
+    (hit ? hit.reasons.length : 0) + ' / ' + (hit ? Related.formatReasons(hit.reasons, 1) : ''));
+
+  // 未知 kind 仍排最后（不能因为空值判断把 rank 变成 NaN）
+  const unknown = Related.formatReasons([
+    { kind: 'mystery', label: '未知理由' },
+    { kind: 'tag', label: '共同标签：X' }
+  ], 9);
+  check('T20.5 未知理由类型排在已知类型之后', unknown === '共同标签：X · 未知理由', unknown);
+})();
+
 console.log('\n合计 ' + (pass + fail) + ' 项，PASS ' + pass + '，FAIL ' + fail);
 if (failures.length) console.log('失败项：' + failures.join(' / '));
 process.exit(fail ? 1 : 0);

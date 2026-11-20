@@ -15,9 +15,10 @@ R-13,算法,related-content,跨类型 ID 冲突,post:paper-4 与 paper:paper-4 �
 R-14,算法,related-content,无效链接过滤,无路由类型（project/note）不进候选;hrefFor 只输出四类真实路由,unit,node,2,PASS,T15 / T15.1
 R-15,安全,related-content,显式链接抽取,四类站内路由可解析;外链与 javascript: 被忽略;重复只留一次;空输入安全,unit,node,4,PASS,T16 / T16.1 / T16.2 / T16.3
 R-16,渲染,related-content,理由顺序与数量,最多 2 条且按 显式>系列>标签>标题 排序,unit,node,2,PASS,T17 / T17.1
+R-16b,渲染,related-content,理由优先级回归（合并前修复）,explicit(rank=0) 不再被 `|| 9` 抬到最后：4 种理由乱序仍第一、截断到 1/2 条不被挤掉、三理由候选端到端、未知类型排最后,unit,node,6,PASS,T20 / T20.1-T20.5
 R-17,算法,related-content,上限与分值格式,默认最多 5 条;分数两位小数且非负,unit,node,2,PASS,T18 / T18.1
 R-18,安全,related-content,恶意标题,算法层原样传出、不改写不执行（转义由渲染层负责）,unit,node,1,PASS,T19
-R-19,页面,related-reading,文章页区块,区块渲染、数量 1–5、类型/标题/理由齐全、链接为真实路由、排除自身、显式关联登顶,browser,chromium,6,PASS,R1.1-R1.6
+R-19,页面,related-reading,文章页区块,区块渲染、数量 1–5、类型/标题/理由齐全、链接为真实路由、排除自身、显式关联理由排在最前（位置断言）,browser,chromium,6,PASS,R1.1-R1.6
 R-20,兼容,related-reading,知识管理按钮,每卡 2 个按钮（复用 kmEnhance）、点收藏不导航、aria-pressed 同步,browser,chromium,3,PASS,R2.1-R2.3
 R-21,交互,related-reading,卡片跳转,点击标题跳到目标路由,browser,chromium,1,PASS,R2.4
 R-22,竞态,related-reading,快速路由切换,挂载点属于当前文章、理由随内容变化、不残留上一篇标题,browser,chromium,3,PASS,R3.1-R3.3

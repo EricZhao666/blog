@@ -19,7 +19,7 @@
 (function (global) {
   'use strict';
 
-  var VERSION = '9b1.1';
+  var VERSION = '9b1.2';   // 9b1.2：修复 formatReasons 把 explicit(rank=0) 当成缺失排到最后
 
   var TYPES = ['post', 'course', 'paper', 'material', 'lib', 'project', 'note'];
 
@@ -336,13 +336,24 @@
   // 理由优先级：显式 > 同系列 > 标签 > 分类 > 技术栈 > 文本
   var REASON_RANK = { explicit: 0, series: 1, tag: 2, topic: 3, category: 4, tech: 5, text: 6 };
 
+  // 注意：显式关联的 rank 是 0，不能写 `REASON_RANK[kind] || 9`——
+  // 那样 0 会被当成"缺失"抬到 9，把最重要的理由排到最后（B9B1 修复）。
+  function reasonRank(kind) {
+    var r = REASON_RANK[kind];
+    return (r === undefined || r === null) ? 9 : r;
+  }
+
   function formatReasons(reasons, max) {
     var limit = typeof max === 'number' ? max : REASON_MAX;
     return (reasons || [])
       .slice()
-      .sort(function (a, b) { return (REASON_RANK[a.kind] || 9) - (REASON_RANK[b.kind] || 9); })
+      .map(function (r, i) { return { r: r, i: i }; })
+      .sort(function (a, b) {
+        var d = reasonRank(a.r.kind) - reasonRank(b.r.kind);
+        return d || (a.i - b.i);   // 同级别保持生成顺序，避免依赖引擎的 sort 稳定性
+      })
       .slice(0, limit)
-      .map(function (r) { return r.label; })
+      .map(function (x) { return x.r.label; })
       .join(' · ');
   }
 

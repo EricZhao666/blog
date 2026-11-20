@@ -117,8 +117,9 @@ async function readRelated(page) {
       r1.items.map(i => i.href).join(' | '));
     check('R1.5 不推荐当前文章自身', r1.items.every(i => i.href !== '#/post/vla-model-intro'),
       r1.items.map(i => i.href).join(' | '));
-    check('R1.6 显式关联（正文链接的代码库）排在首位',
-      r1.items[0] && r1.items[0].reason.indexOf('正文已关联此内容') !== -1,
+    // 理由顺序回归：显式关联的 rank 是 0，曾被 `|| 9` 抬到最后，变得只能在末尾显示
+    check('R1.6 显式关联（正文链接的代码库）理由排在最前',
+      r1.items[0] && r1.items[0].reason.indexOf('正文已关联此内容') === 0,
       r1.items[0] && r1.items[0].reason);
 
     // R2 与知识管理按钮兼容
