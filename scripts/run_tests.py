@@ -131,7 +131,7 @@ GROUPS = {
         'search-interaction', 'reading-experience', 'image-lightbox',
         'ui-refresh', 'performance-accessibility',
     ],
-    'knowledge': ['knowledge-store', 'knowledge-center'],
+    'knowledge': ['knowledge-store', 'knowledge-center', 'related-content', 'related-reading'],
     'full': [],
 }
 
@@ -264,6 +264,10 @@ TESTS = [
      'desc': 'B8D4：性能与无障碍（chips aria-pressed/编辑器与搜索框可访问名称/浅色高亮对比度/键盘与 skip link/触控目标/六档视口+缩放+横屏/路由循环资源清理/passive 滚动/回归冒烟）'},
     {'name': 'knowledge-center', 'file': 'tests/browser/knowledge-center.spec.js', 'kind': 'browser',
      'desc': 'B9A1：知识中心（收藏/待读/历史/继续阅读/导出/降级/移动端/键盘）'},
+    {'name': 'related-content', 'file': 'tests/test52_related_content.js', 'kind': 'jsdom',
+     'desc': 'B9B1：相关推荐算法（标签区分度/显式关联/系列/分类/技术栈/标题/稳定排序/去重/无效链接）'},
+    {'name': 'related-reading', 'file': 'tests/browser/related-content.spec.js', 'kind': 'browser',
+     'desc': 'B9B1：相关阅读（文章与课程页渲染/理由/跳转/知识管理按钮/快速切换/降级/移动端/深色/离线）'},
 ]
 
 COUNT_RE = re.compile(r'共\s*(\d+)\s*项[，,]\s*PASS\s*(\d+)[，,]\s*FAIL\s*(\d+)')

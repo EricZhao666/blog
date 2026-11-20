@@ -1,0 +1,39 @@
+id,area,suite,target,coverage,type,engines,items,result,evidence
+R-01,算法,related-content,共同标签优先,专指标签可单独成榜；泛标签（df>=4 且占比>=40%）被降权到阈值以下,unit,node,2,PASS,T4 / T4.1
+R-02,算法,related-content,显式关联优先,正文内链目标被提升到首位并输出"正文已关联此内容";无链接时不出现,unit,node,3,PASS,T3 / T3.1 / T3.2
+R-03,算法,related-content,同系列优先,同 series 内容排首位且理由以"同系列"开头,unit,node,2,PASS,T2 / T2.1
+R-04,算法,related-content,同分类,同分类课程互相推荐;不同分类且无其他依据不推荐,unit,node,2,PASS,T5 / T5.1
+R-05,算法,related-content,跨类型桥接,源标签出现在候选标题/摘要时给出"内容涉及"理由,unit,node,1,PASS,T6
+R-06,算法,related-content,技术栈重合,tech 交集计分并输出理由;无详情路由的项目被过滤,unit,node,3,PASS,T7 / T7.1 / T7.2
+R-07,算法,related-content,标题词重合,中英混合标题 token 重合计分;无关标题不推荐;单独接近不过默认阈值,unit,node,3,PASS,T8 / T8.1 / T8.2
+R-08,算法,related-content,排除自身,结果中不含源内容,unit,node,1,PASS,T1
+R-09,算法,related-content,去重,重复输入的相同 key 只保留一条;结果无重复 key,unit,node,2,PASS,T11 / T11.1
+R-10,算法,related-content,空元数据/无关联,空索引、非法源键、limit=0 安全返回空数组;无关联返回空列表,unit,node,2,PASS,T9 / T10
+R-11,算法,related-content,稳定排序,重复调用一致;元数据乱序不影响结果;同分按 key 码元序,unit,node,3,PASS,T12 / T12.1 / T12.2
+R-12,算法,related-content,中英文与空白归一化,大小写/多空格可匹配;理由显示保留原始大小写,unit,node,2,PASS,T13 / T13.1
+R-13,算法,related-content,跨类型 ID 冲突,post:paper-4 与 paper:paper-4 互不覆盖;键格式 type:refId,unit,node,2,PASS,T14 / T14.1
+R-14,算法,related-content,无效链接过滤,无路由类型（project/note）不进候选;hrefFor 只输出四类真实路由,unit,node,2,PASS,T15 / T15.1
+R-15,安全,related-content,显式链接抽取,四类站内路由可解析;外链与 javascript: 被忽略;重复只留一次;空输入安全,unit,node,4,PASS,T16 / T16.1 / T16.2 / T16.3
+R-16,渲染,related-content,理由顺序与数量,最多 2 条且按 显式>系列>标签>标题 排序,unit,node,2,PASS,T17 / T17.1
+R-17,算法,related-content,上限与分值格式,默认最多 5 条;分数两位小数且非负,unit,node,2,PASS,T18 / T18.1
+R-18,安全,related-content,恶意标题,算法层原样传出、不改写不执行（转义由渲染层负责）,unit,node,1,PASS,T19
+R-19,页面,related-reading,文章页区块,区块渲染、数量 1–5、类型/标题/理由齐全、链接为真实路由、排除自身、显式关联登顶,browser,chromium,6,PASS,R1.1-R1.6
+R-20,兼容,related-reading,知识管理按钮,每卡 2 个按钮（复用 kmEnhance）、点收藏不导航、aria-pressed 同步,browser,chromium,3,PASS,R2.1-R2.3
+R-21,交互,related-reading,卡片跳转,点击标题跳到目标路由,browser,chromium,1,PASS,R2.4
+R-22,竞态,related-reading,快速路由切换,挂载点属于当前文章、理由随内容变化、不残留上一篇标题,browser,chromium,3,PASS,R3.1-R3.3
+R-23,页面,related-reading,课程页区块,渲染非空、全部课程路由、含"同分类"理由,browser,chromium,2,PASS,R4.1 / R4.2
+R-24,异常,related-reading,元数据加载失败,阻断 js/courses.js 后仍出文章间推荐、无未捕获异常、正文与操作条正常,browser,chromium,3,PASS,R5.1-R5.3
+R-25,响应式,related-reading,手机 + 深色,390 宽无横向溢出、深色下可见且有对比,browser,chromium,2,PASS,R6.1 / R6.2
+R-26,离线,related-reading,离线降级,SW 控制下离线打开已访问文章仍渲染推荐,browser,chromium,1,PASS,R7.1
+R-27,运行时,related-reading,无异常,全流程 s.errors 为空,browser,chromium,1,PASS,R4.3
+R-28,跨引擎,cross-browser K2,三引擎一致性,区块非空、理由可读、点击跳转、换文章跟随、无异常,browser,chromium+firefox+webkit,15,PASS,5 项×3 引擎，推荐顺序三引擎一致
+R-29,SW,sw-snapshot-unit,首屏清单,6→7 项且含 js/related.js,browser,chromium,1,PASS,U0b
+R-30,SW,sw-consistency,首屏路径与不混版,7 条首屏路径全部来自快照、服务端命中 0、离线/换代/5xx 分支,browser,chromium,37,PASS,37/37
+R-31,回归,reading-experience,阅读体验,目录/进度/复制/表格/五档视口/SW 均不受新块影响,browser,chromium,47,PASS,47/47
+R-32,回归,knowledge-center,知识管理,收藏/待读/历史/继续阅读/双标签/降级/离线不受影响,browser,chromium,29,PASS,29/29
+R-33,回归,test7,静态页与课程详情,静态笔记页、canonical、快捷键、课程详情"同方向推荐"断言改为新区块,jsdom,node,26,PASS,ALL PASS
+R-34,回归,test18,数据拆分与 SW 资源,18 篇正文/哈希/搜索语料一致；必需资源 8 项、首屏 7 项全部存在,jsdom,node,18,PASS,18/18
+R-35,回归,test9,路由与懒加载,关于页/论文页/课程页搜索与异步不覆盖,browser-free,node,12,PASS,ALL PASS
+R-36,回归,audit,全站巡检,路由渲染/死链/静态页一致性,jsdom,node,-,PASS,"未发现问题"
+R-37,回归,inline-handlers,内联事件编码,标签 chip 与卡片导航不受影响,jsdom,node,17,PASS,17/17
+R-38,回归,knowledge-store,知识库数据层,未修改,jsdom,node,25,NOT_RUN_LOCAL,本轮未改动 js/knowledge.js（由 PR CI 串行覆盖）

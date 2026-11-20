@@ -156,7 +156,7 @@ async function assetTimings(page) {
     })));
 }
 
-const FIRST_SCREEN_PATHS = ['/css/style.css', '/js/app.js', '/js/knowledge.js', '/js/data.js', '/js/user-posts.js', '/js/projects.js'];
+const FIRST_SCREEN_PATHS = ['/css/style.css', '/js/app.js', '/js/knowledge.js', '/js/related.js', '/js/data.js', '/js/user-posts.js', '/js/projects.js'];
 
 // 判断"首屏资源是否来自 SW 缓存"的硬证据：服务端命中计数。
 // 注意不能用 transferSize —— 经 SW 返回的响应 transferSize 恒为 0，无论 SW 是从缓存读还是回源；

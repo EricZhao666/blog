@@ -673,7 +673,67 @@ async function scenarioK1(env) {
   }
 }
 
-const SCENARIOS = { C1: scenarioC1, C2: scenarioC2, C3: scenarioC3, C4: scenarioC4, C5: scenarioC5, K1: scenarioK1 };
+// ---------------------------------------------------------------- K2 相关阅读（Batch 9B-1）
+// 三引擎一致：文章详情页出现"相关阅读" → 有理由 → 点击可跳转 → 换文章后内容跟随
+async function scenarioK2(env) {
+  const r = env.reporter;
+  const s = await newSession(env.browser);
+  async function waitRelated() {
+    await s.page.waitForFunction(function () {
+      const box = document.querySelector('[data-related]');
+      return !!box && (box.getAttribute('data-related-filled') === '1' || box.hidden === true);
+    }, null, { timeout: 25000 });
+  }
+  try {
+    await s.page.evaluate(function () { location.hash = '#/post/rl-from-mdp-to-ppo'; });
+    await s.page.waitForSelector('.article-detail-body', { timeout: 25000 });
+    await waitRelated();
+    const first = await s.page.evaluate(function () {
+      const box = document.querySelector('[data-related]');
+      const items = Array.from(box ? box.querySelectorAll('.related-reading-item') : []);
+      return {
+        hidden: box ? box.hidden : true,
+        source: box ? box.getAttribute('data-related') : '',
+        count: items.length,
+        reasons: items.map(function (li) {
+          const el = li.querySelector('.related-reason');
+          return el ? el.textContent : '';
+        }),
+        href: items[0] ? items[0].querySelector('.related-card-title').getAttribute('href') : ''
+      };
+    });
+    r.check('K2', '相关阅读区块渲染且非空', first.hidden === false && first.count >= 1 && first.count <= 5,
+      JSON.stringify({ count: first.count, src: first.source }));
+    r.check('K2', '每项推荐都有可读理由', first.reasons.length === first.count &&
+      first.reasons.every(function (x) { return !!x; }), first.reasons.join(' | ').slice(0, 100));
+
+    await s.page.locator('.related-reading-item .related-card-title').first().click();
+    await s.page.waitForFunction(function (want) {
+      return location.hash === want;
+    }, first.href, { timeout: 20000 });
+    r.check('K2', '点击推荐可跳到目标路由', (await s.page.evaluate(function () { return location.hash; })) === first.href, first.href);
+
+    await s.page.evaluate(function () { location.hash = '#/post/slam-overview-filtering-to-graph'; });
+    await s.page.waitForSelector('.article-detail-body', { timeout: 25000 });
+    await waitRelated();
+    const second = await s.page.evaluate(function () {
+      const box = document.querySelector('[data-related]');
+      return {
+        source: box ? box.getAttribute('data-related') : '',
+        reasons: Array.from(box ? box.querySelectorAll('.related-reason') : []).map(function (el) { return el.textContent; })
+      };
+    });
+    r.check('K2', '切换文章后推荐跟随当前内容',
+      second.source === 'post:slam-overview-filtering-to-graph' &&
+      second.reasons.some(function (x) { return x.indexOf('SLAM 技术系列') !== -1; }),
+      second.source + ' / ' + second.reasons.join(' | ').slice(0, 100));
+    r.check('K2', '相关阅读流程无未处理异常', s.errors.length === 0, s.errors.slice(0, 2).join(' | ') || 'none');
+  } finally {
+    await s.ctx.close();
+  }
+}
+
+const SCENARIOS = { C1: scenarioC1, C2: scenarioC2, C3: scenarioC3, C4: scenarioC4, C5: scenarioC5, K1: scenarioK1, K2: scenarioK2 };
 
 (async function main() {
   serverHandle = createServer(ROOT, PREFIX);
