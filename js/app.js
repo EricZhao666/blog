@@ -292,6 +292,19 @@ function updateMetaForRoute(hash) {
       return;
     }
   }
+  if (hash.indexOf('/project/') === 0 && typeof PROJECTS !== 'undefined') {
+    let pid = hash.slice(9);
+    try { pid = decodeURIComponent(pid); } catch (e) { pid = ''; }
+    const proj = PROJECTS.find(p => p.id === pid);
+    if (proj) {
+      setMeta(proj.name + (proj.example ? '（示例项目）' : ''), proj.description || '');
+      setCanonical(null);
+      return;
+    }
+    setMeta('项目未找到', '没有找到对应的项目');
+    setCanonical(null);
+    return;
+  }
   if (hash.indexOf('/course/') === 0 && dataReady('courses')) {
     const id = decodeURIComponent(hash.slice(8));
     const course = COURSES.find(c => c.id === id);
@@ -3148,13 +3161,48 @@ function renderAbout() {
   `;
 }
 
+// ============================================
+// Batch 9D：项目作品集（详情页 + 知识/推荐接入）
+// ============================================
+// 稳定 ID 不进 URL 编码之外的处理；路由为 #/project/<id>。
+function projectHref(id) {
+  return '#/project/' + encodeURIComponent(id);
+}
+
+function projectById(id) {
+  const list = (typeof PROJECTS !== 'undefined' ? PROJECTS : []);
+  return list.find(p => p.id === id) || null;
+}
+
+// 示例身份标记：列表、详情、推荐卡片都要能一眼看出"这不是真实成果"
+function projectDemoBadge(p, extraClass) {
+  if (!p || !p.example) return '';
+  return '<span class="project-demo-badge' + (extraClass ? ' ' + extraClass : '') +
+    '" title="示例数据：占位文案，未经独立验证">示例</span>';
+}
+
+function projectStatusClass(status) {
+  return status === '已完成' ? 'done' : (status === '进行中' ? 'doing' : 'other');
+}
+
+// 只认 http(s)：项目数据属于不可信文本，禁止 javascript:/data: 等协议
+function safeExternalUrl(url) {
+  if (typeof url !== 'string') return '';
+  const u = url.trim();
+  if (!/^https?:\/\/[^\s"'<>]+$/i.test(u)) return '';
+  return u;
+}
+
 function renderProjects() {
+  const anyExample = PROJECTS.some(p => p.example);
   const grid = PROJECTS.map(p => `
-    <article class="project-card">
+    <article class="project-card" data-href="${projectHref(p.id)}" tabindex="0" role="link"
+      aria-label="${escapeHtml(p.name + '（查看详情）')}">
       <div class="project-card-head">
-        <span class="project-card-icon">${p.icon || '📦'}</span>
+        <span class="project-card-icon">${escapeHtml(p.icon || '📦')}</span>
         <span class="project-card-name">${escapeHtml(p.name)}</span>
-        <span class="project-card-status ${p.status === '已完成' ? 'done' : 'doing'}">${escapeHtml(p.status)}</span>
+        ${projectDemoBadge(p)}
+        <span class="project-card-status ${projectStatusClass(p.status)}">${escapeHtml(p.status || '')}</span>
       </div>
       <p class="project-card-desc">${escapeHtml(p.description)}</p>
       ${p.highlights && p.highlights.length ? `
@@ -3162,9 +3210,12 @@ function renderProjects() {
           ${p.highlights.map(h => `<li>${escapeHtml(h)}</li>`).join('')}
         </ul>` : ''}
       <div class="project-card-tech">
-        ${p.tech.map(t => `<span class="tag">${escapeHtml(t)}</span>`).join('')}
+        ${(p.tech || []).map(t => `<span class="tag">${escapeHtml(t)}</span>`).join('')}
       </div>
-      <div class="project-card-year">${escapeHtml(p.year || '')} · ${p.tags.map(t => escapeHtml(t)).join(' / ')}</div>
+      <div class="project-card-foot">
+        <span class="project-card-year">${escapeHtml(p.year || '')} · ${(p.tags || []).map(t => escapeHtml(t)).join(' / ')}</span>
+        <a class="project-card-link" href="${projectHref(p.id)}">查看详情 →</a>
+      </div>
     </article>
   `).join('');
 
@@ -3172,7 +3223,106 @@ function renderProjects() {
     <div class="fade-in">
       <h1 class="page-title">项目作品集</h1>
       <p class="page-intro">这里记录我做过的工程实践与项目。部分项目因保密要求未公开细节，仅作能力展示。</p>
+      ${anyExample ? `<p class="project-demo-notice" role="note">⚠️ ${escapeHtml(PROJECTS_EXAMPLE_NOTICE)}</p>` : ''}
       <div class="projects-grid">${grid}</div>
+    </div>
+  `;
+}
+
+// 可选字段统一按"没有就不渲染"处理，不生成占位文案
+function projectSectionHtml(title, inner, cls) {
+  if (!inner) return '';
+  return `<section class="project-section ${cls || ''}">
+      <h2 class="project-section-title">${escapeHtml(title)}</h2>
+      ${inner}
+    </section>`;
+}
+
+function projectListHtml(items) {
+  const list = (items || []).filter(x => typeof x === 'string' && x.trim());
+  if (!list.length) return '';
+  return '<ul class="project-bullets">' + list.map(x => `<li>${escapeHtml(x)}</li>`).join('') + '</ul>';
+}
+
+function renderProjectDetail(id) {
+  const p = projectById(id);
+  if (!p) return renderProjectMissing(id);
+
+  const repo = (p.visibility === 'private') ? '' : safeExternalUrl(p.repository);
+  const link = (p.visibility === 'private') ? '' : safeExternalUrl(p.link);
+
+  const techHtml = (p.tech && p.tech.length)
+    ? `<div class="project-tags">${p.tech.map(t => `<span class="tag">${escapeHtml(t)}</span>`).join('')}</div>`
+    : '';
+  const tagHtml = (p.tags && p.tags.length)
+    ? `<div class="project-tags project-tags-note">${p.tags.map(t => `<a class="tag tag-link" href="#/tags/${encodeURIComponent(t)}">${escapeHtml(t)}</a>`).join('')}</div>`
+    : '';
+
+  const sections = [
+    projectSectionHtml('项目背景', p.background ? `<p>${escapeHtml(p.background)}</p>` : ''),
+    projectSectionHtml('目标', projectListHtml(p.objectives)),
+    projectSectionHtml('技术方案', p.architecture ? `<p>${escapeHtml(p.architecture)}</p>` : ''),
+    projectSectionHtml('关键做法', projectListHtml(p.approach)),
+    projectSectionHtml('时间线', (p.timeline && p.timeline.length)
+      ? '<ol class="project-timeline">' + p.timeline.map(function (t) {
+        return '<li><span class="project-timeline-time">' + escapeHtml((t && t.time) || '') +
+          '</span><span class="project-timeline-text">' + escapeHtml((t && t.text) || '') + '</span></li>';
+      }).join('') + '</ol>'
+      : ''),
+    projectSectionHtml('结果与指标', projectListHtml(p.results), 'project-section-results'),
+    projectSectionHtml('已知限制', projectListHtml(p.limitations)),
+    projectSectionHtml('参考', (p.references && p.references.length)
+      ? '<ul class="project-bullets">' + p.references.map(function (r) {
+        const url = safeExternalUrl(r && r.url);
+        const label = escapeHtml((r && r.label) || url);
+        return '<li>' + (url ? '<a href="' + escapeHtml(url) + '" target="_blank" rel="noopener noreferrer">' + label + '</a>' : label) + '</li>';
+      }).join('') + '</ul>'
+      : '')
+  ].join('');
+
+  const actions = [];
+  if (link) actions.push('<a class="project-ext-link" href="' + escapeHtml(link) + '" target="_blank" rel="noopener noreferrer">项目链接 ↗</a>');
+  if (repo) actions.push('<a class="project-ext-link" href="' + escapeHtml(repo) + '" target="_blank" rel="noopener noreferrer">公开仓库 ↗</a>');
+
+  const highlights = projectListHtml(p.highlights);
+
+  return `
+    <div class="article-detail fade-in project-detail" data-project-id="${escapeHtml(p.id)}">
+      <div class="article-detail-header">
+        <div class="project-detail-badges">
+          <span class="project-card-status ${projectStatusClass(p.status)}">${escapeHtml(p.status || '')}</span>
+          ${p.year ? `<span class="project-detail-year">${escapeHtml(p.year)}</span>` : ''}
+          ${projectDemoBadge(p, 'project-demo-badge-lg')}
+        </div>
+        <h1 class="article-detail-title">${escapeHtml(p.icon || '📦')} ${escapeHtml(p.name)}</h1>
+        <p class="article-detail-meta">${escapeHtml(p.year || '')}${p.status ? ' · ' + escapeHtml(p.status) : ''}</p>
+      </div>
+      <div class="article-detail-body project-detail-body">
+        ${p.example ? `<div class="project-demo-banner" role="note">
+          <strong>示例项目</strong>
+          <span>${escapeHtml(PROJECTS_EXAMPLE_NOTICE)}</span>
+        </div>` : ''}
+        <p class="project-lede">${escapeHtml(p.description)}</p>
+        ${techHtml ? projectSectionHtml('技术栈', techHtml) : ''}
+        ${highlights ? projectSectionHtml(p.example ? '功能亮点（示例文案，未经独立验证）' : '功能亮点', highlights) : ''}
+        ${sections}
+        ${tagHtml ? projectSectionHtml('技术方向', tagHtml) : ''}
+        ${actions.length ? `<p class="project-actions">${actions.join('')}</p>` : ''}
+        ${relatedSlotHtml('project', p.id)}
+        <p class="project-back"><a href="#/projects">← 返回项目作品集</a></p>
+      </div>
+    </div>
+  `;
+}
+
+function renderProjectMissing(id) {
+  return `
+    <div class="article-detail fade-in">
+      <div class="empty-state">
+        <div class="empty-state-icon">🧭</div>
+        <p>没有找到这个项目${id ? '：<code>' + escapeHtml(id) + '</code>' : ''}</p>
+        <p>项目可能已改名或尚未公开。<a href="#/projects">查看全部项目</a></p>
+      </div>
     </div>
   `;
 }
@@ -5442,7 +5592,7 @@ function kmHrefFor(type, refId) {
   if (type === 'lib') return '#/codelib/' + encodeURIComponent(refId);
   if (type === 'paper') return '#/papers?kind=paper&target=' + encodeURIComponent(refId);
   if (type === 'material') return '#/papers?kind=material&target=' + encodeURIComponent(refId);
-  if (type === 'project') return '#/projects';
+  if (type === 'project') return '#/project/' + encodeURIComponent(refId);
   return '#/';
 }
 
@@ -5485,6 +5635,8 @@ function kmParseHref(href) {
   if (m) return { type: 'course', id: decodeURIComponent(m[1]) };
   m = /^#\/codelib\/(.+)$/.exec(href);
   if (m) return { type: 'lib', id: decodeURIComponent(m[1]) };
+  m = /^#\/project\/(.+)$/.exec(href);
+  if (m) return { type: 'project', id: decodeURIComponent(m[1]) };
   m = /^#\/papers\?([^#]*)$/.exec(href);
   if (m) {
     const q = m[1];
@@ -5516,6 +5668,10 @@ function kmTitleOf(type, refId) {
       const list = (typeof CODE_LIBS !== 'undefined' ? CODE_LIBS : []);
       const l = list.find(x => x.id === refId);
       return l ? (l.name || '') : '';
+    }
+    if (type === 'project') {
+      const p = (typeof PROJECTS !== 'undefined' ? PROJECTS : []).find(x => x.id === refId);
+      return p ? (p.name || '') : '';
     }
   } catch (e) { /* 数据未就绪 */ }
   return '';
@@ -5668,6 +5824,11 @@ function kmResolve(type, refId) {
   if (type === 'lib') {
     if (typeof CODE_LIBS === 'undefined') return { state: 'unknown', title: '' };
     found = CODE_LIBS.find(x => x.id === refId);
+    return found ? { state: 'exists', title: found.name } : { state: 'missing', title: '' };
+  }
+  if (type === 'project') {
+    if (typeof PROJECTS === 'undefined') return { state: 'unknown', title: '' };
+    found = PROJECTS.find(x => x.id === refId);
     return found ? { state: 'exists', title: found.name } : { state: 'missing', title: '' };
   }
   return { state: 'unknown', title: '' };
@@ -5842,6 +6003,18 @@ function kmMount(hash) {
     _kmActiveKey = 'course:' + cid;
     Knowledge.recordView('course', cid, { title: course.name });
     kmInjectBar('course', cid, course.name);
+    return;
+  }
+  // Batch 9D：项目详情也有收藏/待读与历史，但不伪造阅读进度（项目不是长文阅读场景）
+  const mProject = /^\/project\/(.+)$/.exec(hash);
+  if (mProject && document.querySelector('.project-detail')) {
+    let pid = mProject[1];
+    try { pid = decodeURIComponent(pid); } catch (e) { /* 保持原值 */ }
+    const proj = (typeof PROJECTS !== 'undefined' ? PROJECTS : []).find(p => p.id === pid);
+    if (!proj) return;
+    _kmActiveKey = 'project:' + pid;
+    Knowledge.recordView('project', pid, { title: proj.name });
+    kmInjectBar('project', pid, proj.name);
   }
 }
 
@@ -5901,6 +6074,17 @@ function relatedItems() {
       });
     });
   }
+  // Batch 9D：项目作为候选（technologies 当技术栈，tags 当标签；示例身份随结果透出）
+  if (typeof PROJECTS !== 'undefined') {
+    PROJECTS.forEach(function (p) {
+      items.push({
+        type: 'project', refId: p.id, title: p.name,
+        tags: p.tags || [], tech: p.tech || [],
+        text: [p.description, (p.highlights || []).join(' ')].filter(Boolean).join(' '),
+        example: !!p.example
+      });
+    });
+  }
   return items;
 }
 
@@ -5915,8 +6099,30 @@ function relatedSourceText(type, refId) {
       const entry = (typeof COURSE_NOTES !== 'undefined') ? COURSE_NOTES[refId] : null;
       return entry && entry.notes ? entry.notes : '';
     }
+    if (type === 'project') {
+      const p = (typeof PROJECTS !== 'undefined' ? PROJECTS : []).find(function (x) { return x.id === refId; });
+      if (!p) return '';
+      // 项目文本都是纯文本字段，拼接后仅用于抽取其中的站内链接
+      return [p.description, (p.highlights || []).join(' '), p.background, p.architecture]
+        .filter(Boolean).join('\n');
+    }
   } catch (e) { /* 忽略：没有正文就没有显式关联 */ }
   return '';
+}
+
+// 显式关联 = 数据里声明的 relatedKeys ∪ 文本中真实存在的站内链接
+function relatedExplicitKeys(type, refId) {
+  const keys = [];
+  if (type === 'project') {
+    const p = (typeof PROJECTS !== 'undefined' ? PROJECTS : []).find(function (x) { return x.id === refId; });
+    if (p && Array.isArray(p.relatedKeys)) {
+      p.relatedKeys.forEach(function (k) {
+        if (typeof k === 'string' && k.indexOf(':') > 0) keys.push(k);
+      });
+    }
+  }
+  Related.extractLinks(relatedSourceText(type, refId)).forEach(function (x) { keys.push(x.key); });
+  return keys;
 }
 
 function relatedCardHtml(item) {
@@ -5927,6 +6133,7 @@ function relatedCardHtml(item) {
     escapeHtml(item.title) + '</a>' +
     '<span class="related-card-meta">' +
     '<span class="related-type">' + escapeHtml(Related.typeLabel(item.type)) + '</span>' +
+    (item.example ? '<span class="project-demo-badge">示例</span>' : '') +
     (reason ? '<span class="related-reason">' + escapeHtml(reason) + '</span>' : '') +
     '</span>' +
     '</article></li>';
@@ -5969,8 +6176,7 @@ function relatedApply(hash) {
   const parsed = Related.splitId(key);
   if (!parsed) { slot.remove(); return; }
   const token = _routeToken;
-  const explicit = Related.extractLinks(relatedSourceText(parsed.type, parsed.refId))
-    .map(function (x) { return x.key; });
+  const explicit = relatedExplicitKeys(parsed.type, parsed.refId);
 
   relatedPaint(slot, key, token, explicit);
 
@@ -6150,7 +6356,7 @@ async function router() {
     if (route === '/editor' && hash.startsWith('/editor')) {
       link.classList.add('active');
     }
-    if (route === '/projects' && hash.startsWith('/projects')) {
+    if (route === '/projects' && (hash.startsWith('/projects') || hash.startsWith('/project/'))) {
       link.classList.add('active');
     }
     if (route === '/code' && (hash.startsWith('/code') || hash.startsWith('/codelib'))) {
@@ -6293,6 +6499,11 @@ async function router() {
       app.innerHTML = renderAbout();
     } else if (hash === '/projects') {
       app.innerHTML = renderProjects();
+    } else if (hash.startsWith('/project/')) {
+      // 项目详情：无效 ID 有独立友好页，非法编码退化为"未找到"而不是抛错
+      let pid = hash.slice('/project/'.length);
+      try { pid = decodeURIComponent(pid); } catch (e) { pid = ''; }
+      app.innerHTML = renderProjectDetail(pid);
     } else if (hash === '/archive') {
       app.innerHTML = renderArchive();
     } else if (hash === '/code') {

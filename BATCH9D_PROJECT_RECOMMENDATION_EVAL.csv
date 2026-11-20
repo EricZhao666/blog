@@ -1,0 +1,155 @@
+source_type,source_id,source_title,group,rank,cand_type,cand_id,cand_title,score,reasons,href,href_valid,duplicate,cand_example,review
+post,embodied-ai-notes,"具身智能：让AI真正""住进""物理世界",机器人与具身智能,1,post,sim-to-real-gap,Sim-to-Real Gap：具身智能落地的最后一公里,4.04,共同标签：具身智能 · 标题主题相近：具身、身智、智能,#/post/sim-to-real-gap,yes,no,no,PASS
+post,embodied-ai-notes,"具身智能：让AI真正""住进""物理世界",机器人与具身智能,2,paper,paper-74,OpenVLA: An Open-Source Vision-Language-Action Model,3.64,共同标签：具身智能,#/papers?kind=paper&target=paper-74,yes,no,no,PASS
+post,embodied-ai-notes,"具身智能：让AI真正""住进""物理世界",机器人与具身智能,3,project,vla-industrial,工业场景 VLA 操作模型,3.64,共同标签：具身智能,#/project/vla-industrial,yes,no,yes,PASS
+post,embodied-ai-notes,"具身智能：让AI真正""住进""物理世界",机器人与具身智能,4,post,rl-robot-control,强化学习在机器人控制中的应用,3.23,共同标签：机器人,#/post/rl-robot-control,yes,no,no,PASS
+post,embodied-ai-notes,"具身智能：让AI真正""住进""物理世界",机器人与具身智能,5,post,robotics-textbook-notes,读书笔记：《机器人学导论》前三章重点梳理,3.23,共同标签：机器人,#/post/robotics-textbook-notes,yes,no,no,PASS
+post,embodied-ai-notes,"具身智能：让AI真正""住进""物理世界",机器人与具身智能,>+13,,,,,（同分/低分的额外候选已按上限截断）,,,,,INFO：主动截断，未展示
+post,vla-model-intro,VLA模型入门：从RT-1到OpenVLA,机器人与具身智能,1,lib,pythoncodeplace,pythoncodeplace,5.8,正文已关联此内容 · 内容涉及：VLA,#/codelib/pythoncodeplace,yes,no,no,PASS
+post,vla-model-intro,VLA模型入门：从RT-1到OpenVLA,机器人与具身智能,2,post,vla-industrial-challenges,VLA模型在工业场景的落地挑战与思考,4.33,共同标签：VLA · 标题主题相近：vla、模型,#/post/vla-industrial-challenges,yes,no,no,PASS
+post,vla-model-intro,VLA模型入门：从RT-1到OpenVLA,机器人与具身智能,3,project,vla-industrial,工业场景 VLA 操作模型,4.33,共同标签：VLA · 标题主题相近：vla、模型,#/project/vla-industrial,yes,no,yes,PASS
+post,vla-model-intro,VLA模型入门：从RT-1到OpenVLA,机器人与具身智能,4,post,embodied-ai-notes,"具身智能：让AI真正""住进""物理世界",3.23,共同标签：机器人,#/post/embodied-ai-notes,yes,no,no,PASS
+post,vla-model-intro,VLA模型入门：从RT-1到OpenVLA,机器人与具身智能,5,post,rl-robot-control,强化学习在机器人控制中的应用,3.23,共同标签：机器人,#/post/rl-robot-control,yes,no,no,PASS
+post,vla-model-intro,VLA模型入门：从RT-1到OpenVLA,机器人与具身智能,>+20,,,,,（同分/低分的额外候选已按上限截断）,,,,,INFO：主动截断，未展示
+post,arm-trajectory-planning,机械臂轨迹规划简述：从多项式到优化方法,机器人与具身智能,1,post,robot-grasping-survey,机械臂抓取技术：从解析法到学习方法,4.26,共同标签：机械臂、技术笔记 · 标题主题相近：机械、械臂、方法,#/post/robot-grasping-survey,yes,no,no,PASS
+post,arm-trajectory-planning,机械臂轨迹规划简述：从多项式到优化方法,机器人与具身智能,2,post,force-compliance-control,机械臂力控与柔顺控制：从阻抗控制到导纳控制,4.15,共同标签：机械臂、运动控制、技术笔记 · 标题主题相近：机械、械臂,#/post/force-compliance-control,yes,no,no,PASS
+post,arm-trajectory-planning,机械臂轨迹规划简述：从多项式到优化方法,机器人与具身智能,3,project,force-assembly,力控柔顺装配工位,4,共同标签：机械臂、运动控制,#/project/force-assembly,yes,no,yes,PASS
+post,arm-trajectory-planning,机械臂轨迹规划简述：从多项式到优化方法,机器人与具身智能,4,project,arm-visual-grasping,六轴机械臂视觉抓取系统,3.66,共同标签：机械臂 · 标题主题相近：机械、械臂,#/project/arm-visual-grasping,yes,no,yes,PASS
+post,arm-trajectory-planning,机械臂轨迹规划简述：从多项式到优化方法,机器人与具身智能,5,post,digital-twin-manufacturing,数字孪生在产线中的应用：不只是好看的3D,2.54,共同标签：技术笔记,#/post/digital-twin-manufacturing,yes,no,no,PASS
+post,arm-trajectory-planning,机械臂轨迹规划简述：从多项式到优化方法,机器人与具身智能,>+13,,,,,（同分/低分的额外候选已按上限截断）,,,,,INFO：主动截断，未展示
+post,smart-production-line,从传统产线到智能产线：我做产线智能化三年的总结,工业自动化与智能制造,1,post,digital-twin-manufacturing,数字孪生在产线中的应用：不只是好看的3D,4,共同标签：智能制造、产线,#/post/digital-twin-manufacturing,yes,no,no,PASS
+post,smart-production-line,从传统产线到智能产线：我做产线智能化三年的总结,工业自动化与智能制造,2,post,industrial-protocols-notes,工业通信协议实战笔记：OPC UA、Modbus与Profinet,4,共同标签：智能制造、产线,#/post/industrial-protocols-notes,yes,no,no,PASS
+post,smart-production-line,从传统产线到智能产线：我做产线智能化三年的总结,工业自动化与智能制造,3,post,shenzhen-weekend,深圳周末好去处：我的私藏清单,4,共同标签：随笔,#/post/shenzhen-weekend,yes,no,no,PASS
+post,smart-production-line,从传统产线到智能产线：我做产线智能化三年的总结,工业自动化与智能制造,4,post,vla-industrial-challenges,VLA模型在工业场景的落地挑战与思考,4,共同标签：智能制造、产线,#/post/vla-industrial-challenges,yes,no,no,PASS
+post,smart-production-line,从传统产线到智能产线：我做产线智能化三年的总结,工业自动化与智能制造,5,project,defect-inspection,产线缺陷在线检测,3.08,共同标签：智能制造,#/project/defect-inspection,yes,no,yes,PASS
+post,smart-production-line,从传统产线到智能产线：我做产线智能化三年的总结,工业自动化与智能制造,>+3,,,,,（同分/低分的额外候选已按上限截断）,,,,,INFO：主动截断，未展示
+post,shenzhen-weekend,深圳周末好去处：我的私藏清单,标签稀疏 / 跨主题,1,post,smart-production-line,从传统产线到智能产线：我做产线智能化三年的总结,4,共同标签：随笔,#/post/smart-production-line,yes,no,no,PASS
+post,shenzhen-weekend,深圳周末好去处：我的私藏清单,标签稀疏 / 跨主题,2,lib,math_modeling,数学建模上传文件夹,1.8,内容涉及：深圳,#/codelib/math_modeling,yes,no,no,PASS
+post,robotics-textbook-notes,读书笔记：《机器人学导论》前三章重点梳理,课程与基础技术,1,lib,matlab_backup,matlab备份,5.8,正文已关联此内容 · 内容涉及：机器人,#/codelib/matlab_backup,yes,no,no,PASS
+post,robotics-textbook-notes,读书笔记：《机器人学导论》前三章重点梳理,课程与基础技术,2,post,rl-robot-control,强化学习在机器人控制中的应用,4.18,共同标签：机器人、技术笔记 · 标题主题相近：机器、器人,#/post/rl-robot-control,yes,no,no,PASS
+post,robotics-textbook-notes,读书笔记：《机器人学导论》前三章重点梳理,课程与基础技术,3,post,slam-overview-filtering-to-graph,SLAM技术全景：从滤波到图优化,4,共同标签：机器人、技术笔记,#/post/slam-overview-filtering-to-graph,yes,no,no,PASS
+post,robotics-textbook-notes,读书笔记：《机器人学导论》前三章重点梳理,课程与基础技术,4,post,embodied-ai-notes,"具身智能：让AI真正""住进""物理世界",3.23,共同标签：机器人,#/post/embodied-ai-notes,yes,no,no,PASS
+post,robotics-textbook-notes,读书笔记：《机器人学导论》前三章重点梳理,课程与基础技术,5,post,vla-model-intro,VLA模型入门：从RT-1到OpenVLA,3.23,共同标签：机器人,#/post/vla-model-intro,yes,no,no,PASS
+post,robotics-textbook-notes,读书笔记：《机器人学导论》前三章重点梳理,课程与基础技术,>+17,,,,,（同分/低分的额外候选已按上限截断）,,,,,INFO：主动截断，未展示
+post,sim-to-real-gap,Sim-to-Real Gap：具身智能落地的最后一公里,机器人与具身智能,1,post,embodied-ai-notes,"具身智能：让AI真正""住进""物理世界",4.04,共同标签：具身智能 · 标题主题相近：具身、身智、智能,#/post/embodied-ai-notes,yes,no,no,PASS
+post,sim-to-real-gap,Sim-to-Real Gap：具身智能落地的最后一公里,机器人与具身智能,2,post,ml-fundamentals-overview,机器学习入门：从线性回归到深度学习,4,共同标签：深度学习、技术笔记,#/post/ml-fundamentals-overview,yes,no,no,PASS
+post,sim-to-real-gap,Sim-to-Real Gap：具身智能落地的最后一公里,机器人与具身智能,3,post,robot-grasping-survey,机械臂抓取技术：从解析法到学习方法,4,共同标签：深度学习、技术笔记,#/post/robot-grasping-survey,yes,no,no,PASS
+post,sim-to-real-gap,Sim-to-Real Gap：具身智能落地的最后一公里,机器人与具身智能,4,post,visual-slam-frontend,视觉SLAM前端：特征提取与匹配,4,共同标签：深度学习、技术笔记,#/post/visual-slam-frontend,yes,no,no,PASS
+post,sim-to-real-gap,Sim-to-Real Gap：具身智能落地的最后一公里,机器人与具身智能,5,paper,paper-74,OpenVLA: An Open-Source Vision-Language-Action Model,3.64,共同标签：具身智能,#/papers?kind=paper&target=paper-74,yes,no,no,PASS
+post,sim-to-real-gap,Sim-to-Real Gap：具身智能落地的最后一公里,机器人与具身智能,>+15,,,,,（同分/低分的额外候选已按上限截断）,,,,,INFO：主动截断，未展示
+post,vla-industrial-challenges,VLA模型在工业场景的落地挑战与思考,工业自动化与智能制造,1,project,vla-industrial,工业场景 VLA 操作模型,4.86,共同标签：VLA、智能制造 · 标题主题相近：vla、模型、工业,#/project/vla-industrial,yes,no,yes,PASS
+post,vla-industrial-challenges,VLA模型在工业场景的落地挑战与思考,工业自动化与智能制造,2,post,vla-model-intro,VLA模型入门：从RT-1到OpenVLA,4.33,共同标签：VLA · 标题主题相近：vla、模型,#/post/vla-model-intro,yes,no,no,PASS
+post,vla-industrial-challenges,VLA模型在工业场景的落地挑战与思考,工业自动化与智能制造,3,post,digital-twin-manufacturing,数字孪生在产线中的应用：不只是好看的3D,4,共同标签：智能制造、产线,#/post/digital-twin-manufacturing,yes,no,no,PASS
+post,vla-industrial-challenges,VLA模型在工业场景的落地挑战与思考,工业自动化与智能制造,4,post,industrial-protocols-notes,工业通信协议实战笔记：OPC UA、Modbus与Profinet,4,共同标签：智能制造、产线,#/post/industrial-protocols-notes,yes,no,no,PASS
+post,vla-industrial-challenges,VLA模型在工业场景的落地挑战与思考,工业自动化与智能制造,5,post,smart-production-line,从传统产线到智能产线：我做产线智能化三年的总结,4,共同标签：智能制造、产线,#/post/smart-production-line,yes,no,no,PASS
+post,vla-industrial-challenges,VLA模型在工业场景的落地挑战与思考,工业自动化与智能制造,>+5,,,,,（同分/低分的额外候选已按上限截断）,,,,,INFO：主动截断，未展示
+post,robot-grasping-survey,机械臂抓取技术：从解析法到学习方法,机器人与具身智能,1,project,arm-visual-grasping,六轴机械臂视觉抓取系统,4.36,共同标签：机械臂、深度学习 · 标题主题相近：机械、械臂、抓取,#/project/arm-visual-grasping,yes,no,yes,PASS
+post,robot-grasping-survey,机械臂抓取技术：从解析法到学习方法,机器人与具身智能,2,post,arm-trajectory-planning,机械臂轨迹规划简述：从多项式到优化方法,4.26,共同标签：机械臂、技术笔记 · 标题主题相近：机械、械臂、方法,#/post/arm-trajectory-planning,yes,no,no,PASS
+post,robot-grasping-survey,机械臂抓取技术：从解析法到学习方法,机器人与具身智能,3,post,force-compliance-control,机械臂力控与柔顺控制：从阻抗控制到导纳控制,4.17,共同标签：机械臂、技术笔记 · 标题主题相近：机械、械臂,#/post/force-compliance-control,yes,no,no,PASS
+post,robot-grasping-survey,机械臂抓取技术：从解析法到学习方法,机器人与具身智能,4,post,ml-fundamentals-overview,机器学习入门：从线性回归到深度学习,4,共同标签：深度学习、技术笔记,#/post/ml-fundamentals-overview,yes,no,no,PASS
+post,robot-grasping-survey,机械臂抓取技术：从解析法到学习方法,机器人与具身智能,5,post,sim-to-real-gap,Sim-to-Real Gap：具身智能落地的最后一公里,4,共同标签：深度学习、技术笔记,#/post/sim-to-real-gap,yes,no,no,PASS
+post,robot-grasping-survey,机械臂抓取技术：从解析法到学习方法,机器人与具身智能,>+16,,,,,（同分/低分的额外候选已按上限截断）,,,,,INFO：主动截断，未展示
+post,industrial-protocols-notes,工业通信协议实战笔记：OPC UA、Modbus与Profinet,工业自动化与智能制造,1,post,digital-twin-manufacturing,数字孪生在产线中的应用：不只是好看的3D,4,共同标签：智能制造、产线、技术笔记,#/post/digital-twin-manufacturing,yes,no,no,PASS
+post,industrial-protocols-notes,工业通信协议实战笔记：OPC UA、Modbus与Profinet,工业自动化与智能制造,2,post,smart-production-line,从传统产线到智能产线：我做产线智能化三年的总结,4,共同标签：智能制造、产线,#/post/smart-production-line,yes,no,no,PASS
+post,industrial-protocols-notes,工业通信协议实战笔记：OPC UA、Modbus与Profinet,工业自动化与智能制造,3,post,vla-industrial-challenges,VLA模型在工业场景的落地挑战与思考,4,共同标签：智能制造、产线,#/post/vla-industrial-challenges,yes,no,no,PASS
+post,industrial-protocols-notes,工业通信协议实战笔记：OPC UA、Modbus与Profinet,工业自动化与智能制造,4,project,defect-inspection,产线缺陷在线检测,3.08,共同标签：智能制造,#/project/defect-inspection,yes,no,yes,PASS
+post,industrial-protocols-notes,工业通信协议实战笔记：OPC UA、Modbus与Profinet,工业自动化与智能制造,5,project,digital-twin-line,产线数字孪生平台,3.08,共同标签：智能制造,#/project/digital-twin-line,yes,no,yes,PASS
+post,industrial-protocols-notes,工业通信协议实战笔记：OPC UA、Modbus与Profinet,工业自动化与智能制造,>+12,,,,,（同分/低分的额外候选已按上限截断）,,,,,INFO：主动截断，未展示
+post,force-compliance-control,机械臂力控与柔顺控制：从阻抗控制到导纳控制,机器人与具身智能,1,project,force-assembly,力控柔顺装配工位,4.34,共同标签：机械臂、运动控制 · 标题主题相近：力控、柔顺,#/project/force-assembly,yes,no,yes,PASS
+post,force-compliance-control,机械臂力控与柔顺控制：从阻抗控制到导纳控制,机器人与具身智能,2,post,robot-grasping-survey,机械臂抓取技术：从解析法到学习方法,4.17,共同标签：机械臂、技术笔记 · 标题主题相近：机械、械臂,#/post/robot-grasping-survey,yes,no,no,PASS
+post,force-compliance-control,机械臂力控与柔顺控制：从阻抗控制到导纳控制,机器人与具身智能,3,post,arm-trajectory-planning,机械臂轨迹规划简述：从多项式到优化方法,4.15,共同标签：机械臂、运动控制、技术笔记 · 标题主题相近：机械、械臂,#/post/arm-trajectory-planning,yes,no,no,PASS
+post,force-compliance-control,机械臂力控与柔顺控制：从阻抗控制到导纳控制,机器人与具身智能,4,project,arm-visual-grasping,六轴机械臂视觉抓取系统,3.66,共同标签：机械臂 · 标题主题相近：机械、械臂,#/project/arm-visual-grasping,yes,no,yes,PASS
+post,force-compliance-control,机械臂力控与柔顺控制：从阻抗控制到导纳控制,机器人与具身智能,5,post,digital-twin-manufacturing,数字孪生在产线中的应用：不只是好看的3D,2.54,共同标签：技术笔记,#/post/digital-twin-manufacturing,yes,no,no,PASS
+post,force-compliance-control,机械臂力控与柔顺控制：从阻抗控制到导纳控制,机器人与具身智能,>+13,,,,,（同分/低分的额外候选已按上限截断）,,,,,INFO：主动截断，未展示
+post,digital-twin-manufacturing,数字孪生在产线中的应用：不只是好看的3D,工业自动化与智能制造,1,post,industrial-protocols-notes,工业通信协议实战笔记：OPC UA、Modbus与Profinet,4,共同标签：智能制造、产线、技术笔记,#/post/industrial-protocols-notes,yes,no,no,PASS
+post,digital-twin-manufacturing,数字孪生在产线中的应用：不只是好看的3D,工业自动化与智能制造,2,post,smart-production-line,从传统产线到智能产线：我做产线智能化三年的总结,4,共同标签：智能制造、产线,#/post/smart-production-line,yes,no,no,PASS
+post,digital-twin-manufacturing,数字孪生在产线中的应用：不只是好看的3D,工业自动化与智能制造,3,post,vla-industrial-challenges,VLA模型在工业场景的落地挑战与思考,4,共同标签：智能制造、产线,#/post/vla-industrial-challenges,yes,no,no,PASS
+post,digital-twin-manufacturing,数字孪生在产线中的应用：不只是好看的3D,工业自动化与智能制造,4,project,digital-twin-line,产线数字孪生平台,3.77,共同标签：智能制造 · 标题主题相近：数字、字孪、孪生,#/project/digital-twin-line,yes,no,yes,PASS
+post,digital-twin-manufacturing,数字孪生在产线中的应用：不只是好看的3D,工业自动化与智能制造,5,project,defect-inspection,产线缺陷在线检测,3.08,共同标签：智能制造,#/project/defect-inspection,yes,no,yes,PASS
+post,digital-twin-manufacturing,数字孪生在产线中的应用：不只是好看的3D,工业自动化与智能制造,>+12,,,,,（同分/低分的额外候选已按上限截断）,,,,,INFO：主动截断，未展示
+post,ml-fundamentals-overview,机器学习入门：从线性回归到深度学习,人工智能与机器学习,1,lib,pythoncodeplace,pythoncodeplace,5.8,正文已关联此内容 · 内容涉及：机器学习,#/codelib/pythoncodeplace,yes,no,no,PASS
+post,ml-fundamentals-overview,机器学习入门：从线性回归到深度学习,人工智能与机器学习,2,lib,study,学习,5.8,正文已关联此内容 · 内容涉及：机器学习,#/codelib/study,yes,no,no,PASS
+post,ml-fundamentals-overview,机器学习入门：从线性回归到深度学习,人工智能与机器学习,3,post,rl-from-mdp-to-ppo,强化学习入门：从MDP到PPO,4.51,共同标签：机器学习、技术笔记 · 标题主题相近：学习、习入、入门,#/post/rl-from-mdp-to-ppo,yes,no,no,PASS
+post,ml-fundamentals-overview,机器学习入门：从线性回归到深度学习,人工智能与机器学习,4,post,deep-learning-in-slam,深度学习在SLAM中的应用,4.45,共同标签：机器学习、深度学习 · 标题主题相近：学习、深度、度学,#/post/deep-learning-in-slam,yes,no,no,PASS
+post,ml-fundamentals-overview,机器学习入门：从线性回归到深度学习,人工智能与机器学习,5,post,robot-grasping-survey,机械臂抓取技术：从解析法到学习方法,4,共同标签：深度学习、技术笔记,#/post/robot-grasping-survey,yes,no,no,PASS
+post,ml-fundamentals-overview,机器学习入门：从线性回归到深度学习,人工智能与机器学习,>+15,,,,,（同分/低分的额外候选已按上限截断）,,,,,INFO：主动截断，未展示
+post,rl-from-mdp-to-ppo,强化学习入门：从MDP到PPO,人工智能与机器学习,1,post,rl-robot-control,强化学习在机器人控制中的应用,7.51,同系列「强化学习系列」 · 共同标签：强化学习、技术笔记,#/post/rl-robot-control,yes,no,no,PASS
+post,rl-from-mdp-to-ppo,强化学习入门：从MDP到PPO,人工智能与机器学习,2,lib,reinforce_learning,reinforce_learning,5.8,正文已关联此内容 · 内容涉及：强化学习,#/codelib/reinforce_learning,yes,no,no,PASS
+post,rl-from-mdp-to-ppo,强化学习入门：从MDP到PPO,人工智能与机器学习,3,post,ml-fundamentals-overview,机器学习入门：从线性回归到深度学习,4.51,共同标签：机器学习、技术笔记 · 标题主题相近：学习、习入、入门,#/post/ml-fundamentals-overview,yes,no,no,PASS
+post,rl-from-mdp-to-ppo,强化学习入门：从MDP到PPO,人工智能与机器学习,4,post,deep-learning-in-slam,深度学习在SLAM中的应用,3.93,共同标签：机器学习,#/post/deep-learning-in-slam,yes,no,no,PASS
+post,rl-from-mdp-to-ppo,强化学习入门：从MDP到PPO,人工智能与机器学习,5,post,arm-trajectory-planning,机械臂轨迹规划简述：从多项式到优化方法,2.54,共同标签：技术笔记,#/post/arm-trajectory-planning,yes,no,no,PASS
+post,rl-from-mdp-to-ppo,强化学习入门：从MDP到PPO,人工智能与机器学习,>+13,,,,,（同分/低分的额外候选已按上限截断）,,,,,INFO：主动截断，未展示
+post,slam-overview-filtering-to-graph,SLAM技术全景：从滤波到图优化,机器人与具身智能,1,post,visual-slam-frontend,视觉SLAM前端：特征提取与匹配,7.13,同系列「SLAM 技术系列」 · 共同标签：SLAM、技术笔记,#/post/visual-slam-frontend,yes,no,no,PASS
+post,slam-overview-filtering-to-graph,SLAM技术全景：从滤波到图优化,机器人与具身智能,2,post,deep-learning-in-slam,深度学习在SLAM中的应用,6.79,同系列「SLAM 技术系列」 · 共同标签：SLAM,#/post/deep-learning-in-slam,yes,no,no,PASS
+post,slam-overview-filtering-to-graph,SLAM技术全景：从滤波到图优化,机器人与具身智能,3,lib,matlab_backup,matlab备份,6.6,正文已关联此内容 · 内容涉及：SLAM、机器人,#/codelib/matlab_backup,yes,no,no,PASS
+post,slam-overview-filtering-to-graph,SLAM技术全景：从滤波到图优化,机器人与具身智能,4,project,slam-agv,AGV 视觉 SLAM 导航,4.3,共同标签：SLAM、机器人 · 标题主题相近：slam,#/project/slam-agv,yes,no,yes,PASS
+post,slam-overview-filtering-to-graph,SLAM技术全景：从滤波到图优化,机器人与具身智能,5,post,rl-robot-control,强化学习在机器人控制中的应用,4,共同标签：机器人、技术笔记,#/post/rl-robot-control,yes,no,no,PASS
+post,slam-overview-filtering-to-graph,SLAM技术全景：从滤波到图优化,机器人与具身智能,>+19,,,,,（同分/低分的额外候选已按上限截断）,,,,,INFO：主动截断，未展示
+post,rl-robot-control,强化学习在机器人控制中的应用,人工智能与机器学习,1,post,rl-from-mdp-to-ppo,强化学习入门：从MDP到PPO,7.51,同系列「强化学习系列」 · 共同标签：强化学习、技术笔记,#/post/rl-from-mdp-to-ppo,yes,no,no,PASS
+post,rl-robot-control,强化学习在机器人控制中的应用,人工智能与机器学习,2,post,robotics-textbook-notes,读书笔记：《机器人学导论》前三章重点梳理,4.18,共同标签：机器人、技术笔记 · 标题主题相近：机器、器人,#/post/robotics-textbook-notes,yes,no,no,PASS
+post,rl-robot-control,强化学习在机器人控制中的应用,人工智能与机器学习,3,post,slam-overview-filtering-to-graph,SLAM技术全景：从滤波到图优化,4,共同标签：机器人、技术笔记,#/post/slam-overview-filtering-to-graph,yes,no,no,PASS
+post,rl-robot-control,强化学习在机器人控制中的应用,人工智能与机器学习,4,post,embodied-ai-notes,"具身智能：让AI真正""住进""物理世界",3.23,共同标签：机器人,#/post/embodied-ai-notes,yes,no,no,PASS
+post,rl-robot-control,强化学习在机器人控制中的应用,人工智能与机器学习,5,post,vla-model-intro,VLA模型入门：从RT-1到OpenVLA,3.23,共同标签：机器人,#/post/vla-model-intro,yes,no,no,PASS
+post,rl-robot-control,强化学习在机器人控制中的应用,人工智能与机器学习,>+18,,,,,（同分/低分的额外候选已按上限截断）,,,,,INFO：主动截断，未展示
+post,visual-slam-frontend,视觉SLAM前端：特征提取与匹配,机器人与具身智能,1,post,deep-learning-in-slam,深度学习在SLAM中的应用,7.15,同系列「SLAM 技术系列」 · 共同标签：SLAM、深度学习,#/post/deep-learning-in-slam,yes,no,no,PASS
+post,visual-slam-frontend,视觉SLAM前端：特征提取与匹配,机器人与具身智能,2,post,slam-overview-filtering-to-graph,SLAM技术全景：从滤波到图优化,7.13,同系列「SLAM 技术系列」 · 共同标签：SLAM、技术笔记,#/post/slam-overview-filtering-to-graph,yes,no,no,PASS
+post,visual-slam-frontend,视觉SLAM前端：特征提取与匹配,机器人与具身智能,3,project,slam-agv,AGV 视觉 SLAM 导航,4.24,共同标签：SLAM · 标题主题相近：slam、视觉,#/project/slam-agv,yes,no,yes,PASS
+post,visual-slam-frontend,视觉SLAM前端：特征提取与匹配,机器人与具身智能,4,post,ml-fundamentals-overview,机器学习入门：从线性回归到深度学习,4,共同标签：深度学习、技术笔记,#/post/ml-fundamentals-overview,yes,no,no,PASS
+post,visual-slam-frontend,视觉SLAM前端：特征提取与匹配,机器人与具身智能,5,post,robot-grasping-survey,机械臂抓取技术：从解析法到学习方法,4,共同标签：深度学习、技术笔记,#/post/robot-grasping-survey,yes,no,no,PASS
+post,visual-slam-frontend,视觉SLAM前端：特征提取与匹配,机器人与具身智能,>+15,,,,,（同分/低分的额外候选已按上限截断）,,,,,INFO：主动截断，未展示
+post,deep-learning-in-slam,深度学习在SLAM中的应用,机器人与具身智能,1,post,visual-slam-frontend,视觉SLAM前端：特征提取与匹配,7.15,同系列「SLAM 技术系列」 · 共同标签：SLAM、深度学习,#/post/visual-slam-frontend,yes,no,no,PASS
+post,deep-learning-in-slam,深度学习在SLAM中的应用,机器人与具身智能,2,post,slam-overview-filtering-to-graph,SLAM技术全景：从滤波到图优化,6.79,同系列「SLAM 技术系列」 · 共同标签：SLAM,#/post/slam-overview-filtering-to-graph,yes,no,no,PASS
+post,deep-learning-in-slam,深度学习在SLAM中的应用,机器人与具身智能,3,post,ml-fundamentals-overview,机器学习入门：从线性回归到深度学习,4.45,共同标签：深度学习、机器学习 · 标题主题相近：深度、度学、学习,#/post/ml-fundamentals-overview,yes,no,no,PASS
+post,deep-learning-in-slam,深度学习在SLAM中的应用,机器人与具身智能,4,project,slam-agv,AGV 视觉 SLAM 导航,3.94,共同标签：SLAM · 标题主题相近：slam,#/project/slam-agv,yes,no,yes,PASS
+post,deep-learning-in-slam,深度学习在SLAM中的应用,机器人与具身智能,5,post,rl-from-mdp-to-ppo,强化学习入门：从MDP到PPO,3.93,共同标签：机器学习,#/post/rl-from-mdp-to-ppo,yes,no,no,PASS
+post,deep-learning-in-slam,深度学习在SLAM中的应用,机器人与具身智能,>+13,,,,,（同分/低分的额外候选已按上限截断）,,,,,INFO：主动截断，未展示
+course,本科课程|机器人与自动化-(CS422),机器人与自动化 (CS422),课程与基础技术,1,course,香港大学|MECH7010-机器人学,MECH7010 机器人学,2.4,同分类：机器人与自动化 · 标题主题相近：机器、器人,#/course/%E9%A6%99%E6%B8%AF%E5%A4%A7%E5%AD%A6%7CMECH7010-%E6%9C%BA%E5%99%A8%E4%BA%BA%E5%AD%A6,yes,no,no,PASS
+course,本科课程|机器人与自动化-(CS422),机器人与自动化 (CS422),课程与基础技术,2,course,本科课程|自主移动机器人,自主移动机器人,2.2,同分类：机器人与自动化 · 标题主题相近：机器、器人,#/course/%E6%9C%AC%E7%A7%91%E8%AF%BE%E7%A8%8B%7C%E8%87%AA%E4%B8%BB%E7%A7%BB%E5%8A%A8%E6%9C%BA%E5%99%A8%E4%BA%BA,yes,no,no,PASS
+course,本科课程|机器人与自动化-(CS422),机器人与自动化 (CS422),课程与基础技术,3,course,香港大学|机器人大使-(Robotic-Ambassador),机器人大使 (Robotic Ambassador),2.2,同分类：机器人与自动化 · 标题主题相近：机器、器人,#/course/%E9%A6%99%E6%B8%AF%E5%A4%A7%E5%AD%A6%7C%E6%9C%BA%E5%99%A8%E4%BA%BA%E5%A4%A7%E4%BD%BF-(Robotic-Ambassador),yes,no,no,PASS
+course,本科课程|机器人与自动化-(CS422),机器人与自动化 (CS422),课程与基础技术,4,course,香港大学|机器人学-(国立交通大学·杨谷洋),机器人学 (国立交通大学·杨谷洋),2.14,同分类：机器人与自动化 · 标题主题相近：机器、器人,#/course/%E9%A6%99%E6%B8%AF%E5%A4%A7%E5%AD%A6%7C%E6%9C%BA%E5%99%A8%E4%BA%BA%E5%AD%A6-(%E5%9B%BD%E7%AB%8B%E4%BA%A4%E9%80%9A%E5%A4%A7%E5%AD%A6%C2%B7%E6%9D%A8%E8%B0%B7%E6%B4%8B),yes,no,no,PASS
+course,本科课程|机器人与自动化-(CS422),机器人与自动化 (CS422),课程与基础技术,5,course,本科课程|机器运动与传感-(EE413),机器运动与传感 (EE413),1.8,同分类：机器人与自动化,#/course/%E6%9C%AC%E7%A7%91%E8%AF%BE%E7%A8%8B%7C%E6%9C%BA%E5%99%A8%E8%BF%90%E5%8A%A8%E4%B8%8E%E4%BC%A0%E6%84%9F-(EE413),yes,no,no,PASS
+course,本科课程|机器人与自动化-(CS422),机器人与自动化 (CS422),课程与基础技术,>+3,,,,,（同分/低分的额外候选已按上限截断）,,,,,INFO：主动截断，未展示
+course,香港大学|GRCNN-抓取检测,GRCNN 抓取检测,课程与基础技术,1,course,本科课程|机器人与自动化-(CS422),机器人与自动化 (CS422),1.8,同分类：机器人与自动化,#/course/%E6%9C%AC%E7%A7%91%E8%AF%BE%E7%A8%8B%7C%E6%9C%BA%E5%99%A8%E4%BA%BA%E4%B8%8E%E8%87%AA%E5%8A%A8%E5%8C%96-(CS422),yes,no,no,PASS
+course,香港大学|GRCNN-抓取检测,GRCNN 抓取检测,课程与基础技术,2,course,本科课程|机器运动与传感-(EE413),机器运动与传感 (EE413),1.8,同分类：机器人与自动化,#/course/%E6%9C%AC%E7%A7%91%E8%AF%BE%E7%A8%8B%7C%E6%9C%BA%E5%99%A8%E8%BF%90%E5%8A%A8%E4%B8%8E%E4%BC%A0%E6%84%9F-(EE413),yes,no,no,PASS
+course,香港大学|GRCNN-抓取检测,GRCNN 抓取检测,课程与基础技术,3,course,本科课程|自主移动机器人,自主移动机器人,1.8,同分类：机器人与自动化,#/course/%E6%9C%AC%E7%A7%91%E8%AF%BE%E7%A8%8B%7C%E8%87%AA%E4%B8%BB%E7%A7%BB%E5%8A%A8%E6%9C%BA%E5%99%A8%E4%BA%BA,yes,no,no,PASS
+course,香港大学|GRCNN-抓取检测,GRCNN 抓取检测,课程与基础技术,4,course,香港大学|MECH7010-机器人学,MECH7010 机器人学,1.8,同分类：机器人与自动化,#/course/%E9%A6%99%E6%B8%AF%E5%A4%A7%E5%AD%A6%7CMECH7010-%E6%9C%BA%E5%99%A8%E4%BA%BA%E5%AD%A6,yes,no,no,PASS
+course,香港大学|GRCNN-抓取检测,GRCNN 抓取检测,课程与基础技术,5,course,香港大学|ROS机械臂开发视频教程,ROS机械臂开发视频教程,1.8,同分类：机器人与自动化,#/course/%E9%A6%99%E6%B8%AF%E5%A4%A7%E5%AD%A6%7CROS%E6%9C%BA%E6%A2%B0%E8%87%82%E5%BC%80%E5%8F%91%E8%A7%86%E9%A2%91%E6%95%99%E7%A8%8B,yes,no,no,PASS
+course,香港大学|GRCNN-抓取检测,GRCNN 抓取检测,课程与基础技术,>+3,,,,,（同分/低分的额外候选已按上限截断）,,,,,INFO：主动截断，未展示
+course,本科课程|机器学习与神经网络,机器学习与神经网络,课程与基础技术,1,course,香港大学|IDAT-7215-Python与机器学习,IDAT 7215 Python与机器学习,2.31,同分类：人工智能与机器学习 · 标题主题相近：机器、器学、学习,#/course/%E9%A6%99%E6%B8%AF%E5%A4%A7%E5%AD%A6%7CIDAT-7215-Python%E4%B8%8E%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0,yes,no,no,PASS
+course,本科课程|机器学习与神经网络,机器学习与神经网络,课程与基础技术,2,course,本科课程|现代智能与互联机器-(EE220),现代智能与互联机器 (EE220),1.8,同分类：人工智能与机器学习,#/course/%E6%9C%AC%E7%A7%91%E8%AF%BE%E7%A8%8B%7C%E7%8E%B0%E4%BB%A3%E6%99%BA%E8%83%BD%E4%B8%8E%E4%BA%92%E8%81%94%E6%9C%BA%E5%99%A8-(EE220),yes,no,no,PASS
+project,arm-visual-grasping,六轴机械臂视觉抓取系统,项目（示例数据）,1,project,force-assembly,力控柔顺装配工位,5.42,共同标签：机械臂 · 技术栈重合：ROS2,#/project/force-assembly,yes,no,yes,PASS
+project,arm-visual-grasping,六轴机械臂视觉抓取系统,项目（示例数据）,2,project,defect-inspection,产线缺陷在线检测,4.95,共同标签：深度学习 · 技术栈重合：PyTorch、OpenCV、Python,#/project/defect-inspection,yes,no,yes,PASS
+project,arm-visual-grasping,六轴机械臂视觉抓取系统,项目（示例数据）,3,post,robot-grasping-survey,机械臂抓取技术：从解析法到学习方法,4.36,共同标签：机械臂、深度学习 · 标题主题相近：机械、械臂、抓取,#/post/robot-grasping-survey,yes,no,no,PASS
+project,arm-visual-grasping,六轴机械臂视觉抓取系统,项目（示例数据）,4,post,arm-trajectory-planning,机械臂轨迹规划简述：从多项式到优化方法,3.66,共同标签：机械臂 · 标题主题相近：机械、械臂,#/post/arm-trajectory-planning,yes,no,no,PASS
+project,arm-visual-grasping,六轴机械臂视觉抓取系统,项目（示例数据）,5,post,force-compliance-control,机械臂力控与柔顺控制：从阻抗控制到导纳控制,3.66,共同标签：机械臂 · 标题主题相近：机械、械臂,#/post/force-compliance-control,yes,no,no,PASS
+project,arm-visual-grasping,六轴机械臂视觉抓取系统,项目（示例数据）,>+12,,,,,（同分/低分的额外候选已按上限截断）,,,,,INFO：主动截断，未展示
+project,digital-twin-line,产线数字孪生平台,项目（示例数据）,1,project,defect-inspection,产线缺陷在线检测,5.08,共同标签：智能制造 · 技术栈重合：Python,#/project/defect-inspection,yes,no,yes,PASS
+project,digital-twin-line,产线数字孪生平台,项目（示例数据）,2,project,vla-industrial,工业场景 VLA 操作模型,5.08,共同标签：智能制造 · 技术栈重合：Python,#/project/vla-industrial,yes,no,yes,PASS
+project,digital-twin-line,产线数字孪生平台,项目（示例数据）,3,post,digital-twin-manufacturing,数字孪生在产线中的应用：不只是好看的3D,3.77,共同标签：智能制造 · 标题主题相近：产线、数字、字孪,#/post/digital-twin-manufacturing,yes,no,no,PASS
+project,digital-twin-line,产线数字孪生平台,项目（示例数据）,4,post,industrial-protocols-notes,工业通信协议实战笔记：OPC UA、Modbus与Profinet,3.08,共同标签：智能制造,#/post/industrial-protocols-notes,yes,no,no,PASS
+project,digital-twin-line,产线数字孪生平台,项目（示例数据）,5,post,smart-production-line,从传统产线到智能产线：我做产线智能化三年的总结,3.08,共同标签：智能制造,#/post/smart-production-line,yes,no,no,PASS
+project,digital-twin-line,产线数字孪生平台,项目（示例数据）,>+2,,,,,（同分/低分的额外候选已按上限截断）,,,,,INFO：主动截断，未展示
+project,slam-agv,AGV 视觉 SLAM 导航,项目（示例数据）,1,post,slam-overview-filtering-to-graph,SLAM技术全景：从滤波到图优化,4.3,共同标签：SLAM、机器人 · 标题主题相近：slam,#/post/slam-overview-filtering-to-graph,yes,no,no,PASS
+project,slam-agv,AGV 视觉 SLAM 导航,项目（示例数据）,2,post,visual-slam-frontend,视觉SLAM前端：特征提取与匹配,4.24,共同标签：SLAM · 标题主题相近：slam、视觉,#/post/visual-slam-frontend,yes,no,no,PASS
+project,slam-agv,AGV 视觉 SLAM 导航,项目（示例数据）,3,post,deep-learning-in-slam,深度学习在SLAM中的应用,3.94,共同标签：SLAM · 标题主题相近：slam,#/post/deep-learning-in-slam,yes,no,no,PASS
+project,slam-agv,AGV 视觉 SLAM 导航,项目（示例数据）,4,post,embodied-ai-notes,"具身智能：让AI真正""住进""物理世界",3.23,共同标签：机器人,#/post/embodied-ai-notes,yes,no,no,PASS
+project,slam-agv,AGV 视觉 SLAM 导航,项目（示例数据）,5,post,rl-robot-control,强化学习在机器人控制中的应用,3.23,共同标签：机器人,#/post/rl-robot-control,yes,no,no,PASS
+project,slam-agv,AGV 视觉 SLAM 导航,项目（示例数据）,>+15,,,,,（同分/低分的额外候选已按上限截断）,,,,,INFO：主动截断，未展示
+project,vla-industrial,工业场景 VLA 操作模型,项目（示例数据）,1,project,defect-inspection,产线缺陷在线检测,5.08,共同标签：智能制造 · 技术栈重合：PyTorch、Python,#/project/defect-inspection,yes,no,yes,PASS
+project,vla-industrial,工业场景 VLA 操作模型,项目（示例数据）,2,project,digital-twin-line,产线数字孪生平台,5.08,共同标签：智能制造 · 技术栈重合：Python,#/project/digital-twin-line,yes,no,yes,PASS
+project,vla-industrial,工业场景 VLA 操作模型,项目（示例数据）,3,post,vla-industrial-challenges,VLA模型在工业场景的落地挑战与思考,4.86,共同标签：VLA、智能制造 · 标题主题相近：vla、工业、业场,#/post/vla-industrial-challenges,yes,no,no,PASS
+project,vla-industrial,工业场景 VLA 操作模型,项目（示例数据）,4,post,vla-model-intro,VLA模型入门：从RT-1到OpenVLA,4.33,共同标签：VLA · 标题主题相近：vla、模型,#/post/vla-model-intro,yes,no,no,PASS
+project,vla-industrial,工业场景 VLA 操作模型,项目（示例数据）,5,paper,paper-74,OpenVLA: An Open-Source Vision-Language-Action Model,3.64,共同标签：具身智能,#/papers?kind=paper&target=paper-74,yes,no,no,PASS
+project,vla-industrial,工业场景 VLA 操作模型,项目（示例数据）,>+7,,,,,（同分/低分的额外候选已按上限截断）,,,,,INFO：主动截断，未展示
+project,force-assembly,力控柔顺装配工位,项目（示例数据）,1,project,arm-visual-grasping,六轴机械臂视觉抓取系统,5.42,共同标签：机械臂 · 技术栈重合：ROS2,#/project/arm-visual-grasping,yes,no,yes,PASS
+project,force-assembly,力控柔顺装配工位,项目（示例数据）,2,post,force-compliance-control,机械臂力控与柔顺控制：从阻抗控制到导纳控制,4.34,共同标签：机械臂、运动控制 · 标题主题相近：力控、柔顺,#/post/force-compliance-control,yes,no,no,PASS
+project,force-assembly,力控柔顺装配工位,项目（示例数据）,3,post,arm-trajectory-planning,机械臂轨迹规划简述：从多项式到优化方法,4,共同标签：机械臂、运动控制,#/post/arm-trajectory-planning,yes,no,no,PASS
+project,force-assembly,力控柔顺装配工位,项目（示例数据）,4,post,robot-grasping-survey,机械臂抓取技术：从解析法到学习方法,3.42,共同标签：机械臂,#/post/robot-grasping-survey,yes,no,no,PASS
+project,force-assembly,力控柔顺装配工位,项目（示例数据）,5,project,slam-agv,AGV 视觉 SLAM 导航,2,技术栈重合：C++,#/project/slam-agv,yes,no,yes,PASS
+project,force-assembly,力控柔顺装配工位,项目（示例数据）,>+5,,,,,（同分/低分的额外候选已按上限截断）,,,,,INFO：主动截断，未展示
+project,defect-inspection,产线缺陷在线检测,项目（示例数据）,1,project,digital-twin-line,产线数字孪生平台,5.08,共同标签：智能制造 · 技术栈重合：Python,#/project/digital-twin-line,yes,no,yes,PASS
+project,defect-inspection,产线缺陷在线检测,项目（示例数据）,2,project,vla-industrial,工业场景 VLA 操作模型,5.08,共同标签：智能制造 · 技术栈重合：PyTorch、Python,#/project/vla-industrial,yes,no,yes,PASS
+project,defect-inspection,产线缺陷在线检测,项目（示例数据）,3,project,arm-visual-grasping,六轴机械臂视觉抓取系统,4.95,共同标签：深度学习 · 技术栈重合：PyTorch、OpenCV、Python,#/project/arm-visual-grasping,yes,no,yes,PASS
+project,defect-inspection,产线缺陷在线检测,项目（示例数据）,4,post,digital-twin-manufacturing,数字孪生在产线中的应用：不只是好看的3D,3.08,共同标签：智能制造,#/post/digital-twin-manufacturing,yes,no,no,PASS
+project,defect-inspection,产线缺陷在线检测,项目（示例数据）,5,post,industrial-protocols-notes,工业通信协议实战笔记：OPC UA、Modbus与Profinet,3.08,共同标签：智能制造,#/post/industrial-protocols-notes,yes,no,no,PASS
+project,defect-inspection,产线缺陷在线检测,项目（示例数据）,>+9,,,,,（同分/低分的额外候选已按上限截断）,,,,,INFO：主动截断，未展示

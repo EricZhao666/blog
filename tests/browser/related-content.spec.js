@@ -113,7 +113,7 @@ async function readRelated(page) {
     check('R1.3 每项都含类型 / 标题 / 理由',
       r1.items.every(i => i.type && i.title && i.reason), JSON.stringify(r1.items[0] || {}));
     check('R1.4 推荐链接都是站内真实路由',
-      r1.items.every(i => /^#\/(post\/|course\/|codelib\/|papers\?kind=(paper|material)&target=)/.test(i.href)),
+      r1.items.every(i => /^#\/(post\/|course\/|codelib\/|project\/|papers\?kind=(paper|material)&target=)/.test(i.href)),
       r1.items.map(i => i.href).join(' | '));
     check('R1.5 不推荐当前文章自身', r1.items.every(i => i.href !== '#/post/vla-model-intro'),
       r1.items.map(i => i.href).join(' | '));
@@ -163,9 +163,9 @@ async function readRelated(page) {
     const r4 = await readRelated(p1);
     check('R4.1 课程详情页渲染相关阅读', r4.exists && r4.hidden === false && r4.count >= 1,
       JSON.stringify({ count: r4.count, src: r4.source }));
-    check('R4.2 课程页推荐使用课程真实路由且同分类',
-      r4.items.every(i => i.href.indexOf('#/course/') === 0) &&
-      r4.items.some(i => i.reason.indexOf('同分类') !== -1),
+    check('R4.2 课程页推荐使用真实路由且包含同分类理由',
+      r4.items.every(i => /^#\/(course|post|codelib|project|papers)/.test(i.href)) &&
+      r4.items.some(i => i.href.indexOf('#/course/') === 0 && i.reason.indexOf('同分类') !== -1),
       r4.items.map(i => i.reason).join(' | ').slice(0, 120));
 
     check('R4.3 全流程无未处理运行时异常', s1.errors.length === 0, s1.errors.slice(0, 3).join(' | ') || 'none');

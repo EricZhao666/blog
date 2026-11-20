@@ -31,7 +31,7 @@ const note = (m) => problems.push(m);
 
 function loadData() {
   const ctx = vm.createContext({ console });
-  ['js/courses.js', 'js/course-notes.js', 'js/note-slugs.js', 'js/papers.js', 'js/codefiles.js', 'js/data.js', 'js/user-posts.js'].forEach(f => {
+  ['js/courses.js', 'js/course-notes.js', 'js/note-slugs.js', 'js/papers.js', 'js/codefiles.js', 'js/projects.js', 'js/data.js', 'js/user-posts.js'].forEach(f => {
     vm.runInContext(fs.readFileSync(path.join(ROOT, f), 'utf8'), ctx, { filename: f });
   });
   return {
@@ -40,6 +40,7 @@ function loadData() {
     NOTE_PAGES: vm.runInContext('NOTE_PAGES', ctx),
     PAPERS: vm.runInContext('PAPERS', ctx),
     CODE_LIBS: vm.runInContext('CODE_LIBS', ctx),
+    PROJECTS: vm.runInContext('PROJECTS', ctx),
     POSTS: vm.runInContext('POSTS', ctx),
     USER_POSTS: vm.runInContext('USER_POSTS', ctx)
   };
@@ -103,10 +104,11 @@ server.listen(PORT, '127.0.0.1', async () => {
   // Batch 6B-2：正文改为按需加载，巡检前先把 18 篇正文取齐（等价于"用户逐篇都读过"）
   await window.eval('Promise.all(POSTS.map(function (p) { return loadPostBody(p.id); }))');
 
-  const routes = ['/', '/courses', '/papers', '/code', '/tags', '/projects', '/archive', '/about', '/links', '/editor', '/nope'];
+  const routes = ['/', '/courses', '/papers', '/code', '/tags', '/projects', '/archive', '/about', '/links', '/editor', '/nope', '/project/not-a-real-project'];
   D.COURSES.forEach(c => routes.push('/course/' + encodeURIComponent(c.id)));
   D.CODE_LIBS.forEach(l => routes.push('/codelib/' + encodeURIComponent(l.id)));
   (D.POSTS || []).forEach(p => routes.push('/post/' + p.id));
+  (D.PROJECTS || []).forEach(p => routes.push('/project/' + encodeURIComponent(p.id)));
 
   const allHrefs = new Set();
   for (const r of routes) {
@@ -129,6 +131,7 @@ server.listen(PORT, '127.0.0.1', async () => {
   const courseIds = new Set(D.COURSES.map(c => c.id));
   const libIds = new Set(D.CODE_LIBS.map(l => l.id));
   const postIds = new Set([].concat(D.POSTS || [], D.USER_POSTS || []).map(p => p.id));
+  const projectIds = new Set((D.PROJECTS || []).map(p => p.id));
   allHrefs.forEach(h => {
     const bare = h.split('?')[0];
     if (bare.startsWith('/course/')) {
@@ -137,6 +140,10 @@ server.listen(PORT, '127.0.0.1', async () => {
     } else if (bare.startsWith('/codelib/')) {
       const id = decodeURIComponent(bare.slice(9));
       if (!libIds.has(id)) note(`死链: #${h}`);
+    } else if (bare.startsWith('/project/')) {
+      // Batch 9D：项目详情路由
+      const id = decodeURIComponent(bare.slice(9));
+      if (!projectIds.has(id)) note(`死链: #${h}`);
     } else if (bare.startsWith('/post/')) {
       if (!postIds.has(bare.slice(6))) note(`死链: #${h}`);
     } else if (!/^\/(courses|papers|code|tags|projects|archive|about|links|editor)?$/.test(bare) && !bare.startsWith('/tags/')) {

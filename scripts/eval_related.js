@@ -7,7 +7,14 @@
  *
  * 说明：本脚本只做"规则一致性 + 定性"评估，不产出准确率/NDCG 等需要人工标注的指标。
  *
- * 用法：node scripts/eval_related.js [输出路径]
+ * Batch 9D：加 `--projects` 时额外把 6 个项目纳入候选与源，
+ * 输出到 BATCH9D_PROJECT_RECOMMENDATION_EVAL.csv（多一列 cand_example）。
+ * 不带参数时行为与 9B-1 完全一致，**不会覆盖历史基线**。
+ *
+ * 用法：
+ *   node scripts/eval_related.js                     # 9B-1 基线（默认输出 BATCH9B1_...csv）
+ *   node scripts/eval_related.js --projects          # 9D：含项目样本
+ *   node scripts/eval_related.js [输出路径] [--projects]
  */
 'use strict';
 
@@ -15,7 +22,11 @@ const fs = require('fs');
 const path = require('path');
 
 const ROOT = path.dirname(__dirname);
-const OUT = process.argv[2] || path.join(ROOT, 'BATCH9B1_RECOMMENDATION_EVAL.csv');
+const WITH_PROJECTS = process.argv.indexOf('--projects') !== -1;
+const ARGS = process.argv.slice(2).filter((a) => a.indexOf('--') !== 0);
+const OUT = ARGS[0] || path.join(ROOT, WITH_PROJECTS
+  ? 'BATCH9D_PROJECT_RECOMMENDATION_EVAL.csv'
+  : 'BATCH9B1_RECOMMENDATION_EVAL.csv');
 
 // 与浏览器端一致：在隔离作用域里求值数据文件（这些文件是 `const X = [...]` 形式）
 function loadData(rel, names) {
@@ -39,7 +50,8 @@ const ROUTE_OK = [
   /^#\/post\/[^?#]+$/,
   /^#\/course\/[^?#]+$/,
   /^#\/codelib\/[^?#]+$/,
-  /^#\/papers\?kind=(paper|material)&target=[^?#]+$/
+  /^#\/papers\?kind=(paper|material)&target=[^?#]+$/,
+  /^#\/project\/[^?#]+$/
 ];
 
 function hrefValid(href) {
@@ -57,6 +69,7 @@ const { POSTS } = loadData('js/data.js', ['POSTS']);
 const { COURSES } = loadData('js/courses.js', ['COURSES']);
 const { PAPERS, LEARNING_MATERIALS } = loadData('js/papers.js', ['PAPERS', 'LEARNING_MATERIALS']);
 const { CODE_LIBS } = loadData('js/codefiles.js', ['CODE_LIBS']);
+const { PROJECTS } = loadData('js/projects.js', ['PROJECTS']);
 
 const items = [];
 POSTS.forEach((p) => items.push({
@@ -76,6 +89,15 @@ PAPERS.forEach((p) => items.push({
 CODE_LIBS.forEach((l) => items.push({
   type: 'lib', refId: l.id, title: l.name, category: l.category || '', text: l.description || ''
 }));
+
+// Batch 9D：项目进入候选（标签 + 技术栈 + 描述），示例身份随行记录
+if (WITH_PROJECTS) {
+  PROJECTS.forEach((p) => items.push({
+    type: 'project', refId: p.id, title: p.name, tags: p.tags || [], tech: p.tech || [],
+    text: [p.description, (p.highlights || []).join(' ')].filter(Boolean).join(' '),
+    example: !!p.example
+  }));
+}
 
 const index = Related.buildIndex(items);
 
@@ -140,7 +162,7 @@ function collect(sourceType, sourceId, sourceTitle, group, text) {
       source_type: sourceType, source_id: sourceId, source_title: sourceTitle, group: group,
       rank: 0, cand_type: '', cand_id: '', cand_title: '', score: '',
       reasons: '（无有效关联，返回空列表）', href: '', href_valid: '',
-      duplicate: '', review: 'PASS：无关联时不展示无关内容'
+      duplicate: '', cand_example: '', review: 'PASS：无关联时不展示无关内容'
     });
     return;
   }
@@ -164,6 +186,7 @@ function collect(sourceType, sourceId, sourceTitle, group, text) {
       href: r.href,
       href_valid: valid ? 'yes' : 'no',
       duplicate: dup ? 'yes' : 'no',
+      cand_example: r.example ? 'yes' : 'no',
       review: (valid && hasReason && !dup) ? 'PASS' : 'FAIL'
     });
   });
@@ -175,7 +198,7 @@ function collect(sourceType, sourceId, sourceTitle, group, text) {
       rank: '>+' + (wider.length - list.length),
       cand_type: '', cand_id: '', cand_title: '', score: '',
       reasons: '（同分/低分的额外候选已按上限截断）', href: '', href_valid: '', duplicate: '',
-      review: 'INFO：主动截断，未展示'
+      cand_example: '', review: 'INFO：主动截断，未展示'
     });
   }
 }
@@ -188,14 +211,20 @@ COURSE_SAMPLES.forEach((id) => {
   const c = COURSES.find((x) => x.id === id);
   collect('course', id, c.name, '课程与基础技术', c.description || '');
 });
+// Batch 9D：6 个项目全部作为源，覆盖 项目→文章 / 项目→项目 / 项目→其他类型
+if (WITH_PROJECTS) {
+  PROJECTS.forEach((p) => {
+    collect('project', p.id, p.name, '项目（示例数据）', p.description || '');
+  });
+}
 
 // ------------------------------------------------------------------ 输出
 
 const header = [
   'source_type', 'source_id', 'source_title', 'group', 'rank',
   'cand_type', 'cand_id', 'cand_title', 'score', 'reasons',
-  'href', 'href_valid', 'duplicate', 'review'
-];
+  'href', 'href_valid', 'duplicate'
+].concat(WITH_PROJECTS ? ['cand_example'] : []).concat(['review']);
 
 const lines = [header.join(',')];
 rows.forEach((r) => lines.push(header.map((k) => csvCell(r[k])).join(',')));
@@ -206,7 +235,8 @@ const ok = rows.filter((r) => r.review === 'PASS').length;
 const fail = rows.filter((r) => r.review === 'FAIL').length;
 const empty = rows.filter((r) => r.rank === 0).length;
 const noDup = rows.filter((r) => r.duplicate === 'yes').length;
-console.log('sources evaluated:', meta.length, '(posts', POST_SAMPLES.length, '/ courses', COURSE_SAMPLES.length, ')');
+console.log('sources evaluated:', meta.length, '(posts', POST_SAMPLES.length, '/ courses', COURSE_SAMPLES.length,
+  '/ projects', WITH_PROJECTS ? PROJECTS.length : 0, ')');
 console.log('recommendation rows:', rows.length, 'PASS', ok, 'FAIL', fail, 'empty sources', empty, 'dup links', noDup);
 console.log('index size:', index.size, 'items');
 console.log('written:', OUT);

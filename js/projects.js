@@ -1,12 +1,32 @@
 // ============================================
-// 项目作品集数据
-// 每个项目包含: id, name, description, tech[], tags[], icon, link, status, year, highlights[]
-// 说明: 这是示例数据，你可以替换成自己真实的项目。
+// 项目作品集数据（Batch 9D：作品集详情页）
+//
+// 必填：id, name, description, tech[], tags[], icon, link, status, year, highlights[]
+// 可选（缺失时详情页自动隐藏对应区块，不渲染空标题）：
+//   example     布尔，true = 示例项目（列表与详情都会显示"示例"标记）
+//   background  字符串，项目背景 / 问题来源
+//   objectives  字符串数组，目标
+//   architecture 字符串，技术方案与架构说明
+//   approach    字符串数组，关键做法
+//   timeline    数组 [{ time, text }]，时间线
+//   results     字符串数组，**必须有出处**的结果（见 PROJECT_DATA_GUIDE.md）
+//   limitations 字符串数组，已知限制
+//   references  数组 [{ label, url }]，仅 http(s) 外链
+//   repository  字符串，公开仓库地址（必须真实存在，禁止编造）
+//   relatedKeys 字符串数组，显式关联的 type:refId
+//   visibility  'public' | 'private'（private 不展示外部链接）
+//
+// ⚠️ 当前 6 个项目全部是**示例数据**（example: true），用于演示界面结构。
+//    其中的精度、成功率、部署数量等数字来自早期占位文案，未经独立验证，
+//    不得表述为真实成果。真实项目资料由项目所有者确认后替换。
 // ============================================
+
+const PROJECTS_EXAMPLE_NOTICE = '以下项目为示例数据，用于展示作品集结构；其中的指标均为占位文案，未经独立验证，不代表真实工程成果。';
 
 const PROJECTS = [
   {
     id: 'arm-visual-grasping',
+    example: true,
     name: '六轴机械臂视觉抓取系统',
     description: '基于 ROS2 + PyTorch 的机械臂视觉抓取方案，融合 YOLO 检测与 6D 位姿估计，实现无序工件分拣。整套系统部署在真实产线进行验证。',
     tech: ['ROS2', 'PyTorch', 'OpenCV', 'MoveIt2', 'Python'],
@@ -19,6 +39,7 @@ const PROJECTS = [
   },
   {
     id: 'digital-twin-line',
+    example: true,
     name: '产线数字孪生平台',
     description: '面向电子组装产线的数字孪生系统，实时同步设备状态、产量与良率，支持工艺参数仿真与异常预警，已在两条产线落地。',
     tech: ['Three.js', 'WebSocket', 'Python', 'OPC UA', '时序数据库'],
@@ -31,6 +52,7 @@ const PROJECTS = [
   },
   {
     id: 'slam-agv',
+    example: true,
     name: 'AGV 视觉 SLAM 导航',
     description: '面向厂房环境的 AGV 自主导航方案，融合激光与视觉 SLAM，解决动态人流干扰下的定位漂移问题。',
     tech: ['C++', 'ROS', 'ORB-SLAM3', 'Cartographer', 'Linux'],
@@ -43,6 +65,7 @@ const PROJECTS = [
   },
   {
     id: 'vla-industrial',
+    example: true,
     name: '工业场景 VLA 操作模型',
     description: '探索 Vision-Language-Action 模型在柔性装配中的落地，用合成数据 + 真实微调的方式训练指令驱动的操作策略。',
     tech: ['PyTorch', 'Transformers', 'Isaac Gym', 'Python'],
@@ -55,6 +78,7 @@ const PROJECTS = [
   },
   {
     id: 'force-assembly',
+    example: true,
     name: '力控柔顺装配工位',
     description: '基于六维力传感器的轴孔柔顺装配方案，结合阻抗控制与搜索策略，解决精密零件过盈配合难题。',
     tech: ['C++', 'EtherCAT', 'ROS2', '阻抗控制'],
@@ -67,6 +91,7 @@ const PROJECTS = [
   },
   {
     id: 'defect-inspection',
+    example: true,
     name: '产线缺陷在线检测',
     description: '基于深度学习的表面缺陷检测系统，部署在产线边缘设备，实时识别划痕、凹坑、脏污等缺陷并触发分拣。',
     tech: ['PyTorch', 'TensorRT', 'OpenCV', 'Jetson', 'Python'],

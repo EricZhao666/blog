@@ -131,7 +131,8 @@ GROUPS = {
         'search-interaction', 'reading-experience', 'image-lightbox',
         'ui-refresh', 'performance-accessibility',
     ],
-    'knowledge': ['knowledge-store', 'knowledge-center', 'related-content', 'related-reading'],
+    'knowledge': ['knowledge-store', 'knowledge-center', 'related-content', 'related-reading', 'project-detail'],
+    'projects': ['project-detail', 'related-content', 'related-reading'],
     'full': [],
 }
 
@@ -268,6 +269,8 @@ TESTS = [
      'desc': 'B9B1：相关推荐算法（标签区分度/显式关联/系列/分类/技术栈/标题/稳定排序/去重/无效链接）'},
     {'name': 'related-reading', 'file': 'tests/browser/related-content.spec.js', 'kind': 'browser',
      'desc': 'B9B1：相关阅读（文章与课程页渲染/理由/跳转/知识管理按钮/快速切换/降级/移动端/深色/离线）'},
+    {'name': 'project-detail', 'file': 'tests/browser/project-detail.spec.js', 'kind': 'browser',
+     'desc': 'B9D：项目作品集（6 个详情/列表跳转/刷新前进后退/无效 ID/可选字段/示例标记/外链过滤/转义/视口/知识库联动/推荐联动/离线）'},
 ]
 
 COUNT_RE = re.compile(r'共\s*(\d+)\s*项[，,]\s*PASS\s*(\d+)[，,]\s*FAIL\s*(\d+)')
