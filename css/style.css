@@ -4345,3 +4345,51 @@ mark.search-hit {
 @media (max-width:480px){
   .related-card-meta{flex-direction:column;align-items:flex-start;gap:4px}
 }
+
+/* ===== Batch 9D：项目作品集详情页 ===== */
+.project-card[data-href]{cursor:pointer}
+.project-card[data-href]:focus-visible{outline:2px solid var(--color-focus);outline-offset:2px}
+.project-card-foot{display:flex;align-items:baseline;justify-content:space-between;gap:10px;margin-top:12px;flex-wrap:wrap}
+.project-card-foot .project-card-year{margin-top:0;flex:1 1 auto;min-width:0}
+.project-card-link{font-size:.78rem;font-weight:600;color:var(--color-primary);text-decoration:none;white-space:nowrap}
+.project-card-link:hover{color:var(--color-primary-dark);text-decoration:underline}
+
+.project-demo-badge{display:inline-flex;align-items:center;flex:0 0 auto;padding:1px 7px;border-radius:999px;font-size:.66rem;font-weight:700;letter-spacing:.02em;background:var(--color-warning-soft);color:var(--color-warning);border:1px solid color-mix(in srgb,var(--color-warning) 26%,transparent)}
+.project-demo-badge-lg{font-size:.74rem;padding:2px 9px}
+.project-demo-notice{margin:10px 0 0;padding:10px 14px;border-radius:var(--radius-sm);background:var(--color-warning-soft);color:var(--color-warning);font-size:.8rem;line-height:1.6}
+.project-demo-banner{display:flex;flex-wrap:wrap;gap:8px;align-items:baseline;margin-bottom:18px;padding:12px 14px;border-radius:var(--radius-sm);background:var(--color-warning-soft);border:1px solid color-mix(in srgb,var(--color-warning) 24%,transparent);color:var(--color-warning);font-size:.8rem;line-height:1.65}
+.project-demo-banner strong{font-weight:700}
+
+.project-detail-badges{display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin-bottom:10px}
+.project-detail-year{font-size:.72rem;color:var(--color-text-muted);padding:2px 8px;border:1px solid var(--color-border);border-radius:var(--radius-xs)}
+.project-lede{font-size:.98rem;line-height:1.85;color:var(--color-text-secondary);margin-bottom:22px}
+
+.project-section{margin:0 0 22px}
+.project-section-title{font-size:.95rem;font-weight:700;margin-bottom:8px;color:var(--color-text)}
+.project-section-results .project-bullets li{color:var(--color-text)}
+.project-bullets{list-style:none;margin:0;padding:0}
+.project-bullets li{position:relative;padding-left:16px;font-size:.88rem;line-height:1.8;color:var(--color-text-secondary);margin-bottom:4px}
+.project-bullets li::before{content:"–";position:absolute;left:0;color:var(--color-text-muted)}
+.project-bullets a{color:var(--color-primary);text-decoration:none;word-break:break-all}
+.project-bullets a:hover{text-decoration:underline}
+.project-timeline{list-style:none;margin:0;padding:0 0 0 14px;border-left:2px solid var(--color-border)}
+.project-timeline li{position:relative;padding:0 0 12px 12px;font-size:.86rem;line-height:1.7}
+.project-timeline li::before{content:"";position:absolute;left:-19px;top:.45em;width:7px;height:7px;border-radius:50%;background:var(--color-primary)}
+.project-timeline-time{display:block;font-weight:700;color:var(--color-text);font-size:.78rem}
+.project-timeline-text{color:var(--color-text-secondary)}
+
+.project-tags{display:flex;flex-wrap:wrap;gap:6px}
+.project-tags-note .tag-link{text-decoration:none}
+.tag-link:hover{color:var(--color-primary)}
+.project-actions{display:flex;flex-wrap:wrap;gap:10px;margin:0 0 24px}
+.project-ext-link{display:inline-flex;align-items:center;gap:4px;padding:6px 14px;border-radius:999px;border:1px solid var(--color-border-strong);font-size:.8rem;color:var(--color-text);text-decoration:none}
+.project-ext-link:hover{border-color:var(--color-primary);color:var(--color-primary)}
+.project-back{margin-top:6px;font-size:.86rem}
+.project-back a{color:var(--color-primary);text-decoration:none}
+.project-back a:hover{text-decoration:underline}
+
+@media (max-width:480px){
+  .project-detail-badges{gap:6px}
+  .project-card-foot{flex-direction:column;align-items:flex-start;gap:6px}
+  .project-lede{font-size:.94rem}
+}

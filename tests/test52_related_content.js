@@ -106,15 +106,18 @@ const index = Related.buildIndex(BASE);
 
 // T7 技术栈重合
 (function () {
-  const idx = Related.buildIndex([
+  const corpus = [
     { type: 'project', refId: 'pa', title: '项目甲', tech: ['ROS2', 'PyTorch'], tags: [] },
+    { type: 'note', refId: 'na', title: '笔记甲', tech: ['ROS2', 'PyTorch'], tags: [] },
     { type: 'post', refId: 'x', title: '文章甲', tech: ['ROS2', 'PyTorch'], tags: [] },
     { type: 'post', refId: 'y', title: '文章乙', tech: ['Excel'], tags: [] }
-  ]);
-  // project 没有详情路由，不进候选；但 tech 规则本身要可被验证
+  ];
+  for (let i = 0; i < 6; i++) corpus.push({ type: 'post', refId: 'tf' + i, title: '填充' + i, tech: [] });
+  const idx = Related.buildIndex(corpus);
+  // Batch 9D：项目有了 #/project/<id>，凭技术栈重合可以进候选；静态笔记页仍无独立路由
   const list = Related.recommend(idx, 'post:x', {});
-  check('T7 技术栈重合计分且理由可读', list.length === 1 && list[0].key === 'project:pa' ? false : true, ids(list));
-  check('T7.1 无详情路由的项目不进候选', list.every(function (r) { return r.type !== 'project'; }), ids(list));
+  check('T7 技术栈重合让项目进入候选', list.length === 1 && list[0].key === 'project:pa', ids(list));
+  check('T7.1 仍无详情路由的笔记不进候选', list.every(function (r) { return r.type !== 'note'; }), ids(list));
 
   const idx2 = Related.buildIndex([
     { type: 'post', refId: 'x', title: '文章甲', tech: ['ROS2', 'PyTorch'] },
@@ -236,20 +239,24 @@ const index = Related.buildIndex(BASE);
 
 // T15 无效目标过滤：没有真实路由的内容不进入推荐
 (function () {
-  const idx = Related.buildIndex([
+  const corpus = [
     { type: 'post', refId: 'x', title: '文章', tags: ['SLAM'] },
     { type: 'project', refId: 'proj', title: '项目', tags: ['SLAM'] },
     { type: 'note', refId: 'note', title: '笔记', tags: ['SLAM'] }
-  ]);
+  ];
+  for (let i = 0; i < 8; i++) corpus.push({ type: 'post', refId: 'rf' + i, title: '填充' + i, tags: ['填充' + i] });
+  const idx = Related.buildIndex(corpus);
   const list = Related.recommend(idx, 'post:x', {});
-  check('T15 无详情路由的项目/笔记被过滤', list.length === 0, ids(list));
+  check('T15 无详情路由的笔记被过滤（项目已有真实路由）',
+    list.length === 1 && list[0].key === 'project:proj', ids(list));
   check('T15.1 hrefFor 只输出真实路由',
     Related.hrefFor('post', 'a b') === '#/post/a%20b' &&
     Related.hrefFor('course', '本科课程|X') === '#/course/%E6%9C%AC%E7%A7%91%E8%AF%BE%E7%A8%8B%7CX' &&
     Related.hrefFor('lib', 'l1') === '#/codelib/l1' &&
     Related.hrefFor('paper', 'paper-4') === '#/papers?kind=paper&target=paper-4' &&
     Related.hrefFor('material', 'lm-1') === '#/papers?kind=material&target=lm-1' &&
-    Related.hrefFor('project', 'p') === '',
+    Related.hrefFor('project', 'p1') === '#/project/p1' &&
+    Related.hrefFor('note', 'n1') === '',
     Related.hrefFor('course', '本科课程|X'));
 })();
 
@@ -347,6 +354,44 @@ const index = Related.buildIndex(BASE);
     { kind: 'tag', label: '共同标签：X' }
   ], 9);
   check('T20.5 未知理由类型排在已知类型之后', unknown === '共同标签：X · 未知理由', unknown);
+})();
+
+// T21 项目作为推荐源与候选（Batch 9D）
+(function () {
+  const corpus = [
+    { type: 'project', refId: 'arm', example: true, title: '六轴机械臂视觉抓取', tags: ['机械臂', '计算机视觉'], tech: ['ROS2', 'PyTorch'] },
+    { type: 'post', refId: 'p-arm', title: '机械臂手眼标定实践', tags: ['机械臂'], tech: ['ROS2'] },
+    { type: 'post', refId: 'p-cv', title: 'YOLO 部署笔记', tags: ['计算机视觉'] },
+    { type: 'project', refId: 'twin', example: true, title: '产线数字孪生', tags: ['智能制造'], tech: ['Three.js'] }
+  ];
+  for (let i = 0; i < 8; i++) corpus.push({ type: 'post', refId: 'pf' + i, title: '填充' + i, tags: ['填充' + i] });
+  const idx = Related.buildIndex(corpus);
+
+  const fromProject = Related.recommend(idx, 'project:arm', {});
+  check('T21 项目可作为推荐源并推荐相关文章',
+    fromProject.length >= 1 && fromProject[0].type === 'post' &&
+    Related.formatReasons(fromProject[0].reasons).indexOf('共同标签') !== -1,
+    ids(fromProject));
+
+  const fromPost = Related.recommend(idx, 'post:p-arm', {});
+  check('T21.1 文章可推荐相关项目',
+    fromPost.some(function (r) { return r.key === 'project:arm'; }), ids(fromPost));
+
+  check('T21.2 项目排除自身且示例标记随结果透出',
+    fromProject.every(function (r) { return r.key !== 'project:arm'; }) &&
+    fromPost.filter(function (r) { return r.type === 'project'; }).every(function (r) { return r.example === true; }) &&
+    fromPost.filter(function (r) { return r.type === 'post'; }).every(function (r) { return r.example === false; }),
+    JSON.stringify(fromPost.map(function (r) { return r.key + ':' + r.example; })));
+
+  check('T21.3 同一 ID 的项目与文章互不覆盖',
+    Related.recommend(idx, 'post:p-arm', {}).every(function (r) { return r.key !== 'post:p-arm'; }) &&
+    idx.byKey['project:arm'] && idx.byKey['post:p-arm'], Object.keys(idx.byKey).length + '');
+
+  const links = Related.extractLinks('参见 [项目](#/project/arm) 与 [坏链](javascript:alert(1))');
+  check('T21.4 显式内链支持项目路由',
+    links.length === 1 && links[0].key === 'project:arm' &&
+    Related.hrefFor('project', 'arm') === '#/project/arm',
+    JSON.stringify(links));
 })();
 
 console.log('\n合计 ' + (pass + fail) + ' 项，PASS ' + pass + '，FAIL ' + fail);

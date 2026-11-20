@@ -733,7 +733,74 @@ async function scenarioK2(env) {
   }
 }
 
-const SCENARIOS = { C1: scenarioC1, C2: scenarioC2, C3: scenarioC3, C4: scenarioC4, C5: scenarioC5, K1: scenarioK1, K2: scenarioK2 };
+// ---------------------------------------------------------------- K3 项目详情（Batch 9D）
+// 三引擎一致：详情可打开 → 示例标记 → 收藏 → 知识页显示"项目" → 推荐区块存在
+async function scenarioK3(env) {
+  const r = env.reporter;
+  const s = await newSession(env.browser);
+  const PID = 'arm-visual-grasping';
+  try {
+    await s.page.evaluate(function (id) { location.hash = '#/project/' + id; }, PID);
+    await s.page.waitForSelector('.project-detail', { timeout: 25000 });
+    const info = await s.page.evaluate(function () {
+      const root = document.querySelector('.project-detail');
+      return {
+        id: root ? root.getAttribute('data-project-id') : '',
+        title: (document.querySelector('.article-detail-title') || {}).textContent || '',
+        demo: document.querySelectorAll('.project-detail-badges .project-demo-badge').length,
+        sections: Array.from(document.querySelectorAll('.project-section-title')).map(function (x) { return x.textContent.trim(); }),
+        kmBar: !!document.querySelector('.project-detail .km-actions')
+      };
+    });
+    r.check('K3', '项目详情可打开', info.id === PID && info.title.length > 2, JSON.stringify({ id: info.id, title: info.title }));
+    r.check('K3', '示例身份有标记且缺省字段不渲染空区块',
+      info.demo === 1 && info.sections.indexOf('项目背景') === -1 && info.sections.length >= 2,
+      info.sections.join('|'));
+
+    await s.page.locator('.project-detail .km-actions [data-km-toggle="fav"]').first().click();
+    await sleep(400);
+    const pressed = await s.page.locator('.project-detail [data-km-toggle="fav"]').first().getAttribute('aria-pressed');
+    r.check('K3', '详情页收藏生效', pressed === 'true', pressed);
+
+    await s.page.evaluate(function () { location.hash = '#/knowledge?tab=favorites'; });
+    await s.page.waitForSelector('#kmList', { timeout: 20000 });
+    await sleep(700);
+    const row = await s.page.evaluate(function () {
+      const items = Array.from(document.querySelectorAll('.km-item'));
+      const hit = items.find(function (el) { return (el.textContent || '').indexOf('机械臂') !== -1; });
+      return {
+        n: items.length,
+        label: hit ? hit.querySelector('.km-item-type').textContent.trim() : '',
+        href: hit ? (hit.querySelector('a.km-item-main') || {}).getAttribute('href') : ''
+      };
+    });
+    r.check('K3', '知识页显示项目并指向项目详情',
+      row.n >= 1 && row.label === '项目' && row.href === '#/project/' + PID, JSON.stringify(row));
+
+    await s.page.evaluate(function (id) { location.hash = '#/project/' + id; }, PID);
+    await s.page.waitForSelector('.project-detail', { timeout: 20000 });
+    await s.page.waitForFunction(function () {
+      const box = document.querySelector('[data-related]');
+      return !!box && (box.getAttribute('data-related-filled') === '1' || box.hidden === true);
+    }, null, { timeout: 20000 });
+    const rel = await s.page.evaluate(function () {
+      const box = document.querySelector('[data-related]');
+      return {
+        source: box ? box.getAttribute('data-related') : '',
+        count: box ? box.querySelectorAll('.related-reading-item').length : 0,
+        reasons: box ? Array.from(box.querySelectorAll('.related-reason')).map(function (x) { return x.textContent; }) : []
+      };
+    });
+    r.check('K3', '项目详情有带理由的相关推荐',
+      rel.source === 'project:' + PID && rel.count >= 1 && rel.reasons.every(function (x) { return !!x; }),
+      rel.source + ' / ' + rel.count);
+    r.check('K3', '项目流程无未处理异常', s.errors.length === 0, s.errors.slice(0, 2).join(' | ') || 'none');
+  } finally {
+    await s.ctx.close();
+  }
+}
+
+const SCENARIOS = { C1: scenarioC1, C2: scenarioC2, C3: scenarioC3, C4: scenarioC4, C5: scenarioC5, K1: scenarioK1, K2: scenarioK2, K3: scenarioK3 };
 
 (async function main() {
   serverHandle = createServer(ROOT, PREFIX);

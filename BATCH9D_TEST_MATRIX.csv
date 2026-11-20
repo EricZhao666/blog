@@ -1,0 +1,43 @@
+id,area,suite,target,coverage,type,engines,items,result,evidence
+D-01,项目功能,project-detail,6 个详情有效,逐个项目打开并校验 data-project-id 与标题非空,browser,chromium,1,PASS,P1
+D-02,项目功能,project-detail,列表保留与增强,6 张卡片、6 个示例徽标、6 个详情入口、顶部提示、12 个收藏待读按钮,browser,chromium,3,PASS,P2.1-P2.3
+D-03,项目功能,project-detail,列表到详情,点"查看详情"进入对应项目路由,browser,chromium,1,PASS,P2.4
+D-04,项目功能,project-detail,卡片操作不导航,卡片内收藏按钮 aria 同步且 hash 不变,browser,chromium,1,PASS,P2.5
+D-05,项目功能,project-detail,直接访问,冷启动直接打开 #/project/<id>,browser,chromium,1,PASS,P3.1
+D-06,项目功能,project-detail,刷新,reload 后仍是同一项目,browser,chromium,1,PASS,P3.2
+D-07,项目功能,project-detail,前进后退,两个项目间 goBack/goForward 落到正确项目,browser,chromium,1,PASS,P3.3
+D-08,导航,project-detail,active 与标题,导航高亮"项目"、文档标题含项目名与"示例项目",browser,chromium,1,PASS,P3.4
+D-09,项目功能,project-detail,无效 ID,友好提示 + 返回列表入口,browser,chromium,1,PASS,P4.1
+D-10,项目功能,project-detail,特殊字符,中文/全角括号编码的 ID 不抛错,browser,chromium,1,PASS,P4.2
+D-11,项目功能,project-detail,非法编码,%E0%A4%A 退化为未找到而非渲染异常,browser,chromium,1,PASS,P4.3
+D-12,项目功能,project-detail,可选字段缺失,6 个真实项目只渲染技术栈/亮点/技术方向，无空区块,browser,chromium,3,PASS,P5.1-P5.3
+D-13,项目功能,project-detail,可选字段齐全,注入夹具项目后 背景/目标/方案/做法/时间线/结果/限制/参考 全部渲染,browser,chromium,1,PASS,P6.1
+D-14,示例身份,project-detail,非示例项目不显示标记,example=false 时徽标与横幅均不出现,browser,chromium,1,PASS,P6.2
+D-15,安全,project-detail,外部链接协议,合法 http(s) 生成按钮（2 个）,browser,chromium,1,PASS,P6.3
+D-16,安全,project-detail,危险协议过滤,javascript:/data: 不生成按钮且不进任何 href,browser,chromium,1,PASS,P6.4
+D-17,安全,project-detail,恶意文本渲染,img/script/svg 载荷全部转义、__pwned* 全 false、DOM img=0 script=0,browser,chromium,1,PASS,P7.1
+D-18,无障碍,project-detail,键盘操作,卡片 focus + Enter 进入详情,browser,chromium,1,PASS,P8.1
+D-19,响应式,project-detail,三档视口,390/768/1440 无横向溢出且区块完整,browser,chromium,1,PASS,P9
+D-20,主题,project-detail,深色主题,data-theme=dark 时标题与背景有对比,browser,chromium,1,PASS,P10
+D-21,知识库,project-detail,详情操作条,项目详情有收藏/待读 bar,browser,chromium,1,PASS,P11.1
+D-22,知识库,project-detail,收藏与待读,两者可切换、aria-pressed 同步、hash 不变,browser,chromium,1,PASS,P11.2
+D-23,知识库,project-detail,刷新保留,reload 后收藏/待读仍在,browser,chromium,1,PASS,P11.3
+D-24,知识库,project-detail,知识页显示项目,类型标签为"项目"且链接指向 #/project/<id>,browser,chromium,1,PASS,P11.4
+D-25,知识库,project-detail,知识页回跳,点行内链接回到同一项目详情,browser,chromium,1,PASS,P11.5
+D-26,知识库,project-detail,浏览历史,访问后写入历史 tab,browser,chromium,1,PASS,P11.6
+D-27,知识库,project-detail,双标签同步,另一标签页收藏列表自动增加,browser,chromium,1,PASS,P11.7
+D-28,知识库,project-detail,无异常,知识联动流程 pageerror=0,browser,chromium,1,PASS,P11.8
+D-29,推荐,project-detail,项目作为源,详情页出现 3-5 条相关阅读且每条有理由,browser,chromium,2,PASS,P12.1/P12.2
+D-30,推荐,project-detail,跨类型跳转,点推荐卡片跳到目标路由（含项目/文章）,browser,chromium,1,PASS,P12.3
+D-31,推荐,project-detail,文章页推荐项目,项目可出现在文章页且带示例徽标、不强行置顶,browser,chromium,1,PASS,P12.4
+D-32,推荐,project-detail,快速切换,项目→文章→项目后挂载点属于当前项目、不残留旧推荐,browser,chromium,1,PASS,P12.5
+D-33,离线,project-detail,离线打开详情,SW 控制下断网仍渲染项目详情,browser,chromium,1,PASS,P13
+D-34,算法,related-content,项目路由与候选,hrefFor/extractLinks 支持项目；项目凭技术栈进候选；项目可作源；排除自身；示例标记透传；同 ID 项目与文章不冲突,unit,node,8,PASS,T7 / T15 / T15.1 / T21.1-T21.4
+D-35,算法,related-content,既有契约回归,标签区分度/系列/显式关联/确定性/去重/空输入/转义等其余 42 项,unit,node,42,PASS,50 项合计全部通过
+D-36,推荐,related-reading,文章与课程页,项目进入候选后仍全部真实路由、课程页同分类成立,browser,chromium,22,PASS,22/22
+D-37,知识库,knowledge-store,数据层未改动,25 项全部通过（project 类型本就支持）,jsdom,node,25,PASS,25/25
+D-38,知识库,knowledge-center,知识中心回归,收藏/待读/历史/继续阅读/刷新保留/双标签同步/降级/离线,browser,chromium,29,PASS,29/29
+D-39,SW,sw-snapshot-unit,首屏清单,仍为 7 项（未新增脚本）；CACHE_VERSION 递增到 2026-11-20-3,browser,chromium,15,PASS,15/15
+D-40,SW,sw-consistency,快照与不混版,37 项（首屏 7 条路径全部来自快照、离线/换代/5xx）,browser,chromium,37,PASS,37/37
+D-41,回归,test7/test9/test18/inline-handlers/audit,静态页/路由/数据拆分/内联事件/全站巡检,jsdom,node,-,PASS,ALL PASS + audit 未发现问题
+D-42,跨引擎,cross-browser K3,三引擎项目详情,详情/示例标记/收藏/知识页/相关推荐/无异常,browser,chromium+firefox+webkit,18,PASS,6 项 × 3 引擎

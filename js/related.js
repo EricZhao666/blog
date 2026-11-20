@@ -62,7 +62,8 @@
   var LINK_PATTERNS = [
     { type: 'post', re: /^#\/post\/([^?#\s"'<>]+)/ },
     { type: 'course', re: /^#\/course\/([^?#\s"'<>]+)/ },
-    { type: 'lib', re: /^#\/codelib\/([^?#\s"'<>]+)/ }
+    { type: 'lib', re: /^#\/codelib\/([^?#\s"'<>]+)/ },
+    { type: 'project', re: /^#\/project\/([^?#\s"'<>]+)/ }
   ];
   var PAPERS_LINK_RE = /^#\/papers\?([^#\s"'<>]+)/;
 
@@ -136,8 +137,9 @@
     return { type: type, refId: refId };
   }
 
-  // 只输出站点里真实存在的路由；没有稳定目标的内容（项目/笔记）返回空串，
+  // 只输出站点里真实存在的路由；没有稳定目标的内容（静态笔记页）返回空串，
   // 由调用方把它们排除在候选之外 —— 绝不构造"看起来能用"的假详情路由。
+  // Batch 9D：项目有了 #/project/<id> 真实详情路由，因此进入候选池。
   function hrefFor(type, refId) {
     if (!isString(refId)) return '';
     var id = encodeURIComponent(refId);
@@ -146,6 +148,7 @@
     if (type === 'lib') return '#/codelib/' + id;
     if (type === 'paper') return '#/papers?kind=paper&target=' + id;
     if (type === 'material') return '#/papers?kind=material&target=' + id;
+    if (type === 'project') return '#/project/' + id;
     return '';
   }
 
@@ -178,7 +181,8 @@
         series: norm(raw.series),
         techRaw: uniqRaw(raw.tech),
         tech: uniq(raw.tech),
-        text: isString(raw.text) ? raw.text : ''
+        text: isString(raw.text) ? raw.text : '',
+        example: !!raw.example
       };
       item.titleTokens = tokens(item.title);
       item.titleTokenSet = Object.create(null);
@@ -384,6 +388,7 @@
         title: cand.title,
         href: cand.href,
         score: Math.round(r.score * 100) / 100,
+        example: !!cand.example,          // 示例内容：UI 必须显式标注，不能当成真实成果
         reasons: r.reasons
       });
     });
