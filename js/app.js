@@ -2105,6 +2105,7 @@ function renderPostView(post, content) {
       </div>
     </article>
     ${renderSeriesNav(post)}
+    ${relatedSlotHtml('post', post.id)}
     ${renderPostNav(post)}
     <div class="giscus-wrap">
       <h3 class="giscus-wrap-title">💬 评论与讨论</h3>
@@ -2142,25 +2143,8 @@ function renderPostNav(post) {
     html += '</nav>';
   }
 
-  // 相关文章：共享标签越多越相关
-  const tags = post.tags || [];
-  const related = getAllPosts()
-    .filter(p => p.id !== post.id)
-    .map(p => ({ post: p, score: (p.tags || []).filter(t => tags.indexOf(t) !== -1).length }))
-    .filter(x => x.score > 0)
-    .sort((a, b) => b.score - a.score || b.post.date.localeCompare(a.post.date))
-    .slice(0, 3);
-
-  if (related.length) {
-    html += '<section class="related-posts"><h3 class="related-title">相关文章</h3>';
-    related.forEach(x => {
-      html += `<a class="related-item" href="#/post/${x.post.id}">
-        <span class="related-item-title">${escapeHtml(x.post.title)}</span>
-        <span class="related-item-meta">${formatDate(x.post.date)}</span>
-      </a>`;
-    });
-    html += '</section>';
-  }
+  // 相关阅读改由 Batch 9B-1 的统一推荐模块渲染（relatedSlotHtml + relatedMount），
+  // 这里只保留上一篇/下一篇，避免同一页出现两份"相关"列表。
   return html;
 }
 
@@ -2513,6 +2497,7 @@ function renderCourseDetail(courseId) {
           <p><a href="#/courses">返回课程列表</a></p>
         </div>
       `}
+      ${relatedSlotHtml('course', course.id)}
       ${renderCourseNoteNav(course)}
     </div>
   `;
@@ -2538,18 +2523,7 @@ function renderCourseNoteNav(course) {
     html += '</nav>';
   }
 
-  const related = list.filter(c => c.id !== course.id && c.category === course.category).slice(0, 4);
-  if (related.length) {
-    html += '<section class="related-posts"><h3 class="related-title">同方向的其他笔记</h3>';
-    related.forEach(c => {
-      const s = noteStats(c.id);
-      html += `<a class="related-item" href="#/course/${encodeURIComponent(c.id)}">
-        <span class="related-item-title">${escapeHtml(c.name)}</span>
-        <span class="related-item-meta">${s ? s.charsLabel : ''}</span>
-      </a>`;
-    });
-    html += '</section>';
-  }
+  // "同方向的其他笔记"已由 Batch 9B-1 的相关阅读区块统一承担
   return html;
 }
 
@@ -5871,6 +5845,149 @@ function kmMount(hash) {
   }
 }
 
+// ============================================
+// Batch 9B-1：相关阅读（可解释推荐）
+// ============================================
+// 算法本身在 js/related.js（纯函数，可在 node 里单测）；这里只负责
+// "收集当前已加载的元数据 → 调算法 → 转义渲染"。
+// 计算时机只有两处：路由挂载、元数据补齐后各一次，不监听滚动/DOM 变动。
+const RELATED_LIMIT = 5;
+
+function relatedSlotHtml(type, refId) {
+  return '<section class="related-reading" data-related="' + escapeHtml(type + ':' + refId) +
+    '" aria-label="相关阅读" hidden></section>';
+}
+
+// 推荐输入：只用已经加载的元数据。没加载的类型不参与，也不为此额外阻塞正文。
+function relatedItems() {
+  const items = [];
+  try {
+    getAllPosts().forEach(function (p) {
+      items.push({
+        type: 'post', refId: p.id, title: p.title, tags: p.tags || [],
+        series: p.series || '', text: p.excerpt || ''
+      });
+    });
+  } catch (e) { /* 文章元数据必到，异常时退化为空 */ }
+  if (typeof COURSES !== 'undefined') {
+    COURSES.forEach(function (c) {
+      items.push({
+        type: 'course', refId: c.id, title: c.name,
+        category: c.category || '', text: c.description || ''
+      });
+    });
+  }
+  if (typeof PAPERS !== 'undefined') {
+    PAPERS.forEach(function (p) {
+      items.push({
+        type: 'paper', refId: p.id, title: p.title, tags: p.collections || [],
+        category: p.category || '', text: p.abstract || ''
+      });
+    });
+  }
+  if (typeof LEARNING_MATERIALS !== 'undefined') {
+    LEARNING_MATERIALS.forEach(function (m) {
+      items.push({
+        type: 'material', refId: m.id, title: m.name,
+        category: m.category || '', text: m.subcategory || ''
+      });
+    });
+  }
+  if (typeof CODE_LIBS !== 'undefined') {
+    CODE_LIBS.forEach(function (l) {
+      items.push({
+        type: 'lib', refId: l.id, title: l.name,
+        category: l.category || '', text: l.description || ''
+      });
+    });
+  }
+  return items;
+}
+
+// 显式关联只在"正文已经在内存里"时才抽取：文章正文 / 课程笔记，都是当前页已加载的内容
+function relatedSourceText(type, refId) {
+  try {
+    if (type === 'post') {
+      const post = getAllPosts().find(function (p) { return p.id === refId; });
+      return cachedPostContent(post) || '';
+    }
+    if (type === 'course') {
+      const entry = (typeof COURSE_NOTES !== 'undefined') ? COURSE_NOTES[refId] : null;
+      return entry && entry.notes ? entry.notes : '';
+    }
+  } catch (e) { /* 忽略：没有正文就没有显式关联 */ }
+  return '';
+}
+
+function relatedCardHtml(item) {
+  const reason = Related.formatReasons(item.reasons, 2);
+  return '<li class="related-reading-item">' +
+    '<article class="related-card" data-href="' + escapeHtml(item.href) + '">' +
+    '<a class="related-card-title" href="' + escapeHtml(item.href) + '">' +
+    escapeHtml(item.title) + '</a>' +
+    '<span class="related-card-meta">' +
+    '<span class="related-type">' + escapeHtml(Related.typeLabel(item.type)) + '</span>' +
+    (reason ? '<span class="related-reason">' + escapeHtml(reason) + '</span>' : '') +
+    '</span>' +
+    '</article></li>';
+}
+
+function relatedSectionHtml(list) {
+  return '<h2 class="related-reading-title">🔗 相关阅读</h2>' +
+    '<p class="related-reading-hint">依据标签、系列、分类与正文内链计算，理由见每项标题下方</p>' +
+    '<ul class="related-reading-list">' + list.map(relatedCardHtml).join('') + '</ul>';
+}
+
+function relatedPaint(slot, key, token, explicit) {
+  if (!slot || !slot.isConnected) return;
+  if (token !== _routeToken) return;                       // 路由已切走：不覆盖新页面
+  if (slot.getAttribute('data-related') !== key) return;   // 已不是同一个源内容
+  let list = [];
+  try {
+    const index = Related.buildIndex(relatedItems());
+    list = Related.recommend(index, key, { explicit: explicit, limit: RELATED_LIMIT });
+  } catch (e) {
+    console.warn('相关阅读计算失败:', e && e.message);
+    list = [];
+  }
+  if (!list.length) {                 // 无有效关联：整块隐藏，不占位也不留空框
+    slot.hidden = true;
+    slot.innerHTML = '';
+    slot.removeAttribute('data-related-filled');
+    return;
+  }
+  slot.innerHTML = relatedSectionHtml(list);
+  slot.hidden = false;
+  slot.setAttribute('data-related-filled', '1');
+}
+
+function relatedApply(hash) {
+  if (typeof Related === 'undefined') return;              // 模块缺失：不影响阅读
+  const slot = document.querySelector('[data-related]');
+  if (!slot) return;
+  const key = slot.getAttribute('data-related');
+  const parsed = Related.splitId(key);
+  if (!parsed) { slot.remove(); return; }
+  const token = _routeToken;
+  const explicit = Related.extractLinks(relatedSourceText(parsed.type, parsed.refId))
+    .map(function (x) { return x.key; });
+
+  relatedPaint(slot, key, token, explicit);
+
+  // 文章页首次访问时课程元数据还没加载：空闲补齐后再算一次（不阻塞正文）。
+  // 代码库元数据只在正文确实链接了代码库时才补（380KB，按需）。
+  const needCourses = !dataReady('courses');
+  const needLibs = explicit.some(function (k) { return k.indexOf('lib:') === 0; }) &&
+    !dataReady('codefiles');
+  if (!needCourses && !needLibs) return;
+  const redo = function () {
+    if (token !== _routeToken) return;
+    relatedPaint(slot, key, token, explicit);
+  };
+  if (needCourses) loadData('courses').then(redo);
+  if (needLibs) loadData('codefiles').then(redo);
+}
+
 // 个人操作：捕获阶段拦截，避免触发卡片本身的导航
 document.addEventListener('click', function (e) {
   const rowBtn = e.target && e.target.closest ? e.target.closest('[data-km-remove], [data-km-resume]') : null;
@@ -6127,6 +6244,8 @@ async function router() {
           enhanceImages(app);
           highlightIn(app);
           buildReadingTools();
+          // 整页重绘后相关阅读的挂载点被替换，需要重新填充（路由 token 已在上面校验）
+          relatedApply(hash);
           // 笔记映射（NOTE_PAGES）此时才到位：canonical / og:url 必须跟着重算，
           // 否则首访课程页整次会话都指向站点根（见 Batch 7A-02）。
           updateMetaForRoute(hash);
@@ -6244,6 +6363,8 @@ async function router() {
   updateMetaForRoute(hash);
   // 内容渲染成功后挂载个人知识入口（失败/加载态不会进入这里）
   kmMount(hash);
+  // 相关阅读：只挂一次，计算在 related.js 里完成
+  relatedApply(hash);
   // 记录本条历史条目对应的关键词：后退回来时据此恢复搜索上下文
   rememberEntryState(hash);
   perfMark('art:html-end');

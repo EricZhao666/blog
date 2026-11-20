@@ -115,10 +115,11 @@ function fillAll(h) { h.allKeys.forEach(function (u) { h.present.add(u); }); }
 
   // U0b：首屏完整性清单未被改动（本轮不允许放宽快照门槛）
   const h0 = makeHarness();
-  check('U0b 首屏资源清单保持 6 项（含知识库模块）',
-    h0.firstScreen.length === 6 &&
+  check('U0b 首屏资源清单保持 7 项（含知识库与相关推荐模块）',
+    h0.firstScreen.length === 7 &&
     h0.firstScreen.indexOf('js/app.js') !== -1 &&
     h0.firstScreen.indexOf('js/knowledge.js') !== -1 &&
+    h0.firstScreen.indexOf('js/related.js') !== -1 &&
     h0.firstScreen.indexOf('js/projects.js') !== -1,
     h0.firstScreen.join(','));
 

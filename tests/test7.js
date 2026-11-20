@@ -113,12 +113,13 @@ server.listen(PORT, '127.0.0.1', async () => {
     await wait(600);
     check('卡片显示笔记规模', /千字|字 · 约 \d+ 分钟/.test(doc.getElementById('app').textContent));
 
-    // 3) 笔记详情：上下篇 + 同方向推荐 + canonical 指向静态页
+    // 3) 笔记详情：上下篇 + 相关阅读（Batch 9B-1 统一区块）+ canonical 指向静态页
     window.location.hash = '#/course/' + encodeURIComponent('香港大学|材料科学');
     await wait(800);
     const app = doc.getElementById('app');
     check('详情页有上下篇导航', !!app.querySelector('.note-nav .post-nav-item'));
-    check('详情页有同方向推荐', !!app.querySelector('.related-posts .related-item'));
+    check('详情页有同方向推荐（相关阅读区块）',
+      !!app.querySelector('[data-related] .related-reading-item'), app.querySelector('[data-related]') ? 'filled' : 'missing');
     check('详情页显示阅读时长', /约 \d+ 分钟/.test(app.textContent));
     const canonical = doc.querySelector('link[rel="canonical"]').getAttribute('href');
     check('canonical 指向静态笔记页', /\/notes\/materials\.html$/.test(canonical), canonical);

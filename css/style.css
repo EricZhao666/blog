@@ -4327,3 +4327,21 @@ mark.search-hit {
   .km-item-meta{width:100%;margin-left:0;padding-left:0}
   .km-head .editor-btn{width:100%}
 }
+
+/* ===== Batch 9B-1：相关阅读（可解释推荐） ===== */
+.related-reading{margin-top:34px;padding-top:20px;border-top:1px solid var(--color-border)}
+.related-reading[hidden]{display:none}
+.related-reading-title{font-size:.95rem;font-weight:700;margin-bottom:6px}
+.related-reading-hint{font-size:.76rem;color:var(--color-text-muted);margin-bottom:12px}
+.related-reading-list{list-style:none;margin:0;padding:0;display:grid;gap:8px}
+.related-reading-item{margin:0}
+.related-card{display:flex;flex-direction:column;gap:4px;padding:10px 12px;border:1px solid var(--color-border);border-radius:10px;background:var(--color-surface);transition:border-color .15s ease,box-shadow .15s ease}
+.related-card:hover{border-color:var(--color-border-strong);box-shadow:0 2px 10px var(--color-shadow)}
+.related-card-title{font-size:.9rem;font-weight:600;color:var(--color-text);text-decoration:none}
+.related-card:hover .related-card-title{color:var(--color-primary)}
+.related-card-meta{display:flex;flex-wrap:wrap;align-items:center;gap:8px;font-size:.74rem;color:var(--color-text-muted)}
+.related-type{flex:0 0 auto;padding:1px 7px;border-radius:999px;background:var(--color-tag-bg);color:var(--color-tag-text);font-weight:600}
+.related-reason{flex:1 1 auto;min-width:0}
+@media (max-width:480px){
+  .related-card-meta{flex-direction:column;align-items:flex-start;gap:4px}
+}
