@@ -115,9 +115,11 @@ function fillAll(h) { h.allKeys.forEach(function (u) { h.present.add(u); }); }
 
   // U0b：首屏完整性清单未被改动（本轮不允许放宽快照门槛）
   const h0 = makeHarness();
-  check('U0b 首屏资源清单保持 5 项',
-    h0.firstScreen.length === 5 &&
-    h0.firstScreen.indexOf('js/app.js') !== -1 && h0.firstScreen.indexOf('js/projects.js') !== -1,
+  check('U0b 首屏资源清单保持 6 项（含知识库模块）',
+    h0.firstScreen.length === 6 &&
+    h0.firstScreen.indexOf('js/app.js') !== -1 &&
+    h0.firstScreen.indexOf('js/knowledge.js') !== -1 &&
+    h0.firstScreen.indexOf('js/projects.js') !== -1,
     h0.firstScreen.join(','));
 
   // U1：并发调用共享同一 Promise，且只检查一次；成功后结果被缓存
@@ -131,11 +133,11 @@ function fillAll(h) { h.allKeys.forEach(function (u) { h.present.add(u); }); }
   await p2;
   const calls1 = h1.stats.matchCalls - before1;
   check('U1a 并发的完整性检查共享同一 Promise', samePromise);
-  check('U1b 并发检查只创建一轮检查任务（6 次 match）', calls1 === 6, 'matchCalls=' + calls1);
+  check('U1b 并发检查只创建一轮检查任务', calls1 === h1.allKeys.length, 'matchCalls=' + calls1);
   check('U1c 快照完整时返回 true', r1 === true, String(r1));
   const p3 = h1.snapshotReady();
   const calls2 = h1.stats.matchCalls - before1;
-  check('U1d 成功结果被缓存（同一 Promise、无额外检查）', p3 === p1 && calls2 === 6, 'matchCalls=' + calls2);
+  check('U1d 成功结果被缓存（同一 Promise、无额外检查）', p3 === p1 && calls2 === h1.allKeys.length, 'matchCalls=' + calls2);
 
   // U2：快照缺失 → false；再次调用仍必须重新检查；恢复后同生命周期返回 true
   const h2 = makeHarness();
@@ -146,13 +148,13 @@ function fillAll(h) { h.allKeys.forEach(function (u) { h.present.add(u); }); }
   const r2 = await h2.snapshotReady();
   const calls3 = h2.stats.matchCalls - before2;
   check('U2a 快照缺失时返回 false', r2 === false, String(r2));
-  check('U2b 缺失时确实执行了一轮检查', calls3 === 6, 'matchCalls=' + calls3);
+  check('U2b 缺失时确实执行了一轮检查', calls3 === h2.allKeys.length, 'matchCalls=' + calls3);
 
   const before3 = h2.stats.matchCalls;
   const r2b = await h2.snapshotReady();
   const calls4 = h2.stats.matchCalls - before3;
   check('U2c 失败状态未被缓存：再次调用会重新检查',
-    calls4 === 6 && r2b === false, 'matchCalls=' + calls4 + ' result=' + r2b);
+    calls4 === h2.allKeys.length && r2b === false, 'matchCalls=' + calls4 + ' result=' + r2b);
 
   h2.present.add(probe);
   const r3 = await h2.snapshotReady();
