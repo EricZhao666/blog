@@ -208,7 +208,16 @@ kmLearningAnalytics().then(function (r) {
 | Token | 估算 9–13 万（输入+输出合计） | **非精确值**：会话内无法读取 IDE 计量；按读取约 300KB 源码/文档 + 写入约 90KB 新文件估算 |
 | 积分 | 估算 90–130（与 token 同量级） | **非精确值**：积分规则由 IDE 计费侧决定，Agent 侧不可见 |
 
-## 14. 最终状态
+## 14. 提交与 PR
+
+- 提交：`c3daa0c feat: Batch 9E add local learning analytics`（11 个文件，+2340/-17）
+- 分支：`feat/batch9e-learning-analytics` 已推送到 `origin`（未推送、未修改 `main`）
+- PR 状态：仓库环境**未安装 `gh` CLI**，因此未自动创建 PR。请用真实链接创建（base = `main`）：
+  - https://github.com/EricZhao666/blog/pull/new/feat/batch9e-learning-analytics
+  - 或对比视图：https://github.com/EricZhao666/blog/compare/main...feat/batch9e-learning-analytics?expand=1
+- 未自动合并、未部署；完整 73 套回归交 PR CI 执行。
+
+## 15. 最终状态
 
 **B9E_PR_READY** — 代码、两个正式测试套件、三份交付物齐备；本地专项与受影响回归全部通过；
-已推送分支并创建 PR，未自动合并、未部署，不进入 9F。
+分支已推送，PR 待用上面的链接创建（无 `gh` CLI）。不自动合并、不部署，不进入 9F。
