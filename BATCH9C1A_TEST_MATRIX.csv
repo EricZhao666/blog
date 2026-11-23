@@ -38,4 +38,4 @@ A-09,受影响回归,performance-accessibility,无障碍/触控/六档视口,导
 A-10,受影响回归,knowledge-center,知识中心交互,app.js 改动不影响知识库选择器契约,browser,chromium,,PASS,58.5s；tests/reports/b9c1a-affected.md
 A-11,受影响回归,personalized-home,首页个人模块,首页渲染路径未改,jsdom,node,,PASS,21.1s；tests/reports/b9c1a-affected.md
 A-12,受影响回归,home-experience,首页浏览器验收,首页模块/搜索交替/离线未回归,browser,chromium,,PASS,41.7s；tests/reports/b9c1a-affected.md
-N-01,完整回归,PR CI,默认 77 套串行,本地未跑全量；按任务书交 PR CI 执行,ci,chromium,77,PENDING,PR 创建后由 GitHub Actions tests 工作流验证
+N-01,完整回归,PR CI,默认 77 套串行,本地未跑全量；按任务书交 PR CI 执行,ci,chromium,77,PENDING,PR #35 已触发 CI；https://github.com/EricZhao666/blog/pull/35/checks

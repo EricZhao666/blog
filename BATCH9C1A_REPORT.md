@@ -146,12 +146,13 @@
 ## 9. 提交与 PR
 
 - 分支：`feat/batch9c1a-robot-kinematics`（基于 `2ca2258`）
-- 提交：见 git log（代码 + 测试 + 三份交付物；PR 链接创建后补记）
-- PR：本轮允许 push 与创建 PR（base = `main`）；**不自动合并、不部署**，完整 77 套回归由 PR CI 验证。
+- 提交：`8d48831` `feat: Batch 9C-1A add 2R robot kinematics interactive demo`（12 文件，+2385/−4；代码 + 测试 + 三份交付物）；PR 链接补记提交见 git log
+- PR：**https://github.com/EricZhao666/blog/pull/35**（base = `main`，经浏览器创建，仓库环境无 gh CLI）
+- **不自动合并、不部署**；完整 77 套回归由 PR CI 验证（创建时 CI 已触发，结果待验收）。
 - 完成后停止，不进入 PID / OEE 模块。
 
 ## 10. 最终状态
 
 **B9C1A_PR_READY** — 2R 运动学演示（数学模块 + SVG UI + 站点入口 + SW 发布契约）齐备；
 数学专项 50/50、浏览器专项 44/44、SW 快照专项 15/15、受影响回归 14/14 全部通过；
-分支推送并创建 PR 后等待 CI 与人工审核。
+PR #35 已创建（https://github.com/EricZhao666/blog/pull/35），等待 CI 与人工审核，不合并、不部署。
