@@ -1,0 +1,91 @@
+id,area,suite,target,coverage,type,engines,items,result,evidence
+A-01,分类,knowledge-import,默认分类,缺失时自动补齐且排第一；删除请求被拒绝,unit,node,2,PASS,K1 / K2
+A-02,分类,knowledge-import,新建与校验,空白归一；空名/超长/重名拒绝,unit,node,4,PASS,K3-K6
+A-03,分类,knowledge-import,重命名,ID 不变、名称更新,unit,node,1,PASS,K7
+A-04,分类,knowledge-import,删除迁移,收藏迁回 default 且记录不删；待读/其他收藏不受影响,unit,node,3,PASS,K9 / K10
+A-05,分类,knowledge-import,事务回滚,runAtomic 失败后分类与归属都保持原状,unit,node,1,PASS,K11
+A-06,分类,knowledge-import,按分类筛选,list({flag:fav,cat}) 只返回该分类收藏,unit,node,1,PASS,K8
+A-07,批量,knowledge-import,移动分类,单事务批量改 favCat,unit,node,1,PASS,B1
+A-08,批量,knowledge-import,取消收藏,记录保留且 favCat 保留,unit,node,1,PASS,B2
+A-09,批量,knowledge-import,待读,批量加入/移出,unit,node,1,PASS,B3
+A-10,批量,knowledge-import,标记已读,建立 done+doneAt 且不改 progress,unit,node,1,PASS,B4
+A-11,批量,knowledge-import,标记未读,清空 progress 与 doneAt,unit,node,1,PASS,B5
+A-12,批量,knowledge-import,清理历史,纯历史整条删除；长期状态只清历史,unit,node,1,PASS,B6
+A-13,批量,knowledge-import,事务回滚,注入失败后整批不落盘,unit,node,1,PASS,B7
+A-14,批量,knowledge-import,边界,空选择 total=0；未知动作拒绝；只影响传入 key,unit,node,2,PASS,B8 / B9
+A-15,状态,knowledge-import,自动进度,建立 reading,unit,node,1,PASS,R1
+A-16,状态,knowledge-import,标记未读,清 progress+doneAt,unit,node,1,PASS,R2
+A-17,状态,knowledge-import,人工未读优先,后续自动进度不复活 reading,unit,node,1,PASS,R3
+A-18,状态,knowledge-import,人工已读优先,后续滚动不退回未读（进度仍记录位置）,unit,node,1,PASS,R4
+A-19,状态,knowledge-import,过期节流任务,手动状态后 flush 不覆盖,unit,node,1,PASS,R5
+A-20,状态,knowledge-import,重复浏览,recordView 不把 done 退回未读,unit,node,1,PASS,R6
+A-21,导出,knowledge-import,结构,含 categories/schemaVersion=2/complete/persistence/source,unit,node,1,PASS,E1
+A-22,导出,knowledge-import,并发完整性,失败与成功两次导出互不影响,unit,node,1,PASS,E2
+A-23,导出,knowledge-import,往返,导出文件原样导回且幂等,unit,node,1,PASS,E3
+A-24,导入,knowledge-import,版本与外壳,未来版本/app/kind 拒绝,unit,node,2,PASS,I1 / I2
+A-25,导入,knowledge-import,原型污染,__proto__ 字段整份拒绝,unit,node,1,PASS,I3
+A-26,导入,knowledge-import,重复键,同 key 两次拒绝,unit,node,1,PASS,I4
+A-27,导入,knowledge-import,枚举与数值,readState 非法、progress 越界拒绝,unit,node,2,PASS,I5 / I6
+A-28,导入,knowledge-import,时间戳与键一致性,未来/非法时间戳、type 与 key 不一致拒绝,unit,node,2,PASS,I7 / I8
+A-29,导入,knowledge-import,历史格式,v1（无 categories）可接受并补默认分类,unit,node,1,PASS,I9
+A-30,导入,knowledge-import,资源上限,超过 2MB 拒绝,unit,node,1,PASS,I10
+A-31,导入,knowledge-import,预览统计,新增/冲突/分类/失效内容,unit,node,2,PASS,M1 / M2
+A-32,导入,knowledge-import,合并策略,只新增不覆盖本地；分类并集；不删除本地记录,unit,node,3,PASS,M3 / M4 / M7
+A-33,导入,knowledge-import,字段完整性,fav/later/readState/progress 正确落库,unit,node,1,PASS,M5
+A-34,导入,knowledge-import,幂等,重复导入 imported=0,unit,node,1,PASS,M6
+A-35,导入,knowledge-import,悬空分类,未知 favCat 落 default,unit,node,1,PASS,M8
+A-36,替换,knowledge-import,前置条件,不完整备份拒绝；必须二次确认,unit,node,2,PASS,P1 / P2
+A-37,替换,knowledge-import,成功路径,清空旧记录并写入导入集合,unit,node,1,PASS,P4
+A-38,替换,knowledge-import,原子回滚,注入失败后原记录完整保留,unit,node,1,PASS,P5
+A-39,替换,knowledge-import,并发令牌,确认期间数据变化拒绝并提示重新预览,unit,node,1,PASS,P6
+A-40,导入,knowledge-import,降级,内存模式拒绝导入,unit,node,1,PASS,R8
+A-41,导入,knowledge-import,往返一致,记录字段逐一相等,unit,node,1,PASS,R7
+A-42,分类,knowledge-management,对话框与筛选条,浏览器内建分类、名称归一化后显示在分类条,browser,chromium,2,PASS,K20.1 / K20.2
+A-43,分类,knowledge-management,对话框可取消,Esc 关闭，焦点恢复,browser,chromium,1,PASS,K20.3
+A-44,分类,knowledge-management,行内移动,下拉改分类后计数正确,browser,chromium,1,PASS,K20.4
+A-45,分类,knowledge-management,筛选,点自定义分类 chip 只显示该类,browser,chromium,1,PASS,K20.5
+A-46,分类,knowledge-management,重命名,ID 不变,browser,chromium,1,PASS,K20.6
+A-47,分类,knowledge-management,删除迁移,收藏回默认分类且数量不变,browser,chromium,1,PASS,K20.7
+A-48,批量,knowledge-management,进入批量,选择框与操作栏出现,browser,chromium,1,PASS,K21.1
+A-49,批量,knowledge-management,范围提示,已选 N / M + 当前列表,browser,chromium,1,PASS,K21.2
+A-50,批量,knowledge-management,全选范围,只选当前可见 3/3,browser,chromium,1,PASS,K21.3
+A-51,批量,knowledge-management,取消收藏,记录仍在,browser,chromium,1,PASS,K21.4
+A-52,批量,knowledge-management,标记未读,进度与完成时间清零,browser,chromium,1,PASS,K21.5
+A-53,导入,knowledge-management,预览表格,记录数/冲突/可新增/来源完整性,browser,chromium,1,PASS,K22.1
+A-54,导入,knowledge-management,取消,不写库,browser,chromium,1,PASS,K22.2
+A-55,导入,knowledge-management,校验失败,给出具体原因且不写库,browser,chromium,1,PASS,K22.3
+A-56,导入,knowledge-management,合并成功,记录可读且收藏状态正确,browser,chromium,1,PASS,K22.4
+A-57,安全,knowledge-management,恶意标题,转义且不执行（img=0 / __xss=false）,browser,chromium,1,PASS,K22.5
+A-58,迁移,knowledge-management,真实 IDB v1→v2,旧库建好后加载新代码：版本升级+补分类+旧记录保留,browser,chromium,3,PASS,K23.1-K23.3
+A-59,并发,knowledge-management,双标签导入同步,另一标签页列表自动增加,browser,chromium,1,PASS,K24
+A-60,响应式,knowledge-management,390px,批量栏可用、无横向溢出,browser,chromium,1,PASS,K25.1
+A-61,主题,knowledge-management,深色,分类 chip 可读,browser,chromium,1,PASS,K25.2
+A-62,UI,knowledge-management,对话框宽度,390px 内不溢出,browser,chromium,1,PASS,K25.3
+A-63,离线,knowledge-management,离线读分类与导出,SW 控制下断网仍可用,browser,chromium,1,PASS,K26
+A-64,回归,knowledge-store,数据层,25 项（含 T11/T13 按 v2 更新）,jsdom,node,25,PASS,25/25
+A-65,回归,knowledge-center,知识中心,29 项（K9 断言升到 v2+categories）,browser,chromium,29,PASS,29/29
+A-66,跨引擎,cross-browser K4,三引擎,分类/移动/删除迁移 + 导出导回 + 批量未读,browser,chromium+firefox+webkit,12,PASS,4 项 × 3 引擎
+A-67,回归,project-detail,项目详情,40 项（知识条与推荐联动未受影响）,browser,chromium,40,PASS,40/40
+A-68,回归,related-reading,相关阅读,22 项,browser,chromium,22,PASS,22/22
+A-69,回归,reading-experience,阅读体验,47 项（进度写入/恢复路径）,browser,chromium,47,PASS,47/47
+A-70,SW,sw-snapshot-unit,版本递增,2026-11-20-4；首屏仍 7 项,browser,chromium,15,PASS,15/15
+A-71,SW,sw-consistency,快照与不混版,37 项（首屏路径全部来自快照）,browser,chromium,37,PASS,37/37
+A-72,巡检,audit,全站,路由/死链/静态页,jsdom,node,-,PASS,未发现问题
+A-73,修订,knowledge-import,人工状态导出,stateSource/manualStateAt 出现在导出记录中,unit,node,1,PASS,T1.1
+A-74,修订,knowledge-import,人工状态校验,校验后字段类型与数值不变,unit,node,1,PASS,T1.2
+A-75,修订,knowledge-import,人工状态往返,合并到新库并重新 init 后 manual 仍有效,unit,node,1,PASS,T1.3
+A-76,修订,knowledge-import,往返后优先级,导入后滚动进度不覆盖人工已读/未读,unit,node,1,PASS,T1.4
+A-77,修订,knowledge-import,旧格式兼容,缺字段的 v2 与 v1 文件仍可导入,unit,node,2,PASS,T1.5 / T1.6
+A-78,修订,knowledge-import,非法值拒绝,stateSource=robot 与 manualStateAt=-5 被拒,unit,node,1,PASS,T1.7
+A-79,修订,knowledge-import,指纹抗碰撞,同条数同最大 updatedAt 的内容变化可区分,unit,node,1,PASS,T2.1
+A-80,修订,knowledge-import,事务内权威检查,旧 token 直接调后端替换返回 conflict 且不写,unit,node,1,PASS,T2.2
+A-81,修订,knowledge-import,applyImport 并发,竞争窗口后拒绝替换且原数据不变,unit,node,1,PASS,T2.3
+A-82,修订,knowledge-import,token 正确时替换,token 未变时替换正常完成（无无条件重试）,unit,node,1,PASS,T2.4
+A-83,修订,knowledge-import,迁移失败可见,status.migration.failed 且 schemaVersion 未升,unit,node,1,PASS,T3.1
+A-84,修订,knowledge-import,迁移自愈,解除注入后重新 init 完成迁移,unit,node,1,PASS,T3.2
+A-85,修订,knowledge-import,部分状态,分类已写/记录未修正时状态可见且记录未被半改,unit,node,1,PASS,T3.3
+A-86,修订,knowledge-import,重试修复,悬空 favCat 在重试后修回默认分类,unit,node,1,PASS,T3.4
+A-87,修订,knowledge-import,未来版本保护,版本不变、分类原样、写操作与导入均被拒,unit,node,1,PASS,T3.5
+A-88,修订,knowledge-management,双标签替换窗口,B 标签写入后 A 的旧 token 替换被拒,browser,chromium,1,PASS,K27.1
+A-89,修订,knowledge-management,拒绝后数据完整,原两条记录与 B 的写入都保留,browser,chromium,1,PASS,K27.2
+A-90,修订,knowledge-management,重新预览后替换,重新取 token 后替换成功,browser,chromium,1,PASS,K27.3

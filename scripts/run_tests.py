@@ -131,7 +131,8 @@ GROUPS = {
         'search-interaction', 'reading-experience', 'image-lightbox',
         'ui-refresh', 'performance-accessibility',
     ],
-    'knowledge': ['knowledge-store', 'knowledge-center', 'related-content', 'related-reading', 'project-detail'],
+    'knowledge': ['knowledge-store', 'knowledge-center', 'knowledge-import', 'knowledge-management',
+                  'related-content', 'related-reading', 'project-detail'],
     'projects': ['project-detail', 'related-content', 'related-reading'],
     'full': [],
 }
@@ -271,6 +272,10 @@ TESTS = [
      'desc': 'B9B1：相关阅读（文章与课程页渲染/理由/跳转/知识管理按钮/快速切换/降级/移动端/深色/离线）'},
     {'name': 'project-detail', 'file': 'tests/browser/project-detail.spec.js', 'kind': 'browser',
      'desc': 'B9D：项目作品集（6 个详情/列表跳转/刷新前进后退/无效 ID/可选字段/示例标记/外链过滤/转义/视口/知识库联动/推荐联动/离线）'},
+    {'name': 'knowledge-import', 'file': 'tests/test53_knowledge_management.js', 'kind': 'jsdom',
+     'desc': 'B9A2：分类/批量事务/显式已读未读/导出完整性/安全导入与替换（55 项，无浏览器）'},
+    {'name': 'knowledge-management', 'file': 'tests/browser/knowledge-management.spec.js', 'kind': 'browser',
+     'desc': 'B9A2：分类筛选与迁移/批量范围/导入预览与校验/真实 IDB v1→v2 迁移/双标签同步/移动端深色/离线'},
 ]
 
 COUNT_RE = re.compile(r'共\s*(\d+)\s*项[，,]\s*PASS\s*(\d+)[，,]\s*FAIL\s*(\d+)')

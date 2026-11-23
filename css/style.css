@@ -4393,3 +4393,60 @@ mark.search-hit {
   .project-card-foot{flex-direction:column;align-items:flex-start;gap:6px}
   .project-lede{font-size:.94rem}
 }
+
+/* ===== Batch 9A-2：分类 / 批量 / 导入 ===== */
+.km-head-actions{display:flex;flex-wrap:wrap;gap:8px}
+.km-catbar{display:flex;flex-wrap:wrap;gap:6px;margin:12px 0 4px}
+.km-catbar[hidden]{display:none}
+.km-chip{max-width:100%;padding:4px 10px;border-radius:999px;border:1px solid var(--color-border);background:var(--color-surface);color:var(--color-text-secondary);font-size:.76rem;cursor:pointer;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.km-chip:hover{border-color:var(--color-border-strong);color:var(--color-text)}
+.km-chip.active{background:var(--color-primary-light);border-color:var(--color-primary);color:var(--color-primary);font-weight:600}
+.km-chip-manage{border-style:dashed}
+.km-bulkbar{display:flex;flex-wrap:wrap;gap:10px;align-items:center;justify-content:space-between;margin:10px 0;padding:10px 12px;border:1px solid var(--color-border);border-radius:var(--radius-sm);background:var(--color-bg-soft)}
+.km-bulkbar[hidden]{display:none}
+.km-bulk-info{font-size:.8rem;color:var(--color-text-secondary)}
+.km-bulk-actions{display:flex;flex-wrap:wrap;gap:6px;align-items:center}
+.km-bulk-group{display:inline-flex;gap:6px;align-items:center}
+.km-bulk-group select,.km-cat-select select{font-size:.76rem;padding:3px 6px;border-radius:var(--radius-xs);border:1px solid var(--color-border);background:var(--color-surface);color:var(--color-text);max-width:160px}
+.km-check{display:inline-flex;align-items:center;margin-right:8px}
+.km-check input{width:16px;height:16px}
+.km-item-selected{background:var(--color-primary-light)}
+.km-cat-select{display:inline-flex;align-items:center;gap:4px}
+.km-row-danger{color:var(--color-danger);border-color:color-mix(in srgb,var(--color-danger) 35%,transparent)}
+.km-row-btn[disabled]{opacity:.45;cursor:not-allowed}
+.km-sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+
+.km-modal-host{position:fixed;inset:0;z-index:300;display:flex;align-items:center;justify-content:center}
+.km-modal-host[hidden]{display:none}
+.km-modal-backdrop{position:absolute;inset:0;background:rgba(16,24,40,.45)}
+.km-modal{position:relative;z-index:1;width:min(560px,92vw);max-height:86vh;overflow:auto;background:var(--color-surface);border:1px solid var(--color-border);border-radius:var(--radius);box-shadow:0 18px 48px rgba(16,24,40,.22);padding:18px 20px}
+.km-modal-wide{width:min(680px,94vw)}
+.km-modal-head{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:10px}
+.km-modal-title{font-size:1rem;font-weight:700}
+.km-modal-x{border:0;background:transparent;font-size:1.4rem;line-height:1;color:var(--color-text-muted);cursor:pointer}
+.km-modal-x:hover{color:var(--color-text)}
+.km-modal-hint{font-size:.78rem;color:var(--color-text-muted);line-height:1.7;margin-bottom:10px}
+.km-modal-msg{font-size:.78rem;margin-top:8px;color:var(--color-text-secondary)}
+.km-modal-msg[data-kind="error"]{color:var(--color-danger)}
+.km-modal-msg[data-kind="ok"]{color:var(--color-success)}
+.km-cat-list{list-style:none;margin:0 0 12px;padding:0;display:grid;gap:8px}
+.km-cat-row{display:flex;flex-wrap:wrap;gap:6px;align-items:center}
+.km-cat-input{flex:1 1 140px;min-width:0;padding:5px 8px;border:1px solid var(--color-border);border-radius:var(--radius-xs);background:var(--color-surface);color:var(--color-text);font-size:.82rem}
+.km-cat-count{font-size:.7rem;color:var(--color-text-muted)}
+.km-cat-add{display:flex;gap:6px;flex-wrap:wrap;margin-top:6px}
+.km-import-row{margin:8px 0}
+.km-import-report{margin-top:10px;font-size:.82rem}
+.km-import-table{width:100%;border-collapse:collapse;margin-bottom:10px}
+.km-import-table th{text-align:left;font-weight:600;color:var(--color-text-secondary);padding:3px 6px;width:58%}
+.km-import-table td{padding:3px 6px;color:var(--color-text)}
+.km-import-replace{display:flex;flex-wrap:wrap;gap:6px;align-items:center;font-size:.78rem;color:var(--color-text-secondary);margin:8px 0}
+.km-import-actions{display:flex;gap:8px;justify-content:flex-end;margin-top:12px;flex-wrap:wrap}
+.km-msg-bad{color:var(--color-danger);font-size:.82rem}
+.km-msg-ok{color:var(--color-success);font-size:.82rem}
+.km-msg-list{margin:6px 0 0 18px;font-size:.78rem;color:var(--color-text-secondary)}
+@media (max-width:480px){
+  .km-head-actions{width:100%}
+  .km-head-actions .editor-btn{flex:1 1 auto}
+  .km-bulk-actions .km-row-btn{flex:1 1 auto}
+  .km-modal{padding:14px 14px}
+}

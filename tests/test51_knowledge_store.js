@@ -265,9 +265,12 @@ function seed(backend, n, extra) {
   const dump = await m11.api.exportData();
   const keys = Object.keys(dump).sort().join(',');
   const rec = dump.records[0] || {};
+  // Batch 9A-2：schemaVersion 升到 2，导出新增 categories（分类定义与记录同事务读取）
   check('T11 导出结构完整且不含敏感字段',
-    dump.kind === 'knowledge' && dump.schemaVersion === 1 && !!dump.exportedAt &&
-    Array.isArray(dump.records) && rec.key === 'post:e1' &&
+    dump.kind === 'knowledge' && dump.schemaVersion === 2 && !!dump.exportedAt &&
+    Array.isArray(dump.records) && Array.isArray(dump.categories) &&
+    dump.categories.some(function (c) { return c.id === 'default'; }) &&
+    rec.key === 'post:e1' &&
     !('gh_token' in rec) && !('content' in rec),
     keys);
 
@@ -289,8 +292,12 @@ function seed(backend, n, extra) {
   const b13 = makeBackend();
   const m13 = loadModule(b13);
   await m13.api.init();
-  check('T13 数据库记录 schemaVersion=1', (await b13.getMeta('schemaVersion')) === 1,
-    String(await b13.getMeta('schemaVersion')));
+  // Batch 9A-2：数据版本 1 → 2，同时必须补齐 meta.favCategories（含默认分类）
+  const cats13 = await b13.getMeta('favCategories');
+  check('T13 数据库记录 schemaVersion=2 且补齐默认分类',
+    (await b13.getMeta('schemaVersion')) === 2 &&
+    Array.isArray(cats13) && cats13.length === 1 && cats13[0].id === 'default',
+    String(await b13.getMeta('schemaVersion')) + ' / ' + JSON.stringify(cats13));
 
   // T14 不触碰编辑器/主题类键（只写自己的 ping）
   const b14 = makeBackend();

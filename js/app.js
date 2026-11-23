@@ -5578,6 +5578,7 @@ const KM_TABS = [
   { key: 'history', label: '浏览历史' }
 ];
 let _kmActiveKey = null;
+let _kmMigrationWarned = false;   // 迁移告警只提示一次
 let _kmEnhanceRaf = 0;
 
 function kmAvailable() { return typeof window !== 'undefined' && !!window.Knowledge; }
@@ -5795,11 +5796,17 @@ function renderKnowledgeShell(tab) {
     '<div class="km-page">' +
     '  <div class="km-head">' +
     '    <h1 class="page-title">📚 知识库</h1>' +
-    '    <button type="button" class="editor-btn" id="kmExport">导出 JSON</button>' +
+    '    <div class="km-head-actions">' +
+    '      <button type="button" class="editor-btn" id="kmExport">导出 JSON</button>' +
+    '      <button type="button" class="editor-btn" id="kmImportOpen">导入 JSON</button>' +
+    '      <button type="button" class="editor-btn" id="kmBulkToggle" aria-pressed="false">批量管理</button>' +
+    '    </div>' +
     '  </div>' +
     '  <div class="km-stats" id="kmStats" aria-live="polite">正在读取本地数据…</div>' +
     kmBannerHtml() +
     '  <div class="km-tabs" role="tablist" aria-label="知识库分类">' + tabs + '</div>' +
+    '  <div class="km-catbar" id="kmCatBar" aria-label="收藏分类"></div>' +
+    '  <div class="km-bulkbar" id="kmBulkBar" hidden></div>' +
     '  <div class="km-list" id="kmList"><div class="km-loading">加载中…</div></div>' +
     '</div>';
 }
@@ -5834,6 +5841,31 @@ function kmResolve(type, refId) {
   return { state: 'unknown', title: '' };
 }
 
+// ---- Batch 9A-2：知识页交互状态（分类筛选 / 批量选择）----
+let _kmCat = 'all';                 // 收藏分类筛选：'all' 或分类 ID
+let _kmBulk = false;                // 批量管理模式
+let _kmSel = new Set();             // 选中项（只保存当前可见列表里的 key）
+let _kmCats = [];                   // 分类定义缓存
+
+function kmVisibleRows(rows) {
+  return rows;
+}
+
+function kmCheckboxHtml(key) {
+  return '<label class="km-check"><input type="checkbox" data-km-select="' + escapeHtml(key) + '"' +
+    (_kmSel.has(key) ? ' checked' : '') + ' aria-label="选择这条记录"></label>';
+}
+
+function kmCatSelectHtml(rec) {
+  const cur = rec.favCat || 'default';
+  const opts = _kmCats.map(function (c) {
+    return '<option value="' + escapeHtml(c.id) + '"' + (c.id === cur ? ' selected' : '') + '>' +
+      escapeHtml(c.name) + '</option>';
+  }).join('');
+  return '<label class="km-cat-select"><span class="km-sr">移动到分类</span>' +
+    '<select data-km-cat="' + escapeHtml(rec.key) + '" aria-label="移动到分类">' + opts + '</select></label>';
+}
+
 function kmItemHtml(rec, tab) {
   const href = kmHrefFor(rec.type, rec.refId);
   const resolved = kmResolve(rec.type, rec.refId);
@@ -5841,6 +5873,7 @@ function kmItemHtml(rec, tab) {
   const typeLabel = KM_LABELS[rec.type] || rec.type;
   if (resolved.state === 'missing') {
     return '<article class="km-item km-item-missing" data-km-row="' + escapeHtml(rec.key) + '">' +
+      (_kmBulk ? kmCheckboxHtml(rec.key) : '') +
       '<span class="km-item-main">' +
       '  <span class="km-item-type">' + escapeHtml(typeLabel) + '</span>' +
       '  <span class="km-item-title">' + escapeHtml(title) + '</span>' +
@@ -5857,10 +5890,15 @@ function kmItemHtml(rec, tab) {
   } else if (rec.lastSeenAt) {
     meta += ' · ' + Knowledge.relativeTime(rec.lastSeenAt);
   }
+  if (tab === 'favorites' && _kmCat !== 'all') {
+    const c = _kmCats.filter(x => x.id === (rec.favCat || 'default'))[0];
+    if (c) meta += ' · ' + c.name;
+  }
   let actions = '';
   if (tab === 'favorites') {
     actions += '<button type="button" class="km-row-btn" data-km-remove="fav" data-km-key="' + escapeHtml(rec.key) + '"' +
       ' aria-label="取消收藏">取消收藏</button>';
+    if (!_kmBulk) actions += kmCatSelectHtml(rec);
   } else if (tab === 'readlater') {
     actions += '<button type="button" class="km-row-btn" data-km-remove="later" data-km-key="' + escapeHtml(rec.key) + '"' +
       ' aria-label="移出待读">移出待读</button>';
@@ -5871,7 +5909,8 @@ function kmItemHtml(rec, tab) {
     actions += '<button type="button" class="km-row-btn km-row-primary" data-km-resume="' + escapeHtml(rec.key) + '"' +
       ' aria-label="继续阅读">继续阅读</button>';
   }
-  return '<article class="km-item" data-km-row="' + escapeHtml(rec.key) + '">' +
+  return '<article class="km-item' + (_kmSel.has(rec.key) ? ' km-item-selected' : '') + '" data-km-row="' + escapeHtml(rec.key) + '">' +
+    (_kmBulk ? kmCheckboxHtml(rec.key) : '') +
     '<a class="km-item-main" href="' + escapeHtml(href) + '">' +
     '  <span class="km-item-type">' + escapeHtml(typeLabel) + '</span>' +
     '  <span class="km-item-title">' + escapeHtml(title) + '</span>' +
@@ -5892,6 +5931,71 @@ function kmGroupHtml(rows, tab) {
   }).join('');
 }
 
+// 分类筛选条：只在收藏 tab 显示；数量直接来自当前收藏集合
+function kmRenderCatBar(tab, favRows) {
+  const bar = document.getElementById('kmCatBar');
+  if (!bar) return;
+  if (tab !== 'favorites') { bar.innerHTML = ''; bar.hidden = true; return; }
+  bar.hidden = false;
+  const countOf = function (id) {
+    return favRows.filter(function (r) { return (r.favCat || 'default') === id; }).length;
+  };
+  let html = '';
+  html += '<button type="button" class="km-chip' + (_kmCat === 'all' ? ' active' : '') +
+    '" data-km-cat-filter="all" aria-pressed="' + (_kmCat === 'all') + '">全部 ' + favRows.length + '</button>';
+  _kmCats.forEach(function (c) {
+    html += '<button type="button" class="km-chip' + (_kmCat === c.id ? ' active' : '') +
+      '" data-km-cat-filter="' + escapeHtml(c.id) + '" aria-pressed="' + (_kmCat === c.id) + '">' +
+      escapeHtml(c.name) + ' ' + countOf(c.id) + '</button>';
+  });
+  html += '<button type="button" class="km-chip km-chip-manage" id="kmCatManage">管理分类</button>';
+  bar.innerHTML = html;
+}
+
+// 批量操作条：只对"当前可见且被选中"的 key 生效
+function kmRenderBulkBar(tab, rows) {
+  const bar = document.getElementById('kmBulkBar');
+  const toggle = document.getElementById('kmBulkToggle');
+  if (toggle) {
+    toggle.setAttribute('aria-pressed', _kmBulk ? 'true' : 'false');
+    toggle.textContent = _kmBulk ? '退出批量' : '批量管理';
+  }
+  if (!bar) return;
+  if (!_kmBulk) { bar.hidden = true; bar.innerHTML = ''; return; }
+  bar.hidden = false;
+  const visible = rows.map(function (r) { return r.key; });
+  const sel = visible.filter(function (k) { return _kmSel.has(k); });
+  const scope = tab === 'favorites' && _kmCat !== 'all'
+    ? ('当前分类（' + (_kmCats.filter(c => c.id === _kmCat)[0] || {}).name + '）')
+    : ('当前列表（' + (tab === 'favorites' ? '收藏' : tab === 'readlater' ? '待读' : tab === 'history' ? '浏览历史' : '继续阅读') + '）');
+  const catOpts = _kmCats.map(function (c) {
+    return '<option value="' + escapeHtml(c.id) + '">' + escapeHtml(c.name) + '</option>';
+  }).join('');
+  bar.innerHTML =
+    '<div class="km-bulk-info" aria-live="polite">已选 <strong>' + sel.length + '</strong> / ' + visible.length +
+    ' 项 · 范围：' + escapeHtml(scope) + '</div>' +
+    '<div class="km-bulk-actions">' +
+    '  <button type="button" class="km-row-btn" data-km-bulk="select-all">全选当前列表</button>' +
+    '  <button type="button" class="km-row-btn" data-km-bulk="clear">清除选择</button>' +
+    (tab === 'favorites'
+      ? '<span class="km-bulk-group"><select id="kmBulkCat" aria-label="批量移动到分类">' + catOpts + '</select>' +
+      '<button type="button" class="km-row-btn" data-km-bulk="cat">批量移动</button></span>' +
+      '<button type="button" class="km-row-btn" data-km-bulk="fav-off">批量取消收藏</button>'
+      : '') +
+    (tab === 'readlater'
+      ? '<button type="button" class="km-row-btn" data-km-bulk="later-off">批量移出待读</button>'
+      : '') +
+    (tab !== 'favorites' && tab !== 'history'
+      ? '<button type="button" class="km-row-btn" data-km-bulk="later-on">加入待读</button>'
+      : '') +
+    '  <button type="button" class="km-row-btn" data-km-bulk="read-done">标记已读</button>' +
+    '  <button type="button" class="km-row-btn" data-km-bulk="read-none">标记未读</button>' +
+    (tab === 'history'
+      ? '<button type="button" class="km-row-btn km-row-danger" data-km-bulk="history-clear">清理所选历史</button>'
+      : '') +
+    '</div>';
+}
+
 function fillKnowledgeTab(tab) {
   const host = document.getElementById('kmList');
   const stats = document.getElementById('kmStats');
@@ -5900,15 +6004,28 @@ function fillKnowledgeTab(tab) {
     : tab === 'favorites' ? Knowledge.list({ flag: 'fav', sort: 'fav' })
       : tab === 'readlater' ? Knowledge.list({ flag: 'later', sort: 'later' })
         : Knowledge.list({ flag: 'history', sort: 'recent', limit: 100 });
-  Promise.all([query, Knowledge.counts()]).then(function (res) {
-    const rows = res[0] || [];
+  Promise.all([query, Knowledge.counts(), Knowledge.categories()]).then(function (res) {
+    const allRows = res[0] || [];
     const c = res[1] || {};
+    _kmCats = res[2] || [];
     if (stats) {
       stats.textContent = '收藏 ' + (c.fav || 0) + ' · 待读 ' + (c.later || 0) +
         ' · 阅读中 ' + (c.reading || 0) + ' · 已完成 ' + (c.done || 0);
     }
+    const rows = (tab === 'favorites' && _kmCat !== 'all')
+      ? allRows.filter(function (r) { return (r.favCat || 'default') === _kmCat; })
+      : allRows;
+    // 选择集只保留当前可见的 key：切换 tab / 分类后不会把隐藏项一起误删
+    const visible = {};
+    rows.forEach(function (r) { visible[r.key] = true; });
+    Array.from(_kmSel).forEach(function (k) { if (!visible[k]) _kmSel.delete(k); });
+
+    kmRenderCatBar(tab, allRows);
+    kmRenderBulkBar(tab, rows);
+
     if (!rows.length) {
-      const emptyText = tab === 'favorites' ? '还没有收藏。把值得回看的内容加进来吧。'
+      const emptyText = tab === 'favorites'
+        ? (_kmCat !== 'all' ? '这个分类还没有收藏。' : '还没有收藏。把值得回看的内容加进来吧。')
         : tab === 'readlater' ? '待读清单是空的。'
           : tab === 'history' ? '还没有浏览记录。' : '暂时没有未读完的内容。';
       host.innerHTML = '<div class="km-empty"><div class="km-empty-icon">🗂️</div><p>' +
@@ -5918,6 +6035,41 @@ function fillKnowledgeTab(tab) {
     host.innerHTML = kmGroupHtml(rows, tab);
   }).catch(function () {
     host.innerHTML = '<div class="km-empty"><p>读取本地数据失败。</p></div>';
+  });
+}
+
+// 当前可见 + 已选中的 key（任何批量操作都只认这个集合）
+function kmSelectedKeys() {
+  const out = [];
+  document.querySelectorAll('#kmList [data-km-select]').forEach(function (input) {
+    const key = input.getAttribute('data-km-select');
+    if (_kmSel.has(key)) out.push(key);
+  });
+  return out;
+}
+
+function kmRunBulk(action) {
+  const keys = kmSelectedKeys();
+  if (!keys.length) { Knowledge.toast('先选择要操作的条目', 'error'); return; }
+  if (action === 'history-clear') {
+    const ok = window.confirm('将清理所选 ' + keys.length + ' 条浏览历史。\n' +
+      '收藏、待读与阅读状态会保留；仅剩历史记录且没有其他个人状态的项目会被删除。是否继续？');
+    if (!ok) return;
+  }
+  const opts = {};
+  if (action === 'cat') {
+    const sel = document.getElementById('kmBulkCat');
+    opts.catId = sel ? sel.value : 'default';
+  }
+  Knowledge.bulk(keys, action, opts).then(function (r) {
+    if (!r || r.ok === false) {
+      Knowledge.toast((r && r.reason) || '批量操作失败', 'error');
+      return;
+    }
+    Knowledge.toast('已处理 ' + (r.changed || 0) + ' 项' + (r.deleted ? '（删除 ' + r.deleted + ' 条空记录）' : ''),
+      'success');
+    _kmSel.clear();
+    fillKnowledgeTab(kmTabFromHash(location.hash));
   });
 }
 
@@ -6244,6 +6396,306 @@ document.addEventListener('click', function (e) {
   }).catch(function () { Knowledge.toast('导出失败', 'error'); });
 }, true);
 
+// ============================================
+// Batch 9A-2：知识页交互（分类 / 批量 / 导入）
+// ============================================
+function kmModalHost() {
+  let host = document.getElementById('kmModalHost');
+  if (!host) {
+    host = document.createElement('div');
+    host.id = 'kmModalHost';
+    host.className = 'km-modal-host';
+    document.body.appendChild(host);
+  }
+  return host;
+}
+
+let _kmModalReturn = null;
+
+function kmCloseModal() {
+  const host = document.getElementById('kmModalHost');
+  if (host) { host.innerHTML = ''; host.hidden = true; }
+  if (_kmModalReturn && _kmModalReturn.focus) { try { _kmModalReturn.focus(); } catch (e) { } }
+  _kmModalReturn = null;
+}
+
+function kmOpenModal(title, bodyHtml, width) {
+  _kmModalReturn = document.activeElement;
+  const host = kmModalHost();
+  host.hidden = false;
+  host.innerHTML = '<div class="km-modal-backdrop" data-km-modal-close="1"></div>' +
+    '<div class="km-modal' + (width ? ' ' + width : '') + '" role="dialog" aria-modal="true" aria-label="' +
+    escapeHtml(title) + '">' +
+    '<div class="km-modal-head"><h2 class="km-modal-title">' + escapeHtml(title) + '</h2>' +
+    '<button type="button" class="km-modal-x" data-km-modal-close="1" aria-label="关闭">×</button></div>' +
+    '<div class="km-modal-body">' + bodyHtml + '</div></div>';
+  const first = host.querySelector('input, button, select, textarea');
+  if (first) { try { first.focus(); } catch (e) { } }
+}
+
+function kmCatManagerHtml() {
+  const rows = _kmCats.map(function (c) {
+    return '<li class="km-cat-row" data-km-cat-row="' + escapeHtml(c.id) + '">' +
+      '<input type="text" class="km-cat-input" value="' + escapeHtml(c.name) + '" maxlength="' +
+      Knowledge.CAT_NAME_MAX + '" aria-label="分类名称">' +
+      '<span class="km-cat-count">' + (c.system ? '不可删除' : '') + '</span>' +
+      '<button type="button" class="km-row-btn" data-km-cat-save="' + escapeHtml(c.id) + '">重命名</button>' +
+      '<button type="button" class="km-row-btn km-row-danger" data-km-cat-del="' + escapeHtml(c.id) + '"' +
+      (c.system ? ' disabled' : '') + '>删除</button>' +
+      '</li>';
+  }).join('');
+  return '<p class="km-modal-hint">删除分类时，该分类下的收藏会自动迁回「默认分类」，不会删除任何收藏。</p>' +
+    '<ul class="km-cat-list">' + rows + '</ul>' +
+    '<div class="km-cat-add">' +
+    '<input type="text" id="kmCatNew" class="km-cat-input" placeholder="新分类名称" maxlength="' +
+    Knowledge.CAT_NAME_MAX + '" aria-label="新分类名称">' +
+    '<button type="button" class="km-row-btn km-row-primary" id="kmCatAdd">新建分类</button>' +
+    '</div>' +
+    '<p class="km-modal-msg" id="kmCatMsg" role="status" aria-live="polite"></p>';
+}
+
+function kmOpenCatManager() {
+  kmOpenModal('管理收藏分类', kmCatManagerHtml());
+  // 每次重新渲染后节点会被替换，所以这里按 id 现查，不缓存引用
+  const say = function (text, bad) {
+    const msg = document.getElementById('kmCatMsg');
+    if (!msg) return;
+    msg.textContent = text;
+    msg.setAttribute('data-kind', bad ? 'error' : 'ok');
+  };
+  const host = document.getElementById('kmModalHost');
+  const box = host.querySelector('.km-modal');
+  if (box) box.addEventListener('click', function (e) {
+    const t = e.target;
+    if (!t || !t.closest) return;
+    const add = t.closest('#kmCatAdd');
+    if (add) {
+      const input = document.getElementById('kmCatNew');
+      Knowledge.addCategory(input ? input.value : '').then(function (r) {
+        if (!r.ok) return say(r.reason, true);
+        return Knowledge.categories().then(function (list) {
+          _kmCats = list;
+          kmOpenCatManager();
+          fillKnowledgeTab(kmTabFromHash(location.hash));
+        });
+      });
+      return;
+    }
+    const save = t.closest('[data-km-cat-save]');
+    if (save) {
+      const id = save.getAttribute('data-km-cat-save');
+      const row = host.querySelector('[data-km-cat-row="' + id.replace(/"/g, '\\"') + '"]');
+      const input = row ? row.querySelector('input') : null;
+      Knowledge.renameCategory(id, input ? input.value : '').then(function (r) {
+        if (!r.ok) return say(r.reason, true);
+        return Knowledge.categories().then(function (list) {
+          _kmCats = list;
+          kmOpenCatManager();
+          fillKnowledgeTab(kmTabFromHash(location.hash));
+        });
+      });
+      return;
+    }
+    const del = t.closest('[data-km-cat-del]');
+    if (del) {
+      const id = del.getAttribute('data-km-cat-del');
+      const cat = _kmCats.filter(function (c) { return c.id === id; })[0];
+      const ok = window.confirm('删除分类「' + (cat ? cat.name : id) + '」？\n该分类下的收藏会迁回默认分类，收藏本身不会删除。');
+      if (!ok) return;
+      Knowledge.removeCategory(id).then(function (r) {
+        if (!r.ok) return say(r.reason, true);
+        return Knowledge.categories().then(function (list) {
+          _kmCats = list;
+          if (_kmCat === id) _kmCat = 'all';
+          kmOpenCatManager();
+          fillKnowledgeTab(kmTabFromHash(location.hash));
+        });
+      });
+    }
+  });
+}
+
+// ---- 导入 ----
+let _kmImportPayload = null;
+let _kmImportPreview = null;
+
+function kmImportHtml() {
+  return '<p class="km-modal-hint">只接受本站导出的知识库 JSON（kind=knowledge）。导入前会完整校验，' +
+    '校验失败不会写入任何数据。</p>' +
+    '<div class="km-import-row"><input type="file" id="kmImportFile" accept="application/json,.json" ' +
+    'aria-label="选择知识库 JSON 文件"></div>' +
+    '<div id="kmImportReport" class="km-import-report" role="status" aria-live="polite"></div>';
+}
+
+function kmOpenImport() {
+  _kmImportPayload = null;
+  _kmImportPreview = null;
+  kmOpenModal('导入知识库 JSON', kmImportHtml(), 'km-modal-wide');
+  const host = document.getElementById('kmModalHost');
+  const report = document.getElementById('kmImportReport');
+  const file = document.getElementById('kmImportFile');
+  const show = function (html) { if (report) report.innerHTML = html; };
+
+  file.addEventListener('change', function () {
+    const f = file.files && file.files[0];
+    if (!f) return;
+    if (f.size > 2 * 1024 * 1024) { show('<p class="km-msg-bad">文件超过 2MB，已拒绝。</p>'); return; }
+    const reader = new FileReader();
+    reader.onerror = function () { show('<p class="km-msg-bad">读取文件失败。</p>'); };
+    reader.onload = function () {
+      let data;
+      try { data = JSON.parse(String(reader.result)); }
+      catch (e) { show('<p class="km-msg-bad">JSON 语法错误：' + escapeHtml(e.message) + '</p>'); return; }
+      const v = Knowledge.validateImport(data, { bytes: f.size });
+      if (!v.ok) {
+        show('<p class="km-msg-bad">校验失败，未写入任何数据：</p><ul class="km-msg-list">' +
+          v.errors.slice(0, 12).map(function (x) { return '<li>' + escapeHtml(x) + '</li>'; }).join('') + '</ul>');
+        return;
+      }
+      _kmImportPayload = v.payload;
+      Knowledge.previewImport(v.payload, {
+        resolve: function (type, refId) { return kmResolve(type, refId).state !== 'missing'; }
+      }).then(function (p) {
+        _kmImportPreview = p;
+        const rows = [
+          ['文件记录数', p.total],
+          ['可新增', p.incoming],
+          ['已存在冲突（保留本地）', p.conflicts],
+          ['失效内容（跳过）', p.stale],
+          ['新增分类', p.newCategories],
+          ['分类冲突（保留本地名称）', p.categoryConflicts]
+        ];
+        show('<table class="km-import-table"><tbody>' +
+          rows.map(function (r) {
+            return '<tr><th>' + escapeHtml(r[0]) + '</th><td>' + Number(r[1]) + '</td></tr>';
+          }).join('') +
+          '<tr><th>数据来源</th><td>' + escapeHtml(p.source || '未知') + ' / ' + escapeHtml(p.persistence || '未知') +
+          (p.complete ? '（完整备份）' : '（不完整）') + '</td></tr>' +
+          '</tbody></table>' +
+          (p.canReplace
+            ? '<label class="km-import-replace"><input type="checkbox" id="kmImportBackup"> 我已导出当前数据备份' +
+            '<input type="checkbox" id="kmImportReplace"> 使用替换模式（先清空现有 ' +
+            (await0(p)) + ' 条记录再写入，不可撤销）</label>'
+            : '<p class="km-modal-hint">该文件不是完整备份，只能使用合并导入。</p>') +
+          '<div class="km-import-actions">' +
+          '<button type="button" class="km-row-btn" data-km-modal-close="1">取消</button>' +
+          '<button type="button" class="km-row-btn km-row-primary" id="kmImportApply">确认导入（合并）</button>' +
+          '</div>');
+      }).catch(function (e) {
+        show('<p class="km-msg-bad">预览失败：' + escapeHtml(e && e.message || e) + '</p>');
+      });
+    };
+    reader.readAsText(f);
+  });
+
+  function await0(p) { return Number(p.conflicts) + Number(p.incoming); }
+
+  const box = host.querySelector('.km-modal');
+  if (box) box.addEventListener('click', function (e) {
+    const btn = e.target && e.target.closest ? e.target.closest('#kmImportApply') : null;
+    if (!btn || !_kmImportPayload) return;
+    const replaceBox = document.getElementById('kmImportReplace');
+    const backupBox = document.getElementById('kmImportBackup');
+    const useReplace = !!(replaceBox && replaceBox.checked);
+    if (useReplace && !(backupBox && backupBox.checked)) {
+      show('<p class="km-msg-bad">替换前必须先勾选"我已导出当前数据备份"。</p>');
+      return;
+    }
+    const opts = {
+      mode: useReplace ? 'replace' : 'merge',
+      confirm: useReplace ? true : undefined,
+      expectToken: _kmImportPreview && _kmImportPreview.token,
+      resolve: function (type, refId) { return kmResolve(type, refId).state !== 'missing'; }
+    };
+    Knowledge.applyImport(_kmImportPayload, opts).then(function (r) {
+      if (!r.ok) {
+        show('<p class="km-msg-bad">导入失败：' + escapeHtml(r.reason || '未知原因') + '</p>');
+        return;
+      }
+      show('<p class="km-msg-ok">已' + (r.replaced ? '替换' : '合并') + '导入 ' + r.imported + ' 条记录' +
+        (r.categories ? '，新增 ' + r.categories + ' 个分类' : '') + '。</p>');
+      Knowledge.toast('导入完成：' + r.imported + ' 条', 'success');
+      fillKnowledgeTab(kmTabFromHash(location.hash));
+    }).catch(function (e) {
+      show('<p class="km-msg-bad">导入异常：' + escapeHtml(e && e.message || e) + '</p>');
+    });
+  });
+}
+
+// 知识页交互统一委托（页面会整块重绘，所以不绑定在具体按钮上）
+document.addEventListener('click', function (e) {
+  const t = e.target;
+  if (!t || !t.closest) return;
+  if (t.closest('[data-km-modal-close]')) { e.preventDefault(); kmCloseModal(); return; }
+  const toggle = t.closest('#kmBulkToggle');
+  if (toggle) {
+    e.preventDefault();
+    _kmBulk = !_kmBulk;
+    if (!_kmBulk) _kmSel.clear();
+    fillKnowledgeTab(kmTabFromHash(location.hash));
+    return;
+  }
+  const catFilter = t.closest('[data-km-cat-filter]');
+  if (catFilter) {
+    e.preventDefault();
+    _kmCat = catFilter.getAttribute('data-km-cat-filter') || 'all';
+    _kmSel.clear();                                  // 换分类时清空选择，避免跨分类误操作
+    fillKnowledgeTab('favorites');
+    return;
+  }
+  if (t.closest('#kmCatManage')) { e.preventDefault(); kmOpenCatManager(); return; }
+  if (t.closest('#kmImportOpen')) { e.preventDefault(); kmOpenImport(); return; }
+  const bulkBtn = t.closest('[data-km-bulk]');
+  if (bulkBtn) {
+    e.preventDefault();
+    const action = bulkBtn.getAttribute('data-km-bulk');
+    if (action === 'select-all') {
+      document.querySelectorAll('#kmList [data-km-select]').forEach(function (input) {
+        _kmSel.add(input.getAttribute('data-km-select'));
+      });
+      fillKnowledgeTab(kmTabFromHash(location.hash));
+      return;
+    }
+    if (action === 'clear') {
+      _kmSel.clear();
+      fillKnowledgeTab(kmTabFromHash(location.hash));
+      return;
+    }
+    kmRunBulk(action);
+  }
+});
+
+document.addEventListener('change', function (e) {
+  const t = e.target;
+  if (!t || !t.closest) return;
+  const box = t.closest('[data-km-select]');
+  if (box) {
+    const key = box.getAttribute('data-km-select');
+    if (box.checked) _kmSel.add(key); else _kmSel.delete(key);
+    const row = box.closest('.km-item');
+    if (row) row.classList.toggle('km-item-selected', box.checked);
+    kmRenderBulkBar(kmTabFromHash(location.hash), Array.from(document.querySelectorAll('#kmList [data-km-row]')).map(function (el) {
+      return { key: el.getAttribute('data-km-row') };
+    }));
+    return;
+  }
+  const catSel = t.closest('[data-km-cat]');
+  if (catSel) {
+    const key = catSel.getAttribute('data-km-cat');
+    Knowledge.assignCategory(key, catSel.value).then(function (r) {
+      if (!r.ok) Knowledge.toast(r.reason || '移动失败', 'error');
+      else Knowledge.toast('已移动分类', 'success');
+      fillKnowledgeTab('favorites');
+    });
+  }
+});
+
+document.addEventListener('keydown', function (e) {
+  if (e.key !== 'Escape') return;
+  const host = document.getElementById('kmModalHost');
+  if (host && !host.hidden) { kmCloseModal(); }
+});
+
 // 初始化：空闲时装载数据层，避免阻塞首屏
 function kmBoot() {
   if (!kmAvailable()) return;
@@ -6260,6 +6712,11 @@ function kmBoot() {
       kmSyncBanner();
       const st = Knowledge.status();
       if (st && st.degraded) Knowledge.toast('本地存储不可用：本次更改仅本会话生效', 'error');
+      // Batch 9A-2 修订：迁移失败/未来版本必须让用户看见，不能静默当作成功
+      if (st && st.migration && !st.migration.ok && !_kmMigrationWarned) {
+        _kmMigrationWarned = true;
+        Knowledge.toast(st.migration.reason || '本地数据迁移未完成', 'error');
+      }
     });
     window.addEventListener('pagehide', function () {
       try { Knowledge.flushProgress(); } catch (e) { /* 忽略 */ }
@@ -6274,6 +6731,11 @@ function kmBoot() {
         kmScheduleEnhance();
         kmRefreshAll();
         kmRerenderIfKnowledge();
+        const st = Knowledge.status();
+        if (st && st.migration && !st.migration.ok && !_kmMigrationWarned) {
+          _kmMigrationWarned = true;
+          Knowledge.toast(st.migration.reason || '本地数据迁移未完成', 'error');
+        }
       });
     };
     if (window.requestIdleCallback) requestIdleCallback(start, { timeout: 1500 });
