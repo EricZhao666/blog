@@ -280,7 +280,30 @@ CI tests #116 通过后复查三个数据完整性边界，结论与修改如下
 - T3.5 未来版本（schemaVersion=9）→ 版本不变、两个分类原样、`addCategory` 与 `applyImport` 都被拒（不降级覆盖）。
 未重建数据库、未改 IDB 结构。
 
-### 13.4 本轮新增/调整的测试
+### 13.4 统一写入闸门（合并前补充）
+
+**问题**：`writeBlockedReason()` 之前只检查 `migrationState.future`，且普通写入（`mutateWithOutcome`）
+没有检查——未来版本或迁移失败时，浏览历史、收藏、待读、进度、删除仍会写入，等于可能覆盖新版数据。
+
+| 位置 | 修改 |
+| --- | --- |
+| `writeBlockedReason()` | 同时覆盖 `future` 与 `failed`（失败时带上迁移原因） |
+| `mutateWithOutcome()` | **所有**记录写入的统一闸门：命中时返回 `{ok:false, blocked:true, reason}`，不写库、不降级内存、不清库 |
+| 既有分类/批量/导入闸门 | 复用同一函数（行为不变，只是失败态也生效） |
+| 只读路径 | `list/counts/state/exportData/previewImport/validateImport/categories` 不受影响 |
+| UI 提示 | `Knowledge.writeBlockedReason()` 透出真实原因；`kmWriteFailText()` 用它替换笼统的"保存失败"（无布局改动） |
+
+**GREEN 证据**：
+- 单元 T4.1–T4.2：未来版本（真实迁移路径置位）下 `recordView/setFlag/setReadState/saveProgress/
+  clearHistory/remove/bulk/addCategory/assignCategory/applyImport` 全部被拒，记录 JSON 前后**完全一致**，
+  `schemaVersion` 仍为 9，只读查询与导出（`complete=true`）正常；
+- T4.3–T4.5：迁移失败态同样全部被拒、`degraded=false`（未降级）、`exportData().source='database'`，
+  解除闸门后写入恢复；
+- 浏览器 K28.1–K28.3：**真实 IndexedDB** v2 库 + `schemaVersion=9`，11 类写入全部被拒，
+  `getAll()` 序列化结果与 meta 版本号字节级不变；
+- K28.4：迁移失败态（注入）下同样全拒、原数据不变、解除后 `setFlag` 成功。
+
+### 13.5 本轮新增/调整的测试
 
 `knowledge-import` 55 → **71 项**（新增 T1.1–T1.7、T2.1–T2.4、T3.1–T3.5 共 16 项）；
 `knowledge-management` 27 → **30 项**（新增 K27.1–K27.3 双标签替换窗口）。

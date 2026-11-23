@@ -5678,6 +5678,17 @@ function kmTitleOf(type, refId) {
   return '';
 }
 
+// 写入被数据层闸门拦下（迁移失败/未来版本）时，把真实原因带给用户
+function kmWriteFailText(fallback) {
+  try {
+    if (typeof Knowledge !== 'undefined' && Knowledge.writeBlockedReason) {
+      const why = Knowledge.writeBlockedReason();
+      if (why) return why;
+    }
+  } catch (e) { /* 忽略 */ }
+  return fallback;
+}
+
 function kmRefreshAll() {
   document.querySelectorAll('[data-km-toggle]').forEach(function (btn) {
     kmRefreshButtons(btn.getAttribute('data-km-type'), btn.getAttribute('data-km-id'));
@@ -6080,17 +6091,25 @@ function kmHandleRowAction(btn) {
   const remove = btn.getAttribute('data-km-remove');
   if (remove === 'fav' || remove === 'later') {
     Knowledge.setFlag(parsed.type, parsed.refId, remove, false).then(function (rec) {
-      if (!rec) return Knowledge.toast('保存失败，请稍后重试', 'error');
+      if (!rec) return Knowledge.toast(kmWriteFailText('保存失败，请稍后重试'), 'error');
       fillKnowledgeTab(kmTabFromHash(location.hash));
     });
     return;
   }
   if (remove === 'history') {
-    Knowledge.clearHistory(key).then(function () { fillKnowledgeTab('history'); });
+    Knowledge.clearHistory(key).then(function (rec) {
+      if (!rec && Knowledge.writeBlockedReason && Knowledge.writeBlockedReason()) {
+        return Knowledge.toast(kmWriteFailText('清理失败'), 'error');
+      }
+      fillKnowledgeTab('history');
+    });
     return;
   }
   if (remove === 'record') {
-    Knowledge.remove(key).then(function () { fillKnowledgeTab(kmTabFromHash(location.hash)); });
+    Knowledge.remove(key).then(function (r) {
+      if (r && r.ok === false) return Knowledge.toast(kmWriteFailText('删除失败'), 'error');
+      fillKnowledgeTab(kmTabFromHash(location.hash));
+    });
     return;
   }
   if (btn.hasAttribute('data-km-resume')) {
@@ -6365,7 +6384,8 @@ document.addEventListener('click', function (e) {
   const title = toggle.getAttribute('data-km-title') || kmTitleOf(type, id);
   Knowledge.toggleFlag(type, id, flag, { title: title }).then(function (rec) {
     if (!rec) {
-      Knowledge.toast('保存失败，请稍后重试', 'error');
+      // 写入被闸门拦下时给出真实原因（迁移失败/未来版本），而不是笼统的"保存失败"
+      Knowledge.toast(kmWriteFailText('保存失败，请稍后重试'), 'error');
       return;
     }
     kmRefreshButtons(type, id);

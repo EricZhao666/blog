@@ -815,6 +815,67 @@ function makeExport(over) {
       JSON.stringify({ ver: ver4, future: st4.migration.future, add: addBlocked.ok, imp: impBlocked.ok }));
   }
 
+  // ============================================================ 修订：统一写入闸门（Task 4）
+  async function assertAllWritesBlocked(label, api, getRows) {
+    const before = JSON.stringify(await getRows());
+    await api.recordView('post', 'gate1', { title: '闸门' });
+    await api.setFlag('post', 'gate1', 'fav', true);
+    await api.setFlag('post', 'gate1', 'later', true);
+    await api.setReadState('post', 'gate1', 'done');
+    await api.saveProgress('post', 'gate1', 0.5);
+    await api.clearHistory('post:gate1');
+    await api.remove('post:gate1');
+    await api.bulk(['post:gate1'], 'fav-off');
+    await api.addCategory('闸门分类');
+    await api.assignCategory('post:gate1', 'default');
+    const imp = await api.applyImport(makeExport(), { mode: 'merge', resolve: () => true });
+    const after = JSON.stringify(await getRows());
+    const rows = JSON.parse(after);
+    check(label + ' 所有持久化写入被拒绝且数据字节级不变',
+      before === after && rows.length === 2 && !rows.some(r => r.key === 'post:gate1') &&
+      imp.ok === false,
+      JSON.stringify({ same: before === after, n: rows.length, imp: imp.ok }));
+  }
+
+  {
+    // 场景 A：未来版本（真实迁移路径置位）
+    const b = makeBackend();
+    await b.setMeta('schemaVersion', 9);
+    await b.setMeta('favCategories', [{ id: 'default', name: '默认分类', system: true }]);
+    await b.mutate('post:g1', () => ({ key: 'post:g1', type: 'post', refId: 'g1', title: '既有', fav: 1, favAt: 1, favCat: 'default', later: 0, laterAt: 0, readState: 'none', progress: 0, firstSeenAt: 1, lastSeenAt: 1, doneAt: 0, updatedAt: 1 }));
+    await b.mutate('post:g2', () => ({ key: 'post:g2', type: 'post', refId: 'g2', title: '既有二', fav: 0, favAt: 0, favCat: 'default', later: 1, laterAt: 1, readState: 'none', progress: 0, firstSeenAt: 1, lastSeenAt: 1, doneAt: 0, updatedAt: 1 }));
+    const m = loadModule(b);
+    await m.api.init();
+    const st = m.api.status();
+    await assertAllWritesBlocked('T4.1 未来版本', m.api, () => b.getAll());
+    check('T4.2 未来版本：状态可读、只读查询与导出仍可用',
+      st.migration.future === true && (await m.api.list({})).length === 2 &&
+      (await m.api.counts()).fav >= 1 &&
+      (await m.api.exportData()).complete === true &&
+      (await b.getMeta('schemaVersion')) === 9,
+      JSON.stringify({ future: st.migration.future }));
+  }
+
+  {
+    // 场景 B：迁移失败（测试注入，真实失败路径见 T3.1）
+    const { b, api } = await setup();
+    await api.recordView('post', 'k1', { title: 'K1' });
+    await api.recordView('post', 'k2', { title: 'K2' });
+    await api.setFlag('post', 'k1', 'fav', true);
+    await api.setFlag('post', 'k2', 'later', true);
+    api._forceMigrationBlock({ failed: true, reason: '迁移未完成：测试注入' });
+    await assertAllWritesBlocked('T4.3 迁移失败', api, () => b.getAll());
+    check('T4.4 迁移失败：只读与导出正常、无内存降级',
+      api.status().degraded === false && (await api.list({})).length === 2 &&
+      (await api.exportData()).source === 'database',
+      JSON.stringify(api.status()));
+
+    // 恢复后写入回到原行为
+    api._forceMigrationBlock({});
+    const ok = await api.setFlag('post', 'k1', 'later', true);
+    check('T4.5 闸门解除后写入恢复正常', !!ok && ok.later === 1, JSON.stringify(ok && ok.later));
+  }
+
   console.log('\n合计 ' + (pass + fail) + ' 项，PASS ' + pass + '，FAIL ' + fail);
   if (failures.length) console.log('失败项：' + failures.join(' / '));
   process.exit(fail ? 1 : 0);
