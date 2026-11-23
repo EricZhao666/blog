@@ -4328,6 +4328,60 @@ mark.search-hit {
   .km-head .editor-btn{width:100%}
 }
 
+/* ===== Batch 9E：学习统计（只读聚合视图） ===== */
+/* 统计入口不占用列表 tab 的既有 class，保持四个管理 tab 的选择器契约不变 */
+.km-tab-ext{padding:6px 12px;border-radius:var(--radius-sm);color:var(--color-text-secondary);text-decoration:none;white-space:nowrap;font-size:.9rem;margin-left:auto;border:1px solid transparent}
+.km-tab-ext:hover{background:var(--color-bg-soft);color:var(--color-text)}
+.km-tab-ext.active{background:var(--color-primary-light);color:var(--color-primary-dark);font-weight:600;border-color:var(--color-primary)}
+.km-tab-ext:focus-visible{outline:2px solid var(--color-primary);outline-offset:2px}
+.km-an{display:block}
+.km-an-lead{margin:0 0 16px;padding:10px 12px;border:1px solid var(--color-border);border-radius:var(--radius-sm);background:var(--color-bg-soft);color:var(--color-text-secondary);font-size:.84rem;line-height:1.7}
+.km-an-block{margin:0 0 26px}
+.km-an-title{font-size:1rem;font-weight:700;margin:0 0 4px;color:var(--color-text)}
+.km-an-subtitle{font-size:.86rem;font-weight:700;margin:14px 0 6px;color:var(--color-text-secondary)}
+.km-an-hint{font-size:.78rem;color:var(--color-text-muted);margin:0 0 10px;line-height:1.7}
+.km-an-note{font-size:.76rem;color:var(--color-text-muted);margin:8px 0 0;line-height:1.7}
+.km-an-empty{padding:14px 12px;border:1px dashed var(--color-border);border-radius:var(--radius-sm);color:var(--color-text-muted);font-size:.84rem}
+.km-an-empty a{color:var(--color-primary)}
+.km-an-error{padding:14px 12px;border:1px solid var(--color-danger);border-radius:var(--radius-sm);color:var(--color-text);font-size:.86rem;display:grid;gap:8px;justify-items:start}
+.km-metric-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:10px;margin-top:6px}
+.km-metric{display:flex;flex-direction:column;gap:2px;padding:12px;border:1px solid var(--color-border);border-radius:var(--radius-sm);background:var(--color-surface);text-decoration:none;color:var(--color-text);transition:border-color .15s ease,box-shadow .15s ease}
+.km-metric:hover{border-color:var(--color-primary);box-shadow:0 2px 10px var(--color-shadow)}
+.km-metric:focus-visible{outline:2px solid var(--color-primary);outline-offset:2px}
+.km-metric-static{border-style:dashed}
+.km-metric-value{font-size:1.6rem;font-weight:700;line-height:1.15;color:var(--color-text)}
+.km-metric-label{font-size:.84rem;color:var(--color-text-secondary);font-weight:600}
+.km-metric-hint{font-size:.72rem;color:var(--color-text-muted);line-height:1.5}
+.km-bars{list-style:none;margin:0;padding:0;display:grid;gap:8px}
+.km-bar-row{display:grid;grid-template-columns:minmax(72px,7em) 1fr auto;align-items:center;gap:10px;min-width:0}
+.km-bar-label{font-size:.82rem;color:var(--color-text-secondary);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.km-bar-track{display:block;height:10px;border-radius:999px;background:var(--color-bg-soft);border:1px solid var(--color-border);overflow:hidden}
+.km-bar-fill{display:block;height:100%;border-radius:999px;background:var(--color-primary);min-width:3px}
+.km-bar-value{font-size:.78rem;color:var(--color-text-muted);font-variant-numeric:tabular-nums;white-space:nowrap}
+.km-an-rows{list-style:none;margin:0;padding:0;display:grid;gap:8px}
+.km-an-row{display:flex;align-items:center;gap:10px;justify-content:space-between;padding:9px 12px;border:1px solid var(--color-border);border-radius:var(--radius-sm);background:var(--color-surface);min-width:0}
+.km-an-row-link{display:flex;flex-direction:column;gap:2px;min-width:0;flex:1;text-decoration:none;color:var(--color-text)}
+.km-an-row-link:hover .km-an-row-title{color:var(--color-primary-dark)}
+.km-an-row-link:focus-visible{outline:2px solid var(--color-primary);outline-offset:2px}
+.km-an-row-title{font-size:.88rem;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.km-an-row-meta{font-size:.74rem;color:var(--color-text-muted);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.km-an-row-broken{border-style:dashed;align-items:flex-start;flex-direction:column}
+.km-an-scope{display:grid;grid-template-columns:auto 1fr;gap:6px 14px;margin:6px 0 0;font-size:.8rem}
+.km-an-scope dt{color:var(--color-text-secondary);font-weight:600;white-space:nowrap}
+.km-an-scope dd{margin:0;color:var(--color-text);line-height:1.7}
+.km-an-unsupported{margin:6px 0 0 18px;padding:0;font-size:.78rem;color:var(--color-text-secondary);line-height:1.75}
+.km-an-unsupported b{color:var(--color-text)}
+@media (max-width:768px){
+  .km-metric-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .km-an-scope{grid-template-columns:1fr;gap:2px 0}
+  .km-an-scope dt{margin-top:6px}
+}
+@media (max-width:480px){
+  .km-metric-value{font-size:1.35rem}
+  .km-bar-row{grid-template-columns:minmax(56px,5.5em) 1fr auto;gap:8px}
+  .km-tab-ext{margin-left:0;width:100%;text-align:center}
+}
+
 /* ===== Batch 9B-1：相关阅读（可解释推荐） ===== */
 .related-reading{margin-top:34px;padding-top:20px;border-top:1px solid var(--color-border)}
 .related-reading[hidden]{display:none}

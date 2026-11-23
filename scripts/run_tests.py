@@ -132,6 +132,7 @@ GROUPS = {
         'ui-refresh', 'performance-accessibility',
     ],
     'knowledge': ['knowledge-store', 'knowledge-center', 'knowledge-import', 'knowledge-management',
+                  'learning-stats', 'learning-analytics',
                   'related-content', 'related-reading', 'project-detail'],
     'projects': ['project-detail', 'related-content', 'related-reading'],
     'full': [],
@@ -276,6 +277,10 @@ TESTS = [
      'desc': 'B9A2：分类/批量事务/显式已读未读/导出完整性/安全导入与替换（55 项，无浏览器）'},
     {'name': 'knowledge-management', 'file': 'tests/browser/knowledge-management.spec.js', 'kind': 'browser',
      'desc': 'B9A2：分类筛选与迁移/批量范围/导入预览与校验/真实 IDB v1→v2 迁移/双标签同步/移动端深色/离线'},
+    {'name': 'learning-stats', 'file': 'tests/test54_learning_stats.js', 'kind': 'jsdom',
+     'desc': 'B9E：学习统计口径（去重/已浏览/完成率分母/多方向/分类/规模/输入不可变/不支持项）'},
+    {'name': 'learning-analytics', 'file': 'tests/browser/learning-analytics.spec.js', 'kind': 'browser',
+     'desc': 'B9E：统计页（空库/指标一致/分布与方向/指标跳转/自动刷新/多标签/导入/三档视口/降级/未来版本/离线）'},
 ]
 
 COUNT_RE = re.compile(r'共\s*(\d+)\s*项[，,]\s*PASS\s*(\d+)[，,]\s*FAIL\s*(\d+)')

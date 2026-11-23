@@ -314,6 +314,14 @@ function updateMetaForRoute(hash) {
       return;
     }
   }
+  if (hash === '/knowledge' || hash.indexOf('/knowledge?') === 0) {
+    // 统计视图与列表视图共用路由，但标签页标题需要区分
+    const statsView = kmTabFromHash(hash) === 'stats';
+    setMeta(statsView ? '学习统计' : '知识库',
+      statsView ? '本地学习统计：浏览、收藏、分类与技术方向分布' : '收藏、待读、浏览历史与继续阅读');
+    setCanonical(null);
+    return;
+  }
   // 带查询串的深链（/papers?kind=..&target=..）按路径本身取元数据，
   // 否则标题/描述会被重置成站点默认值
   const metaKey = hash.indexOf('?') === -1 ? hash : hash.slice(0, hash.indexOf('?'));
@@ -5696,10 +5704,12 @@ function kmRefreshAll() {
 }
 
 function kmRerenderIfKnowledge() {
-  if (isKnowledgeRoute(location.hash.slice(1) || '/')) {
-    kmSyncBanner();
-    fillKnowledgeTab(kmTabFromHash(location.hash));
-  }
+  const hash = location.hash.slice(1) || '/';
+  if (!isKnowledgeRoute(hash)) return;
+  kmSyncBanner();
+  const tab = kmTabFromHash(hash);
+  if (tab === 'stats') fillKnowledgeStats();
+  else fillKnowledgeTab(tab);
 }
 
 // 数据变化统一走一次去抖刷新：按钮状态 + 知识页列表（避免重复渲染与焦点抖动）
@@ -5786,7 +5796,15 @@ function isKnowledgeRoute(hash) {
 function kmTabFromHash(hash) {
   const m = /[?&]tab=([a-z]+)/.exec(hash || '');
   const key = m ? m[1] : 'continue';
+  // Batch 9E：统计视图不是"列表 tab"，但仍然由同一个路由承载
+  if (key === 'stats') return 'stats';
   return KM_TABS.some(t => t.key === key) ? key : 'continue';
+}
+
+// 只有浏览历史 tab 支持"只看已完成"筛选（统计页的已完成指标跳转目标）
+function kmStateFromHash(hash) {
+  const m = /[?&]state=([a-z]+)/.exec(hash || '');
+  return m && m[1] === 'done' ? 'done' : '';
 }
 
 function kmBannerHtml() {
@@ -5798,27 +5816,37 @@ function kmBannerHtml() {
 }
 
 function renderKnowledgeShell(tab) {
+  const statsView = tab === 'stats';
   const tabs = KM_TABS.map(function (t) {
     const on = t.key === tab;
     return '<a class="km-tab' + (on ? ' active' : '') + '" role="tab" aria-selected="' + (on ? 'true' : 'false') + '"' +
       ' href="#/knowledge?tab=' + t.key + '" data-km-tab="' + t.key + '">' + escapeHtml(t.label) + '</a>';
   }).join('');
+  // 统计是可选的只读视图，用独立 class 表示（列表 tab 的既有契约与断言保持不变）
+  const statsTab = '<a class="km-tab-ext' + (statsView ? ' active' : '') + '" role="tab"' +
+    ' aria-selected="' + (statsView ? 'true' : 'false') + '" href="#/knowledge?tab=stats"' +
+    ' data-km-tab="stats">📊 学习统计</a>';
   return '' +
-    '<div class="km-page">' +
+    '<div class="km-page" data-km-view="' + (statsView ? 'stats' : 'list') + '">' +
     '  <div class="km-head">' +
     '    <h1 class="page-title">📚 知识库</h1>' +
     '    <div class="km-head-actions">' +
     '      <button type="button" class="editor-btn" id="kmExport">导出 JSON</button>' +
     '      <button type="button" class="editor-btn" id="kmImportOpen">导入 JSON</button>' +
-    '      <button type="button" class="editor-btn" id="kmBulkToggle" aria-pressed="false">批量管理</button>' +
+    (statsView ? '' : '      <button type="button" class="editor-btn" id="kmBulkToggle" aria-pressed="false">批量管理</button>') +
     '    </div>' +
     '  </div>' +
-    '  <div class="km-stats" id="kmStats" aria-live="polite">正在读取本地数据…</div>' +
+    '  <div class="km-stats" id="kmStats" aria-live="polite">' +
+    (statsView ? '正在计算本地统计…' : '正在读取本地数据…') + '</div>' +
     kmBannerHtml() +
-    '  <div class="km-tabs" role="tablist" aria-label="知识库分类">' + tabs + '</div>' +
-    '  <div class="km-catbar" id="kmCatBar" aria-label="收藏分类"></div>' +
-    '  <div class="km-bulkbar" id="kmBulkBar" hidden></div>' +
-    '  <div class="km-list" id="kmList"><div class="km-loading">加载中…</div></div>' +
+    '  <div class="km-tabs" role="tablist" aria-label="知识库视图">' + tabs + statsTab + '</div>' +
+    (statsView ? '' : '  <div class="km-catbar" id="kmCatBar" aria-label="收藏分类"></div>') +
+    (statsView ? '' : '  <div class="km-bulkbar" id="kmBulkBar" hidden></div>') +
+    '  <div class="km-list" id="kmList">' +
+    (statsView
+      ? '<div class="km-loading" role="status">正在计算学习统计…</div>'
+      : '<div class="km-loading">加载中…</div>') +
+    '</div>' +
     '</div>';
 }
 
@@ -6008,20 +6036,25 @@ function kmRenderBulkBar(tab, rows) {
 }
 
 function fillKnowledgeTab(tab) {
+  if (tab === 'stats') return;                       // 统计视图由 fillKnowledgeStats 负责
   const host = document.getElementById('kmList');
   const stats = document.getElementById('kmStats');
   if (!host || !kmAvailable()) return;
+  const doneOnly = tab === 'history' ? kmStateFromHash(location.hash) : '';
   const query = tab === 'continue' ? Knowledge.list({ flag: 'continue', limit: 6 })
     : tab === 'favorites' ? Knowledge.list({ flag: 'fav', sort: 'fav' })
       : tab === 'readlater' ? Knowledge.list({ flag: 'later', sort: 'later' })
-        : Knowledge.list({ flag: 'history', sort: 'recent', limit: 100 });
+        // 只看已完成：不要求存在浏览历史，手动标记已读也应该出现在这里
+        : doneOnly ? Knowledge.list({ readState: 'done', sort: 'recent' })
+          : Knowledge.list({ flag: 'history', sort: 'recent', limit: 100 });
   Promise.all([query, Knowledge.counts(), Knowledge.categories()]).then(function (res) {
     const allRows = res[0] || [];
     const c = res[1] || {};
     _kmCats = res[2] || [];
     if (stats) {
       stats.textContent = '收藏 ' + (c.fav || 0) + ' · 待读 ' + (c.later || 0) +
-        ' · 阅读中 ' + (c.reading || 0) + ' · 已完成 ' + (c.done || 0);
+        ' · 阅读中 ' + (c.reading || 0) + ' · 已完成 ' + (c.done || 0) +
+        (doneOnly ? ' · 只看已完成' : '');
     }
     const rows = (tab === 'favorites' && _kmCat !== 'all')
       ? allRows.filter(function (r) { return (r.favCat || 'default') === _kmCat; })
@@ -6038,7 +6071,8 @@ function fillKnowledgeTab(tab) {
       const emptyText = tab === 'favorites'
         ? (_kmCat !== 'all' ? '这个分类还没有收藏。' : '还没有收藏。把值得回看的内容加进来吧。')
         : tab === 'readlater' ? '待读清单是空的。'
-          : tab === 'history' ? '还没有浏览记录。' : '暂时没有未读完的内容。';
+          : tab === 'history' ? (doneOnly ? '还没有标记为已完成的条目。' : '还没有浏览记录。')
+            : '暂时没有未读完的内容。';
       host.innerHTML = '<div class="km-empty"><div class="km-empty-icon">🗂️</div><p>' +
         escapeHtml(emptyText) + '</p><p><a href="#/">去首页看看</a></p></div>';
       return;
@@ -6046,6 +6080,320 @@ function fillKnowledgeTab(tab) {
     host.innerHTML = kmGroupHtml(rows, tab);
   }).catch(function () {
     host.innerHTML = '<div class="km-empty"><p>读取本地数据失败。</p></div>';
+  });
+}
+
+// ============================================
+// Batch 9E：学习统计（只读聚合）
+// ============================================
+let _kmStatsGen = 0;          // 请求代次：旧结果不得覆盖新数据
+let _kmStatsLib = null;       // js/learning-stats.js 的加载 Promise（按需注入）
+
+function kmStatsRouteActive() {
+  const hash = location.hash.slice(1) || '/';
+  return isKnowledgeRoute(hash) && kmTabFromHash(hash) === 'stats';
+}
+
+// 统计模块按需加载：不进首屏，离线时若从未加载过会明确提示而不是静默显示 0
+function kmLoadStatsModule() {
+  if (typeof LearningStats !== 'undefined') return Promise.resolve(LearningStats);
+  if (_kmStatsLib) return _kmStatsLib;
+  _kmStatsLib = loadScriptOnce('js/learning-stats.js').then(function () {
+    if (typeof LearningStats === 'undefined') throw new Error('统计模块未注册');
+    return LearningStats;
+  }).catch(function (err) {
+    _kmStatsLib = null;                       // 允许离线恢复后重试
+    throw new Error('统计模块加载失败：' + (err && err.message ? err.message : '网络不可用'));
+  });
+  return _kmStatsLib;
+}
+
+// 内容元数据快照：只放已经加载到内存的类型；没加载的类型由模块标为"元数据未知"
+function kmStatsContent() {
+  const content = {};
+  content.post = {};
+  getAllPosts().forEach(function (p) { content.post[p.id] = { title: p.title, tags: p.tags }; });
+  if (typeof PROJECTS !== 'undefined') {
+    content.project = {};
+    PROJECTS.forEach(function (p) { content.project[p.id] = { title: p.name, tags: p.tags, tech: p.tech }; });
+  }
+  if (dataReady('courses')) {
+    content.course = {};
+    COURSES.forEach(function (c) { content.course[c.id] = { title: c.name, category: c.category }; });
+  }
+  if (dataReady('papers')) {
+    const papers = {};
+    PAPERS.forEach(function (p) {
+      papers[p.id] = { title: p.title, category: p.category, collections: p.collections };
+    });
+    content.paper = papers;
+    content.material = papers;
+  }
+  if (dataReady('codefiles')) {
+    content.lib = {};
+    CODE_LIBS.forEach(function (l) { content.lib[l.id] = { title: l.name, category: l.category }; });
+  }
+  return content;
+}
+
+// 只为"确实有记录"的内容类型补元数据，避免打开统计页就下载全部数据脚本
+function kmStatsPrepare(records) {
+  const types = {};
+  (records || []).forEach(function (r) { if (r && r.type) types[r.type] = true; });
+  const need = [];
+  if (types.course && !dataReady('courses')) need.push('courses');
+  if ((types.paper || types.material) && !dataReady('papers')) need.push('papers');
+  if (types.lib && !dataReady('codefiles')) need.push('codefiles');
+  if (!need.length) return Promise.resolve();
+  return Promise.all(need.map(function (k) {
+    return loadData(k).catch(function () { return null; });
+  }));
+}
+
+/**
+ * 9F 可复用的只读聚合接口。
+ * 返回 { ok, summary, continueItems, status, complete }；失败时 reject（不返回上一次结果）。
+ */
+function kmLearningAnalytics() {
+  if (!kmAvailable()) return Promise.reject(new Error('本地知识库不可用'));
+  // snapshot() 会把"本次读取是否完整"跟随结果返回，避免读失败时把缓存当成最新统计
+  const read = (typeof Knowledge.snapshot === 'function')
+    ? Knowledge.snapshot()
+    : Knowledge.list({}).then(function (rows) {
+      return { rows: rows, complete: true, source: 'database', warning: '' };
+    });
+  return Promise.all([read, Knowledge.categories(), Knowledge.list({ flag: 'continue', limit: 6 })])
+    .then(function (res) {
+      const snap = res[0] || {};
+      const records = snap.rows || [];
+      const categories = res[1] || [];
+      const cont = res[2] || [];
+      if (snap.source === 'cache' && !snap.complete) {
+        throw new Error(snap.warning || '读取本地数据库失败');
+      }
+      return kmStatsPrepare(records).then(kmLoadStatsModule).then(function (LS) {
+        const summary = LS.summarize({
+          records: records,
+          categories: categories,
+          content: kmStatsContent(),
+          now: Date.now()
+        });
+        return {
+          ok: true,
+          summary: summary,
+          continueItems: cont,
+          status: Knowledge.status(),
+          complete: snap.complete !== false,
+          warning: snap.warning || ''
+        };
+      });
+    });
+}
+
+function kmBarHtml(items, total, emptyText) {
+  const rows = (items || []).filter(function (it) { return it && it.count > 0; });
+  if (!rows.length) return '<div class="km-an-empty">' + escapeHtml(emptyText) + '</div>';
+  const max = rows.reduce(function (m, it) { return Math.max(m, it.count); }, 0) || 1;
+  return '<ul class="km-bars">' + rows.map(function (it) {
+    const label = it.label || it.name || KM_LABELS[it.type] || it.type || it.key || '';
+    const pct = total ? Math.round((it.count / total) * 1000) / 10 : 0;
+    const width = Math.max(3, Math.round((it.count / max) * 100));
+    return '<li class="km-bar-row">' +
+      '<span class="km-bar-label">' + escapeHtml(label) + '</span>' +
+      '<span class="km-bar-track" aria-hidden="true"><span class="km-bar-fill" style="width:' + width + '%"></span></span>' +
+      '<span class="km-bar-value">' + it.count + (total ? ' · ' + pct + '%' : '') + '</span>' +
+      '</li>';
+  }).join('') + '</ul>';
+}
+
+function kmStatsRecentHtml(recent) {
+  if (!recent || !recent.length) return '<div class="km-an-empty">还没有浏览记录。</div>';
+  return '<ul class="km-an-rows">' + recent.map(function (r) {
+    const typeLabel = KM_LABELS[r.type] || r.type;
+    const meta = [typeLabel];
+    if (r.type === 'post') meta.push('进度 ' + Math.round((r.progress || 0) * 100) + '%');
+    if (r.readState === 'done') meta.push('已完成');
+    else if (r.readState === 'reading') meta.push('阅读中');
+    if (r.lastSeenAt) meta.push(Knowledge.relativeTime(r.lastSeenAt));
+    const title = r.title || r.refId;
+    if (r.metaState === 'missing') {
+      return '<li class="km-an-row km-an-row-broken">' +
+        '<span class="km-an-row-title">' + escapeHtml(title) + '</span>' +
+        '<span class="km-an-row-meta">' + escapeHtml(meta.join(' · ')) + ' · 内容已删除</span></li>';
+    }
+    return '<li class="km-an-row"><a class="km-an-row-link" href="' +
+      escapeHtml(kmHrefFor(r.type, r.refId)) + '">' +
+      '<span class="km-an-row-title">' + escapeHtml(title) + '</span>' +
+      '<span class="km-an-row-meta">' + escapeHtml(meta.join(' · ')) + '</span></a></li>';
+  }).join('') + '</ul>';
+}
+
+function kmStatsContinueHtml(items) {
+  if (!items || !items.length) {
+    return '<div class="km-an-empty">没有读了一半的文章。<a href="#/knowledge?tab=continue">打开继续阅读</a></div>';
+  }
+  return '<ul class="km-an-rows">' + items.map(function (rec) {
+    return '<li class="km-an-row">' +
+      '<span class="km-an-row-link">' +
+      '<span class="km-an-row-title">' + escapeHtml(rec.title || rec.refId) + '</span>' +
+      '<span class="km-an-row-meta">进度 ' + Math.round((rec.progress || 0) * 100) + '%' +
+      (rec.lastSeenAt ? ' · ' + escapeHtml(Knowledge.relativeTime(rec.lastSeenAt)) : '') + '</span></span>' +
+      '<button type="button" class="km-row-btn km-row-primary" data-km-resume="' +
+      escapeHtml(rec.key) + '">继续阅读</button></li>';
+  }).join('') + '</ul>';
+}
+
+function kmStatsScopeHtml(r) {
+  const s = r.summary;
+  const st = r.status || {};
+  const rows = [];
+  const degraded = !!st.degraded;
+  const mig = st.migration || {};
+  // 不能写死版本号：未来版本库要如实说明"检测到更高版本"
+  const dbVersionText = mig.future
+    ? '检测到版本 ' + (mig.from || '?') + '，高于当前支持的 ' + Knowledge.SCHEMA_VERSION
+    : '数据版本 ' + (mig.to || Knowledge.SCHEMA_VERSION);
+  rows.push(['数据来源', degraded
+    ? '内存降级（本地数据库不可用，统计只反映本次会话）'
+    : '本机 IndexedDB（blog-knowledge，' + dbVersionText + '）']);
+  rows.push(['记录范围', s.totals.records + ' 条去重记录（读取 ' + s.totals.rawRecords + ' 条，合并重复 ' +
+    s.totals.duplicates + ' 条）']);
+  rows.push(['已浏览口径', 'lastSeenAt > 0，按 type:refId 去重；清理过历史的条目不在此列']);
+  rows.push(['已完成口径', 'readState = done（人工 ' + s.completion.doneManual + ' 条 / 自动阈值 ' +
+    s.completion.doneAuto + ' 条）；进度 100% 不单独算作已完成']);
+  rows.push(['完成率分母', '已浏览文章 ' + s.completion.viewed + ' 篇（课程、项目等没有可靠阅读进度，不计入）']);
+  rows.push(['收藏 / 待读', '两个数字可以重叠：' + s.totals.favLater + ' 条同时属于两者，不能相加当作唯一内容数']);
+  rows.push(['技术方向', '只按内容自带标签/分类/技术栈归类，不看标题；一条内容可属于多个方向，' +
+    '方向计数合计 ' + s.directionTotals.assignments + ' 可大于唯一内容 ' + s.directionTotals.uniqueContent]);
+  if (s.quality.missing) rows.push(['失效内容', s.quality.missing + ' 条记录指向的内容已删除或改名，已按"内容已删除"标注']);
+  if (s.quality.unknownMeta) rows.push(['元数据缺失', s.quality.unknownMeta + ' 条记录的类型元数据未加载，方向计入"未分类"']);
+  if (s.quality.unknownFavCategory) rows.push(['未知分类', s.quality.unknownFavCategory + ' 条收藏指向已删除的分类，已归入"未知分类"']);
+  if (mig && !mig.ok) {
+    rows.push(['只读限制', (mig.future ? '本地数据来自更新版本' : '本地数据迁移未完成') +
+      '（' + (mig.reason || '未知原因') + '）：统计仍可只读，收藏、待读与阅读进度的写入已停用']);
+  }
+  const list = rows.map(function (pair) {
+    return '<dt>' + escapeHtml(pair[0]) + '</dt><dd>' + escapeHtml(pair[1]) + '</dd>';
+  }).join('');
+  const unsupported = (s.unsupported || []).map(function (u) {
+    return '<li><b>' + escapeHtml(u.label) + '</b>：' + escapeHtml(u.reason) + '</li>';
+  }).join('');
+  return '<dl class="km-an-scope">' + list + '</dl>' +
+    '<h3 class="km-an-subtitle">本站不提供的统计</h3>' +
+    '<ul class="km-an-unsupported">' + unsupported + '</ul>';
+}
+
+function kmStatsHtml(r) {
+  const s = r.summary;
+  const t = s.totals;
+  const ratePct = Math.round((s.completion.rate || 0) * 100);
+  const empty = t.records === 0;
+  const lead = empty
+    ? '本地还没有任何知识记录。浏览文章、收藏或加入待读后，这里会自动出现统计。'
+    : '统计基于本机 ' + t.records + ' 条记录，只读计算，不会写库或上传。';
+  const card = function (href, value, label, hint) {
+    return '<a class="km-metric" href="' + escapeHtml(href) + '">' +
+      '<span class="km-metric-value">' + escapeHtml(String(value)) + '</span>' +
+      '<span class="km-metric-label">' + escapeHtml(label) + '</span>' +
+      '<span class="km-metric-hint">' + escapeHtml(hint) + '</span></a>';
+  };
+  return '<div class="km-an" data-km-an="1">' +
+    '<p class="km-an-lead" role="note">' + escapeHtml(lead) + '</p>' +
+
+    '<section class="km-an-block" aria-labelledby="kmAnOverview">' +
+    '  <h2 class="km-an-title" id="kmAnOverview">总览</h2>' +
+    '  <div class="km-metric-grid">' +
+    card('#/knowledge?tab=history', t.viewed, '已浏览内容', '去重后的不同内容') +
+    card('#/knowledge?tab=favorites', t.fav, '收藏', '点开查看收藏列表') +
+    card('#/knowledge?tab=readlater', t.later, '待读', '点开查看待读清单') +
+    card('#/knowledge?tab=continue', t.reading, '阅读中', '未读完的文章') +
+    card('#/knowledge?tab=history&state=done', t.done, '已完成', '按已读状态统计') +
+    '<div class="km-metric km-metric-static"><span class="km-metric-value">' + ratePct + '%</span>' +
+    '<span class="km-metric-label">文章完成率</span>' +
+    '<span class="km-metric-hint">' + s.completion.done + ' / ' + s.completion.viewed + ' 篇已浏览文章</span></div>' +
+    '  </div>' +
+    '  <p class="km-an-note">收藏与待读可以重叠：' + t.favLater + ' 条同时属于两者，两个数字不能相加当作唯一内容数。' +
+    (t.silent ? ' 另有 ' + t.silent + ' 条只有个人状态、没有浏览记录（例如在列表里直接收藏）。' : '') +
+    '</p>' +
+    '</section>' +
+
+    '<section class="km-an-block" aria-labelledby="kmAnTypes">' +
+    '  <h2 class="km-an-title" id="kmAnTypes">内容类型分布</h2>' +
+    '  <p class="km-an-hint">全部本地记录按内容类型统计。</p>' +
+    kmBarHtml(s.types, t.records, empty ? '还没有内容记录。' : '暂无可统计的类型。') +
+    '</section>' +
+
+    '<section class="km-an-block" aria-labelledby="kmAnDirections">' +
+    '  <h2 class="km-an-title" id="kmAnDirections">技术方向分布</h2>' +
+    '  <p class="km-an-hint">按内容自带的标签、分类与技术栈归类；一条内容可属于多个方向。</p>' +
+    kmBarHtml(s.directions, s.directionTotals.assignments,
+      '暂时没有可归类的技术方向（元数据缺失或内容未分类）。') +
+    '</section>' +
+
+    '<section class="km-an-block" aria-labelledby="kmAnRecentDirs">' +
+    '  <h2 class="km-an-title" id="kmAnRecentDirs">最近接触的技术方向</h2>' +
+    '  <p class="km-an-hint">最近 ' + s.recentDirections.windowDays + ' 天浏览过的内容（' +
+    s.recentDirections.uniqueContent + ' 条）按方向统计。</p>' +
+    kmBarHtml(s.recentDirections.directions, s.recentDirections.assignments,
+      '最近 ' + s.recentDirections.windowDays + ' 天没有浏览记录。') +
+    '</section>' +
+
+    '<section class="km-an-block" aria-labelledby="kmAnCategories">' +
+    '  <h2 class="km-an-title" id="kmAnCategories">收藏分类</h2>' +
+    '  <p class="km-an-hint">当前收藏归属（合计 ' + s.favTotal + ' 条）。</p>' +
+    kmBarHtml(s.favCategories, s.favTotal, '还没有收藏。') +
+    '</section>' +
+
+    '<section class="km-an-block" aria-labelledby="kmAnRecent">' +
+    '  <h2 class="km-an-title" id="kmAnRecent">最近浏览</h2>' +
+    '  <p class="km-an-hint">按最近浏览时间排序，最多显示 ' + s.recent.length + ' / ' + s.recentTotal + ' 条。</p>' +
+    kmStatsRecentHtml(s.recent) +
+    '</section>' +
+
+    '<section class="km-an-block" aria-labelledby="kmAnContinue">' +
+    '  <h2 class="km-an-title" id="kmAnContinue">继续阅读</h2>' +
+    '  <p class="km-an-hint">沿用知识库现有的进度恢复规则（文章进度 5%–95%）。</p>' +
+    kmStatsContinueHtml(r.continueItems) +
+    '</section>' +
+
+    '<section class="km-an-block" aria-labelledby="kmAnScope">' +
+    '  <h2 class="km-an-title" id="kmAnScope">数据范围与统计说明</h2>' +
+    kmStatsScopeHtml(r) +
+    '</section>' +
+    '</div>';
+}
+
+function fillKnowledgeStats() {
+  const host = document.getElementById('kmList');
+  const statsLine = document.getElementById('kmStats');
+  if (!host) return;
+  const gen = ++_kmStatsGen;
+  const rendered = host.getAttribute('data-km-an') === '1';
+  host.setAttribute('aria-busy', 'true');
+  // 首次进入给加载态；后续数据变化只原地替换，避免闪烁
+  if (!rendered) {
+    host.innerHTML = '<div class="km-loading" role="status">正在计算学习统计…</div>';
+    if (statsLine) statsLine.textContent = '正在计算本地统计…';
+  }
+  kmLearningAnalytics().then(function (r) {
+    // 旧请求或已离开路由：一律丢弃，不覆盖新数据
+    if (gen !== _kmStatsGen || !kmStatsRouteActive()) return;
+    host.removeAttribute('aria-busy');
+    host.setAttribute('data-km-an', '1');
+    host.innerHTML = kmStatsHtml(r);
+    if (statsLine) {
+      statsLine.textContent = '统计基于本机 ' + r.summary.totals.records + ' 条记录（只读）' +
+        (r.status && r.status.degraded ? ' · 本地存储不可用，仅本次会话' : '');
+    }
+  }).catch(function (err) {
+    if (gen !== _kmStatsGen || !kmStatsRouteActive()) return;
+    host.removeAttribute('aria-busy');
+    host.removeAttribute('data-km-an');            // 失败后不留旧结果，也不假装是最新
+    host.innerHTML = '<div class="km-an-error" role="alert">' +
+      '<p>统计读取失败，已停止显示上一次的结果。</p>' +
+      '<p class="km-an-note">原因：' + escapeHtml(err && err.message ? err.message : '未知错误') + '</p>' +
+      '<button type="button" class="km-row-btn" id="kmAnRetry">重试</button></div>';
+    if (statsLine) statsLine.textContent = '统计读取失败';
   });
 }
 
@@ -6647,6 +6995,7 @@ document.addEventListener('click', function (e) {
   const t = e.target;
   if (!t || !t.closest) return;
   if (t.closest('[data-km-modal-close]')) { e.preventDefault(); kmCloseModal(); return; }
+  if (t.closest('#kmAnRetry')) { e.preventDefault(); fillKnowledgeStats(); return; }
   const toggle = t.closest('#kmBulkToggle');
   if (toggle) {
     e.preventDefault();
@@ -6881,8 +7230,8 @@ async function router() {
     } else if (isKnowledgeRoute(hash)) {
       const tab = kmTabFromHash(hash);
       app.innerHTML = renderKnowledgeShell(tab);
-      document.title = '知识库 · Eric\'s Notebook';
-      fillKnowledgeTab(tab);
+      if (tab === 'stats') fillKnowledgeStats();
+      else fillKnowledgeTab(tab);
       // 进入知识页前先把节流中的阅读进度落盘，避免"刚读完却不在继续阅读里"
       if (kmAvailable()) {
         try {
