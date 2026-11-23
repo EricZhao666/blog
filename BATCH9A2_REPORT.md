@@ -280,9 +280,57 @@ CI tests #116 通过后复查三个数据完整性边界，结论与修改如下
 - T3.5 未来版本（schemaVersion=9）→ 版本不变、两个分类原样、`addCategory` 与 `applyImport` 都被拒（不降级覆盖）。
 未重建数据库、未改 IDB 结构。
 
-### 13.4 本轮新增/调整的测试
+### 13.4 统一写入闸门（合并前补充）
 
-`knowledge-import` 55 → **71 项**（新增 T1.1–T1.7、T2.1–T2.4、T3.1–T3.5 共 16 项）；
+**问题**：`writeBlockedReason()` 之前只检查 `migrationState.future`，且普通写入（`mutateWithOutcome`）
+没有检查——未来版本或迁移失败时，浏览历史、收藏、待读、进度、删除仍会写入，等于可能覆盖新版数据。
+
+| 位置 | 修改 |
+| --- | --- |
+| `writeBlockedReason()` | 同时覆盖 `future` 与 `failed`（失败时带上迁移原因） |
+| `mutateWithOutcome()` | **所有**记录写入的统一闸门：命中时返回 `{ok:false, blocked:true, reason}`，不写库、不降级内存、不清库 |
+| 既有分类/批量/导入闸门 | 复用同一函数（行为不变，只是失败态也生效） |
+| 只读路径 | `list/counts/state/exportData/previewImport/validateImport/categories` 不受影响 |
+| UI 提示 | `Knowledge.writeBlockedReason()` 透出真实原因；`kmWriteFailText()` 用它替换笼统的"保存失败"（无布局改动） |
+
+**GREEN 证据**：
+- 单元 T4.1–T4.2：未来版本（真实迁移路径置位）下 `recordView/setFlag/setReadState/saveProgress/
+  clearHistory/remove/bulk/addCategory/assignCategory/applyImport` 全部被拒，记录 JSON 前后**完全一致**，
+  `schemaVersion` 仍为 9，只读查询与导出（`complete=true`）正常；
+- T4.3–T4.5：迁移失败态同样全部被拒、`degraded=false`（未降级）、`exportData().source='database'`，
+  解除闸门后写入恢复；
+- 浏览器 K28.1–K28.3：**真实 IndexedDB** v2 库 + `schemaVersion=9`，11 类写入全部被拒，
+  `getAll()` 序列化结果与 meta 版本号字节级不变；
+- K28.4：迁移失败态（注入）下同样全拒、原数据不变、解除后 `setFlag` 成功。
+
+### 13.5 自动历史裁剪的闸门（发布前补充）
+
+**问题**：`pruneHistory()` 直接调 `backend.mutate()`，绕过了 `mutateWithOutcome` 的写入闸门；
+`enforceHistoryLimit()` 也不看闸门状态。未来版本/迁移失败时，自动裁剪仍可能**删掉本地历史记录**。
+
+| 位置 | 修改 |
+| --- | --- |
+| `pruneHistory()` 入口 | `writeBlockedReason()` 命中时直接返回 0（不读、不算、不写） |
+| 每个候选的执行前 | 队列真正执行时再查一次；事务内 updater 第一行**再查一次**（最权威） |
+| `enforceHistoryLimit()` | 闸门命中时不安排裁剪 |
+| 计数语义 | 只有 `applied=true` 才计入 `changed`（跳过/被拦不再虚报裁剪数） |
+
+不受影响：正常 v2 数据库照常按 500 上限裁剪（T5.3：520 → 500，删 20）；
+`migrateMeta()` 走 `backend.setMeta/mutateMany` 直连，**不经过闸门**（T5.5 仍能修悬空分类）。
+
+**GREEN 证据**（单元 T5.1–T5.5）：
+- T5.1 未来版本：`_pruneHistory` 返回 0，520 条记录 JSON 前后完全一致，`schemaVersion` 仍 9；
+- T5.2 迁移失败态：同样 0 删除、记录不变；
+- T5.3 正常 v2：520 → 500，`removed=20`，受保护记录不误删；
+- T5.4 已排队裁剪：在"取到候选、尚未写入"时关闭闸门 → `removed=0`，520 条一条不删；
+- T5.5 迁移修复不被闸门阻断（悬空 `favCat` 仍修回 default，版本升到 2）。
+
+真实 IndexedDB 侧由既有 K28 覆盖（11 类写入被拒、`getAll()` 序列化与 meta 字节级不变），
+本轮未再新增 500 条规模的浏览器用例，以免把专项拖成分钟级。
+
+### 13.6 本轮新增/调整的测试
+
+`knowledge-import` 55 → **81 项**（新增 T1.1–T1.7、T2.1–T2.4、T3.1–T3.5、T4.1–T4.5、T5.1–T5.5 共 26 项）；
 `knowledge-management` 27 → **30 项**（新增 K27.1–K27.3 双标签替换窗口）。
 其余套件未改动，本地只跑受影响的三套 + `git diff --check`，71 套全量由 PR CI 执行。
 `CACHE_VERSION`、SW 策略、UI 布局、推荐模块、CI 配置均未改动。

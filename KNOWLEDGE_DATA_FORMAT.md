@@ -76,6 +76,17 @@ blog-knowledge (v1)
 - 部分状态（分类已写入、记录修正失败）可通过重新 init 修复，不会留下半改记录（单测 T3.3/T3.4）；
 - `schemaVersion > 2`（未来版本）→ `future=true`，一个字节都不写，并拒绝
   `addCategory/renameCategory/removeCategory/assignCategory/bulk/applyImport`（T3.5）。
+
+**统一写入闸门**：`future` 或 `failed` 时，`mutateWithOutcome()` 会拒绝**所有**记录写入
+（浏览历史、收藏、待读、阅读进度、删除、历史清理），返回 `{ ok:false, blocked:true, reason }`。
+只读查询与导出完全不受影响；不清空数据库、不切换到内存降级，因此不会"看起来写成功"。
+闸门原因可通过 `Knowledge.writeBlockedReason()` 读取（空串表示可写），UI 用它给出明确提示。
+真实 IndexedDB 回归见 `knowledge-management.spec.js` K28：11 类写入全部被拒，
+`records` 序列化结果与 `meta.schemaVersion` 字节级不变。
+
+**自动裁剪同样受闸门保护**：`pruneHistory()` / `enforceHistoryLimit()` 在闸门命中时不启动、
+执行前再查一次、事务内 updater 再查一次；只有真正写进去才计入裁剪数。
+正常 v2 库不受影响（仍按 500 上限裁剪）；`migrateMeta()` 的修复写入走 backend 直连，不被闸门阻断。
 **真实浏览器验证**：先建 v1 库（仅 `schemaVersion=1`，两条记录），再加载新代码，见
 `tests/browser/knowledge-management.spec.js` 的 K23（K23.1/K23.2/K23.3）。
 

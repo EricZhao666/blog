@@ -510,6 +510,140 @@ async function seed(page, n) {
       await s5.ctx.close();
     }
 
+    // K28 写入闸门：未来版本 / 迁移失败时，真实 IndexedDB 下所有写入被拒且原记录字节级不变
+    {
+      const dumpRows = () => ({
+        rows: [
+          { key: 'post:vla-model-intro', type: 'post', refId: 'vla-model-intro', title: '既有收藏', fav: 1, favAt: 1000, favCat: 'default', later: 0, laterAt: 0, readState: 'reading', progress: 0.4, firstSeenAt: 900, lastSeenAt: 1000, doneAt: 0, updatedAt: 1000 },
+          { key: 'post:rl-from-mdp-to-ppo', type: 'post', refId: 'rl-from-mdp-to-ppo', title: '既有待读', fav: 0, favAt: 0, favCat: 'default', later: 1, laterAt: 1100, readState: 'none', progress: 0, firstSeenAt: 0, lastSeenAt: 1100, doneAt: 0, updatedAt: 1100 }
+        ]
+      });
+
+      // ---- A：未来 schemaVersion（真实迁移路径置位）----
+      const ctx = await browser.newContext({ serviceWorkers: 'block' });
+      await ctx.route('**/*', route => {
+        const u = route.request().url();
+        if (u.startsWith('http://127.0.0.1')) return route.continue();
+        return route.fulfill({ status: 204, contentType: 'text/plain', body: '' });
+      });
+      await ctx.route('**/js/app.js*', route => route.abort());
+      const page = await ctx.newPage();
+      const errs = [];
+      page.on('pageerror', e => errs.push(e.message));
+      await page.goto(base + PREFIX + '/index.html#/', { waitUntil: 'load', timeout: 60000 });
+      const built = await page.evaluate(rows => new Promise(resolve => {
+        const req = indexedDB.open('blog-knowledge', 1);
+        req.onupgradeneeded = function () {
+          const db = req.result;
+          if (!db.objectStoreNames.contains('records')) db.createObjectStore('records', { keyPath: 'key' });
+          if (!db.objectStoreNames.contains('meta')) db.createObjectStore('meta', { keyPath: 'k' });
+        };
+        req.onsuccess = function () {
+          const db = req.result;
+          const tx = db.transaction(['records', 'meta'], 'readwrite');
+          rows.forEach(r => tx.objectStore('records').put(r));
+          tx.objectStore('meta').put({ k: 'schemaVersion', v: 9 });
+          tx.objectStore('meta').put({ k: 'favCategories', v: [{ id: 'default', name: '默认分类', system: true }, { id: 'cat-future', name: '未来分类', system: false }] });
+          tx.oncomplete = function () { db.close(); resolve(true); };
+          tx.onerror = function () { resolve(false); };
+        };
+      }), dumpRows().rows);
+      await ctx.unroute('**/js/app.js*');
+      await page.reload({ waitUntil: 'load' });
+      await page.waitForFunction(() => window.Knowledge && Knowledge.status().ready, null, { timeout: 20000 });
+      await sleep(400);
+
+      const futureState = await page.evaluate(async () => {
+        const readRaw = () => new Promise(res => {
+          const r = indexedDB.open('blog-knowledge');
+          r.onsuccess = function () {
+            const db = r.result;
+            const tx = db.transaction(['records', 'meta'], 'readonly');
+            const g = tx.objectStore('records').getAll();
+            g.onsuccess = function () {
+              const rows = (g.result || []).sort((a, b) => (a.key < b.key ? -1 : 1));
+              const m = tx.objectStore('meta').get('schemaVersion');
+              m.onsuccess = function () {
+                db.close();
+                res({ json: JSON.stringify(rows), ver: m.result ? m.result.v : null });
+              };
+            };
+          };
+        });
+        const before = await readRaw();
+        const blockedBefore = Knowledge.writeBlockedReason();
+        // 全量写入尝试
+        await Knowledge.recordView('post', 'shenzhen-weekend', { title: '闸门' });
+        await Knowledge.setFlag('post', 'shenzhen-weekend', 'fav', true);
+        await Knowledge.setFlag('post', 'shenzhen-weekend', 'later', true);
+        await Knowledge.setReadState('post', 'vla-model-intro', 'done');
+        await Knowledge.saveProgress('post', 'vla-model-intro', 1);
+        await Knowledge.clearHistory('post:vla-model-intro');
+        await Knowledge.remove('post:vla-model-intro');
+        await Knowledge.bulk(['post:vla-model-intro'], 'fav-off');
+        await Knowledge.clearAllHistory();
+        await Knowledge.addCategory('闸门分类');
+        await Knowledge.assignCategory('post:vla-model-intro', 'default');
+        const imp = await Knowledge.applyImport({
+          app: 'ericzhao-blog', kind: 'knowledge', schemaVersion: 2, exportedAt: new Date().toISOString(),
+          persistence: 'indexeddb', source: 'database', degraded: false, complete: true, warning: '',
+          categories: [{ id: 'default', name: '默认分类', system: true }],
+          records: [{ key: 'post:embodied-ai-notes', type: 'post', refId: 'embodied-ai-notes', title: '导入', fav: 1, favAt: 1, favCat: 'default', later: 0, laterAt: 0, readState: 'none', progress: 0, firstSeenAt: 0, lastSeenAt: 0, doneAt: 0, updatedAt: 1 }]
+        }, { mode: 'merge', resolve: () => true });
+        const after = await readRaw();
+        const list = await Knowledge.list({});
+        const exp = await Knowledge.exportData();
+        return {
+          same: before.json === after.json,
+          ver: after.ver,
+          blocked: !!blockedBefore,
+          n: list.length,
+          imp: imp.ok,
+          complete: exp.complete,
+          degraded: Knowledge.status().degraded
+        };
+      });
+      check('K28.1 未来版本：全部写入被拒且记录字节级不变',
+        built === true && futureState.same === true && futureState.blocked === true &&
+        futureState.n === 2 && futureState.imp === false,
+        JSON.stringify(futureState));
+      check('K28.2 未来版本：版本号与分类未被降级改写，只读与导出正常',
+        futureState.ver === 9 && futureState.complete === true && futureState.degraded === false,
+        JSON.stringify({ ver: futureState.ver, complete: futureState.complete }));
+      check('K28.3 未来版本：过程中无未捕获异常', errs.length === 0, errs.slice(0, 2).join(' | ') || 'none');
+      await ctx.close();
+
+      // ---- B：迁移失败（测试注入，真实失败路径见单元 T3.1）----
+      const s6 = await newSession(browser, base);
+      const P = s6.page;
+      await seed(P, 2);
+      const failedState = await P.evaluate(async () => {
+        const snap = async () => JSON.stringify((await Knowledge.list({})).sort((a, b) => (a.key < b.key ? -1 : 1)));
+        const before = await snap();
+        Knowledge._forceMigrationBlock({ failed: true, reason: '迁移未完成：测试注入' });
+        const why = Knowledge.writeBlockedReason();
+        await Knowledge.recordView('post', 'shenzhen-weekend', { title: '闸门' });
+        await Knowledge.setFlag('post', 'vla-model-intro', 'later', true);
+        await Knowledge.setReadState('post', 'vla-model-intro', 'done');
+        await Knowledge.saveProgress('post', 'vla-model-intro', 0.9);
+        await Knowledge.clearHistory('post:vla-model-intro');
+        await Knowledge.remove('post:vla-model-intro');
+        await Knowledge.setFlag('post', 'rl-from-mdp-to-ppo', 'fav', false);
+        const after = await snap();
+        Knowledge._forceMigrationBlock({});
+        const restored = await Knowledge.setFlag('post', 'vla-model-intro', 'later', true);
+        return { same: before === after, why: why, restored: !!(restored && restored.later === 1) };
+      });
+      const toastText = await P.evaluate(() => {
+        const el = document.querySelector('.km-toast');
+        return el ? el.textContent : '';
+      });
+      check('K28.4 迁移失败：所有写入被拒、原数据不变、解除后可写',
+        failedState.same === true && /迁移/.test(failedState.why) && failedState.restored === true,
+        JSON.stringify(failedState));
+      await s6.ctx.close();
+    }
+
     // K26 离线：分类与导出仍可用
     {
       const s4 = await newSession(browser, base, { sw: true });

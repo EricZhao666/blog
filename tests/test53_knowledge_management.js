@@ -32,7 +32,8 @@ function makeBackend() {
   const meta = new Map();
   const state = {
     failBulk: false, failReplace: false, failAll: false, failUpdaterAt: -1, writes: 0,
-    failSetMetaCat: false, failMigrateMany: false
+    failSetMetaCat: false, failMigrateMany: false,
+    onNextMutate: null          // 在"已取到候选、尚未写入"的时刻插入回调（模拟闸门在排队期间关闭）
   };
   let chain = Promise.resolve();
   function enqueue(fn) {
@@ -70,6 +71,7 @@ function makeBackend() {
     },
     mutate(key, updater) {
       return enqueue(() => {
+        if (state.onNextMutate) { const fn = state.onNextMutate; state.onNextMutate = null; fn(); }
         const cur = map.has(key) ? JSON.parse(JSON.stringify(map.get(key))) : null;
         const next = updater(cur);
         if (next === null) map.delete(key);
@@ -813,6 +815,150 @@ function makeExport(over) {
       cats4.length === 2 && cats4[1].id === 'cat-future' &&
       addBlocked.ok === false && impBlocked.ok === false,
       JSON.stringify({ ver: ver4, future: st4.migration.future, add: addBlocked.ok, imp: impBlocked.ok }));
+  }
+
+  // ============================================================ 修订：统一写入闸门（Task 4）
+  async function assertAllWritesBlocked(label, api, getRows) {
+    const before = JSON.stringify(await getRows());
+    await api.recordView('post', 'gate1', { title: '闸门' });
+    await api.setFlag('post', 'gate1', 'fav', true);
+    await api.setFlag('post', 'gate1', 'later', true);
+    await api.setReadState('post', 'gate1', 'done');
+    await api.saveProgress('post', 'gate1', 0.5);
+    await api.clearHistory('post:gate1');
+    await api.remove('post:gate1');
+    await api.bulk(['post:gate1'], 'fav-off');
+    await api.addCategory('闸门分类');
+    await api.assignCategory('post:gate1', 'default');
+    const imp = await api.applyImport(makeExport(), { mode: 'merge', resolve: () => true });
+    const after = JSON.stringify(await getRows());
+    const rows = JSON.parse(after);
+    check(label + ' 所有持久化写入被拒绝且数据字节级不变',
+      before === after && rows.length === 2 && !rows.some(r => r.key === 'post:gate1') &&
+      imp.ok === false,
+      JSON.stringify({ same: before === after, n: rows.length, imp: imp.ok }));
+  }
+
+  {
+    // 场景 A：未来版本（真实迁移路径置位）
+    const b = makeBackend();
+    await b.setMeta('schemaVersion', 9);
+    await b.setMeta('favCategories', [{ id: 'default', name: '默认分类', system: true }]);
+    await b.mutate('post:g1', () => ({ key: 'post:g1', type: 'post', refId: 'g1', title: '既有', fav: 1, favAt: 1, favCat: 'default', later: 0, laterAt: 0, readState: 'none', progress: 0, firstSeenAt: 1, lastSeenAt: 1, doneAt: 0, updatedAt: 1 }));
+    await b.mutate('post:g2', () => ({ key: 'post:g2', type: 'post', refId: 'g2', title: '既有二', fav: 0, favAt: 0, favCat: 'default', later: 1, laterAt: 1, readState: 'none', progress: 0, firstSeenAt: 1, lastSeenAt: 1, doneAt: 0, updatedAt: 1 }));
+    const m = loadModule(b);
+    await m.api.init();
+    const st = m.api.status();
+    await assertAllWritesBlocked('T4.1 未来版本', m.api, () => b.getAll());
+    check('T4.2 未来版本：状态可读、只读查询与导出仍可用',
+      st.migration.future === true && (await m.api.list({})).length === 2 &&
+      (await m.api.counts()).fav >= 1 &&
+      (await m.api.exportData()).complete === true &&
+      (await b.getMeta('schemaVersion')) === 9,
+      JSON.stringify({ future: st.migration.future }));
+  }
+
+  {
+    // 场景 B：迁移失败（测试注入，真实失败路径见 T3.1）
+    const { b, api } = await setup();
+    await api.recordView('post', 'k1', { title: 'K1' });
+    await api.recordView('post', 'k2', { title: 'K2' });
+    await api.setFlag('post', 'k1', 'fav', true);
+    await api.setFlag('post', 'k2', 'later', true);
+    api._forceMigrationBlock({ failed: true, reason: '迁移未完成：测试注入' });
+    await assertAllWritesBlocked('T4.3 迁移失败', api, () => b.getAll());
+    check('T4.4 迁移失败：只读与导出正常、无内存降级',
+      api.status().degraded === false && (await api.list({})).length === 2 &&
+      (await api.exportData()).source === 'database',
+      JSON.stringify(api.status()));
+
+    // 恢复后写入回到原行为
+    api._forceMigrationBlock({});
+    const ok = await api.setFlag('post', 'k1', 'later', true);
+    check('T4.5 闸门解除后写入恢复正常', !!ok && ok.later === 1, JSON.stringify(ok && ok.later));
+  }
+
+  // ============================================================ 修订：自动裁剪也走闸门（Task B）
+  async function seedHistory(b, n) {
+    for (let i = 0; i < n; i++) {
+      const key = 'post:hist' + i;
+      await b.mutate(key, () => ({
+        key: key, type: 'post', refId: 'hist' + i, title: 'H' + i,
+        fav: 0, favAt: 0, favCat: 'default', later: 0, laterAt: 0,
+        readState: 'none', progress: 0,
+        firstSeenAt: 1000 + i, lastSeenAt: 1000 + i, doneAt: 0, updatedAt: 1000 + i
+      }));
+    }
+  }
+
+  {
+    // T5.1 未来版本：不启动新的自动裁剪
+    const b = makeBackend();
+    await b.setMeta('schemaVersion', 9);
+    await b.setMeta('favCategories', [{ id: 'default', name: '默认分类', system: true }]);
+    await seedHistory(b, 520);
+    const m = loadModule(b);
+    await m.api.init();
+    const before = JSON.stringify(await b.getAll());
+    const removed = await m.api._pruneHistory(0);
+    m.api._enforceHistoryLimit();
+    await new Promise(r => setTimeout(r, 30));
+    const after = JSON.stringify(await b.getAll());
+    check('T5.1 未来版本下自动裁剪被闸门拦截（记录与 meta 均不变）',
+      removed === 0 && before === after && (await b.getMeta('schemaVersion')) === 9,
+      JSON.stringify({ removed, same: before === after }));
+  }
+
+  {
+    // T5.2 迁移失败：同样不裁剪
+    const { b, api } = await setup();
+    await seedHistory(b, 520);
+    api._forceMigrationBlock({ failed: true, reason: '迁移未完成：测试注入' });
+    const before = JSON.stringify(await b.getAll());
+    const removed = await api._pruneHistory(0);
+    const after = JSON.stringify(await b.getAll());
+    check('T5.2 迁移失败态下自动裁剪被拦（记录不变）',
+      removed === 0 && before === after, JSON.stringify({ removed, same: before === after }));
+  }
+
+  {
+    // T5.3 正常 v2：历史上限照常生效（不被闸门误伤）
+    const { b, api } = await setup();
+    await seedHistory(b, 520);
+    const removed = await api._pruneHistory(0);
+    const rows = await b.getAll();
+    check('T5.3 正常 v2 下历史裁剪到 500 且不误删受保护记录',
+      removed === 20 && rows.length === 500, JSON.stringify({ removed, left: rows.length }));
+  }
+
+  {
+    // T5.4 已排队的裁剪：真正写入前被闸门拦下
+    const { b, api } = await setup();
+    await seedHistory(b, 520);
+    b.state.onNextMutate = () => api._forceMigrationBlock({ failed: true, reason: '排队期间关闭' });
+    const before = (await b.getAll()).length;
+    const removed = await api._pruneHistory(0);
+    const after = await b.getAll();
+    check('T5.4 已排队的自动裁剪在写入前再次检查闸门（一条都不删）',
+      removed === 0 && after.length === before && before === 520,
+      JSON.stringify({ removed, before, after: after.length }));
+  }
+
+  {
+    // T5.5 迁移修复不被闸门阻断：失败态下重新 init 仍能修悬空分类
+    const b = makeBackend();
+    await b.setMeta('schemaVersion', 1);
+    await b.mutate('post:orphan2', () => ({
+      key: 'post:orphan2', type: 'post', refId: 'orphan2', title: '悬空', fav: 1, favAt: 1,
+      favCat: 'cat-missing', later: 0, laterAt: 0, readState: 'none', progress: 0,
+      firstSeenAt: 1, lastSeenAt: 1, doneAt: 0, updatedAt: 1
+    }));
+    const m = loadModule(b);
+    await m.api.init();
+    const rec = await b.get('post:orphan2');
+    check('T5.5 迁移修复本身不被写入闸门阻断',
+      rec && rec.favCat === 'default' && (await b.getMeta('schemaVersion')) === 2,
+      JSON.stringify({ cat: rec && rec.favCat }));
   }
 
   console.log('\n合计 ' + (pass + fail) + ' 项，PASS ' + pass + '，FAIL ' + fail);
