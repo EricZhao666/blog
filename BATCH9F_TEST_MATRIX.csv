@@ -1,0 +1,47 @@
+id,area,suite,target,coverage,type,engines,items,result,evidence
+F-01,首页模块,personalized-home,无个人记录,容器存在但 state=empty；不渲染任何区块；文章列表与标题篇数完整,jsdom,node,4,PASS,P1.1-P1.4
+F-02,首页模块,personalized-home,偏好纯逻辑,空/异常输入回退默认；未知键丢弃；缺失键补齐；隐藏去重；允许全部隐藏,jsdom,node,3,PASS,P2.1-P2.3
+F-03,首页模块,personalized-home,偏好持久化,写入独立键并可读回；与主题键隔离；损坏 JSON 回退默认；恢复默认清除键,jsdom,node,4,PASS,P2.4-P2.7
+F-04,首页模块,personalized-home,localStorage 不可用,读写抛错时使用默认值且不抛异常，内存副本仍可生效,jsdom,node,1,PASS,P2.8
+F-05,首页模块,personalized-home,默认组合与顺序,继续阅读→最近浏览→我的收藏→最近学习方向；概览 4 个指标,jsdom,node,2,PASS,P3.1-P3.2
+F-06,首页模块,personalized-home,继续阅读,最多 3 条；带 data-km-resume；指向真实文章进度,jsdom,node,2,PASS,P3.3-P3.4
+F-07,首页模块,personalized-home,最近浏览,最多 6 条；按 lastSeenAt 相对时间展示（不是更新时间）,jsdom,node,2,PASS,P3.5-P3.6
+F-08,首页模块,personalized-home,我的收藏,最多 4 条；查看全部入口；显示收藏总数,jsdom,node,2,PASS,P3.7-P3.8
+F-09,首页模块,personalized-home,最近学习方向,最多 4 项；多归属说明；入口只指向真实标签页或静态；统计入口有效,jsdom,node,4,PASS,P3.9-P3.12
+F-10,首页模块,personalized-home,文章列表不受影响,个人模块渲染前后文章卡片数量一致,jsdom,node,1,PASS,P3.13
+F-11,首页模块,personalized-home,失效内容,失效收藏有文案且不生成链接,jsdom,node,2,PASS,P4.1-P4.2
+F-12,首页模块,personalized-home,隐藏与顺序,面板含 4 开关；取消勾选立即隐藏且记录保留；隐藏写偏好；预设顺序生效；aria-pressed 同步,jsdom,node,5,PASS,P5.1-P5.6
+F-13,首页模块,personalized-home,恢复与全隐藏,恢复默认还原顺序并清键；全部隐藏给出恢复入口,jsdom,node,1,PASS,P5.7-P5.9
+F-14,首页模块,personalized-home,读取失败降级,不展示旧数据；文章列表完整；有重试；重试后恢复,jsdom,node,4,PASS,P6.1-P6.4
+F-15,首页模块,personalized-home,搜索兼容,输入搜索词后不渲染个人模块；清空后模块与文章列表恢复,jsdom,node,3,PASS,P7.1-P7.3
+F-16,首页模块,personalized-home,路由往返,文章→首页重新挂载；文章列表完整,jsdom,node,2,PASS,P8.1-P8.2
+F-17,首页模块,personalized-home,运行时异常,全流程无未捕获异常,jsdom,node,1,PASS,P9
+F-18,首页验收,home-experience,无数据→有数据,空状态首页完整；有数据后四模块默认顺序；方向结果出现；多归属说明, browser,chromium,4,PASS,H1.1-H1.4
+F-19,首页验收,home-experience,继续阅读恢复,点击跳到真实文章并恢复滚动位置；返回首页重新渲染, browser,chromium,2,PASS,H2.1-H2.2
+F-20,首页验收,home-experience,搜索交替,输入搜索词只显示结果；清空后模块与文章列表同时恢复, browser,chromium,2,PASS,H3.1-H3.2
+F-21,首页验收,home-experience,设置面板键盘,Enter 打开；4 开关 3 预设；空格隐藏且焦点停留；状态提示；预设顺序生效, browser,chromium,4,PASS,H4.1-H4.4
+F-22,首页验收,home-experience,焦点与持久化,Escape 关闭并归还焦点；刷新后偏好保留；恢复默认还原, browser,chromium,3,PASS,H4.5-H4.7
+F-23,首页验收,home-experience,失效内容,失效收藏有提示且无链接, browser,chromium,1,PASS,H5.1
+F-24,首页验收,home-experience,多标签同步,另一标签页收藏后首页概览自动更新, browser,chromium,1,PASS,H6.1
+F-25,首页验收,home-experience,快速路由切换,7 次跳跃后回到首页；模块不重复、不串页；文章列表完整, browser,chromium,1,PASS,H7.1
+F-26,首页验收,home-experience,读取失败,只降级个人模块；文章列表不变；重试恢复, browser,chromium,2,PASS,H8.1-H8.2
+F-27,首页验收,home-experience,主流程异常,无未捕获运行时异常, browser,chromium,1,PASS,H9
+F-28,首页验收,home-experience,390px 深色,无横向溢出；模块与文章都在；深色背景生效, browser,chromium,2,PASS,H10.1-H10.2
+F-29,首页验收,home-experience,768px,无溢出；文章列表单列, browser,chromium,1,PASS,H10.3
+F-30,首页验收,home-experience,1440px,无溢出；文章列表两列, browser,chromium,1,PASS,H10.4
+F-31,首页验收,home-experience,IndexedDB 降级,内存模式仍渲染模块；文章列表完整, browser,chromium,1,PASS,H11.1
+F-32,首页验收,home-experience,统计脚本失败,仅方向区降级，其它模块与文章正常, browser,chromium,1,PASS,H11.2
+F-33,首页验收,home-experience,离线再访问,SW 接管后离线打开首页：文章与个人模块都可用, browser,chromium,1,PASS,H11.3
+F-34,首页验收,home-experience,三引擎,firefox / webkit 渲染模块且无溢出；无运行时异常, browser,firefox+webkit,4,PASS,H12.1-H12.2
+F-35,回归,knowledge-center,知识中心（含历史选择器语义）,K4.1 曾因模块链接抢占 #app a[href^="#/post/"] 失败；模块移到列表之后修复, browser,chromium,1,PASS,整套 PASS
+F-36,回归,learning-analytics,统计页,9E 统计页与首页共用接口后行为不变, browser,chromium,1,PASS,整套 PASS
+F-37,回归,audit,全站巡检,路由渲染/死链/静态页/404 资源（首页新增真实链接无死链）,jsdom,node,1,PASS,整套 PASS
+F-38,回归,test41,搜索筛选与排序,搜索结果替换行为与排序语义不变,jsdom,node,1,PASS,整套 PASS
+F-39,回归,ui-refresh,全站 UI 2.0,五档视口/双主题/键盘/首页结构（含新增设置按钮）无回归, browser,chromium,59,PASS,整套 PASS
+F-40,回归,performance-accessibility,性能与无障碍,对比度/触控/六档视口/路由循环资源清理, browser,chromium,59,PASS,整套 PASS
+F-41,回归,project-detail,项目与知识库联动,项目详情/知识库收藏/离线, browser,chromium,1,PASS,整套 PASS
+F-42,回归,mobile-notes,移动端笔记,同一 #/post/ 选择器语义与移动菜单, browser,chromium,1,PASS,整套 PASS
+F-43,回归,reading-experience,阅读与继续阅读,进度写入与恢复契约不变, browser,chromium,47,PASS,整套 PASS
+F-44,回归,browser,SW 安装/离线/更新,新 CACHE_VERSION 2026-11-23-2 下 SW 行为正常, browser,chromium,1,PASS,整套 PASS
+F-45,回归,sw-consistency,版本一致性/慢网/离线/SW 重启,37 项全部通过, browser,chromium,37,PASS,整套 PASS
+F-46,发布契约,sw-snapshot-unit,首屏清单与版本递增,FIRST_SCREEN_ASSETS 仍 7 项；CACHE_VERSION 递增,unit,node,15,PASS,U0-U3d

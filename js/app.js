@@ -1404,6 +1404,536 @@ document.addEventListener('keydown', function (e) {
 });
 
 // ============================================
+// Batch 9F：首页个人知识模块（渐进增强 + 异步加载）
+//
+// 约束：
+//   - renderHome() 保持同步，文章列表与搜索行为完全不变；
+//   - 个人模块先给占位，再异步填充；失败只影响该区块；
+//   - 不新建数据库、不改知识库 schema，全部复用 Knowledge 只读接口 + 9E 统计口径；
+//   - 偏好存 localStorage（独立键），不可用时退回内存/默认值。
+// ============================================
+const HOME_PREFS_KEY = 'blog.home.prefs.v1';
+const HOME_MODULES = [
+  { key: 'continue', label: '继续阅读' },
+  { key: 'recent', label: '最近浏览' },
+  { key: 'favorites', label: '我的收藏' },
+  { key: 'directions', label: '最近学习方向' }
+];
+const HOME_PRESETS = [
+  { key: 'default', label: '默认顺序', order: ['continue', 'recent', 'favorites', 'directions'] },
+  { key: 'reading', label: '阅读优先', order: ['continue', 'recent', 'directions', 'favorites'] },
+  { key: 'collection', label: '收藏优先', order: ['favorites', 'continue', 'recent', 'directions'] }
+];
+const HOME_CONTINUE_LIMIT = 3;
+const HOME_RECENT_LIMIT = 6;
+const HOME_FAV_LIMIT = 4;
+const HOME_DIRECTION_LIMIT = 4;
+
+let _homePrefsMemory = null;    // localStorage 不可用时的会话内偏好
+let _homeGen = 0;               // 请求代次：旧结果不得写入新页面
+let _homeWatcher = false;
+let _homeMountFrame = 0;
+
+function homeDefaultPrefs() {
+  return { v: 1, hidden: [], order: HOME_MODULES.map(function (m) { return m.key; }) };
+}
+
+function homeModuleKeys() {
+  return HOME_MODULES.map(function (m) { return m.key; });
+}
+
+// 偏好归一化：未知键丢弃、缺失键补默认顺序、隐藏列表去重；异常一律回退默认
+function homeNormalizePrefs(raw) {
+  const def = homeDefaultPrefs();
+  if (!raw || typeof raw !== 'object' || Array.isArray(raw) || raw.v !== 1) return def;
+  const keys = homeModuleKeys();
+  const hidden = [];
+  (Array.isArray(raw.hidden) ? raw.hidden : []).forEach(function (k) {
+    if (keys.indexOf(k) !== -1 && hidden.indexOf(k) === -1) hidden.push(k);
+  });
+  const order = [];
+  (Array.isArray(raw.order) ? raw.order : []).forEach(function (k) {
+    if (keys.indexOf(k) !== -1 && order.indexOf(k) === -1) order.push(k);
+  });
+  keys.forEach(function (k) { if (order.indexOf(k) === -1) order.push(k); });
+  return { v: 1, hidden: hidden, order: order };
+}
+
+function homeReadPrefs() {
+  if (_homePrefsMemory) return homeNormalizePrefs(_homePrefsMemory);
+  let raw = null;
+  try { raw = localStorage.getItem(HOME_PREFS_KEY); } catch (e) { return homeDefaultPrefs(); }
+  if (!raw) return homeDefaultPrefs();
+  try { return homeNormalizePrefs(JSON.parse(raw)); } catch (e) { return homeDefaultPrefs(); }
+}
+
+function homeWritePrefs(prefs) {
+  const next = homeNormalizePrefs(prefs);
+  _homePrefsMemory = next;                     // 先落在内存：存储失败也不影响本次会话
+  try { localStorage.setItem(HOME_PREFS_KEY, JSON.stringify(next)); } catch (e) { /* 隐私模式忽略 */ }
+  return next;
+}
+
+function homeResetPrefs() {
+  _homePrefsMemory = null;
+  try { localStorage.removeItem(HOME_PREFS_KEY); } catch (e) { /* 忽略 */ }
+  return homeDefaultPrefs();
+}
+
+function homeModuleHidden(prefs, key) {
+  return prefs.hidden.indexOf(key) !== -1;
+}
+
+function homePrefsPanelHtml(prefs) {
+  const boxes = HOME_MODULES.map(function (m) {
+    const on = !homeModuleHidden(prefs, m.key);
+    return '<label class="hp-check"><input type="checkbox" data-home-module="' + m.key + '"' +
+      (on ? ' checked' : '') + '> ' + escapeHtml(m.label) + '</label>';
+  }).join('');
+  const presetKey = HOME_PRESETS.filter(function (p) {
+    return p.order.join(',') === prefs.order.join(',');
+  })[0];
+  const presets = HOME_PRESETS.map(function (p) {
+    const on = presetKey && presetKey.key === p.key;
+    return '<button type="button" class="hp-preset" data-home-preset="' + p.key + '"' +
+      ' aria-pressed="' + (on ? 'true' : 'false') + '">' + escapeHtml(p.label) + '</button>';
+  }).join('');
+  return '' +
+    '<p class="hp-prefs-hint">个人模块只读取本机数据，不会上传；隐藏模块不会删除任何记录。</p>' +
+    '<fieldset class="hp-prefs-group"><legend>显示的模块</legend>' + boxes + '</fieldset>' +
+    '<fieldset class="hp-prefs-group"><legend>模块顺序</legend><div class="hp-presets">' + presets + '</div></fieldset>' +
+    '<div class="hp-prefs-actions">' +
+    '  <button type="button" class="hp-btn" data-home-reset="1">恢复默认布局</button>' +
+    '  <button type="button" class="hp-btn hp-btn-primary" data-home-close="1">完成</button>' +
+    '</div>' +
+    '<p class="hp-prefs-status" id="homePrefsStatus" role="status" aria-live="polite"></p>';
+}
+
+function homePrefsOpen() {
+  const panel = document.getElementById('homePrefsPanel');
+  const btn = document.getElementById('homePrefsBtn');
+  if (!panel || !btn) return;
+  if (panel.hidden) {
+    panel.innerHTML = homePrefsPanelHtml(homeReadPrefs());
+    panel.hidden = false;
+    btn.setAttribute('aria-expanded', 'true');
+  }
+}
+
+function homePrefsClose(restoreFocus) {
+  const panel = document.getElementById('homePrefsPanel');
+  const btn = document.getElementById('homePrefsBtn');
+  if (!panel || !btn) return;
+  if (!panel.hidden) {
+    panel.hidden = true;
+    panel.innerHTML = '';
+    btn.setAttribute('aria-expanded', 'false');
+  }
+  if (restoreFocus) { try { btn.focus(); } catch (e) { /* 忽略 */ } }
+}
+
+function homePrefsStatus(text) {
+  const el = document.getElementById('homePrefsStatus');
+  if (el) el.textContent = text;
+}
+
+// 首页模块地址：只指向真实存在的路由；失效内容不生成链接
+function homeRowHtml(rec, opts) {
+  const o = opts || {};
+  const parsed = kmResolve(rec.type, rec.refId);
+  const title = rec.title || parsed.title || rec.refId;
+  const typeLabel = KM_LABELS[rec.type] || rec.type;
+  const metaBits = [typeLabel];
+  if (rec.type === 'post' && typeof rec.progress === 'number') {
+    metaBits.push('进度 ' + Math.round(rec.progress * 100) + '%');
+  }
+  if (o.showTime && rec.lastSeenAt) metaBits.push(Knowledge.relativeTime(rec.lastSeenAt));
+  const action = o.resume
+    ? '<button type="button" class="hp-row-btn" data-km-resume="' + escapeHtml(rec.key) + '">继续阅读</button>'
+    : '';
+  if (parsed.state === 'missing') {
+    return '<li class="hp-row hp-row-broken">' +
+      '<span class="hp-row-main"><span class="hp-row-title">' + escapeHtml(title) + '</span>' +
+      '<span class="hp-row-meta">' + escapeHtml(metaBits.join(' · ')) + ' · 内容已删除或迁移</span></span>' +
+      '</li>';
+  }
+  return '<li class="hp-row">' +
+    '<a class="hp-row-main hp-row-link" href="' + escapeHtml(kmHrefFor(rec.type, rec.refId)) + '">' +
+    '<span class="hp-row-title">' + escapeHtml(title) + '</span>' +
+    '<span class="hp-row-meta">' + escapeHtml(metaBits.join(' · ')) + '</span></a>' +
+    action + '</li>';
+}
+
+function homeBlockShell(key, title, hint, extraHead, body) {
+  return '<section class="hp-block" data-home-block="' + key + '" aria-labelledby="hpTitle-' + key + '">' +
+    '<div class="hp-block-head">' +
+    '<h2 class="hp-block-title" id="hpTitle-' + key + '">' + escapeHtml(title) + '</h2>' +
+    (extraHead || '') +
+    '</div>' +
+    (hint ? '<p class="hp-block-hint">' + escapeHtml(hint) + '</p>' : '') +
+    body +
+    '</section>';
+}
+
+function homeEmptyHtml(text) {
+  return '<p class="hp-empty">' + escapeHtml(text) + '</p>';
+}
+
+// 方向 → 真实存在的标签页（只从已加载文章标签里取，绝不自造方向路由）
+function homeDirectionTag(directionKey) {
+  const counts = {};
+  getAllPosts().forEach(function (p) {
+    (p.tags || []).forEach(function (t) {
+      if (typeof LearningStats === 'undefined') return;
+      if (LearningStats.classify([t]).indexOf(directionKey) === -1) return;
+      counts[t] = (counts[t] || 0) + 1;
+    });
+  });
+  const tags = Object.keys(counts);
+  if (!tags.length) return '';
+  tags.sort(function (a, b) {
+    if (counts[b] !== counts[a]) return counts[b] - counts[a];
+    return String(a).localeCompare(String(b), 'zh');
+  });
+  return tags[0];
+}
+
+function homeDirectionsHtml(state) {
+  if (!state || state.pending) {
+    return '<p class="hp-pending" role="status">正在归纳最近的技术方向…</p>';
+  }
+  if (state.error) {
+    return homeEmptyHtml('方向统计暂时不可用（统计模块未加载）。');
+  }
+  if (!state.items || !state.items.length) {
+    return homeEmptyHtml('最近 ' + state.windowDays + ' 天还没有可以归纳的技术方向。');
+  }
+  const total = state.items.reduce(function (a, it) { return a + it.count; }, 0) || 1;
+  const max = state.items.reduce(function (m, it) { return Math.max(m, it.count); }, 0) || 1;
+  const rows = state.items.map(function (it) {
+    const tag = homeDirectionTag(it.key);
+    const inner = '<span class="hp-dir-label">' + escapeHtml(it.label) + '</span>' +
+      '<span class="hp-dir-track" aria-hidden="true"><span class="hp-dir-fill" style="width:' +
+      Math.max(6, Math.round((it.count / max) * 100)) + '%"></span></span>' +
+      '<span class="hp-dir-count">' + it.count + '</span>';
+    if (tag) {
+      return '<li class="hp-dir"><a class="hp-dir-link" href="#/tags/' + jsInline(tag) + '"' +
+        ' aria-label="' + escapeHtml(it.label + '：查看标签 ' + tag) + '">' + inner + '</a></li>';
+    }
+    return '<li class="hp-dir"><span class="hp-dir-link hp-dir-static">' + inner + '</span></li>';
+  }).join('');
+  return '<ul class="hp-dirs">' + rows + '</ul>' +
+    '<p class="hp-note">一条内容可以属于多个方向，方向计数合计 ' + total +
+    ' 可大于唯一内容数；未分类内容不计入。</p>';
+}
+
+function homeOverviewHtml(counts) {
+  const items = [
+    ['#/knowledge?tab=favorites', '收藏', counts.fav],
+    ['#/knowledge?tab=readlater', '待读', counts.later],
+    ['#/knowledge?tab=continue', '阅读中', counts.reading],
+    ['#/knowledge?tab=history&state=done', '已完成', counts.done]
+  ];
+  if (!items.some(function (x) { return x[2] > 0; })) return '';
+  return '<div class="hp-overview" aria-label="个人知识概览">' + items.map(function (x) {
+    return '<a class="hp-chip" href="' + x[0] + '">' + x[1] + ' <b>' + (x[2] || 0) + '</b></a>';
+  }).join('') + '</div>';
+}
+
+function homeRenderBlocks(prefs, data) {
+  const host = document.getElementById('homePersonal');
+  if (!host) return;
+  const hiddenAll = HOME_MODULES.every(function (m) { return homeModuleHidden(prefs, m.key); });
+  if (hiddenAll) {
+    host.setAttribute('data-home-state', 'hidden');
+    host.innerHTML = '<div class="hp-collapsed">个人模块已全部隐藏。' +
+      '<button type="button" class="hp-btn" data-home-reset="1">恢复默认布局</button></div>';
+    return;
+  }
+  const blocks = {};
+  const order = prefs.order.filter(function (k) { return !homeModuleHidden(prefs, k); });
+  const ctx = data || {};
+
+  if (order.indexOf('continue') !== -1 && ctx.continue && ctx.continue.length) {
+    blocks.continue = homeBlockShell('continue', '继续阅读', '按现有进度规则（5%–95%）',
+      '<a class="hp-more" href="#/knowledge?tab=continue">查看全部</a>',
+      '<ul class="hp-rows">' + ctx.continue.map(function (r) {
+        return homeRowHtml(r, { resume: true });
+      }).join('') + '</ul>');
+  }
+  if (order.indexOf('recent') !== -1 && ctx.recent && ctx.recent.length) {
+    blocks.recent = homeBlockShell('recent', '最近浏览', '按最近浏览时间排序，不重复计入',
+      '<a class="hp-more" href="#/knowledge?tab=history">查看全部</a>',
+      '<ul class="hp-rows">' + ctx.recent.map(function (r) {
+        return homeRowHtml(r, { showTime: true });
+      }).join('') + '</ul>');
+  }
+  if (order.indexOf('favorites') !== -1 && ctx.favorites && ctx.favorites.length) {
+    blocks.favorites = homeBlockShell('favorites', '我的收藏',
+      '共 ' + (ctx.counts && ctx.counts.fav || ctx.favorites.length) + ' 条收藏',
+      '<a class="hp-more" href="#/knowledge?tab=favorites">查看全部收藏</a>',
+      '<ul class="hp-rows">' + ctx.favorites.map(function (r) {
+        return homeRowHtml(r, {});
+      }).join('') + '</ul>');
+  }
+  if (order.indexOf('directions') !== -1) {
+    blocks.directions = homeBlockShell('directions', '最近学习方向',
+      '复用知识库统计口径：只按内容自带标签/分类归类',
+      '<a class="hp-more" href="#/knowledge?tab=stats">查看统计</a>',
+      '<div id="hpDirections">' + homeDirectionsHtml(ctx.directions) + '</div>');
+  }
+
+  host.setAttribute('data-home-state', 'ready');
+  host.innerHTML = homeOverviewHtml(ctx.counts || {}) +
+    order.map(function (k) { return blocks[k] || ''; }).join('');
+}
+
+// 首页方向：只在"最近 30 天确实浏览过、且类型元数据需要"时按需补数据
+function homeLoadDirections(rows) {
+  const types = {};
+  const now = Date.now();
+  const since = now - 30 * 86400000;
+  (rows || []).forEach(function (r) {
+    if (r && r.lastSeenAt > 0 && r.lastSeenAt >= since) types[r.type] = true;
+  });
+  const need = [];
+  if (types.course && !dataReady('courses')) need.push('courses');
+  if ((types.paper || types.material) && !dataReady('papers')) need.push('papers');
+  // 代码库元数据 380KB：首页不加载，相关记录按"元数据缺失"处理，不影响其它模块
+  const load = need.length
+    ? Promise.all(need.map(function (k) { return loadData(k).catch(function () { return null; }); }))
+    : Promise.resolve();
+  return load.then(kmLoadStatsModule).then(function (LS) {
+    const summary = LS.summarize({
+      records: rows,
+      categories: [],
+      content: kmStatsContent(),
+      now: Date.now(),
+      recentWindowDays: 30
+    });
+    const items = summary.recentDirections.directions
+      .filter(function (d) { return d.key !== 'unknown' && d.count > 0; })
+      .slice(0, HOME_DIRECTION_LIMIT);
+    return { items: items, windowDays: summary.recentDirections.windowDays };
+  });
+}
+
+// 首页填充：先给占位，再按阶段渲染；任何阶段失败都只降级该区块
+function homeFillPersonal() {
+  const host = document.getElementById('homePersonal');
+  if (!host) return;
+  const gen = ++_homeGen;
+  const prefs = homeReadPrefs();
+
+  if (!kmAvailable()) {
+    // 数据层脚本缺失：静默隐藏，首页保持原样
+    host.setAttribute('data-home-state', 'unavailable');
+    host.innerHTML = '';
+    return;
+  }
+
+  const live = function () {
+    return gen === _homeGen && host.isConnected && isHomeRoute();
+  };
+  const fail = function (message) {
+    if (!live()) return;
+    host.setAttribute('data-home-state', 'error');
+    host.removeAttribute('aria-busy');
+    host.innerHTML = '<div class="hp-error" role="alert">个人模块读取失败，已停止显示（不展示缓存回退结果）。' +
+      '<button type="button" class="hp-btn" data-home-retry="1">重试</button>' +
+      '<p class="hp-note">' + escapeHtml(message || '读取本地数据库失败') + '</p></div>';
+  };
+
+  // 已经渲染过就原地更新，不闪回加载态；首次进入才给占位
+  const firstPaint = host.getAttribute('data-home-state') !== 'ready';
+  host.setAttribute('aria-busy', 'true');
+  if (firstPaint) {
+    host.setAttribute('data-home-state', 'loading');
+    host.innerHTML = '<div class="hp-loading" role="status">正在加载你的学习概览…</div>';
+  }
+
+  Promise.all([
+    Knowledge.snapshot(),
+    Knowledge.list({ flag: 'continue', limit: HOME_CONTINUE_LIMIT }),
+    Knowledge.list({ flag: 'history', sort: 'recent', limit: HOME_RECENT_LIMIT }),
+    Knowledge.list({ flag: 'fav', sort: 'fav', limit: HOME_FAV_LIMIT }),
+    Knowledge.counts()
+  ]).then(function (res) {
+    if (!live()) return;
+    const snap = res[0] || {};
+    if (snap.source === 'cache' && !snap.complete) {
+      // 读失败时一律不展示（缓存回退不等于最新）
+      throw new Error(snap.warning || '读取本地数据库失败');
+    }
+    const rows = snap.rows || [];
+    if (!rows.length) {
+      host.setAttribute('data-home-state', 'empty');
+      host.removeAttribute('aria-busy');
+      host.innerHTML = '';                       // 无个人数据：首页保持原样
+      return;
+    }
+    const data = {
+      continue: res[1] || [],
+      recent: res[2] || [],
+      favorites: res[3] || [],
+      counts: res[4] || {},
+      directions: { pending: true }
+    };
+    host.removeAttribute('aria-busy');
+    host.setAttribute('data-home-skeleton', '0');
+    homeRenderBlocks(prefs, data);
+
+    // 方向统计较重：空闲时再算，算完只替换方向区块
+    const run = function () {
+      const slot = document.getElementById('hpDirections');
+      if (!slot || !live()) return;
+      homeLoadDirections(rows).then(function (state) {
+        if (!live()) return;
+        const host2 = document.getElementById('hpDirections');
+        if (!host2) return;
+        host2.innerHTML = homeDirectionsHtml({ items: state.items, windowDays: state.windowDays });
+      }).catch(function () {
+        if (!live()) return;
+        const host2 = document.getElementById('hpDirections');
+        if (host2) host2.innerHTML = homeDirectionsHtml({ error: true });
+      });
+    };
+    if (window.requestIdleCallback) requestIdleCallback(run, { timeout: 1200 });
+    else setTimeout(run, 30);
+  }).catch(function (err) {
+    fail(err && err.message);
+  });
+}
+
+// 首页容器出现/重建后自动挂载（搜索清空、前进后退、路由切换都走同一条路径）
+function homeMaybeMount() {
+  const host = document.getElementById('homePersonal');
+  if (!host) return;
+  if (host.getAttribute('data-home-bound') === '1') return;
+  host.setAttribute('data-home-bound', '1');
+  homeFillPersonal();
+}
+
+function homeScheduleMount() {
+  if (_homeMountFrame) return;
+  const run = function () { _homeMountFrame = 0; homeMaybeMount(); };
+  // 部分环境（jsdom / 老浏览器）没有 rAF：退化成 setTimeout，语义一致
+  _homeMountFrame = (typeof requestAnimationFrame === 'function')
+    ? requestAnimationFrame(run) : setTimeout(run, 16);
+}
+
+function homeInstallWatcher() {
+  if (_homeWatcher) return;
+  const app = document.getElementById('app');
+  if (!app || typeof MutationObserver !== 'function') return;
+  _homeWatcher = true;
+  new MutationObserver(function () { homeScheduleMount(); }).observe(app, { childList: true });
+  homeMaybeMount();
+}
+
+function homeRefreshPersonal() {
+  if (!isHomeRoute()) return;
+  const host = document.getElementById('homePersonal');
+  if (!host) return;
+  homeFillPersonal();
+}
+
+function homeBoot() {
+  homeInstallWatcher();
+  const btn = document.getElementById('homePrefsBtn');
+  if (btn) btn.setAttribute('aria-expanded', 'false');
+}
+
+if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', homeBoot);
+else setTimeout(homeBoot, 0);
+
+function homeSyncPresetButtons(key) {
+  document.querySelectorAll('[data-home-preset]').forEach(function (btn) {
+    const on = btn.getAttribute('data-home-preset') === key;
+    btn.setAttribute('aria-pressed', on ? 'true' : 'false');
+  });
+}
+
+function homeModuleLabel(key) {
+  const m = HOME_MODULES.filter(function (x) { return x.key === key; })[0];
+  return m ? m.label : key;
+}
+
+// 首页设置：面板内的所有交互都只改偏好并局重绘模块，不重建整页（焦点不会丢）
+document.addEventListener('click', function (e) {
+  const t = e.target;
+  if (!t || !t.closest) return;
+
+  if (t.closest('#homePrefsBtn')) {
+    e.preventDefault();
+    const panel = document.getElementById('homePrefsPanel');
+    if (!panel) return;
+    if (panel.hidden) homePrefsOpen(); else homePrefsClose(false);
+    return;
+  }
+  if (t.closest('[data-home-close]')) {
+    e.preventDefault();
+    homePrefsClose(true);
+    return;
+  }
+  const preset = t.closest('[data-home-preset]');
+  if (preset) {
+    e.preventDefault();
+    const key = preset.getAttribute('data-home-preset');
+    const p = HOME_PRESETS.filter(function (x) { return x.key === key; })[0];
+    if (!p) return;
+    const prefs = homeReadPrefs();
+    prefs.order = p.order.slice();
+    homeWritePrefs(prefs);
+    homeSyncPresetButtons(p.key);
+    homeRefreshPersonal();
+    homePrefsStatus('已切换为「' + p.label + '」');
+    return;
+  }
+  if (t.closest('[data-home-reset]')) {
+    e.preventDefault();
+    homeResetPrefs();
+    const panel = document.getElementById('homePrefsPanel');
+    if (panel && !panel.hidden) {
+      panel.innerHTML = homePrefsPanelHtml(homeReadPrefs());
+      const again = panel.querySelector('[data-home-reset]');
+      if (again) { try { again.focus(); } catch (err) { /* 忽略 */ } }
+      homePrefsStatus('已恢复默认布局');
+    }
+    homeRefreshPersonal();
+    return;
+  }
+  if (t.closest('[data-home-retry]')) {
+    e.preventDefault();
+    homeFillPersonal();
+  }
+});
+
+document.addEventListener('change', function (e) {
+  const box = e.target && e.target.closest ? e.target.closest('[data-home-module]') : null;
+  if (!box) return;
+  const key = box.getAttribute('data-home-module');
+  const prefs = homeReadPrefs();
+  const hidden = prefs.hidden.filter(function (k) { return k !== key; });
+  if (!box.checked) hidden.push(key);
+  prefs.hidden = hidden;
+  homeWritePrefs(prefs);
+  homeRefreshPersonal();
+  homePrefsStatus(box.checked
+    ? '已显示「' + homeModuleLabel(key) + '」'
+    : '已隐藏「' + homeModuleLabel(key) + '」（记录不会删除）');
+  // 面板没有重建，焦点保持在当前复选框上
+  try { box.focus(); } catch (err) { /* 忽略 */ }
+});
+
+document.addEventListener('keydown', function (e) {
+  if (e.key !== 'Escape') return;
+  const panel = document.getElementById('homePrefsPanel');
+  if (!panel || panel.hidden) return;
+  homePrefsClose(true);
+});
+
+// ============================================
 // Page Renderers
 // ============================================
 
@@ -1431,10 +1961,15 @@ function renderHome() {
   const latestMonth = latestDate ? latestDate.slice(0, 7) : '';
   const homeHead = `
     <header class="home-head">
-      <h1 class="page-title">文章</h1>
+      <div class="home-head-row">
+        <h1 class="page-title">文章</h1>
+        <button type="button" class="home-prefs-btn" id="homePrefsBtn" aria-expanded="false"
+                aria-controls="homePrefsPanel">⚙ 首页设置</button>
+      </div>
       <p class="page-desc">机器人、工业自动化与人工智能的技术笔记</p>
       <p class="home-meta">共 ${filtered.length} 篇${latestMonth ? ` · 更新至 ${escapeHtml(latestMonth)}` : ''}</p>
     </header>
+    <div class="home-prefs" id="homePrefsPanel" hidden aria-label="首页个人模块设置"></div>
   `;
 
   const cards = filtered.map(post => `
@@ -1463,7 +1998,16 @@ function renderHome() {
     </article>
   `).join('');
 
-  return `${homeHead}<div class="article-list">${cards}</div>`;
+  // 个人模块容器：同步输出的只是占位，异步填充；任何失败都不影响文章列表。
+  // 位置放在文章列表之后：文章内容优先可见，且不改变既有首页选择器契约
+  // （#app a[href^="#/post/"] 的前 N 个仍然是文章卡片里的链接）。
+  const personal = `
+    <div class="home-personal" id="homePersonal" data-home-personal="1" data-home-state="loading" aria-busy="true">
+      <div class="hp-loading" role="status">正在加载你的学习概览…</div>
+    </div>
+  `;
+
+  return `${homeHead}<div class="article-list">${cards}</div>${personal}`;
 }
 
 // ============================================
@@ -5721,6 +6265,8 @@ function kmScheduleDataRefresh() {
     kmScheduleEnhance();
     kmRefreshAll();
     kmRerenderIfKnowledge();
+    // Batch 9F：首页个人模块跟随同一份数据变更（含其他标签页通知）
+    if (typeof homeRefreshPersonal === 'function') homeRefreshPersonal();
   }, 80);
 }
 
