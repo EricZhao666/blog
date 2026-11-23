@@ -133,6 +133,7 @@ GROUPS = {
     ],
     'knowledge': ['knowledge-store', 'knowledge-center', 'knowledge-import', 'knowledge-management',
                   'learning-stats', 'learning-analytics',
+                  'personalized-home', 'home-experience',
                   'related-content', 'related-reading', 'project-detail'],
     'projects': ['project-detail', 'related-content', 'related-reading'],
     'full': [],
@@ -281,6 +282,10 @@ TESTS = [
      'desc': 'B9E：学习统计口径（去重/已浏览/完成率分母/多方向/分类/规模/输入不可变/不支持项）'},
     {'name': 'learning-analytics', 'file': 'tests/browser/learning-analytics.spec.js', 'kind': 'browser',
      'desc': 'B9E：统计页（空库/指标一致/分布与方向/指标跳转/自动刷新/多标签/导入/三档视口/降级/未来版本/离线）'},
+    {'name': 'personalized-home', 'file': 'tests/test55_personalized_home.js', 'kind': 'jsdom',
+     'desc': 'B9F：首页个人模块（无数据/组合顺序/偏好读写与损坏/隐藏恢复/失效内容/失败降级/搜索交替）'},
+    {'name': 'home-experience', 'file': 'tests/browser/home-experience.spec.js', 'kind': 'browser',
+     'desc': 'B9F：首页验收（模块顺序/继续阅读恢复/搜索交替/键盘焦点/多标签/快速路由/视口主题/降级/离线/三引擎）'},
 ]
 
 COUNT_RE = re.compile(r'共\s*(\d+)\s*项[，,]\s*PASS\s*(\d+)[，,]\s*FAIL\s*(\d+)')
