@@ -129,8 +129,9 @@ GROUPS = {
         'browser', 'sw-consistency', 'sw-upgrade', 'mobile-notes', 'course-seo',
         'papers-deeplink', 'editor-ux', 'editor-history', 'search-ux',
         'search-interaction', 'reading-experience', 'image-lightbox',
-        'ui-refresh', 'performance-accessibility',
+        'ui-refresh', 'performance-accessibility', 'robot-kinematics',
     ],
+    'lab': ['robot-math', 'robot-kinematics'],
     'knowledge': ['knowledge-store', 'knowledge-center', 'knowledge-import', 'knowledge-management',
                   'learning-stats', 'learning-analytics',
                   'personalized-home', 'home-experience',
@@ -286,6 +287,10 @@ TESTS = [
      'desc': 'B9F：首页个人模块（无数据/组合顺序/偏好读写与损坏/隐藏恢复/失效内容/失败降级/搜索交替）'},
     {'name': 'home-experience', 'file': 'tests/browser/home-experience.spec.js', 'kind': 'browser',
      'desc': 'B9F：首页验收（模块顺序/继续阅读恢复/搜索交替/键盘焦点/多标签/快速路由/视口主题/降级/离线/三引擎）'},
+    {'name': 'robot-math', 'file': 'tests/test56_robot_kinematics.js', 'kind': 'jsdom',
+     'desc': 'B9C1A：2R 运动学数学（FK/IK 回代/双分支/内外边界/奇异/非法输入/精度/连续性）'},
+    {'name': 'robot-kinematics', 'file': 'tests/browser/robot-kinematics.spec.js', 'kind': 'browser',
+     'desc': 'B9C1A：机器人演示验收（数值一致/拖动/分支/边界奇异/390px 触摸/深色/键盘无障碍/离线/三引擎）'},
 ]
 
 COUNT_RE = re.compile(r'共\s*(\d+)\s*项[，,]\s*PASS\s*(\d+)[，,]\s*FAIL\s*(\d+)')

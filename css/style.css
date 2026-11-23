@@ -4920,3 +4920,330 @@ mark.search-hit {
   .km-bulk-actions .km-row-btn{flex:1 1 auto}
   .km-modal{padding:14px 14px}
 }
+
+/* ============================================
+   Batch 9C-1A：二连杆机器人运动学演示
+   全部颜色走设计令牌，深浅主题自动适配
+   ============================================ */
+.robot-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 320px;
+  gap: 20px;
+  align-items: start;
+  margin-top: 16px;
+}
+
+.robot-stage-card {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  padding: 16px;
+}
+
+.robot-stage {
+  display: block;
+  width: 100%;
+  height: auto;
+  touch-action: none;          /* 拖动目标点时不触发页面滚动/缩放手势 */
+  cursor: crosshair;
+  border-radius: var(--radius-sm);
+  background: var(--color-bg);
+}
+
+.robot-stage:focus-visible {
+  outline: 2px solid var(--color-focus);
+  outline-offset: 2px;
+}
+
+.robot-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  padding: 16px;
+}
+
+.robot-field-title {
+  display: block;
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--color-text-secondary);
+  margin-bottom: 6px;
+}
+
+.robot-field-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+
+.robot-input-label {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.85rem;
+  color: var(--color-text-secondary);
+}
+
+.robot-input-label input {
+  width: 100%;
+  min-width: 0;
+  min-height: 40px;
+  padding: 8px 10px;
+  border: 1px solid var(--color-border-strong);
+  border-radius: var(--radius-sm);
+  background: var(--color-bg);
+  color: var(--color-text);
+  font-size: 0.9rem;
+  font-variant-numeric: tabular-nums;
+}
+
+.robot-input-label input:focus-visible {
+  outline: 2px solid var(--color-focus);
+  outline-offset: 1px;
+}
+
+.robot-input-label input[aria-invalid="true"] {
+  border-color: var(--color-danger);
+}
+
+.robot-error {
+  min-height: 1.2em;
+  margin: 4px 0 0;
+  font-size: 0.78rem;
+  color: var(--color-danger);
+}
+
+.robot-branch {
+  display: flex;
+  gap: 8px;
+}
+
+.robot-branch button {
+  flex: 1;
+  min-height: 40px;
+  padding: 9px 10px;
+  border: 1px solid var(--color-border-strong);
+  border-radius: var(--radius-sm);
+  background: var(--color-bg);
+  color: var(--color-text-secondary);
+  font-size: 0.88rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background var(--transition), color var(--transition), border-color var(--transition);
+}
+
+.robot-branch button:hover {
+  border-color: var(--color-primary);
+  color: var(--color-text);
+}
+
+.robot-branch button:focus-visible {
+  outline: 2px solid var(--color-focus);
+  outline-offset: 1px;
+}
+
+.robot-branch button[aria-pressed="true"] {
+  background: var(--color-primary-light);
+  border-color: var(--color-primary);
+  color: var(--color-primary-dark);
+  font-weight: 600;
+}
+
+.robot-readout {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  gap: 6px 12px;
+  margin: 0;
+  font-size: 0.85rem;
+}
+
+.robot-readout dt {
+  color: var(--color-text-muted);
+  white-space: nowrap;
+}
+
+.robot-readout dd {
+  margin: 0;
+  color: var(--color-text);
+  font-variant-numeric: tabular-nums;
+  overflow-wrap: anywhere;
+}
+
+.robot-status {
+  display: inline-block;
+  padding: 2px 10px;
+  border-radius: var(--radius-pill);
+  font-size: 0.78rem;
+  font-weight: 600;
+}
+
+.robot-status--ok {
+  background: var(--color-success-soft);
+  color: var(--color-success);
+}
+
+.robot-status--warn {
+  background: var(--color-warning-soft);
+  color: var(--color-warning);
+}
+
+.robot-status--err {
+  background: var(--color-danger-soft);
+  color: var(--color-danger);
+}
+
+.robot-reset {
+  min-height: 40px;
+  padding: 9px 12px;
+  border: 1px solid var(--color-border-strong);
+  border-radius: var(--radius-sm);
+  background: var(--color-bg);
+  color: var(--color-text-secondary);
+  font-size: 0.88rem;
+  cursor: pointer;
+  transition: border-color var(--transition), color var(--transition);
+}
+
+.robot-reset:hover {
+  border-color: var(--color-primary);
+  color: var(--color-text);
+}
+
+.robot-reset:focus-visible {
+  outline: 2px solid var(--color-focus);
+  outline-offset: 1px;
+}
+
+.robot-hint {
+  margin: 8px 0 0;
+  font-size: 0.78rem;
+  line-height: 1.6;
+  color: var(--color-text-muted);
+}
+
+.robot-panel .robot-hint {
+  margin: 0;
+}
+
+.robot-visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}
+
+/* ---- SVG 场景元素 ---- */
+.robot-ws-outer {
+  fill: var(--color-primary-light);
+  fill-opacity: 0.45;
+  stroke: var(--color-border-strong);
+  stroke-width: 1.5;
+  stroke-dasharray: 5 5;
+}
+
+.robot-ws-inner {
+  fill: var(--color-bg);
+  stroke: var(--color-warning);
+  stroke-width: 1.5;
+  stroke-dasharray: 4 4;
+}
+
+.robot-axis {
+  stroke: var(--color-border);
+  stroke-width: 1;
+}
+
+.robot-axis-label {
+  fill: var(--color-text-muted);
+  font-size: 12px;
+}
+
+.robot-link1 {
+  stroke: var(--color-primary);
+  stroke-width: 10;
+  stroke-linecap: round;
+}
+
+.robot-link2 {
+  stroke: var(--color-accent);
+  stroke-width: 8;
+  stroke-linecap: round;
+}
+
+.robot-joint-base {
+  fill: var(--color-text);
+}
+
+.robot-joint-elbow {
+  fill: var(--color-surface);
+  stroke: var(--color-primary);
+  stroke-width: 3;
+}
+
+.robot-joint-end {
+  fill: var(--color-surface);
+  stroke: var(--color-accent);
+  stroke-width: 3;
+}
+
+.robot-target {
+  cursor: grab;
+}
+
+.robot-target-hit {
+  fill: transparent;
+  stroke: none;
+}
+
+.robot-target-ring {
+  fill: none;
+  stroke: var(--color-success);
+  stroke-width: 2;
+  stroke-dasharray: 4 3;
+}
+
+.robot-target-cross {
+  stroke: var(--color-success);
+  stroke-width: 1.5;
+}
+
+.robot-stage[data-reach="0"] .robot-target-ring,
+.robot-stage[data-reach="0"] .robot-target-cross {
+  stroke: var(--color-danger);
+}
+
+.robot-residual {
+  stroke: var(--color-danger);
+  stroke-width: 1.5;
+  stroke-dasharray: 3 3;
+}
+
+.robot-arc {
+  fill: none;
+  stroke: var(--color-text-muted);
+  stroke-width: 1.5;
+}
+
+.robot-arc-label {
+  fill: var(--color-text-secondary);
+  font-size: 12px;
+  font-variant-numeric: tabular-nums;
+}
+
+@media (max-width: 900px) {
+  .robot-layout {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 480px) {
+  .robot-stage-card,
+  .robot-panel {
+    padding: 12px;
+  }
+}

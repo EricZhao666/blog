@@ -268,7 +268,8 @@ const STATIC_META = {
   '/projects': ['项目', '正在进行与已完成的项目'],
   '/about': ['关于', '关于 Eric 与这个博客'],
   '/links': ['友情链接', '志同道合的技术博客与工具'],
-  '/editor': ['编辑器', '在线撰写并发布文章']
+  '/editor': ['编辑器', '在线撰写并发布文章'],
+  '/lab/robot-2r': ['二连杆机器人运动学演示', '平面 2R 机械臂交互演示：正运动学、解析逆运动学、肘上/肘下分支与工作空间边界']
 };
 
 const SITE_ORIGIN = 'https://ericzhao666.github.io/blog/';
@@ -546,6 +547,27 @@ function loadScriptOnce(src) {
     s.onerror = function () { reject(new Error('加载失败: ' + src)); };
     document.head.appendChild(s);
   });
+}
+
+// Batch 9C-1A：机器人演示脚本按需加载（数学模块 → UI 模块，顺序注入）。
+// 与 learning-stats 相同：缓存加载 Promise；失败清除以便重试，不阻塞首屏。
+let _robotLabPromise = null;
+function loadRobotLab() {
+  if (window.RobotKinematics && window.RobotDemo) return Promise.resolve(true);
+  if (_robotLabPromise) return _robotLabPromise;
+  _robotLabPromise = loadScriptOnce('js/robot-kinematics.js')
+    .then(function () { return loadScriptOnce('js/robot-demo.js'); })
+    .then(function () {
+      const ok = !!(window.RobotKinematics && window.RobotDemo);
+      if (!ok) _robotLabPromise = null;
+      return ok;
+    })
+    .catch(function (err) {
+      console.warn('机器人演示脚本加载失败:', err && err.message);
+      _robotLabPromise = null;
+      return false;
+    });
+  return _robotLabPromise;
 }
 
 function loadData(key) {
@@ -7745,6 +7767,9 @@ async function router() {
     if (route === '/knowledge' && hash.startsWith('/knowledge')) {
       link.classList.add('active');
     }
+    if (route === '/lab' && hash.startsWith('/lab')) {
+      link.classList.add('active');
+    }
     if (link.classList.contains('active')) link.setAttribute('aria-current', 'page');
   });
 
@@ -7912,6 +7937,17 @@ async function router() {
       app.innerHTML = renderCodeDetail(id);
     } else if (hash === '/links') {
       app.innerHTML = renderLinks();
+    } else if (hash === '/lab/robot-2r') {
+      // Batch 9C-1A：二连杆运动学演示。脚本按需注入，路由 token 防止快速切换串页。
+      app.innerHTML = renderLoading('机器人运动学演示');
+      const robotReady = await loadRobotLab();
+      if (token !== _routeToken) return;
+      if (!robotReady) {
+        app.innerHTML = renderLoadError('机器人运动学演示');
+        return;
+      }
+      app.innerHTML = window.RobotDemo.renderPage();
+      window.RobotDemo.mount(document.getElementById('robotDemoRoot'));
     } else if (hash === '/editor') {
       app.innerHTML = renderEditor(null);
       setupEditorListeners();

@@ -1,0 +1,41 @@
+id,area,suite,target,coverage,type,engines,items,result,evidence
+K-01,FK 已知值,robot-math,零位/90°/60°−60° 组合,FK 解析值；大角度归一化 (−π π]；normalizeAngle 边界,jsdom,node,6,PASS,M1.1-M1.6
+K-02,FK/IK 回代与双分支,robot-math,400 随机可达目标×双分支,回代残差<1e-9×scale（实测 max 9.954e-14）；分支符号；肘部侧向 cross；非奇异两分支不同,jsdom,node,6,PASS,M2.1-M2.6
+K-03,可达与不可达,robot-math,外/内/斜向/非有限目标,不可达结果不含任何解字段（不截断伪造）；工作空间环形与等长圆盘退化,jsdom,node,8,PASS,M3.1-M3.8
+K-04,内外边界,robot-math,边界容差两侧,恰好边界判奇异；±1e-6×scale 两侧判定；容差带内 clamped=true 且残差如实,jsdom,node,9,PASS,M4.1-M4.9
+K-05,奇异与近奇异,robot-math,伸直/折叠/等长原点/近奇异,两分支重合；acos 输入夹取保护；1e-12 级近奇异数值稳定,jsdom,node,7,PASS,M5.1-M5.7
+K-06,非法输入,robot-math,零/负/NaN/Infinity/非数字,validate/ik/fk/workspace 结构化拒绝且不抛异常；非法分支与关节角,jsdom,node,5,PASS,M6.1-M6.5
+K-07,精度与尺度不变性,robot-math,300 随机目标 + k=1e±6,最大残差 9.099e-14；角度随尺度不变；1e-6/1e6 量级杆长回代通过,jsdom,node,3,PASS,M7.1-M7.3
+K-08,连续性,robot-math,圆周 720 步/径向 400 步/±π 割线,相邻步位移<0.02×scale（实测 1.0472）；肘上 θ2 单调不翻分支；跨割线姿态连续,jsdom,node,3,PASS,M8.1-M8.3
+K-09,API 契约,robot-math,导出/ikBoth/度弧度,VERSION=1 与 API 完整；不可达时双分支均无解,jsdom,node,3,PASS,M9.1-M9.3
+R-01,入口与渲染,robot-kinematics,导航「实验」入口/深链,入口激活与页面标题；SVG 与 7 项读数；getState=页内独立 FK 回代；DOM 读数同步,browser,chromium,4,PASS,R1.1-R1.4
+R-02,指针拖动,robot-kinematics,可达/不可达/恢复,目标跟随残差≈0；不可达目标不截断、残差为真实距离、残差线可见；拖回恢复,browser,chromium,4,PASS,R2.1-R2.4
+R-03,分支切换,robot-kinematics,肘上/肘下 + 键盘 Enter,θ2 符号；aria-pressed 同步；肘部侧向 cross 数值判据,browser,chromium,3,PASS,R3.1-R3.3
+R-04,杆长输入,robot-kinematics,150/100、0、非数字、等长,工作空间圆半径=rMax×scale 数值一致；非法值拒绝并保留有效值；rMin=0 内圆消失,browser,chromium,4,PASS,R4.1-R4.4
+R-05,目标输入/边界/奇异,robot-kinematics,(0,0)/(210,0)/(30,0)/250/10/非法,奇异徽标（伸直/折叠）；不可达内外边界文案；目标保持不截断；非法输入拒绝,browser,chromium,7,PASS,R5.1-R5.7
+R-06,连续拖动,robot-kinematics,25 步圆弧路径,全程可达且角度有限；相邻末端步长有界（实测 max 6.98）；结束残差≈0,browser,chromium,2,PASS,R6.1-R6.2
+R-07,移动布局与触摸,robot-kinematics,390×844 hasTouch,无横向溢出；面板移到下方；输入/按钮触控≥40px；触摸点按设定目标回代通过,browser,chromium,4,PASS,R7.1-R7.4
+R-08,深色主题,robot-kinematics,themeToggle 切换,SVG stroke 随设计令牌切换（37,99,235→91,140,255）；深色下拖动数值不变,browser,chromium,2,PASS,R8.1-R8.2
+R-09,键盘与无障碍,robot-kinematics,方向键/Shift/Home,步长 1/10 与默认恢复；role=application/tabindex/aria-label/live region/输入标签/分支组标签,browser,chromium,5,PASS,R9.1-R9.5
+R-10,离线,robot-kinematics,SW 接管 + 离线重载,两脚本进入 SW 缓存；离线重载后可渲染、可拖动、IK 残差 1.4e-14,browser,chromium,2,PASS,R10.1-R10.2
+R-11,脚本失败降级,robot-kinematics,robot-demo.js 404,加载失败提示与重试入口、不白屏不抛错；首页文章列表不受影响,browser,chromium,2,PASS,R11.1-R11.2
+R-12,快速路由切换,robot-kinematics,5 次连续切换,单实例无串页；数值正确；无运行时异常,browser,chromium,1,PASS,R12.1
+R-13,firefox 代表场景,robot-kinematics,390px 渲染/拖动/分支,无溢出；FK 回代 Δ=0；无运行时异常,browser,firefox,2,PASS,R13.1-R13.2
+R-14,webkit 代表场景,robot-kinematics,390px 渲染/拖动/分支,无溢出；FK 回代 Δ=0；无运行时异常,browser,webkit,2,PASS,R13.1-R13.2
+S-01,发布契约,sw-snapshot-unit,版本号与首屏清单,CACHE_VERSION 2026-11-23-3 满足格式且递增；首屏清单保持 7 项,node-vm,node,2,PASS,U0-U0b
+S-02,快照完整性缓存,sw-snapshot-unit,并发/共享/缓存,并发共享同一 Promise；只创建一轮检查；成功结果缓存,node-vm,node,4,PASS,U1a-U1d
+S-03,缺失重查与自愈,sw-snapshot-unit,缺失→恢复,失败结论不缓存；再次调用重查；恢复后自愈,node-vm,node,5,PASS,U2a-U2e
+S-04,异常恢复,sw-snapshot-unit,reject/同步抛错,返回 false 不逃逸；解除后重新判定 true,node-vm,node,4,PASS,U3a-U3d
+A-01,受影响回归,audit,全站巡检,路由渲染/死链/静态页一致性/404 资源（既有路由清单；新路由由浏览器专项覆盖）,jsdom,node,,PASS,65.7s；tests/reports/b9c1a-affected.md
+A-02,受影响回归,test7,搜索/主题/静态页/SW/RSS,jsdom 层 SW 与主题契约未回归,jsdom,node,,PASS,21.8s；tests/reports/b9c1a-affected.md
+A-03,受影响回归,test9,路由/搜索/懒加载,新增路由分支与按需加载不影响既有契约,jsdom,node,,PASS,27.3s；tests/reports/b9c1a-affected.md
+A-04,受影响回归,test18,数据拆分与 SW 资源存在性,REQUIRED/FIRST_SCREEN 资源全部存在,jsdom,node,18,PASS,0.6s；18/18
+A-05,受影响回归,browser,SW 安装/离线/更新/容量,真实 Chromium SW 生命周期未回归,browser,chromium,37,PASS,54.5s；37/37
+A-06,受影响回归,sw-consistency,版本一致性/慢网/离线/HTTP 错误,新 CACHE_VERSION 下混版防护未回归,browser,chromium,37,PASS,100.9s；37/37
+A-07,受影响回归,sw-upgrade,旧版→新版升级/回退/多标签,2026-11-23-3 升级路径正常,browser,chromium,25,PASS,40.8s；25/25
+A-08,受影响回归,ui-refresh,全站 UI/导航/五档视口,新增导航项后 1440/1024 单行不换行、双主题正常,browser,chromium,59,PASS,54.1s；59/59
+A-09,受影响回归,performance-accessibility,无障碍/触控/六档视口,导航与全站无障碍契约未回归,browser,chromium,59,PASS,64.3s；59/59
+A-10,受影响回归,knowledge-center,知识中心交互,app.js 改动不影响知识库选择器契约,browser,chromium,,PASS,58.5s；tests/reports/b9c1a-affected.md
+A-11,受影响回归,personalized-home,首页个人模块,首页渲染路径未改,jsdom,node,,PASS,21.1s；tests/reports/b9c1a-affected.md
+A-12,受影响回归,home-experience,首页浏览器验收,首页模块/搜索交替/离线未回归,browser,chromium,,PASS,41.7s；tests/reports/b9c1a-affected.md
+N-01,完整回归,PR CI,默认 77 套串行,本地未跑全量；按任务书交 PR CI 执行,ci,chromium,77,PENDING,PR 创建后由 GitHub Actions tests 工作流验证
