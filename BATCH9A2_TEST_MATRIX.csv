@@ -96,3 +96,8 @@ A-94,闸门,knowledge-import,迁移失败只读,degraded=false、exportData().so
 A-95,闸门,knowledge-import,闸门复位,解除后 setFlag 恢复正常,unit,node,1,PASS,T4.5
 A-96,闸门,knowledge-management,真实 IDB 未来版本,11 类写入被拒；getAll 序列化与 meta 版本字节级不变,browser,chromium,2,PASS,K28.1 / K28.2
 A-97,闸门,knowledge-management,迁移失败态（注入）,写全拒、原数据不变、解除后可写,browser,chromium,2,PASS,K28.3 / K28.4
+A-98,闸门,knowledge-import,自动裁剪（未来版本）,pruneHistory 返回 0；520 条记录与 meta 完全不变,unit,node,1,PASS,T5.1
+A-99,闸门,knowledge-import,自动裁剪（迁移失败）,同样 0 删除、记录不变,unit,node,1,PASS,T5.2
+A-100,裁剪,knowledge-import,正常 v2 不受影响,520 → 500（removed=20），受保护记录保留,unit,node,1,PASS,T5.3
+A-101,闸门,knowledge-import,已排队任务,取到候选后关闭闸门：removed=0 且 520 条不删,unit,node,1,PASS,T5.4
+A-102,迁移,knowledge-import,修复不被阻断,失败态下重新 init 仍修悬空 favCat 并升到 v2,unit,node,1,PASS,T5.5

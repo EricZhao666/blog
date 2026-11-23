@@ -655,6 +655,9 @@
   //   - 没有任何长期状态时才整条删除。
   // 契约：历史硬上限 500；受保护记录会突破上限（软上限例外，优先保证数据不丢失）。
   function pruneHistory(target) {
+    if (!backend) return Promise.resolve(0);
+    // 闸门：迁移失败/未来版本时，不启动新的自动裁剪（只读统计也不做）
+    if (writeBlockedReason()) return Promise.resolve(0);
     return backend.getAll().then(function (all) {
       var list = (all || []).filter(function (r) { return r && r.lastSeenAt > 0 && !isProtected(r); });
       list.sort(function (a, b) { return (a.lastSeenAt || 0) - (b.lastSeenAt || 0); });
@@ -664,18 +667,25 @@
       var seq = Promise.resolve();
       var changed = [];
       list.slice(0, overflow).forEach(function (cand) {
+        var applied = false;          // 只有真的写进去才算一次裁剪（跳过/被拦不打点）
         seq = seq.then(function () {
+          // 已排队但尚未执行的裁剪：真正写入前再查一次闸门
+          if (writeBlockedReason()) return null;
           return backend.mutate(cand.key, function (cur) {
             if (!cur) return null;
+            // 事务内最后一道检查：即便上面通过，此刻被闸门拦下也不写
+            if (writeBlockedReason()) return undefined;
             if (cur.lastSeenAt !== cand.lastSeenAt) return undefined;  // 过期候选：不误删新历史
             if (isProtected(cur)) return undefined;                    // 事务内重新检查保护状态
             var next = clone(cur);
             next.firstSeenAt = 0;
             next.lastSeenAt = 0;
             next.updatedAt = nowMs();
+            applied = true;
             if (!hasPersonalState(next)) return null;                  // 纯历史记录才整条删除
             return next;
           }).then(function (rec) {
+            if (!applied) return;
             changed.push(cand.key);
             if (rec) cache.set(cand.key, rec);
             else cache.delete(cand.key);
@@ -1061,6 +1071,7 @@
 
   function enforceHistoryLimit() {
     if (!backend) return;
+    if (writeBlockedReason()) return;          // 闸门：不安排自动裁剪
     backend.getAll().then(function (all) {
       var n = (all || []).filter(function (r) { return r && r.lastSeenAt > 0; }).length;
       if (n > HISTORY_LIMIT) return pruneHistory(0).then(function () { return refreshCache(); });
@@ -1803,6 +1814,9 @@
     _snapshotToken: tokenOf,
     // 当前写入闸门原因（空串 = 可写）。UI 用它给用户明确提示。
     writeBlockedReason: writeBlockedReason,
+    // 内部：自动裁剪入口（测试与排障用；业务代码通过 recordView 间接触发）
+    _pruneHistory: pruneHistory,
+    _enforceHistoryLimit: enforceHistoryLimit,
     // 测试用：模拟"迁移失败/未来版本"状态（真实路径见 migrateMeta）
     _forceMigrationBlock: function (o) {
       var opt = o || {};

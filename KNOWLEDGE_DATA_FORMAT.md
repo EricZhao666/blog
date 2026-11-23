@@ -83,6 +83,10 @@ blog-knowledge (v1)
 闸门原因可通过 `Knowledge.writeBlockedReason()` 读取（空串表示可写），UI 用它给出明确提示。
 真实 IndexedDB 回归见 `knowledge-management.spec.js` K28：11 类写入全部被拒，
 `records` 序列化结果与 `meta.schemaVersion` 字节级不变。
+
+**自动裁剪同样受闸门保护**：`pruneHistory()` / `enforceHistoryLimit()` 在闸门命中时不启动、
+执行前再查一次、事务内 updater 再查一次；只有真正写进去才计入裁剪数。
+正常 v2 库不受影响（仍按 500 上限裁剪）；`migrateMeta()` 的修复写入走 backend 直连，不被闸门阻断。
 **真实浏览器验证**：先建 v1 库（仅 `schemaVersion=1`，两条记录），再加载新代码，见
 `tests/browser/knowledge-management.spec.js` 的 K23（K23.1/K23.2/K23.3）。
 
