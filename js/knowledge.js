@@ -599,6 +599,15 @@
   function mutateWithOutcome(key, updater, noteKey) {
     // init 尚未完成时排队，避免首访详情页的浏览/收藏被静默丢弃
     if (!backend) return ensureReady().then(function () { return mutateWithOutcome(key, updater, noteKey); });
+    // 统一写入闸门：所有记录写入（浏览/收藏/待读/进度/删除）都从这里经过。
+    // 迁移失败或未来版本时直接拒绝，不触发内存降级、不清空数据库。
+    var blocked = writeBlockedReason();
+    if (blocked) {
+      return Promise.resolve({
+        ok: false, blocked: true, reason: blocked,
+        changed: false, deleted: false, record: null
+      });
+    }
     var flags = { deleted: false, changed: false };
     var wrapped = function (cur) {
       var next = updater(cur);
@@ -987,9 +996,13 @@
     });
   }
 
-  // 未来版本或迁移失败期间，拒绝一切会改动分类/记录的写入（尤其是导入与替换）
+  // 未来版本或迁移失败期间，拒绝一切持久化写入（浏览历史/收藏/待读/进度/删除/分类/导入）。
+  // 只读查询与导出不受影响；不清库、不降级到内存，避免"看起来写成功"或覆盖已有数据。
   function writeBlockedReason() {
     if (migrationState.future) return migrationState.reason;
+    if (migrationState.failed) {
+      return migrationState.reason || '本地数据迁移未完成，已暂停写入以保护现有数据';
+    }
     return '';
   }
 
@@ -1788,6 +1801,17 @@
     applyImport: applyImport,
     // 内部：快照指纹。对外只用于测试与排障（不要用它做业务判断）
     _snapshotToken: tokenOf,
+    // 当前写入闸门原因（空串 = 可写）。UI 用它给用户明确提示。
+    writeBlockedReason: writeBlockedReason,
+    // 测试用：模拟"迁移失败/未来版本"状态（真实路径见 migrateMeta）
+    _forceMigrationBlock: function (o) {
+      var opt = o || {};
+      migrationState.future = !!opt.future;
+      migrationState.failed = !!opt.failed;
+      migrationState.ok = !(migrationState.future || migrationState.failed);
+      migrationState.reason = opt.reason || '测试注入的写入闸门';
+      return { future: migrationState.future, failed: migrationState.failed };
+    },
     CAT_DEFAULT: CAT_DEFAULT,
     CAT_NAME_MAX: CAT_NAME_MAX,
     SCHEMA_VERSION: SCHEMA_VERSION,

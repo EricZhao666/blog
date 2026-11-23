@@ -89,3 +89,10 @@ A-87,修订,knowledge-import,未来版本保护,版本不变、分类原样、�
 A-88,修订,knowledge-management,双标签替换窗口,B 标签写入后 A 的旧 token 替换被拒,browser,chromium,1,PASS,K27.1
 A-89,修订,knowledge-management,拒绝后数据完整,原两条记录与 B 的写入都保留,browser,chromium,1,PASS,K27.2
 A-90,修订,knowledge-management,重新预览后替换,重新取 token 后替换成功,browser,chromium,1,PASS,K27.3
+A-91,闸门,knowledge-import,未来版本全拒,11 类写入全部被拒且记录 JSON 完全一致,unit,node,1,PASS,T4.1
+A-92,闸门,knowledge-import,未来版本只读,list/counts/exportData 正常、版本仍为 9、无降级,unit,node,1,PASS,T4.2
+A-93,闸门,knowledge-import,迁移失败全拒,注入 failed 后所有写入被拒且数据不变,unit,node,1,PASS,T4.3
+A-94,闸门,knowledge-import,迁移失败只读,degraded=false、exportData().source=database,unit,node,1,PASS,T4.4
+A-95,闸门,knowledge-import,闸门复位,解除后 setFlag 恢复正常,unit,node,1,PASS,T4.5
+A-96,闸门,knowledge-management,真实 IDB 未来版本,11 类写入被拒；getAll 序列化与 meta 版本字节级不变,browser,chromium,2,PASS,K28.1 / K28.2
+A-97,闸门,knowledge-management,迁移失败态（注入）,写全拒、原数据不变、解除后可写,browser,chromium,2,PASS,K28.3 / K28.4
