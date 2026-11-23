@@ -1,0 +1,51 @@
+id,area,suite,target,coverage,type,engines,items,result,evidence
+E-01,统计口径,learning-stats,空记录,全部计数为 0；完成率为 0 而不是 NaN；分类仍列出但计数为 0,unit,node,6,PASS,K1.1-K1.6
+E-02,统计口径,learning-stats,去重,同一 type:refId 只算一条；重复数被记录；保留 updatedAt 较新的记录；不同 type 同 ID 不合并,unit,node,3,PASS,K2.1-K2.3
+E-03,统计口径,learning-stats,已浏览判定,lastSeenAt>0 才算已浏览；只有收藏没有浏览计入 silent,unit,node,3,PASS,K3.1-K3.3
+E-04,统计口径,learning-stats,收藏与待读重叠,分别计数并给出 favLater；不把两个数字相加冒充唯一内容数,unit,node,3,PASS,K4.1-K4.3
+E-05,统计口径,learning-stats,人工已读与未读,readState=done 计完成且不伪造 progress；标记未读不计完成/阅读中；doneManual 与 doneAuto 分开,unit,node,3,PASS,K5.1-K5.3
+E-06,统计口径,learning-stats,进度与完成率边界,progress=0.99 但状态阅读中不算完成；未浏览有进度不进分母；rate 三位小数；progress 限幅 0-1,unit,node,4,PASS,K6.1-K6.4
+E-07,统计口径,learning-stats,项目无阅读进度,项目已完成不进文章完成率；excludedTypes 显式列出；markedDoneOther 单独计数,unit,node,3,PASS,K7.1-K7.3
+E-08,统计口径,learning-stats,已删除内容,类型已加载但 ID 不存在 → missing；用记录内标题兜底；方向计未分类,unit,node,3,PASS,K8.1-K8.3
+E-09,统计口径,learning-stats,未知元数据,类型未加载 → unknownMeta 而不是 missing；方向计未分类；类型分布仍可用,unit,node,3,PASS,K9.1-K9.3
+E-10,统计口径,learning-stats,多方向统计,一条内容命中两个方向；assignments>unique；multiDirection 单独计数,unit,node,3,PASS,K10.1-K10.3
+E-11,统计口径,learning-stats,分类新建/删除/重命名,按 id 归集；重命名跟随新名称；删除后归入未知分类；新建分类立即出现；排序稳定,unit,node,5,PASS,K11.1-K11.5
+E-12,统计口径,learning-stats,最近浏览与窗口,按时间倒序并遵守上限；最近方向只统计 30 天窗口；窗口可配置；窗口外不产生方向,unit,node,5,PASS,K12.1-K12.5
+E-13,统计口径,learning-stats,规模,500 与 2000 条记录全部计入且自洽；2000 条聚合 < 500ms,unit,node,4,PASS,K13.1-K13.4
+E-14,统计口径,learning-stats,输入不可变,聚合不修改输入记录/分类/元数据；返回新对象,unit,node,2,PASS,K14.1-K14.2
+E-15,统计口径,learning-stats,方向规则,ASCII 词边界（AI 不命中 Training）；C++/Python 命中 software；学习资料不命中 ai；通用标签不归类；空值安全,unit,node,8,PASS,K15.1-K15.8
+E-16,统计口径,learning-stats,不支持项,显式声明不提供访问次数/时长/连续天数/频率；每项带原因；输出无对应字段,unit,node,3,PASS,K16.1-K16.3
+E-17,统计口径,learning-stats,健壮性,无参数调用不抛错；非法记录被忽略；build 等价 summarize；规则可读,unit,node,4,PASS,K17.1-K17.4
+E-18,统计页,learning-analytics,深链接与刷新,#/knowledge?tab=stats 直接渲染；列表 tab 仍为 4 个；统计入口独立 class；刷新可恢复, browser,chromium,5,PASS,L1.1-L1.5
+E-19,统计页,learning-analytics,空库状态,空状态文案；五项指标为 0；各分布给出空状态；无异常,browser,chromium,4,PASS,L2.1-L2.4
+E-20,统计页,learning-analytics,指标与数据层一致,已浏览/收藏/待读/已完成与 Knowledge.list 去重结果一致；完成率 1/2=50%；重叠说明,browser,chromium,5,PASS,L3.1-L3.5
+E-21,统计页,learning-analytics,分布与方向,类型分布按真实类型；方向只按元数据；多方向；最近方向窗口；收藏分类分布,browser,chromium,5,PASS,L4.1-L4.6
+E-22,统计页,learning-analytics,最近浏览,展示真实标题；可点击；链接指向真实目标,browser,chromium,2,PASS,L4.7-L4.8
+E-23,统计页,learning-analytics,指标跳转,收藏/待读/阅读中/已浏览链接到现有列表；已完成链接到 state=done；跳转后列表可见,browser,chromium,3,PASS,L5.1-L5.3
+E-24,统计页,learning-analytics,已完成筛选,只显示 done 条目；统计行标注"只看已完成"；跨类型可用,browser,chromium,2,PASS,L5.4-L5.5
+E-25,统计页,learning-analytics,分类联动,新建分类后分布出现；重命名后跟随；删除后回到默认分类,browser,chromium,3,PASS,L6.1-L6.3
+E-26,统计页,learning-analytics,变更自动刷新,待读变更/批量标记已读/收藏变更后统计页原地刷新；无需重新进入路由,browser,chromium,3,PASS,L7.1-L7.3
+E-27,统计页,learning-analytics,多标签同步,另一标签页收藏后统计值自动同步,browser,chromium,1,PASS,L8.1
+E-28,统计页,learning-analytics,导入后更新,导入 1 条记录后已浏览数立即 +1,browser,chromium,1,PASS,L9.1
+E-29,统计页,learning-analytics,布局与主题,390px 深色无溢出且指标卡可用；768px 两列；1440px 多列；深色生效,browser,chromium,4,PASS,L10.1-L10.4
+E-30,统计页,learning-analytics,键盘操作,统计入口可键盘激活；指标卡可键盘激活并跳转,browser,chromium,2,PASS,L11.1-L11.2
+E-31,统计页,learning-analytics,IndexedDB 降级,不可用时仍只读渲染 6 个指标；显示持久化 banner 与"内存降级"口径,browser,chromium,2,PASS,L12.1-L12.2
+E-32,统计页,learning-analytics,未来版本只读,schemaVersion=3 识别为 future；统计仍可读；说明写入已停用；版本号按真实值展示,browser,chromium,3,PASS,L13.1-L13.3
+E-33,统计页,learning-analytics,读取失败,注入读取失败后显示错误且不保留旧指标；提供重试入口,browser,chromium,2,PASS,L14.1-L14.2
+E-34,统计页,learning-analytics,离线,SW 接管后离线仍可打开统计页；数值来自本地记录,browser,chromium,2,PASS,L15.1-L15.2
+E-35,统计页,learning-analytics,三引擎,firefox / webkit 渲染 6 指标 + 分布；无横向溢出；无运行时异常,browser,firefox+webkit,4,PASS,L16.1-L16.2
+E-36,统计页,learning-analytics,主流程异常,全流程无未捕获运行时异常,browser,chromium,1,PASS,L17
+E-37,发布契约,sw-snapshot-unit,CACHE_VERSION 与首屏清单,YYYY-MM-DD-N 递增；FIRST_SCREEN_ASSETS 仍为 7 项（未把统计脚本升级为首屏必需）,unit,node,15,PASS,U0-U3d
+E-38,回归,knowledge-store,数据层契约,稳定键/字段级并发/历史裁剪/降级/导出（未改动断言）,unit,node,1,PASS,整套 PASS
+E-39,回归,knowledge-center,知识中心,收藏/待读/历史/继续阅读/导出/降级/移动端/键盘, browser,chromium,1,PASS,整套 PASS
+E-40,回归,knowledge-import,分类与导入,分类/批量事务/显式已读未读/导入与替换（55 项）,unit,node,1,PASS,整套 PASS
+E-41,回归,knowledge-management,分类与迁移,分类筛选/批量范围/导入预览/v1→v2 迁移/双标签/离线,browser,chromium,1,PASS,整套 PASS
+E-42,回归,audit,全站巡检,路由渲染/死链/静态页一致性/404 资源（含知识库标题变更为"知识库"）,jsdom,node,1,PASS,整套 PASS
+E-43,回归,test7,搜索/主题/静态页/SW/RSS,SW 安装期不预取大体积数据脚本等既有断言,jsdom,node,1,PASS,整套 PASS
+E-44,回归,browser,SW 安装/离线/更新/容量,CACHE_VERSION 2026-11-23-1 下的 SW 行为,browser,chromium,1,PASS,整套 PASS
+E-45,回归,sw-consistency,版本一致性/慢网/离线/HTTP 错误/SW 重启,37 项全部通过,browser,chromium,37,PASS,整套 PASS
+E-46,回归,sw-upgrade,旧版安装→新版部署/回退/多标签/混部,25 项全部通过,browser,chromium,25,PASS,整套 PASS
+E-47,回归,reading-experience,目录/进度/复制/深链与 SW,47 项全部通过,browser,chromium,47,PASS,整套 PASS
+E-48,回归,ui-refresh,全站 UI 2.0（五档视口/双主题/键盘）,59 项全部通过,browser,chromium,59,PASS,整套 PASS
+E-49,回归,related-content,相关推荐算法,标签区分度/稳定排序/去重等既有断言,jsdom,node,1,PASS,整套 PASS
+E-50,回归,project-detail,项目作品集与知识库联动,6 个详情/知识库联动/推荐联动/离线,browser,chromium,1,PASS,整套 PASS

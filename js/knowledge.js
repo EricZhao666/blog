@@ -1262,6 +1262,19 @@
     return readSnapshot().then(function (s) { return s.rows; });
   }
 
+  // 只读快照：把"本次读取是否完整"一起返回，供统计等只读视图判断能否展示。
+  // 不写库、不改缓存、不影响任何持久化契约。
+  function snapshot() {
+    return readSnapshot().then(function (s) {
+      return {
+        rows: s.rows || [],
+        source: s.source,
+        complete: !!s.complete,
+        warning: s.warning || ''
+      };
+    });
+  }
+
   // 删除记录：成功时返回 { ok, deleted }；无变化返回 deleted=false；失败返回 ok=false
   function remove(key) {
     if (!key) return Promise.resolve({ ok: false, deleted: false, changed: false });
@@ -1278,6 +1291,10 @@
       if (o.flag === 'fav') rows = rows.filter(function (r) { return !!r.fav; });
       if (o.flag === 'later') rows = rows.filter(function (r) { return !!r.later; });
       if (o.flag === 'history') rows = rows.filter(function (r) { return r.lastSeenAt > 0; });
+      // Batch 9E：只读筛选（统计页的"已完成"入口需要跨类型查 done，不要求有浏览历史）
+      if (o.readState) {
+        rows = rows.filter(function (r) { return (r.readState || 'none') === o.readState; });
+      }
       // 分类筛选只作用于收藏；未收藏的记录不参与分类维度
       if (o.cat && o.cat !== 'all') {
         rows = rows.filter(function (r) { return !!r.fav && (r.favCat || CAT_DEFAULT) === o.cat; });
@@ -1799,6 +1816,8 @@
     remove: remove,
     list: list,
     counts: counts,
+    // Batch 9E：只读快照（含本次读取完整性），统计层不直接读后端
+    snapshot: snapshot,
     exportData: exportData,
     // Batch 9A-2：分类 / 批量 / 导入
     categories: categories,
