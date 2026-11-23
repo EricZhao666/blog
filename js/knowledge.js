@@ -37,6 +37,7 @@
   var IMPORT_APP = 'ericzhao-blog';
   var IMPORT_KIND = 'knowledge';
   var IMPORT_VERSIONS = [1, 2];     // 可接受的历史格式
+  var STATE_SOURCES = ['manual', 'auto'];   // 人工/自动状态来源（可选字段）
   var TYPES = ['post', 'course', 'paper', 'material', 'lib', 'project', 'note'];
 
   var backend = null;
@@ -186,8 +187,16 @@
           }
         });
       },
-      replaceAll: function (records, cats) {
+      replaceAll: function (records, cats, expect) {
         return enqueue(function () {
+          // 权威冲突检查与清空/写入在同一个"事务"内：先按当前内容算指纹
+          if (expect) {
+            var curRows = Array.from(map.values());
+            var curCats = meta.has(CAT_KEY) ? meta.get(CAT_KEY) : null;
+            if (tokenOf({ rows: curRows, cats: curCats }) !== expect) {
+              return { ok: false, conflict: true };
+            }
+          }
           var snapshot = new Map();
           map.forEach(function (v, k) { snapshot.set(k, clone(v)); });
           var metaSnapshot = meta.has(CAT_KEY) ? meta.get(CAT_KEY) : null;
@@ -401,24 +410,61 @@
       },
       // 替换：清空 records 并写回新集合 + 分类 meta，全部在同一个 readwrite 事务内。
       // 不使用 deleteDatabase，也不 clear 整个 meta（避免丢掉 schemaVersion 之外的键）。
-      replaceAll: function (records, cats) {
+      replaceAll: function (records, cats, expect) {
         return new Promise(function (resolve, reject) {
           var tx;
           try { tx = db.transaction([STORE, META], 'readwrite'); }
           catch (e) { reject(e); return; }
           var rs = tx.objectStore(STORE);
           var ms = tx.objectStore(META);
-          var cleared = rs.clear();
-          cleared.onerror = function () { try { tx.abort(); } catch (e) { } };
-          cleared.onsuccess = function () {
-            try {
-              (records || []).forEach(function (r) { if (r && r.key) rs.put(r); });
-              ms.put({ k: CAT_KEY, v: cats });
-            } catch (e) { try { tx.abort(); } catch (x) { } }
+          var settled = false;
+          var conflict = false;
+
+          function writeAll() {
+            var cleared = rs.clear();
+            cleared.onerror = function () { try { tx.abort(); } catch (e) { } };
+            cleared.onsuccess = function () {
+              try {
+                (records || []).forEach(function (r) { if (r && r.key) rs.put(r); });
+                ms.put({ k: CAT_KEY, v: cats });
+              } catch (e) { try { tx.abort(); } catch (x) { } }
+            };
+          }
+
+          if (!expect) {
+            writeAll();
+          } else {
+            // 权威检查：在**同一个 readwrite 事务内**先读当前快照并与 expect 比对，
+            // 只有指纹一致才 clear + put；不一致直接 abort，不写任何数据。
+            var rows0 = null;
+            var cats0 = null;
+            var pending = 2;
+            function ready() {
+              pending--;
+              if (pending > 0 || settled) return;
+              if (tokenOf({ rows: rows0 || [], cats: cats0 }) !== expect) {
+                conflict = true;
+                try { tx.abort(); } catch (e) { }
+                return;
+              }
+              writeAll();
+            }
+            var g1 = ms.get(CAT_KEY);
+            g1.onsuccess = function () { cats0 = g1.result ? g1.result.v : null; ready(); };
+            g1.onerror = function () { try { tx.abort(); } catch (e) { } };
+            var g2 = rs.getAll();
+            g2.onsuccess = function () { rows0 = g2.result || []; ready(); };
+            g2.onerror = function () { try { tx.abort(); } catch (e) { } };
+          }
+
+          tx.oncomplete = function () { if (!settled) { settled = true; resolve({ ok: true }); } };
+          tx.onerror = function () { if (!settled) { settled = true; reject(tx.error || new Error('replace failed')); } };
+          tx.onabort = function () {
+            if (settled) return;
+            settled = true;
+            if (conflict) resolve({ ok: false, conflict: true });
+            else reject(tx.error || new Error('replace aborted'));
           };
-          tx.oncomplete = function () { resolve(true); };
-          tx.onerror = function () { reject(tx.error || new Error('replace failed')); };
-          tx.onabort = function () { reject(tx.error || new Error('replace aborted')); };
         });
       },
       // 一次性读出 records + 分类定义（同一个只读事务），供导出使用
@@ -711,6 +757,8 @@
   }
 
   function addCategory(name) {
+    var blocked = writeBlockedReason();
+    if (blocked) return Promise.resolve({ ok: false, reason: blocked });
     return loadCategories().then(function (list) {
       var v = validateCatName(name, list);
       if (!v.ok) return { ok: false, reason: v.reason };
@@ -727,6 +775,8 @@
   }
 
   function renameCategory(id, name) {
+    var blocked = writeBlockedReason();
+    if (blocked) return Promise.resolve({ ok: false, reason: blocked });
     return loadCategories().then(function (list) {
       var cur = list.filter(function (c) { return c.id === id; })[0];
       if (!cur) return { ok: false, reason: '分类不存在' };
@@ -745,6 +795,8 @@
   // 删除分类：分类定义与"收藏归属"必须在同一个事务里完成，否则会出现悬空 favCat
   function removeCategory(id) {
     if (id === CAT_DEFAULT) return Promise.resolve({ ok: false, reason: '默认分类不可删除' });
+    var blocked = writeBlockedReason();
+    if (blocked) return Promise.resolve({ ok: false, reason: blocked });
     return loadCategories().then(function (list) {
       if (!list.some(function (c) { return c.id === id; })) {
         return { ok: false, reason: '分类不存在' };
@@ -777,6 +829,8 @@
   }
 
   function assignCategory(key, catId) {
+    var blocked = writeBlockedReason();
+    if (blocked) return Promise.resolve({ ok: false, reason: blocked });
     return loadCategories().then(function (list) {
       if (!list.some(function (c) { return c.id === catId; })) {
         return { ok: false, reason: '分类不存在' };
@@ -849,6 +903,8 @@
       return Promise.resolve({ ok: false, reason: '未知批量操作', changed: 0, total: 0 });
     }
     if (!ks.length) return Promise.resolve({ ok: true, total: 0, changed: 0, deleted: 0 });
+    var blocked = writeBlockedReason();
+    if (blocked) return Promise.resolve({ ok: false, reason: blocked, changed: 0, total: ks.length });
     return loadCategories().then(function (list) {
       if (action === 'cat' && !list.some(function (c) { return c.id === o.catId; })) {
         return { ok: false, reason: '分类不存在', changed: 0, total: ks.length };
@@ -879,10 +935,22 @@
 
   // 迁移：v1 → v2 只补 meta.favCategories，并把指向不存在分类的收藏归回默认分类。
   // 幂等：重复执行不会改变结果；遇到更高版本直接跳过（不破坏性写入）。
+  // Batch 9A-2 修订：迁移结果不再被 catch 吞成 null，而是记录到 migrationState
+  // 并透出到 status()，避免"迁移失败却显示成功"。
+  var migrationState = { ok: true, failed: false, future: false, from: null, reason: '' };
+
   function migrateMeta() {
+    migrationState = { ok: true, failed: false, future: false, from: null, reason: '' };
     return backend.getMeta('schemaVersion').then(function (v) {
       var from = Number(v) || 0;
-      if (from > SCHEMA_VERSION) return null;            // 未来版本：不写
+      migrationState.from = from;
+      if (from > SCHEMA_VERSION) {
+        // 未来版本：一个字节都不写，并禁止后续分类/导入写操作，避免降级覆盖
+        migrationState.ok = false;
+        migrationState.future = true;
+        migrationState.reason = '本地数据来自更新版本（schemaVersion=' + from + '），本次未迁移也不会覆盖，请升级站点';
+        return { skipped: true };
+      }
       var cats = null;
       return backend.getMeta(CAT_KEY).then(function (raw) {
         cats = normalizeCategories(raw);
@@ -903,13 +971,26 @@
           var n = clone(cur);
           n.favCat = CAT_DEFAULT;
           return n;
-        });
+        }).then(function () { migrationState.fixed = fixes.length; });
       }).then(function () {
         catCache = cats;
         if (from === SCHEMA_VERSION) return null;
         return backend.setMeta('schemaVersion', SCHEMA_VERSION);
-      });
-    }).catch(function () { return null; });
+      }).then(function () { migrationState.to = SCHEMA_VERSION; });
+    }).catch(function (e) {
+      // 不吞掉：记录失败原因，交由 status()/UI 明确提示；下次 init 会自动重试（幂等）
+      migrationState.ok = false;
+      migrationState.failed = true;
+      migrationState.reason = '迁移未完成：' + (e && e.message || e) + '（可刷新页面重试）';
+      try { console.warn('[knowledge] migration failed:', e && e.message || e); } catch (x) { }
+      return { failed: true };
+    });
+  }
+
+  // 未来版本或迁移失败期间，拒绝一切会改动分类/记录的写入（尤其是导入与替换）
+  function writeBlockedReason() {
+    if (migrationState.future) return migrationState.reason;
+    return '';
   }
 
   function init() {
@@ -1210,7 +1291,7 @@
   }
 
   function publicRecord(r) {
-    return {
+    var out = {
       key: r.key, type: r.type, refId: r.refId, title: r.title || '',
       fav: r.fav ? 1 : 0, favAt: r.favAt || 0, favCat: r.favCat || 'default',
       later: r.later ? 1 : 0, laterAt: r.laterAt || 0,
@@ -1218,6 +1299,11 @@
       firstSeenAt: r.firstSeenAt || 0, lastSeenAt: r.lastSeenAt || 0,
       doneAt: r.doneAt || 0, updatedAt: r.updatedAt || 0
     };
+    // Batch 9A-2 修订：人工状态的来源与时间必须一起导出，否则"已读/未读"
+    // 在往返后会退化成普通进度，被旧滚动任务覆盖。缺省时不写，保持旧文件形状。
+    if (r.stateSource) out.stateSource = String(r.stateSource);
+    if (r.manualStateAt) out.manualStateAt = Number(r.manualStateAt) || 0;
+    return out;
   }
 
   function exportData() {
@@ -1333,7 +1419,19 @@
       if (v === undefined || v === null) continue;
       if (!isTs(v)) { errors.push(at + '：' + stamps[i] + ' 时间戳非法'); return null; }
     }
-    return {
+    // 可选：人工状态来源与时间（v1 / 早期 v2 备份没有这两个字段，缺省即兼容）
+    var stateSource = raw.stateSource;
+    if (stateSource !== undefined && stateSource !== null) {
+      if (typeof stateSource !== 'string' || STATE_SOURCES.indexOf(stateSource) === -1) {
+        errors.push(at + '：stateSource 非法');
+        return null;
+      }
+    }
+    var manualStateAt = raw.manualStateAt;
+    if (manualStateAt !== undefined && manualStateAt !== null) {
+      if (!isTs(manualStateAt)) { errors.push(at + '：manualStateAt 时间戳非法'); return null; }
+    }
+    var rec = {
       key: key, type: sp.type, refId: sp.refId, title: title,
       fav: raw.fav ? 1 : 0, favAt: raw.favAt || 0, favCat: cat,
       later: raw.later ? 1 : 0, laterAt: raw.laterAt || 0,
@@ -1341,6 +1439,9 @@
       firstSeenAt: raw.firstSeenAt || 0, lastSeenAt: raw.lastSeenAt || 0,
       doneAt: raw.doneAt || 0, updatedAt: raw.updatedAt || 0
     };
+    if (stateSource) rec.stateSource = stateSource;
+    if (manualStateAt) rec.manualStateAt = manualStateAt;
+    return rec;
   }
 
   function validateImport(payload, opts) {
@@ -1417,13 +1518,30 @@
     };
   }
 
+  // 快照指纹：不能只用"条数 + 最大 updatedAt"——同一毫秒内写入或等量替换
+  // 会得到相同 token，导致替换前的并发检查被绕过。这里对每条记录的关键字段
+  // 做排序后哈希，任何一条变化都会改变指纹。
+  function fnv1a(str) {
+    var h = 0x811c9dc5;
+    for (var i = 0; i < str.length; i++) {
+      h ^= str.charCodeAt(i);
+      h = (h + ((h << 1) + (h << 4) + (h << 7) + (h << 8) + (h << 24))) >>> 0;
+    }
+    return h.toString(36);
+  }
+
   function tokenOf(snapshot) {
     var rows = (snapshot && snapshot.rows) || [];
-    var max = 0;
-    rows.forEach(function (r) { if (r && r.updatedAt > max) max = r.updatedAt; });
+    var parts = rows.map(function (r) {
+      return [
+        r.key, r.updatedAt || 0, r.fav ? 1 : 0, r.later ? 1 : 0,
+        r.favCat || '', r.readState || '', Math.round((r.progress || 0) * 100),
+        r.doneAt || 0, r.manualStateAt || 0, r.lastSeenAt || 0
+      ].join(',');
+    }).sort();
     var cats = normalizeCategories(snapshot && snapshot.cats)
       .map(function (c) { return c.id + '=' + c.name; }).join('|');
-    return rows.length + ':' + max + ':' + cats;
+    return rows.length + '-' + fnv1a(parts.join(';') + '#' + cats);
   }
 
   function previewImport(payload, opts) {
@@ -1485,6 +1603,10 @@
         imported: 0, categories: 0, replaced: false
       });
     }
+    var blocked = writeBlockedReason();
+    if (blocked) {
+      return Promise.resolve({ ok: false, reason: blocked, imported: 0, categories: 0, replaced: false });
+    }
     if (mode === 'replace') {
       if (o.confirm !== true) return Promise.resolve({ ok: false, reason: '替换需要二次确认', imported: 0, categories: 0, replaced: false });
       if (!(payload.complete === true && payload.source === 'database' && payload.persistence === 'indexeddb')) {
@@ -1529,7 +1651,15 @@
           var rows = payload.records
             .filter(function (r) { return typeof o.resolve !== 'function' || o.resolve(r.type, r.refId); })
             .map(fixCat);
-          return backend.replaceAll(rows, finalCats).then(function () {
+          // expect 传进事务内做权威比对：预检查只是快速失败，不能作为最终依据
+          return backend.replaceAll(rows, finalCats, o.expectToken || null).then(function (res) {
+            if (res && res.ok === false && res.conflict) {
+              return {
+                ok: false,
+                reason: '确认期间本地数据发生了变化，请重新预览后再导入',
+                imported: 0, categories: 0, replaced: false, conflict: true
+              };
+            }
             _writeGen++;
             catCache = finalCats;
             return refreshCache().then(function () {
@@ -1588,7 +1718,15 @@
   }
 
   function status() {
-    return { degraded: degraded, usingMemory: usingMemory, reason: degradeReason, ready: !!backend };
+    return {
+      degraded: degraded, usingMemory: usingMemory, reason: degradeReason, ready: !!backend,
+      // 迁移可见性：失败/未来版本都要能被 UI 读到，而不是静默成功
+      migration: {
+        ok: migrationState.ok, failed: migrationState.failed, future: migrationState.future,
+        from: migrationState.from, to: migrationState.to, fixed: migrationState.fixed || 0,
+        reason: migrationState.reason
+      }
+    };
   }
 
   function relativeTime(ts, ref) {
@@ -1648,6 +1786,8 @@
     validateImport: validateImport,
     previewImport: previewImport,
     applyImport: applyImport,
+    // 内部：快照指纹。对外只用于测试与排障（不要用它做业务判断）
+    _snapshotToken: tokenOf,
     CAT_DEFAULT: CAT_DEFAULT,
     CAT_NAME_MAX: CAT_NAME_MAX,
     SCHEMA_VERSION: SCHEMA_VERSION,

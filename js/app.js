@@ -5578,6 +5578,7 @@ const KM_TABS = [
   { key: 'history', label: '浏览历史' }
 ];
 let _kmActiveKey = null;
+let _kmMigrationWarned = false;   // 迁移告警只提示一次
 let _kmEnhanceRaf = 0;
 
 function kmAvailable() { return typeof window !== 'undefined' && !!window.Knowledge; }
@@ -6711,6 +6712,11 @@ function kmBoot() {
       kmSyncBanner();
       const st = Knowledge.status();
       if (st && st.degraded) Knowledge.toast('本地存储不可用：本次更改仅本会话生效', 'error');
+      // Batch 9A-2 修订：迁移失败/未来版本必须让用户看见，不能静默当作成功
+      if (st && st.migration && !st.migration.ok && !_kmMigrationWarned) {
+        _kmMigrationWarned = true;
+        Knowledge.toast(st.migration.reason || '本地数据迁移未完成', 'error');
+      }
     });
     window.addEventListener('pagehide', function () {
       try { Knowledge.flushProgress(); } catch (e) { /* 忽略 */ }
@@ -6725,6 +6731,11 @@ function kmBoot() {
         kmScheduleEnhance();
         kmRefreshAll();
         kmRerenderIfKnowledge();
+        const st = Knowledge.status();
+        if (st && st.migration && !st.migration.ok && !_kmMigrationWarned) {
+          _kmMigrationWarned = true;
+          Knowledge.toast(st.migration.reason || '本地数据迁移未完成', 'error');
+        }
       });
     };
     if (window.requestIdleCallback) requestIdleCallback(start, { timeout: 1500 });

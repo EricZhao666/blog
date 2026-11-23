@@ -191,7 +191,7 @@ RED/GREEN 证据（本轮真实修过的缺陷）：
 ## 11. 交付物
 
 - `BATCH9A2_REPORT.md`（本文件）
-- `BATCH9A2_TEST_MATRIX.csv`（72 行测试矩阵）
+- `BATCH9A2_TEST_MATRIX.csv`（90 行测试矩阵，含 §13 修订的 A-73~A-90）
 - `KNOWLEDGE_DATA_FORMAT.md`（三层版本、记录/分类字段、迁移、导入导出契约）
 - `knowledge-import-sample.json`（无真实个人数据的示例，2 记录 + 2 分类）
 - 更新 `BATCH9_ARCHITECTURE.md` 第 3/6/8/9 节为已确认契约（含与规划的三处差异及原因）
@@ -212,7 +212,82 @@ node tests/browser/sw-consistency.spec.js
 python scripts/run_tests.py --only knowledge-import knowledge-management knowledge-store knowledge-center
 ```
 
-## 13. 实际耗时与平台成本
+## 13. 最终数据契约修订（2026-11-23）
+
+CI tests #116 通过后复查三个数据完整性边界，结论与修改如下。
+
+### 13.1 人工阅读状态的导出/导入往返（已修）
+
+**问题（RED）**：`publicRecord()` 只输出固定 14 个字段，`validateRecord()` 也只白名单这 14 个，
+`stateSource` / `manualStateAt` 在导出时被丢弃，导入时被忽略。所以"手动标记已读/未读"这条信息
+一旦导出再导入就退化成普通记录，后续滚动进度会把状态改回去。
+
+| 位置 | 修改 |
+| --- | --- |
+| `publicRecord()` | 有值时附带 `stateSource` / `manualStateAt`；缺省不写，保持旧文件形状 |
+| `validateRecord()` | `stateSource ∈ {manual, auto}`、`manualStateAt` 走 `isTs()`（非负、不超前 1 天）；非法即整份拒绝；合法则原样返回 |
+| 版本 | **仍为 schemaVersion=2**，两个字段都是可选项；v1 与早期 v2 备份（无这两个字段）继续可导入 |
+
+**GREEN 证据**（`test53` T1.1–T1.7）：
+- T1.1 导出两条人工记录 → `stateSource='manual'`、`manualStateAt>0` 均在；
+- T1.2 校验后字段类型与数值不变；
+- T1.3 合并到新库 + 重新 init（模拟重开数据库）后 `readState='done'` 且 `stateSource='manual'` 仍有效；
+- T1.4 导入后写入 0.2 / 0.8 的滚动进度，`done` 不被改回、人工未读仍是 `none` 且 `progress=0`；
+- T1.5/T1.6 缺字段的 v2、v1 文件照常导入；
+- T1.7 `stateSource='robot'`、`manualStateAt=-5` 被拒。
+`readState / progress / doneAt` 语义未改。
+
+### 13.2 替换的并发检查（已修）
+
+**问题（RED）**：`expectToken` 只在 `replaceAll` 之前用 `readSnapshot()` 比一次；
+另一个标签页若在这之后、`clear()` 之前写入，替换会静默覆盖它。
+另外旧 token = `条数 + 最大 updatedAt + 分类串`，**同一毫秒内写入或等量替换会碰撞**（单测 T2.1 用合成行证明）。
+
+| 位置 | 修改 |
+| --- | --- |
+| `tokenOf()` | 改为对每条记录的 `key/updatedAt/fav/later/favCat/readState/progress/doneAt/manualStateAt/lastSeenAt` 排序后做 FNV-1a 哈希，再拼分类串；任一条变化都会变 |
+| IDB `replaceAll(rows, cats, expect)` | 在**同一个 readwrite 事务内**先 `getAll()` + `get(meta)` 算出当前指纹，与 `expect` 一致才 `clear()` + `put`；不一致 → `tx.abort()` 并 resolve `{ok:false, conflict:true}` |
+| 内存后端 `replaceAll` | 在串行队列内做同样的检查（顺序等价于单事务） |
+| `applyImport` | 预检查保留（快速失败、提示友好），真正的权威判断交给事务内；收到 `conflict` 返回"请重新预览"，不写任何数据 |
+
+**GREEN 证据**：
+- 单测 T2.1 指纹能区分"同条数、同最大 `updatedAt`"的内容差异；
+- T2.2 预览拿 token → 另一实例写入 → 直接调 `backend.replaceAll(..., staleToken)` → `{ok:false, conflict:true}`，3 条记录原样；
+- T2.3 走 `applyImport(mode:'replace', expectToken)` 同样被拒，4 条记录未变；
+- T2.4 token 未变时替换正常完成（**没有无条件重试**）；
+- 浏览器 K27.1–K27.3 用两个真实标签页复现同一窗口：B 写入后 A 的旧 token 被拒、原数据完整、重新预览后替换成功。
+
+保留：二次确认、`complete/source/persistence` 完整备份限制、事务失败回滚（P1/P2/P5 仍绿）。
+
+### 13.3 迁移异常的可见性（已修）
+
+**问题（RED）**：`migrateMeta()` 末尾 `.catch(function () { return null; })` 把一切迁移错误吞掉，
+`init()` 照常 resolve，UI 认为迁移成功；`schemaVersion` 未升级时也不会重试提示。
+部分状态确实存在：`meta.favCategories` 可能已写、记录修正失败（T3.3 复现）。
+
+| 位置 | 修改 |
+| --- | --- |
+| `migrateMeta()` | 改为记录 `migrationState{ok, failed, future, from, to, fixed, reason}`；失败时 `console.warn` 并**不**写 schemaVersion（下次 init 幂等重试） |
+| `status()` | 新增 `migration` 字段，UI 可读 |
+| 写保护 | `migrationState.future === true` 时 `addCategory/renameCategory/removeCategory/assignCategory/bulk/applyImport` 一律拒绝，避免旧代码覆盖更新版本的数据 |
+| `app.js` | `knowledge:status` 与首次 `init()` 回调各加一次（去重）toast，迁移失败/未来版本不再静默 |
+
+**GREEN 证据**：
+- T3.1 v1 库 + 注入 `setMeta` 失败 → `status().migration.failed=true`、`schemaVersion` 仍为 1；
+- T3.2 解除注入后重新 init → `schemaVersion=2`、默认分类补齐（可安全恢复）；
+- T3.3 分类已写、记录修正失败 → 状态可见且脏记录 `favCat` 未被半修改；
+- T3.4 重试后悬空分类修回 `default`；
+- T3.5 未来版本（schemaVersion=9）→ 版本不变、两个分类原样、`addCategory` 与 `applyImport` 都被拒（不降级覆盖）。
+未重建数据库、未改 IDB 结构。
+
+### 13.4 本轮新增/调整的测试
+
+`knowledge-import` 55 → **71 项**（新增 T1.1–T1.7、T2.1–T2.4、T3.1–T3.5 共 16 项）；
+`knowledge-management` 27 → **30 项**（新增 K27.1–K27.3 双标签替换窗口）。
+其余套件未改动，本地只跑受影响的三套 + `git diff --check`，71 套全量由 PR CI 执行。
+`CACHE_VERSION`、SW 策略、UI 布局、推荐模块、CI 配置均未改动。
+
+## 14. 实际耗时与平台成本
 
 - 分支创建（2026-11-20 15:30:00）→ 本地验收与文档完成 = **约 50 分钟**（含数据层重写、UI、真实 IDB 迁移与三引擎）。
 - 工具调用约 **70 次**；改动文件 15 个（新增 5、修改 8、删除 0，另含 2 个调试临时文件已清理）。

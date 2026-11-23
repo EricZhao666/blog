@@ -37,7 +37,7 @@ blog-knowledge (v1)
 | `later` / `laterAt` | 0\|1 / ts | 待读状态与时间 |
 | `readState` | `none`\|`reading`\|`done` | 阅读状态 |
 | `progress` | number | 0–1，自动滚动写入；手动"已读"不会伪造为 1 |
-| `stateSource` | `manual`（可选） | 人工设置过状态 |
+| `stateSource` | `manual`\|`auto`（可选） | 状态来源；`manual` 表示人工设置过，自动进度不再改状态 |
 | `manualStateAt` | ts（可选） | 人工状态时间，用于压过更早的滚动采样 |
 | `firstSeenAt` / `lastSeenAt` | ts | 浏览历史；`lastSeenAt=0` 表示已清理 |
 | `doneAt` | ts | 完成时间；标记未读时清 0 |
@@ -64,7 +64,18 @@ blog-knowledge (v1)
 3. 扫描记录：`fav=1` 且 `favCat` 指向不存在分类的，改回 `default`（同一批量事务）。
 4. 写 `meta.schemaVersion = 2`。
 
-保证：不删库、不动 `blog-draft-history`、不重建 store、失败时抛错但原数据不变（写操作在事务内）。
+保证：不删库、不动 `blog-draft-history`、不重建 store、失败时原数据不变（写操作在事务内）。
+
+**失败可见性**：迁移结果记录在 `status().migration`：
+
+```js
+{ ok, failed, future, from, to, fixed, reason }
+```
+
+- 失败时**不写** `schemaVersion`，`reason` 直接用于 UI 提示（toast），下次 `init()` 幂等重试；
+- 部分状态（分类已写入、记录修正失败）可通过重新 init 修复，不会留下半改记录（单测 T3.3/T3.4）；
+- `schemaVersion > 2`（未来版本）→ `future=true`，一个字节都不写，并拒绝
+  `addCategory/renameCategory/removeCategory/assignCategory/bulk/applyImport`（T3.5）。
 **真实浏览器验证**：先建 v1 库（仅 `schemaVersion=1`，两条记录），再加载新代码，见
 `tests/browser/knowledge-management.spec.js` 的 K23（K23.1/K23.2/K23.3）。
 
@@ -111,6 +122,7 @@ blog-knowledge (v1)
 | 时间戳 | 非负、有限、不超过 now+1 天 |
 | 重复 | 同一 `key` 出现两次 → 整份拒绝；分类 id / 名称重复 → 整份拒绝 |
 | 结构 | 嵌套深度 ≤ 6；拒绝 `__proto__` / `constructor` / `prototype` 字段 |
+| 人工状态 | `stateSource ∈ {manual, auto}`（可选）、`manualStateAt` 合法时间戳（可选）；两者缺省时按"无人工状态"处理，兼容 v1 与早期 v2 备份 |
 
 不使用 `eval` / `new Function`，不执行文件里的任何字符串。
 
@@ -132,10 +144,14 @@ blog-knowledge (v1)
 - 仅当 `complete === true` 且 `source === 'database'` 且 `persistence === 'indexeddb'` 时可选；
   不完整备份一律拒绝（单测 P1）。
 - 必须二次确认，并在 UI 上先勾选"我已导出当前数据备份"。
-- 实现为**单个 readwrite 事务**：`records.clear()` + 批量 `put` + 写 `favCategories`，
-  任一环节失败整体 abort（单测 P5：注入失败后原记录仍在）。
+- 实现为**单个 readwrite 事务**：先在同一事务内 `getAll()` + `get(meta)` 校验快照指纹，
+  一致才 `records.clear()` + 批量 `put` + 写 `favCategories`；任一环节失败整体 abort
+  （单测 P5：注入失败后原记录仍在）。
 - 不使用 `deleteDatabase`，不清空整个 `meta`。
-- 确认期间若其他标签页写入导致快照 token 变化 → 拒绝并提示重新预览（单测 P6）。
+- 快照指纹（token）= 每条记录的 `key/updatedAt/fav/later/favCat/readState/progress/doneAt/manualStateAt/lastSeenAt`
+  排序后哈希 + 分类串。**不是**"条数 + 最大 updatedAt"——后者在同时刻写入或等量替换时会碰撞。
+- 确认期间若其他标签页写入导致指纹变化 → 事务内 aborted，拒绝并提示重新预览
+  （单测 T2.2/T2.3、浏览器 K27.1/K27.2）；指纹未变时正常完成（T2.4、K27.3），不做无条件重试。
 
 ### 5.5 降级与并发
 

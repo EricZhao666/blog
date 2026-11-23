@@ -454,6 +454,62 @@ async function seed(page, n) {
       await s3.ctx.close();
     }
 
+    // K27 替换的并发窗口（双标签、确定性顺序）：预览后另一个标签页写入 → 旧 token 必须被拒
+    {
+      const s5 = await newSession(browser, base);
+      const A = s5.page;
+      await seed(A, 2);
+      const B = await s5.ctx.newPage();
+      await B.goto(base + PREFIX + '/index.html#/knowledge?tab=favorites', { waitUntil: 'load', timeout: 60000 });
+      await B.waitForFunction(() => window.Knowledge && Knowledge.status().ready, null, { timeout: 20000 });
+      await sleep(400);
+
+      const payload = await A.evaluate(async () => {
+        const d = await Knowledge.exportData();
+        d.records = [{ key: 'post:embodied-ai-notes', type: 'post', refId: 'embodied-ai-notes', title: '替换来源', fav: 1, favAt: 1000, favCat: 'default', later: 0, laterAt: 0, readState: 'none', progress: 0, firstSeenAt: 0, lastSeenAt: 0, doneAt: 0, updatedAt: 1000 }];
+        return d;
+      });
+      const token = await A.evaluate(async p => {
+        const v = Knowledge.validateImport(p, {});
+        const prev = await Knowledge.previewImport(v.payload, { resolve: () => true });
+        return prev.token;
+      }, payload);
+
+      // 另一个标签页在"确认"之前写入（改的是已存在的记录，不新增条数）
+      await B.evaluate(async () => {
+        await Knowledge.setFlag('post', 'vla-model-intro', 'later', true);
+      });
+      await sleep(300);
+
+      const stale = await A.evaluate(async args => {
+        const v = Knowledge.validateImport(args.p, {});
+        return Knowledge.applyImport(v.payload, {
+          mode: 'replace', confirm: true, resolve: () => true, expectToken: args.t
+        });
+      }, { p: payload, t: token });
+      const afterA = await A.evaluate(async () => {
+        const rows = await Knowledge.list({});
+        return { n: rows.length, hasLater: rows.some(r => r.later === 1) };
+      });
+      check('K27.1 另一标签页写入后，旧 token 的替换被拒绝',
+        stale.ok === false && /重新预览/.test(stale.reason || ''), JSON.stringify({ ok: stale.ok }));
+      check('K27.2 被拒后原数据完整（含另一标签页的写入）',
+        afterA.n === 2 && afterA.hasLater === true, JSON.stringify(afterA));
+
+      const fresh = await A.evaluate(async p => {
+        const v = Knowledge.validateImport(p, {});
+        const prev = await Knowledge.previewImport(v.payload, { resolve: () => true });
+        return Knowledge.applyImport(v.payload, {
+          mode: 'replace', confirm: true, resolve: () => true, expectToken: prev.token
+        });
+      }, payload);
+      const afterFresh = await A.evaluate(async () => ({ n: (await Knowledge.list({})).length }));
+      check('K27.3 重新预览后替换成功（不做无条件重试）',
+        fresh.ok === true && fresh.replaced === true && afterFresh.n === 1,
+        JSON.stringify({ ok: fresh.ok, n: afterFresh.n, reason: fresh.reason }));
+      await s5.ctx.close();
+    }
+
     // K26 离线：分类与导出仍可用
     {
       const s4 = await newSession(browser, base, { sw: true });

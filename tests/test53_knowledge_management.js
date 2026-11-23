@@ -30,7 +30,10 @@ function check(name, cond, extra) {
 function makeBackend() {
   const map = new Map();
   const meta = new Map();
-  const state = { failBulk: false, failReplace: false, failAll: false, failUpdaterAt: -1, writes: 0 };
+  const state = {
+    failBulk: false, failReplace: false, failAll: false, failUpdaterAt: -1, writes: 0,
+    failSetMetaCat: false, failMigrateMany: false
+  };
   let chain = Promise.resolve();
   function enqueue(fn) {
     const p = chain.then(fn, fn);
@@ -53,7 +56,11 @@ function makeBackend() {
       return Promise.resolve(Array.from(map.values()).map(v => JSON.parse(JSON.stringify(v))));
     },
     getMeta(k) { return Promise.resolve(meta.has(k) ? JSON.parse(JSON.stringify(meta.get(k))) : null); },
-    setMeta(k, v) { meta.set(k, JSON.parse(JSON.stringify(v))); return Promise.resolve(); },
+    setMeta(k, v) {
+      if (state.failSetMetaCat && k === 'favCategories') return Promise.reject(new Error('injected setMeta failure'));
+      meta.set(k, JSON.parse(JSON.stringify(v)));
+      return Promise.resolve();
+    },
     readAll() {
       if (state.failAll) return Promise.reject(new Error('injected readAll failure'));
       return Promise.resolve({
@@ -76,7 +83,7 @@ function makeBackend() {
         const s = snap();
         const out = [];
         try {
-          if (state.failBulk) throw new Error('injected bulk failure');
+          if (state.failBulk || state.failMigrateMany) throw new Error('injected bulk failure');
           (keys || []).forEach((key, i) => {
             if (state.failUpdaterAt === i) throw new Error('injected updater failure');
             const cur = map.has(key) ? JSON.parse(JSON.stringify(map.get(key))) : null;
@@ -112,9 +119,17 @@ function makeBackend() {
         } catch (e) { restore(s); throw e; }
       });
     },
-    replaceAll(rows, cats) {
+    replaceAll(rows, cats, expect) {
       return enqueue(() => {
         const s = snap();
+        if (expect) {
+          // 与实现一致：权威检查发生在"清空之前"，同一队列内
+          const cur = LAST_API._snapshotToken({
+            rows: Array.from(map.values()),
+            cats: meta.has('favCategories') ? meta.get('favCategories') : null
+          });
+          if (cur !== expect) return { ok: false, conflict: true };
+        }
         try {
           if (state.failReplace) throw new Error('injected replace failure');
           map.clear();
@@ -128,6 +143,8 @@ function makeBackend() {
     clear() { map.clear(); meta.clear(); return Promise.resolve(); }
   };
 }
+
+let LAST_API = null;
 
 function loadModule(backend) {
   const sandbox = {
@@ -144,6 +161,7 @@ function loadModule(backend) {
   const ctx = vm.createContext(sandbox);
   vm.runInContext(SRC, ctx, { filename: 'js/knowledge.js' });
   const api = sandbox.window.Knowledge;
+  LAST_API = api;
   if (backend) api._injectBackend(backend);
   return { api: api, sandbox: sandbox };
 }
@@ -585,6 +603,216 @@ function makeExport(over) {
     const res = await api.applyImport(makeExport(), { mode: 'merge', resolve: () => true });
     check('R8 内存降级模式拒绝导入（不宣称保存成功）',
       res.ok === false && /降级|不可用/.test(res.reason || ''), res.reason);
+  }
+
+  // ============================================================ 修订：人工状态往返（Task 1）
+  {
+    const { b, api } = await setup();
+    await api.recordView('post', 'm1', { title: '人工已读' });
+    await api.saveProgress('post', 'm1', 0.7);
+    await api.setReadState('post', 'm1', 'done');          // 人工已读
+    await api.recordView('post', 'm2', { title: '人工未读' });
+    await api.saveProgress('post', 'm2', 0.5);
+    await api.setReadState('post', 'm2', 'none');          // 人工未读
+
+    const dump = await api.exportData();
+    const rec1 = dump.records.filter(r => r.key === 'post:m1')[0];
+    const rec2 = dump.records.filter(r => r.key === 'post:m2')[0];
+    check('T1.1 导出保留 stateSource 与 manualStateAt',
+      !!rec1 && rec1.stateSource === 'manual' && rec1.manualStateAt > 0 &&
+      !!rec2 && rec2.stateSource === 'manual' && rec2.manualStateAt > 0,
+      JSON.stringify([rec1 && rec1.stateSource, rec1 && rec1.manualStateAt, rec2 && rec2.stateSource]));
+
+    const v = api.validateImport(JSON.parse(JSON.stringify(dump)), {});
+    const vr1 = v.ok ? v.payload.records.filter(r => r.key === 'post:m1')[0] : null;
+    check('T1.2 校验后字段仍存在且类型正确',
+      v.ok === true && !!vr1 && vr1.stateSource === 'manual' && vr1.manualStateAt === rec1.manualStateAt,
+      JSON.stringify(vr1 && { s: vr1.stateSource, t: vr1.manualStateAt }));
+
+    // 导入到全新库（模拟换设备），再"重新打开数据库"
+    const b2 = makeBackend();
+    const m2 = loadModule(b2);
+    await m2.api.init();
+    const r1 = await m2.api.applyImport(v.payload, { mode: 'merge', resolve: () => true });
+    const m3 = loadModule(b2);                             // 同一后端重新 init = 重新打开数据库
+    await m3.api.init();
+    const st1 = m3.api.state('post', 'm1') || {};
+    const st2 = m3.api.state('post', 'm2') || {};
+    check('T1.3 替换/合并并重新打开后人工状态仍有效',
+      r1.ok === true && st1.readState === 'done' && st1.stateSource === 'manual' && st1.manualStateAt > 0,
+      JSON.stringify({ ok: r1.ok, st: st1.readState, src: st1.stateSource }));
+
+    // 旧滚动任务不得覆盖人工状态
+    await m3.api.saveProgress('post', 'm1', 0.2);
+    await m3.api.saveProgress('post', 'm2', 0.8);
+    const a1 = m3.api.state('post', 'm1');
+    const a2 = m3.api.state('post', 'm2');
+    check('T1.4 导入后旧滚动进度不覆盖人工操作',
+      a1.readState === 'done' && a1.progress === 0.2 && a2.readState === 'none' && a2.progress === 0,
+      JSON.stringify({ m1: [a1.readState, a1.progress], m2: [a2.readState, a2.progress] }));
+
+    // 兼容：v1 文件与不带这两个字段的 v2 文件
+    const noFields = JSON.parse(JSON.stringify(dump));
+    noFields.records.forEach(r => { delete r.stateSource; delete r.manualStateAt; });
+    const v2 = api.validateImport(noFields, {});
+    check('T1.5 缺省字段的 v2 文件仍可导入',
+      v2.ok === true && v2.payload.records.every(r => r.stateSource === undefined),
+      JSON.stringify(v2.errors));
+
+    const v1 = api.validateImport(Object.assign({}, noFields, { schemaVersion: 1 }), {});
+    check('T1.6 v1 文件仍可导入且不产生人工字段',
+      v1.ok === true && v1.payload.records.every(r => r.stateSource === undefined && r.manualStateAt === undefined),
+      JSON.stringify(v1.errors));
+
+    // 非法值必须拒绝
+    const badSrc = JSON.parse(JSON.stringify(dump));
+    badSrc.records[0].stateSource = 'robot';
+    const badAt = JSON.parse(JSON.stringify(dump));
+    badAt.records[0].manualStateAt = -5;
+    const r1x = api.validateImport(badSrc, {});
+    const r2x = api.validateImport(badAt, {});
+    check('T1.7 stateSource / manualStateAt 非法值被拒绝',
+      r1x.ok === false && /stateSource/.test(r1x.errors.join()) &&
+      r2x.ok === false && /manualStateAt/.test(r2x.errors.join()),
+      [r1x.errors.join('|'), r2x.errors.join('|')].join(' // '));
+  }
+
+  // ============================================================ 修订：替换的并发检查（Task 2）
+  {
+    const { b, api } = await setup();
+    await api.setFlag('post', 'c1', 'fav', true);
+    await api.setFlag('post', 'c2', 'later', true);
+
+    // 指纹必须能区分"条数相同、最大时间戳相同"的不同状态
+    // （旧实现 = 条数 + 最大 updatedAt，同一毫秒写入或等量替换会碰撞）
+    const rowsA = [{
+      key: 'post:a', type: 'post', refId: 'a', updatedAt: 1000, fav: 1, later: 0,
+      favCat: 'default', readState: 'reading', progress: 0.5, doneAt: 0, manualStateAt: 0, lastSeenAt: 1000
+    }];
+    const rowsB = [JSON.parse(JSON.stringify(rowsA[0]))];
+    rowsB[0].favCat = 'cat-x';
+    const oldStyle = function (rows) {
+      let max = 0;
+      rows.forEach(r => { if ((r.updatedAt || 0) > max) max = r.updatedAt || 0; });
+      return rows.length + ':' + max;
+    };
+    const tA = api._snapshotToken({ rows: rowsA, cats: [{ id: 'default', name: '默认分类', system: true }] });
+    const tB = api._snapshotToken({ rows: rowsB, cats: [{ id: 'default', name: '默认分类', system: true }] });
+    const tC = api._snapshotToken({ rows: rowsA, cats: [{ id: 'default', name: '改名', system: true }] });
+    check('T2.1 新指纹能识别"同条数同最大时间戳"的内容变化',
+      rowsA.length === rowsB.length && oldStyle(rowsA) === oldStyle(rowsB) &&
+      tA !== tB && tA !== tC,
+      JSON.stringify({ old: oldStyle(rowsA), tA, tB, tC }));
+
+    // 竞争窗口：预览拿到 token → 另一标签页写入 → 用旧 token 调后端替换
+    const prev = await api.previewImport(makeExport(), { resolve: () => true });
+    await api.setFlag('post', 'c3', 'fav', true);           // 模拟另一个标签页
+    const direct = await b.replaceAll([], [], prev.token);
+    const rowsAfter = await api.list({});
+    check('T2.2 事务内的权威检查拒绝过期 token（不写任何数据）',
+      direct && direct.ok === false && direct.conflict === true &&
+      rowsAfter.length === 3, JSON.stringify({ direct, n: rowsAfter.length }));
+
+    // 走 applyImport 的完整路径同样被拒
+    const p2 = await api.previewImport(makeExport(), { resolve: () => true });
+    await api.setFlag('post', 'c4', 'later', true);
+    const stale = await api.applyImport(makeExport(), {
+      mode: 'replace', confirm: true, resolve: () => true, expectToken: p2.token
+    });
+    const rows2 = await api.list({});
+    check('T2.3 applyImport 在竞争窗口后拒绝替换且原数据不变',
+      stale.ok === false && /重新预览/.test(stale.reason || '') && rows2.length === 4,
+      JSON.stringify({ ok: stale.ok, n: rows2.length }));
+
+    // token 一致时仍可替换（不做无条件重试，但正确的 token 不应被误判）
+    const p3 = await api.previewImport(makeExport(), { resolve: () => true });
+    const good = await api.applyImport(makeExport(), {
+      mode: 'replace', confirm: true, resolve: () => true, expectToken: p3.token
+    });
+    check('T2.4 token 未变时替换正常完成', good.ok === true && good.replaced === true,
+      JSON.stringify({ ok: good.ok, n: good.imported }));
+  }
+
+  // ============================================================ 修订：迁移可见性（Task 3）
+  {
+    // 场景一：v1 库 + 分类 meta 写入失败 → 必须报错、不升版本
+    const b1 = makeBackend();
+    await b1.setMeta('schemaVersion', 1);                  // 先造一个 v1 库
+    await b1.mutate('post:x1', function () {
+      return {
+        key: 'post:x1', type: 'post', refId: 'x1', title: 'X1', fav: 0, favAt: 0, favCat: 'default',
+        later: 0, laterAt: 0, readState: 'none', progress: 0, firstSeenAt: 1, lastSeenAt: 1,
+        doneAt: 0, updatedAt: 1
+      };
+    });
+    b1.state.failSetMetaCat = true;
+    const m1b = loadModule(b1);                            // 首次 init 即触发迁移
+    await m1b.api.init();
+    const st1 = m1b.api.status();
+    const ver1 = await b1.getMeta('schemaVersion');
+    check('T3.1 迁移失败不再静默：status 报告失败且版本未升',
+      st1.migration.failed === true && st1.migration.ok === false &&
+      /迁移未完成/.test(st1.migration.reason) && Number(ver1) !== 2,
+      JSON.stringify({ failed: st1.migration.failed, ver: ver1, reason: st1.migration.reason }));
+
+    // 场景二：恢复正常后重新 init 能自愈
+    b1.state.failSetMetaCat = false;
+    const m1c = loadModule(b1);
+    await m1c.api.init();
+    const st2 = m1c.api.status();
+    const ver2 = await b1.getMeta('schemaVersion');
+    const cats2 = await m1c.api.categories();
+    check('T3.2 恢复后重新初始化可安全完成迁移',
+      st2.migration.ok === true && st2.migration.failed === false &&
+      Number(ver2) === 2 && cats2[0].id === 'default',
+      JSON.stringify({ ok: st2.migration.ok, ver: ver2 }));
+
+    // 场景三：分类已写、记录修正失败 → 部分状态可见，重试后可修复
+    const b3 = makeBackend();
+    const m3 = loadModule(b3);
+    await m3.api.init();
+    // 直接写一条"收藏指向不存在分类"的脏记录，模拟 9A-1 遗留数据
+    await b3.mutate('post:orphan', function () {
+      return {
+        key: 'post:orphan', type: 'post', refId: 'orphan', title: '悬空', fav: 1, favAt: 1,
+        favCat: 'cat-gone', later: 0, laterAt: 0, readState: 'none', progress: 0,
+        firstSeenAt: 0, lastSeenAt: 0, doneAt: 0, updatedAt: 1
+      };
+    });
+    b3.state.failSetMetaCat = true;
+    const m3b = loadModule(b3);
+    await m3b.api.init();
+    const partial = m3b.api.status();
+    const orphanBefore = await b3.get('post:orphan');
+    check('T3.3 中途失败时状态可见，记录保持原样（不会半修改）',
+      partial.migration.failed === true && !!orphanBefore && orphanBefore.favCat === 'cat-gone',
+      JSON.stringify({ failed: partial.migration.failed, cat: orphanBefore && orphanBefore.favCat }));
+
+    b3.state.failSetMetaCat = false;
+    b3.state.failMigrateMany = false;
+    const m3c = loadModule(b3);
+    await m3c.api.init();
+    const orphanAfter = await b3.get('post:orphan');
+    check('T3.4 重试后悬空分类被修回默认分类',
+      orphanAfter && orphanAfter.favCat === 'default',
+      JSON.stringify(orphanAfter && orphanAfter.favCat));
+
+    // 场景四：未来版本不得被降级覆盖
+    const b4 = makeBackend();
+    await b4.setMeta('schemaVersion', 9);
+    await b4.setMeta('favCategories', [{ id: 'default', name: '默认分类', system: true }, { id: 'cat-future', name: '未来分类', system: false }]);
+    const m4 = loadModule(b4);
+    await m4.api.init();
+    const st4 = m4.api.status();
+    const ver4 = await b4.getMeta('schemaVersion');
+    const addBlocked = await m4.api.addCategory('新分类');
+    const impBlocked = await m4.api.applyImport(makeExport(), { mode: 'merge', resolve: () => true });
+    const cats4 = await b4.getMeta('favCategories');
+    check('T3.5 未来版本不降级：版本不变、分类原样、写操作被拒',
+      st4.migration.future === true && Number(ver4) === 9 &&
+      cats4.length === 2 && cats4[1].id === 'cat-future' &&
+      addBlocked.ok === false && impBlocked.ok === false,
+      JSON.stringify({ ver: ver4, future: st4.migration.future, add: addBlocked.ok, imp: impBlocked.ok }));
   }
 
   console.log('\n合计 ' + (pass + fail) + ' 项，PASS ' + pass + '，FAIL ' + fail);
