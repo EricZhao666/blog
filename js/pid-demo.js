@@ -135,7 +135,7 @@
       '<dt>上升时间</dt><dd id="pidRise">–</dd>' +
       '<dt>超调量</dt><dd id="pidOvershoot">–</dd>' +
       '<dt>调节时间</dt><dd id="pidSettling">–</dd>' +
-      '<dt>稳态误差</dt><dd id="pidEss">–</dd>' +
+      '<dt id="pidEssLabel">稳态误差</dt><dd id="pidEss">–</dd>' +
       '<dt>控制量范围</dt><dd id="pidURange">–</dd>' +
       '<dt>饱和步数</dt><dd id="pidSatCount">–</dd>' +
       '<dt>状态</dt><dd><span id="pidStatus" class="pid-status">–</span></dd>' +
@@ -149,8 +149,9 @@
       '<div class="pid-explain">' +
       '<p><strong>Kp</strong> 比例：增大加快响应，但可能超调甚至振荡；仅 P 控制对阶跃存在稳态误差 r/(1+K·Kp)。</p>' +
       '<p><strong>Ki</strong> 积分：闭环稳定且未饱和时消除阶跃稳态误差；过大引起超调与振荡，饱和时可能积分饱和（windup）。</p>' +
-      '<p><strong>Kd</strong> 微分：对测量值求导并低通滤波，抑制输出快速变化（减缓上升）。一阶对象的超调主要由积分引起，Kd 不保证减小超调（参数不当时反而增大），不保证优于 PI；对采样噪声敏感。</p>' +
+      '<p><strong>Kd</strong> 微分：对测量值求导并低通滤波，抑制输出快速变化（减缓上升）。细采样下一阶对象超调主要由积分引起（粗采样/高增益离散 P 自身也可超调），Kd 不保证减小超调（参数不当时反而增大），不保证优于 PI；对采样噪声敏感。</p>' +
       '<p><strong>抗饱和</strong>：输出限幅且误差继续推向饱和时冻结积分，减轻 windup 造成的过大超调。</p>' +
+      '<p><strong>误差口径</strong>：已稳定时显示稳态误差（r 与末尾 5% 样本均值之差）；未收敛时该值仅为末段平均误差，不代表真实稳态误差。</p>' +
       '</div>' +
       '<span id="pidLive" class="pid-visually-hidden" aria-live="polite"></span>' +
       '</aside>' +
@@ -317,23 +318,26 @@
   }
 
   // ---------------------------------------------------------------- 读数
-  function metricCells(m) {
+  // Batch 9C-1C 口径修订：未收敛时末尾 5% 样本均值只是「末段平均误差」，
+  // 不冒充真实稳态误差（单模式切换 dt 标签；对比模式逐行标注）。
+  function metricCells(m, annotateEss) {
     return {
       rise: m.rise === null ? '–' : fmt(m.rise, 3) + ' s',
       overshoot: m.overshoot === null ? '–' : fmt(m.overshoot, 2) + ' %',
       settling: m.settled ? fmt(m.settling, 3) + ' s' : '未在仿真时间内稳定',
-      ess: fmtSmall(m.ess)
+      ess: fmtSmall(m.ess) + (annotateEss && !m.settled ? '（末段平均）' : '')
     };
   }
 
   function renderReadout(root, state) {
     var primary = state.compare ? state.compare.PID : state.single;
     var m = primary.metrics;
-    var cells = metricCells(m);
+    var cells = metricCells(m, !!state.compare);
     root.querySelector('#pidRise').textContent = cells.rise;
     root.querySelector('#pidOvershoot').textContent = cells.overshoot;
     root.querySelector('#pidSettling').textContent = cells.settling;
     root.querySelector('#pidEss').textContent = cells.ess;
+    root.querySelector('#pidEssLabel').textContent = m.settled ? '稳态误差' : '末段平均误差';
     root.querySelector('#pidURange').textContent = fmt(primary.stats.minU, 3) + ' … ' + fmt(primary.stats.maxU, 3);
     root.querySelector('#pidSatCount').textContent = primary.stats.satCount + ' 步';
 
@@ -352,8 +356,10 @@
     if (state.compare) {
       wrap.hidden = false;
       var rows = ['P', 'PI', 'PID'].map(function (mo) {
-        var cm = metricCells(state.compare[mo].metrics);
-        return '<tr><th scope="row">' + mo + '</th><td>' + cm.rise + '</td><td>' + cm.overshoot + '</td><td>' + cm.settling + '</td><td>' + cm.ess + '</td></tr>';
+        var cm = metricCells(state.compare[mo].metrics, true);
+        // 标注用块级 span 独立成行：避免「数值+（」被 UAX14 视为不可断行块撑宽 390px 表格
+        var essHtml = cm.ess.replace('（末段平均）', '<span class="pid-ess-note">（末段平均）</span>');
+        return '<tr><th scope="row">' + mo + '</th><td>' + cm.rise + '</td><td>' + cm.overshoot + '</td><td>' + cm.settling + '</td><td>' + essHtml + '</td></tr>';
       }).join('');
       root.querySelector('#pidCompareBody').innerHTML = rows;
     } else {
@@ -368,7 +374,8 @@
     var m = primary.metrics;
     var cells = metricCells(m);
     live.textContent = (state.compare ? '对比模式（表中为 PID 行）；' : '') +
-      '上升时间 ' + cells.rise + '，超调量 ' + cells.overshoot + '，调节时间 ' + cells.settling + '，稳态误差 ' + cells.ess;
+      '上升时间 ' + cells.rise + '，超调量 ' + cells.overshoot + '，调节时间 ' + cells.settling + '，' +
+      (m.settled ? '稳态误差 ' : '末段平均误差（未收敛，非真实稳态误差） ') + cells.ess;
   }
 
   // ---------------------------------------------------------------- 计算与挂载

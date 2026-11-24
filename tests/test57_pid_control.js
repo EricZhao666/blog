@@ -121,6 +121,17 @@ function allFinite(arr) { return arr.every(Number.isFinite); }
   check('M3.5 高增益 P（ess=1/61≈0.016<2% 带，细采样单调）：已稳定且上升时间有定义',
     pHigh.metrics.settled && pHigh.metrics.rise !== null && pHigh.metrics.rise > 0,
     'rise=' + pHigh.metrics.rise);
+
+  // B9C1C 口径修订：离散 P 控制可超调——稳定性取决于采样周期与闭环极点，不是「永不超调」
+  const pDisc = sim({ mode: 'P', kp: 2, ki: 0, kd: 0, tau: 1, dt: 1, duration: 10, uMin: -10, uMax: 10 });
+  const aD = Math.exp(-1), bD = 1 - aD;
+  const pole = aD - bD * 2;
+  check('M3.6 离散 P 超调反例：dt=τ=1、Kp=2 → 闭环极点 −0.896<0，y[1]=1.264>1，超调≈26.42%（未收敛如实判未稳定）',
+    pole < 0 && pDisc.ok && pDisc.y[1] > 1 &&
+    near(pDisc.y[1], 2 * bD, 1e-12) &&
+    near(pDisc.metrics.overshoot, (2 * bD - 1) * 100, 1e-9) &&
+    pDisc.metrics.settled === false,
+    'pole=' + pole.toFixed(4) + ' overshoot=' + pDisc.metrics.overshoot.toFixed(4) + '%');
 }
 
 // ================================================================ M4 PI 控制

@@ -130,8 +130,9 @@ GROUPS = {
         'papers-deeplink', 'editor-ux', 'editor-history', 'search-ux',
         'search-interaction', 'reading-experience', 'image-lightbox',
         'ui-refresh', 'performance-accessibility', 'robot-kinematics', 'pid-control',
+        'oee-analysis',
     ],
-    'lab': ['robot-math', 'robot-kinematics', 'pid-math', 'pid-control'],
+    'lab': ['robot-math', 'robot-kinematics', 'pid-math', 'pid-control', 'oee-math', 'oee-analysis'],
     'knowledge': ['knowledge-store', 'knowledge-center', 'knowledge-import', 'knowledge-management',
                   'learning-stats', 'learning-analytics',
                   'personalized-home', 'home-experience',
@@ -295,6 +296,10 @@ TESTS = [
      'desc': 'B9C1B：PID 离散仿真数学（对象解析对照/零输入/P/PI/PID/饱和与抗饱和/dt 收敛/指标定义/非法输入/确定性）'},
     {'name': 'pid-control', 'file': 'tests/browser/pid-control.spec.js', 'kind': 'browser',
      'desc': 'B9C1B：PID 实验室验收（数值一致/参数与模式/饱和可视化/抗饱和对比/390px/深色/键盘无障碍/离线/三引擎）'},
+    {'name': 'oee-math', 'file': 'tests/test58_oee_math.js', 'kind': 'jsdom',
+     'desc': 'B9C1C：OEE 数学与数据口径（统一口径/多穴/单位换算/损失守恒/边界与异常/Performance>100%/A-B 对比与假设投影/确定性）'},
+    {'name': 'oee-analysis', 'file': 'tests/browser/oee-analysis.spec.js', 'kind': 'browser',
+     'desc': 'B9C1C：OEE 实验室验收（数值一致/示例切换/多穴/A-B 对比/异常提示/390px/深色/键盘无障碍/离线/三引擎）'},
 ]
 
 COUNT_RE = re.compile(r'共\s*(\d+)\s*项[，,]\s*PASS\s*(\d+)[，,]\s*FAIL\s*(\d+)')

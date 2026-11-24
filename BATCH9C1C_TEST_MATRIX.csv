@@ -1,0 +1,41 @@
+id,area,suite,target,coverage,type,engines,items,result,evidence
+K-01,基准样例,oee-math,450/45/30s/720/684 独立硬编码期望,A=90%/P=88.888889%/Q=95%/OEE=76%；损失 45/45/18/342 分钟；守恒偏差 0；交叉偏差 1.11e-16；理论产能 900/810,jsdom,node,12,PASS,K1.1-K1.12
+K-02,多穴模具,oee-math,4 穴 20s/双穴 10s/等价单穴,理想单件周期=机器周期÷穴数只除一次；多穴与等价单穴逐字段偏差 0；OEE=71.09375%,jsdom,node,5,PASS,K2.1-K2.5
+K-03,单位换算,oee-math,分钟→秒显式换算,0.1 分钟=6 秒（相对<1e-9）；60 分钟+60s+60 件→P/OEE=100%,jsdom,node,3,PASS,K3.1-K3.3
+K-04,边界口径,oee-math,零计划/零运行/零产量/零不合格/全不合格,分母零→null 不适用；零合格产出 OEE=0（时间公式）各指标分别判断；无 NaN/虚构 100%,jsdom,node,5,PASS,K4.1-K4.5
+K-05,异常数据,oee-math,不一致数据/P>100%/满产能,零运行有产量→inconsistent OEE=null；P=10/9 不截断负损失保留 chartSafe=false；守恒仍成立；810 件 P=100%,jsdom,node,5,PASS,K5.1-K5.5
+K-06,非法输入,oee-math,21 组非法+非对象+零值边界,负数/NaN/Infinity/非整数件数与穴数/合格>总量/停机>计划/周期≤0 全拒绝且错误码正确；零值合法边界,jsdom,node,3,PASS,K6.1-K6.3
+K-07,守恒与随机性质,oee-math,固定种子 100 组（含 P>100%）,全部有限 A/Q∈[0,1]；守恒相对<1e-9；有效时间=c×G；交叉≤1e-9；chartSafe 时损失非负,jsdom,node,1,PASS,K7.1
+K-08,A/B 实际对比,oee-math,硬编码 B（停机 30/840/798）,ΔOEE=+12.6667pp；损失 −15/−45/+3/+57 分钟；合格+114；只减停机 OEE 不变（损失转移）；计划不同标注；非法拒绝,jsdom,node,8,PASS,K8.1-K8.8
+K-09,假设投影,oee-math,停机 45→30/0/越界/零产量,显式假设 P/Q/c 不变+非已验证声明；G'=709.333（+25.333）；零产量拒绝不编造；越界拒绝,jsdom,node,7,PASS,K9.1-K9.7
+K-10,确定性与极值,oee-math,同参重跑/1e6 分钟 1e9 件 0.01s/64 穴/0.001 分钟,JSON 完全一致；极值全部有限守恒相对<1e-9,jsdom,node,4,PASS,K10.1-K10.4
+K-11,教学示例,oee-math,3 示例标注/默认=基准/冲压线,A=13/14 P=12/13 Q=0.99 OEE=21384/25200 独立硬编码,jsdom,node,3,PASS,K11.1-K11.3
+R-01,入口与互链,oee-analysis,导航 href 不变/#/lab 三卡/2R 与 PID 深链接,实验导航保持 #/lab/robot-2r；三卡深链；两既有实验正常且含 OEE 互链,browser,chromium,5,PASS,R1.1-R1.5
+R-02,默认数值一致,oee-analysis,getState/页内独立重算/堆叠图+数值表,默认 A/P/Q/OEE=90/88.888889/95/76%；损失 45/45/18/342；4 段+4 行；OEE 显示 76.00%,browser,chromium,4,PASS,R2.1-R2.4
+R-03,参数即时计算,oee-analysis,停机 30/产量 840/798/多穴 4×20s,只减停机 OEE 仍 76%（损失转移）；P=100% OEE=88.6667%；理想单件周期 5s,browser,chromium,3,PASS,R3.1-R3.3
+R-04,示例切换,oee-analysis,multi/line/手动改参,multi OEE=71.09375%；line OEE=21384/25200；改参标记 custom,browser,chromium,3,PASS,R4.1-R4.3
+R-05,A/B 与投影,oee-analysis,保存 A/对比表 7 行/停机→15 投影,ΔOEE=+12.6667pp 合格+114（实际对比）；投影合格 826.5（+28.5）标注假设与非已验证,browser,chromium,3,PASS,R5.1-R5.3
+R-06,异常提示,oee-analysis,P>100%/不一致/零计划,111.11% 不截断+堆叠图隐藏+四项检查清单；inconsistent OEE 不适用；零计划 A/OEE 不适用；无运行时异常,browser,chromium,4,PASS,R6.1-R6.4
+R-07,非法输入与默认,oee-analysis,合格>总量/非整数/负停机/恢复默认,拒绝保持上一有效值 aria-invalid；默认全量恢复错误清空基准 A 清除,browser,chromium,4,PASS,R7.1-R7.4
+R-08,有界计算,oee-analysis,30 次快速输入,同步期间零重算（防抖）结束后恰一次到末值；无异常,browser,chromium,2,PASS,R8.1-R8.2
+R-09,390px 移动,oee-analysis,单列/触控高度/触摸保存 A,无溢出；面板下移；输入/按钮≥40px；触摸点按生效（滚动到可见后 tap）,browser,chromium,2,PASS,R9.1-R9.2
+R-10,深色主题,oee-analysis,令牌切换/数值不变,损失图 fill 随主题变化无溢出；深色下独立重算一致,browser,chromium,2,PASS,R10.1-R10.2
+R-11,键盘无障碍,oee-analysis,ArrowUp/Enter 保存 A/aria,计划时间+1 重算；Enter 激活；role/aria-label/live/标签/caption/异常 aria-live,browser,chromium,4,PASS,R11.1-R11.4
+R-12,离线,oee-analysis,SW 缓存/离线重载改参,两脚本入缓存；离线渲染+改参+独立重算一致（OEE 仍 76%）,browser,chromium,2,PASS,R12.1-R12.2
+R-13,脚本降级,oee-analysis,oee-demo.js 与 oee-calculation.js 分别 404,加载失败+重试入口不白屏不抛错；首页文章列表不受影响,browser,chromium,4,PASS,R13×2 脚本×2 断言
+R-14,快速路由,oee-analysis,5 次切换含 2R/PID/OEE,单实例无串页数值正确无异常,browser,chromium,1,PASS,R14.1
+R-15,三引擎,oee-analysis,firefox/webkit 390px 多穴示例,渲染/示例切换/独立重算 OEEΔ=0/4 段/无溢出/无异常,browser,firefox+webkit,4,PASS,R15.1-R15.2×2
+S-01,SW 快照契约,sw-snapshot-unit,CACHE_VERSION 2026-11-24-2,版本格式与递增；首屏 7 项/REQUIRED 8 项不变,browser,chromium,15,PASS,U0-U3d
+S-02,SW 一致性,sw-consistency,资源集合与缓存策略,OPTIONAL 新增两脚本存在性；策略不变,browser,chromium,37,PASS,37/37 93.0s
+S-03,SW 升级,sw-upgrade,版本换代清理,旧版本缓存清理与新版接管,browser,chromium,25,PASS,25/25 29.3s
+A-01,全站巡检,audit,路由可达/死链/资源/控制台,新增路由与互链不引入死链或控制台错误,browser,chromium,1,PASS,套件级 PASS 23.0s
+A-02,搜索主题静态页,test7,搜索/主题/静态页/SW/RSS,SW 版本断言动态读取不受递增影响,jsdom,node,1,PASS,套件级 PASS 16.9s
+A-03,导航与 UI,ui-refresh,导航单行/入口/视觉契约,实验入口不破坏导航单行断言,browser,chromium,59,PASS,59/59 39.0s
+A-04,首页个人模块,personalized-home,模块顺序/偏好/降级,首页口径不受影响,jsdom,node,58,PASS,58/58 12.8s
+A-05,首页验收,home-experience,搜索交替/路由/视口/离线,首页不受影响,browser,chromium,41,PASS,41/41 30.4s
+A-06,性能无障碍,performance-accessibility,焦点/对比度/性能预算,新页面不劣化既有断言,browser,chromium,59,PASS,59/59 56.4s
+A-07,2R 数学回归,robot-math,FK/IK 全量,2R 算法零改动验证,jsdom,node,50,PASS,50/50 0.1s
+A-08,2R 浏览器回归,robot-kinematics,拖动/分支/离线/三引擎,互链新增不破坏既有验收,browser,chromium+firefox+webkit,44,PASS,44/44 21.9s
+A-09,PID 数学回归,pid-math,全量+新增 M3.6 离散 P 超调,53/53；口径修订不改动算法数值契约,jsdom,node,53,PASS,53/53 0.2s（含 M3.6 极点 −0.8964 超调 26.42%）
+A-10,PID 浏览器回归,pid-control,全量（含末段平均误差标注）,45/45；390px 断行回归已修复（块级标注+min-width:0）,browser,chromium+firefox+webkit,45,PASS,45/45（修复后重跑）
+N-01,完整回归,PR CI,默认 81 套串行,本地未跑全量；按任务书交 PR CI 执行,ci,chromium,81,PENDING,PR 创建后由 GitHub Actions tests 工作流验证
