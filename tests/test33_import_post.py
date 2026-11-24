@@ -54,8 +54,14 @@ ENV = dict(os.environ, PYTHONIOENCODING='utf-8', PYTHONUTF8='1')
 
 # ---------------------------------------------------------------- 临时仓库
 REPO_FILES = ['js/data.js', 'js/user-posts.js', 'data/search-index.json',
-              'data/posts/manifest.json', 'feed.xml', 'gen_feed.py',
-              'scripts/build_content.py', 'scripts/split_posts.py', 'scripts/import_post.py']
+              'data/posts/manifest.json', 'feed.xml', 'data/content-links.json',
+              'gen_feed.py', 'scripts/content_links.py',
+              'scripts/build_content.py', 'scripts/split_posts.py', 'scripts/import_post.py',
+              'js/courses.js', 'js/course-notes.js', 'js/papers.js',
+              'js/codefiles.js', 'js/projects.js', 'js/note-slugs.js']
+# 引用索引的权威源：fixture 必须齐全，否则索引会与 fixture 自身漂移
+DERIVED = ['js/data.js', 'data/search-index.json', 'data/posts/manifest.json',
+           'feed.xml', 'data/content-links.json']
 
 
 def make_repo():
@@ -120,7 +126,9 @@ try:
     rc, out = run_cli(['--file', f1, '--dry-run', '--root', root])
     check('I14 --dry-run 退出码 0', rc == 0, out.strip()[-60:])
     check('I14 --dry-run 不写任何文件', snapshot(root) == before)
-    check('I14 --dry-run 说明未来会更新 4 个派生文件', '待更新 4 个' in out, out.strip()[-80:])
+    check('I14 --dry-run 说明未来会更新 5 个派生文件', '待更新 5 个' in out, out.strip()[-80:])
+    check('I14b dry-run 列出真实变化的全部产物（新增文章会同时改动索引）',
+          all(rel in out for rel in DERIVED), out.strip()[-200:])
 
     rc, out = run_cli(['--file', f1, '--apply', '--root', root])
     check('I1 --apply 退出码 0', rc == 0, out.strip()[-120:])
@@ -353,6 +361,73 @@ try:
     rc, out = run_cli(['--file', path, '--apply', '--root', root])
     check('I9 回滚后可以重新导入成功', rc == 0, out.strip()[-80:])
     shutil.rmtree(root, ignore_errors=True)
+
+    # ================================================================ D1 新增文章失败回滚（含索引）
+    # 注入点：索引已替换完成、最终 run_check 之前 → 必须字节级恢复 content-links.json。
+    d1_root = make_repo()
+    d1_before = snapshot(d1_root)
+    d1_idx_before = io.open(os.path.join(d1_root, 'data', 'content-links.json'), 'rb').read()
+    d1_article = dict(ARTICLE, id='d1-rollback', content=(
+        '# D1 回滚验证\n\n'
+        '引用已有文章 [[post:embodied-ai-notes]] 与草稿 [[post:d1-not-exist]]。\n\n'
+        '显式站内链接：[回到笔记](#/post/embodied-ai-notes)\n'))
+    f_d1 = write_json(tmpdir, 'd1.json', d1_article)
+
+    calls = {'check': 0}
+    fired = [False]
+    idx_at_failure = []
+    lock_at_rollback = []
+    orig_check, orig_rollback = ip.run_check, ip._rollback
+
+    def fail_check(root_arg):
+        calls['check'] += 1
+        idxp = os.path.join(root_arg, 'data', 'content-links.json')
+        cur = io.open(idxp, 'rb').read() if os.path.exists(idxp) else b''
+        if cur != d1_idx_before and not fired[0]:
+            fired[0] = True
+            idx_at_failure.append(cur)
+            raise ip.ImportFailure('simulated failure after index replacement')
+        return orig_check(root_arg)
+
+    def spy_rollback(root_arg, backup, body_rel, delete_body):
+        lock_at_rollback.append(os.path.exists(os.path.join(root_arg, ip.bc.LOCK_NAME)))
+        return orig_rollback(root_arg, backup, body_rel, delete_body)
+
+    ip.run_check, ip._rollback = fail_check, spy_rollback
+    buf_out, buf_err = io.StringIO(), io.StringIO()
+    try:
+        with contextlib.redirect_stdout(buf_out), contextlib.redirect_stderr(buf_err):
+            rc = ip.main(['--file', f_d1, '--apply', '--root', d1_root])
+    finally:
+        ip.run_check, ip._rollback = orig_check, orig_rollback
+
+    check('D1 注入失败后返回 1', rc == 1, rc)
+    check('D1 失败发生在索引写入之后（注入点有效）',
+          idx_at_failure and idx_at_failure[0] != d1_idx_before,
+          len(idx_at_failure[0]) if idx_at_failure else 'no-capture')
+    check('D1 新文章正文不存在',
+          not os.path.exists(os.path.join(d1_root, 'data', 'posts', 'd1-rollback.md')))
+    d1_after = snapshot(d1_root)
+    diff = sorted(rel for rel in d1_before if d1_before[rel] != d1_after.get(rel))
+    check('D1 全部派生产物逐字节恢复（含 content-links.json）', diff == [], diff)
+    check('D1 content-links.json 字节级恢复',
+          io.open(os.path.join(d1_root, 'data', 'content-links.json'), 'rb').read() == d1_idx_before)
+    r_check = subprocess.run([sys.executable, os.path.join(d1_root, 'scripts', 'build_content.py'),
+                              '--root', d1_root, '--check'], cwd=d1_root, capture_output=True,
+                             text=True, encoding='utf-8', errors='replace', env=ENV)
+    check('D1 回滚后 build_content --check 通过', r_check.returncode == 0,
+          (r_check.stdout or r_check.stderr).strip()[-70:])
+
+    # ---------------------------------------------------------------- D5 BuildLock 临界区
+    check('D5 回滚发生在同一个构建锁内（不是释放锁后再回滚）',
+          lock_at_rollback == [True], lock_at_rollback)
+    check('D5 失败后锁已释放（没有把临界区留在占用状态）',
+          not os.path.exists(os.path.join(d1_root, ip.bc.LOCK_NAME)))
+    ok_article = dict(ARTICLE, id='d1-after-rollback', content='# 回滚后\n\n正文。\n')
+    rc, out = run_cli(['--file', write_json(tmpdir, 'd1-ok.json', ok_article),
+                       '--apply', '--root', d1_root])
+    check('D5 回滚后可正常开始下一次导入（无残留锁）', rc == 0, out.strip()[-70:])
+    shutil.rmtree(d1_root, ignore_errors=True)
 
     # ================================================================ I14 参数互斥
     rc, out = run_cli(['--file', f1, '--apply', '--dry-run', '--root', tmpdir])

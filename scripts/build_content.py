@@ -201,6 +201,18 @@ def build_artifacts(p, state, source_info):
     return artifacts, manifest
 
 
+# 全部 B 类派生产物（相对路径，固定顺序）。这里是**唯一权威清单**：
+# import_post 的备份/回滚、release_candidate 的快照/过期检测、CI 候选哈希
+# 都复用它，避免各处再手写"四个文件"造成遗漏（Batch 9B-2R）。
+DERIVED_ARTIFACTS = (
+    'js/data.js',
+    'data/search-index.json',
+    'data/posts/manifest.json',
+    'feed.xml',
+    'data/content-links.json',
+)
+
+
 def _parse_now(p):
     return p.get('now')
 

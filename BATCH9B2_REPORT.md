@@ -126,3 +126,16 @@ WikiLink 注册/反向链接区/图谱路由/清理钩子/知识库入口）、`
 
 - 提交信息：`feat: Batch 9B-2 add backlinks and knowledge graph`
 - 允许 push 并创建 PR；不自动合并、不部署。完成后停止，不进入 9C-2。
+
+## 11. 9B-2R 增补（派生产物契约扩到 5 项）
+
+本报告记录 9B-2 首次交付（`c9b80e9`）。该提交的 PR CI 稳定暴露 6 套失败，根因是索引只接进了
+`build_artifacts`，没有接进旧内容发布体系（导入备份/回滚、发布候选快照/过期检测、CI 候选哈希留档）。
+完整根因、修复与 D1–D5 回滚证据见 `BATCH9B2R_REPORT.md`，此处只固定契约结论：
+
+- 唯一权威清单：`scripts/build_content.py::DERIVED_ARTIFACTS` =
+  `js/data.js`、`data/search-index.json`、`data/posts/manifest.json`、`feed.xml`、`data/content-links.json`。
+- `import_post.DERIVED_FILES`、`release_candidate.ARTIFACTS` 直接复用该常量；
+  CI `content-pipeline.yml` 的哈希循环与之逐项一致（`test27 W13` 静态校验，禁止分叉）。
+- 候选哈希留档不再做字符级截断（旧 `cut -c1-300` 在 4 条时就已截尾）。
+- 索引的确定性、语法与保护语义**未变**（本增补不改任何 WikiLink v1 规则）。

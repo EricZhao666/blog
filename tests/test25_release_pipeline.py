@@ -45,17 +45,29 @@ def run(args, timeout=180):
                           timeout=timeout)
 
 
+DERIVED = ['js/data.js', 'data/search-index.json', 'data/posts/manifest.json',
+           'feed.xml', 'data/content-links.json']
+
+
 def sha(path):
     with open(path, 'rb') as f:
         return hashlib.sha256(f.read()).hexdigest()
 
 
 def make_copy(tag):
-    """复制一份精简仓库（够 build_content 用）。"""
+    """复制一份精简仓库（够 build_content 用）。
+
+    Batch 9B-2R：引用索引是第 5 个派生产物，fixture 必须同时带上生成器
+    （scripts/content_links.py）与索引的**全部权威源**，否则 fixture 里的索引
+    会和 fixture 自身的内容漂移（不能只复制站点整份索引）。
+    """
     dst = os.path.join(TMP, tag)
     for rel in ['js/data.js', 'js/user-posts.js', 'data/search-index.json',
-                'data/posts/manifest.json', 'feed.xml',
-                'scripts/build_content.py', 'scripts/split_posts.py', 'gen_feed.py']:
+                'data/posts/manifest.json', 'feed.xml', 'data/content-links.json',
+                'scripts/build_content.py', 'scripts/split_posts.py', 'gen_feed.py',
+                'scripts/content_links.py',
+                'js/courses.js', 'js/course-notes.js', 'js/papers.js',
+                'js/codefiles.js', 'js/projects.js', 'js/note-slugs.js']:
         target = os.path.join(dst, rel.replace('/', os.sep))
         os.makedirs(os.path.dirname(target), exist_ok=True)
         shutil.copy2(os.path.join(ROOT, rel.replace('/', os.sep)), target)
@@ -82,12 +94,12 @@ check('R1b 只在全部通过后才写可部署标记', ok and os.path.isfile(ma
 if os.path.isfile(marker):
     data = json.load(io.open(marker, encoding='utf-8'))
     check('R1c 标记记录了输入版本与产物哈希',
-          data.get('status') == 'ready' and 'source' in data and len(data.get('artifacts', {})) == 4,
+          data.get('status') == 'ready' and 'source' in data
+          and sorted(data.get('artifacts', {}).keys()) == sorted(DERIVED),
           list(data.get('artifacts', {}).keys()))
 
 # ------------------------------------------------------------------ R6 不写回源
-before = {rel: sha(os.path.join(src, rel.replace('/', os.sep)))
-          for rel in ['js/data.js', 'data/search-index.json', 'data/posts/manifest.json', 'feed.xml']}
+before = {rel: sha(os.path.join(src, rel.replace('/', os.sep))) for rel in DERIVED}
 r = run(['--from-worktree', '--source-dir', src, '--work-dir', os.path.join(TMP, 'wd2')])
 after = {rel: sha(os.path.join(src, rel.replace('/', os.sep))) for rel in before}
 check('R6 隔离构建不写回源目录', before == after)
@@ -97,8 +109,7 @@ wd3, wd4 = os.path.join(TMP, 'wd3'), os.path.join(TMP, 'wd4')
 run(['--from-worktree', '--source-dir', src, '--work-dir', wd3])
 run(['--from-worktree', '--source-dir', src, '--work-dir', wd4])
 def snaps(wd):
-    return {rel: sha(os.path.join(wd, rel.replace('/', os.sep)))
-            for rel in ['js/data.js', 'data/search-index.json', 'data/posts/manifest.json']}
+    return {rel: sha(os.path.join(wd, rel.replace('/', os.sep))) for rel in DERIVED}
 check('R7 同一输入两次构建产物一致（确定性）', snaps(wd3) == snaps(wd4))
 
 # ------------------------------------------------------------------ R2 源变了、派生没更新
@@ -111,6 +122,26 @@ r = run(['--from-worktree', '--source-dir', src2, '--work-dir', wd5])
 check('R2 源与派生不一致 → 判定失败', r.returncode != 0 and '不一致' in (r.stderr + r.stdout),
       (r.stderr or '').strip()[-60:])
 check('R2b 失败时不写可部署标记', not os.path.isfile(os.path.join(wd5, '.release-candidate.json')))
+
+# ------------------------------------------------------------------ R2c 只有索引过期（D3）
+# 只篡改 data/content-links.json，其余四个派生产物保持仓库原样：
+# 闸门必须把它判成"过期产物"，不能自动重建后照样给 CANDIDATE_READY。
+src2c = make_copy('stale_index')
+idx = os.path.join(src2c, 'data', 'content-links.json')
+# 真实内容篡改：把一个节点标题改掉（仍是合法 JSON，只与权威源不一致）
+parsed = json.loads(io.open(idx, 'rb').read().decode('utf-8'))
+parsed['nodes'][0]['title'] = parsed['nodes'][0]['title'] + '（过期）'
+write(idx, json.dumps(parsed, ensure_ascii=False, sort_keys=True, separators=(',', ':')) + '\n')
+tampered_sha = sha(idx)
+check('R2c0 fixture 其余产物未被改动',
+      sha(os.path.join(src2c, 'js', 'data.js')) == sha(os.path.join(src, 'js', 'data.js')))
+wd5c = os.path.join(TMP, 'wd5c')
+r = run(['--from-worktree', '--source-dir', src2c, '--work-dir', wd5c])
+check('R2c 仅索引过期 → 候选拒绝（不自动重建后宣称可部署）',
+      r.returncode != 0 and 'data/content-links.json' in (r.stderr + r.stdout),
+      (r.stderr or r.stdout).strip()[-70:])
+check('R2c2 失败时无标记', not os.path.isfile(os.path.join(wd5c, '.release-candidate.json')))
+check('R2c3 闸门不写回源目录（源索引仍是过期字节）', sha(idx) == tampered_sha)
 
 # ------------------------------------------------------------------ R3 生成器失败（正文损坏）
 src3 = make_copy('broken')

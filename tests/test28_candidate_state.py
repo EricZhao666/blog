@@ -62,9 +62,13 @@ def run(*args, cwd=None):
 
 def make_repo(tag):
     dst = os.path.join(TMP, tag)
+    # Batch 9B-2R：引用索引是第 5 个派生产物，fixture 必须带上生成器与全部权威源
     for rel in ['js/data.js', 'js/user-posts.js', 'data/search-index.json',
-                'data/posts/manifest.json', 'feed.xml', 'gen_feed.py',
-                'scripts/build_content.py', 'scripts/split_posts.py']:
+                'data/posts/manifest.json', 'feed.xml', 'data/content-links.json',
+                'gen_feed.py', 'scripts/build_content.py', 'scripts/split_posts.py',
+                'scripts/content_links.py',
+                'js/courses.js', 'js/course-notes.js', 'js/papers.js',
+                'js/codefiles.js', 'js/projects.js', 'js/note-slugs.js']:
         target = os.path.join(dst, rel.replace('/', os.sep))
         os.makedirs(os.path.dirname(target), exist_ok=True)
         shutil.copy2(os.path.join(ROOT, rel.replace('/', os.sep)), target)
@@ -93,7 +97,7 @@ def item(pid, op='add', title=None, content=None):
 def merge_back(repo, cand):
     """模拟候选 PR 已合并：把候选的权威源与产物写回仓库根。"""
     for rel in ['js/data.js', 'data/search-index.json', 'data/posts/manifest.json',
-                'feed.xml', 'content/ledger.json']:
+                'feed.xml', 'data/content-links.json', 'content/ledger.json']:
         src = os.path.join(cand, rel.replace('/', os.sep))
         if os.path.isfile(src):
             dst = os.path.join(repo, rel.replace('/', os.sep))

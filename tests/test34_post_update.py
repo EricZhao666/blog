@@ -63,8 +63,13 @@ def check(name, cond, extra=None):
 ENV = dict(os.environ, PYTHONIOENCODING='utf-8', PYTHONUTF8='1')
 
 REPO_FILES = ['js/data.js', 'js/user-posts.js', 'data/search-index.json',
-              'data/posts/manifest.json', 'feed.xml', 'gen_feed.py',
-              'scripts/build_content.py', 'scripts/split_posts.py', 'scripts/import_post.py']
+              'data/posts/manifest.json', 'feed.xml', 'data/content-links.json',
+              'gen_feed.py', 'scripts/content_links.py',
+              'scripts/build_content.py', 'scripts/split_posts.py', 'scripts/import_post.py',
+              'js/courses.js', 'js/course-notes.js', 'js/papers.js',
+              'js/codefiles.js', 'js/projects.js', 'js/note-slugs.js']
+DERIVED = ['js/data.js', 'data/search-index.json', 'data/posts/manifest.json',
+           'feed.xml', 'data/content-links.json']
 
 TARGET = 'embodied-ai-notes'      # 真实批次里存在的内置文章（副本上操作，不动真实仓库）
 
@@ -427,6 +432,64 @@ try:
     rc, out = run_cli(['--file', f_crash, '--mode', 'update', '--apply', '--root', root])
     check('U13 回滚后可以重新更新成功', rc == 0, out.strip()[-70:])
     shutil.rmtree(root, ignore_errors=True)
+
+    # ================================================================ D2 更新文章失败回滚（含索引）
+    # 更新正文里的 WikiLink/显式引用 → 索引 bySource 必须变化；
+    # 注入点：索引已替换、最终 run_check 之前 → 正文/元数据/索引全部字节级恢复。
+    d2_root = make_repo()
+    d2_before = snapshot(d2_root)
+    d2_idx_before = io.open(os.path.join(d2_root, 'data', 'content-links.json'), 'rb').read()
+    d2_body = ('# 具身智能（叠加引用）\n\n'
+               '引用 [[post:embodied-ai-notes]] 与 [[post:batch9b2-wikilink-demo]]；\n'
+               '站内链接：[进入笔记](#/post/embodied-ai-notes)。\n')
+    f_d2 = write_json(tmpdir, 'd2.json', make_update(d2_root, TARGET, content=d2_body))
+    body_path = os.path.join(d2_root, 'data', 'posts', TARGET + '.md')
+    body_before = io.open(body_path, 'rb').read()
+
+    fired = [False]
+    idx_at_failure = []
+    lock_at_rollback = []
+    orig_check, orig_rollback = ip.run_check, ip._rollback
+
+    def fail_check(root_arg):
+        idxp = os.path.join(root_arg, 'data', 'content-links.json')
+        cur = io.open(idxp, 'rb').read() if os.path.exists(idxp) else b''
+        if cur != d2_idx_before and not fired[0]:
+            fired[0] = True
+            idx_at_failure.append(cur)
+            raise ip.ImportFailure('simulated failure after index replacement (update)')
+        return orig_check(root_arg)
+
+    def spy_rollback(root_arg, backup, body_rel, delete_body):
+        lock_at_rollback.append(os.path.exists(os.path.join(root_arg, ip.bc.LOCK_NAME)))
+        return orig_rollback(root_arg, backup, body_rel, delete_body)
+
+    buf_out, buf_err = io.StringIO(), io.StringIO()
+    ip.run_check, ip._rollback = fail_check, spy_rollback
+    try:
+        with contextlib.redirect_stdout(buf_out), contextlib.redirect_stderr(buf_err):
+            rc = ip.main(['--file', f_d2, '--mode', 'update', '--apply', '--root', d2_root])
+    finally:
+        ip.run_check, ip._rollback = orig_check, orig_rollback
+
+    check('D2 更新注入失败后返回 1', rc == 1, rc)
+    check('D2 失败发生在索引写入之后（注入点有效）',
+          bool(idx_at_failure) and idx_at_failure[0] != d2_idx_before,
+          len(idx_at_failure[0]) if idx_at_failure else 'no-capture')
+    check('D2 原正文逐字节恢复', io.open(body_path, 'rb').read() == body_before)
+    check('D2 content-links.json 字节级恢复',
+          io.open(os.path.join(d2_root, 'data', 'content-links.json'), 'rb').read() == d2_idx_before)
+    d2_after = snapshot(d2_root)
+    d2_diff = sorted(rel for rel in d2_before if d2_before[rel] != d2_after.get(rel))
+    check('D2 全部派生产物逐字节恢复（含元数据与索引）', d2_diff == [], d2_diff)
+    r_check = subprocess.run([sys.executable, os.path.join(d2_root, 'scripts', 'build_content.py'),
+                              '--root', d2_root, '--check'], cwd=d2_root, capture_output=True,
+                             text=True, encoding='utf-8', errors='replace', env=ENV)
+    check('D2 回滚后 build_content --check 通过', r_check.returncode == 0,
+          (r_check.stdout or r_check.stderr).strip()[-70:])
+    check('D2 回滚在构建锁内完成（不会覆盖其他进程已提交的数据）',
+          lock_at_rollback == [True], lock_at_rollback)
+    shutil.rmtree(d2_root, ignore_errors=True)
 
     # ================================================================ U22 锁被占用
     root = make_repo()

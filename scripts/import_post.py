@@ -8,7 +8,8 @@
         data/posts/<id>.md     正文（Markdown）
         js/data.js             元数据（由生成器重新渲染整份文件）
     派生产物（B 类，复用 scripts/build_content.py 重建）
-        data/search-index.json / data/posts/manifest.json / feed.xml
+        data/search-index.json / data/posts/manifest.json / feed.xml / data/content-links.json
+        （清单统一取自 build_content.DERIVED_ARTIFACTS，备份/回滚不再另写死列表）
 
 两种操作：
 
@@ -82,7 +83,7 @@ WINDOWS_RESERVED = ({'con', 'prn', 'aux', 'nul'} |
                     {'com%d' % i for i in range(1, 10)} |
                     {'lpt%d' % i for i in range(1, 10)})
 
-DERIVED_FILES = ('js/data.js', 'data/search-index.json', 'data/posts/manifest.json', 'feed.xml')
+DERIVED_FILES = bc.DERIVED_ARTIFACTS
 
 CONTROL_CHARS = re.compile(r'[\x00-\x08\x0b\x0c\x0e-\x1f\x7f]')
 
@@ -612,27 +613,33 @@ def _rebuild_and_write(root, p, state, plan):
 
 
 def apply_add_plan(root, p, plan):
-    """真正落盘：正文 → 元数据 → 派生数据 → 回读校验；失败即回滚。"""
+    """真正落盘：正文 → 元数据 → 派生数据 → 回读校验；失败即回滚。
+
+    Batch 9B-2R：备份与回滚都必须在**同一个** BuildLock 临界区内完成。
+    否则出现这种竞态：进程 A 在锁外取备份 → 持锁写入并失败 → 释放锁 →
+    进程 B 持锁成功提交 → A 才回滚，把 B 刚提交的产物覆盖回旧字节。
+    回滚里的 run_check 是只读（--check 无锁），不会嵌套同一把锁。
+    """
     pid = plan['id']
     body_rel = 'data/posts/%s.md' % pid
-    backup = _backup(root, p, pid, with_body=False)
-    try:
-        with bc.BuildLock(p['lock']):
+    with bc.BuildLock(p['lock']):
+        backup = _backup(root, p, pid, with_body=False)
+        try:
             write_new_body(sp.body_path(p, pid), plan['body'])
             write_data_js(p['data_js'], plan['artifacts']['js/data.js'])
             # 不信任内存里的中间结果：从磁盘重新读一遍，再交给统一构建器生成派生数据
             state_now = bc.collect(p)
             _rebuild_and_write(root, p, state_now, plan)
-    except BaseException:
-        problems = _rollback(root, backup, body_rel, delete_body=True)
-        if problems:
-            print('[ROLLBACK-INCOMPLETE] 自动回滚未完全成功，请手工核对：' + '；'.join(problems),
-                  file=sys.stderr)
-        raise
+        except BaseException:
+            problems = _rollback(root, backup, body_rel, delete_body=True)
+            if problems:
+                print('[ROLLBACK-INCOMPLETE] 自动回滚未完全成功，请手工核对：' + '；'.join(problems),
+                      file=sys.stderr)
+            raise
 
 
 def apply_update_plan(root, p, plan):
-    """更新落盘：整个"复核 → 写入 → 校验"都在构建锁内，防止并发覆盖。"""
+    """更新落盘：整个"复核 → 写入 → 校验 → 回滚"都在构建锁内，防止并发覆盖。"""
     pid = plan['id']
     body_rel = 'data/posts/%s.md' % pid
     ups = plan['update']

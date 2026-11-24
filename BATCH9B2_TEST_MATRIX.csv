@@ -37,3 +37,16 @@ R-06,首页,personalized-home/home-experience,个人模块与首页验收,47 项
 R-07,编辑器,editor-ux/test24,工具栏与发布队列,66/66+发布队列全通过（预览扩展不改变正式索引）,browser+jsdom,chromium+node,2,PASS,定向回归 run2
 R-08,UI 与 SW,ui-refresh/sw-consistency/browser,UI2.0/SW 一致性/离线,59/59+SW 快照与升级全通过（CACHE_VERSION 递增契约）,browser,chromium,3,PASS,定向回归 run2
 R-09,新增专项注册,content-links/knowledge-graph,run_tests 注册,81→84 套；full 组含新专项；未改调度器与 CI 命令,jsdom,node,2,PASS,定向回归 run2
+RR-01,六套 RED 复现,test25/test26/test27/test28/test33/test34,c9b80e9 定向复现,"A 类：fixture 缺 content_links.py；C 类：旧断言写死四产物",python,python,6,PASS,"RED: tests/reports/b9b2r-red-run1.txt"
+RR-02,派生产物统一清单,scripts/build_content.py,DERIVED_ARTIFACTS 常量,"5 项唯一权威清单；import_post / release_candidate 复用，无重复硬编码",python,python,1,PASS,BATCH9B2R_REPORT.md 第 2 节
+RR-03,导入备份回滚契约,test33,DERIVED_FILES=5 项,"备份/回滚覆盖索引；I14 断言待更新 5 个且五个文件名全在输出",python,python,2,PASS,green-run1.txt
+RR-04,发布候选快照,test25,ARTIFACTS=5 项,"R1c 标记 artifacts 键集合=5；R6/R7 快照与确定性含索引",python,git+python,3,PASS,green-run1.txt
+RR-05,CI 哈希留档,test27,W13/W13b/W13c,"哈希循环 5 项；去掉字符截断；git add 显式含索引",python,python,3,PASS,green-run1.txt
+RR-06,候选完整性,test27,W11/W11b/W11c,"完整候选通过；缺 search-index 失败；缺 content-links.json 失败",python,python,3,PASS,green-run1.txt
+RR-07,D1 新增回滚,test33,索引替换后注入失败,"正文不存在；5 产物逐字节恢复；索引字节级恢复；--check 通过",python,python,5,PASS,green-run1.txt
+RR-08,D2 更新回滚,test34,更新稿注入失败,"原正文/元数据/索引/全产物逐字节恢复；--check 通过",python,python,5,PASS,green-run1.txt
+RR-09,D3 过期索引候选,test25,仅篡改 content-links.json,"候选拒绝并点名索引；不写标记；不写回源目录",python,git+python,4,PASS,green-run1.txt
+RR-10,D4 正常生命周期,test26,WikiLink 增删与确定性,"节点/显式边/反向索引同步；重复 --sync 字节一致；其他正文零改动",python,python,10,PASS,green-run1.txt
+RR-11,D5 BuildLock,test33/test34,锁内备份与回滚,"回滚时锁仍在；失败后无残留锁；可继续导入；无嵌套锁",python,python,3,PASS,green-run1.txt
+RR-12,受影响专项,十套件,定向回归,"10/10 PASS（build-lock/test23/test29/test30/test31/content-check/split-check/feed-check/content-links/knowledge-graph）",python+jsdom,python+node,10,PASS,affected-run1.txt
+RR-13,浏览器图谱回归,graph-experience,54 项三引擎,"PASS（图谱 UI 与可视化未改动）",browser,chromium,54,PASS,graph-run1.txt

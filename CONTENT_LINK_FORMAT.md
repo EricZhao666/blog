@@ -109,3 +109,10 @@ marked 自身在 token 化阶段天然保证 1–3（扩展只在普通文本位
   夹具文章，验证 WikiLink 边、去重、自环、循环、诊断、`--check`、BuildLock 并发。
 - `tests/browser/graph-experience.spec.js`：HTTP 层 override 注入夹具正文/索引，
   仓库正式文件零改动。
+## 5. 与发布体系的关系（9B-2R 修订）
+
+`data/content-links.json` 是**完整派生产物**之一：与 `js/data.js`、`data/search-index.json`、
+`data/posts/manifest.json`、`feed.xml` 同级。它的清单只在一处定义
+（`scripts/build_content.py::DERIVED_ARTIFACTS`），导入备份/回滚、发布候选快照与过期检测、
+CI 候选哈希留档都复用它。因此"索引过期"和"data.js 过期"在发布闸门里是同一等级的失败：
+候选只篡改索引也必须被拒绝，不允许自动重建后宣称可部署。
