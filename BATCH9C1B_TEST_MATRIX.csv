@@ -36,4 +36,4 @@ A-04,首页验收,home-experience,搜索交替/路由/视口/离线,首页不受
 A-05,性能无障碍,performance-accessibility,焦点/对比度/性能预算,新页面不劣化既有断言,browser,chromium,59,PASS,59/59 56.8s
 A-06,2R 数学回归,robot-math,FK/IK 全量,2R 算法零改动验证,jsdom,node,50,PASS,50/50 0.1s
 A-07,2R 浏览器回归,robot-kinematics,拖动/分支/离线/三引擎,互链新增不破坏既有验收,browser,chromium+firefox+webkit,44,PASS,44/44 21.5s
-N-01,完整回归,PR CI,默认 79 套串行,本地未跑全量；按任务书交 PR CI 执行,ci,chromium,79,PENDING,PR 创建后由 GitHub Actions tests 工作流验证
+N-01,完整回归,PR CI,默认 79 套串行,本地未跑全量；按任务书交 PR CI 执行,ci,chromium,79,PENDING,PR #36 已触发 CI；https://github.com/EricZhao666/blog/pull/36/checks
