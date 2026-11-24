@@ -5396,10 +5396,17 @@ mark.search-hit {
   display: flex;
   flex-direction: column;
   gap: 14px;
+  min-width: 0;
   background: var(--color-surface);
   border: 1px solid var(--color-border);
   border-radius: var(--radius);
   padding: 16px;
+}
+
+.pid-ess-note {
+  display: block;
+  font-size: 0.7rem;
+  color: var(--color-text-muted);
 }
 
 .pid-field-title {
@@ -5721,5 +5728,410 @@ mark.search-hit {
 
   .pid-gain-row {
     grid-template-columns: 96px minmax(0, 1fr);
+  }
+}
+
+/* ============================================
+   Batch 9C-1C：OEE 工业生产效率与损失分析实验室
+   全部颜色走设计令牌，深浅主题自动适配
+   ============================================ */
+.oee-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 360px;
+  gap: 20px;
+  align-items: start;
+  margin-top: 16px;
+}
+
+.oee-main {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  min-width: 0;
+}
+
+.oee-card {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  padding: 16px;
+}
+
+.oee-card-title {
+  margin: 0 0 10px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--color-text-secondary);
+}
+
+.oee-overview {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 18px;
+  align-items: center;
+}
+
+.oee-big {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-width: 120px;
+}
+
+.oee-big-value {
+  font-size: 2rem;
+  font-weight: 700;
+  color: var(--color-primary);
+  font-variant-numeric: tabular-nums;
+}
+
+.oee-big-label {
+  font-size: 0.78rem;
+  color: var(--color-text-muted);
+}
+
+.oee-apq {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  gap: 5px 12px;
+  margin: 0;
+  font-size: 0.85rem;
+  flex: 1;
+  min-width: 220px;
+}
+
+.oee-apq dt {
+  color: var(--color-text-muted);
+  white-space: nowrap;
+}
+
+.oee-apq dd {
+  margin: 0;
+  color: var(--color-text);
+  font-variant-numeric: tabular-nums;
+}
+
+.oee-cross {
+  margin: 10px 0 0;
+  font-size: 0.78rem;
+  line-height: 1.6;
+  color: var(--color-text-muted);
+}
+
+.oee-status-line {
+  margin: 8px 0 0;
+  font-size: 0.82rem;
+  color: var(--color-text-secondary);
+}
+
+.oee-status {
+  display: inline-block;
+  padding: 2px 10px;
+  border-radius: var(--radius-pill);
+  font-size: 0.78rem;
+  font-weight: 600;
+}
+
+.oee-status--ok {
+  background: var(--color-success-soft);
+  color: var(--color-success);
+}
+
+.oee-status--warn {
+  background: var(--color-warning-soft);
+  color: var(--color-warning);
+}
+
+.oee-status--err {
+  background: var(--color-danger-soft);
+  color: var(--color-danger);
+}
+
+.oee-counts {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  gap: 5px 12px;
+  margin: 0;
+  font-size: 0.85rem;
+}
+
+.oee-counts dt {
+  color: var(--color-text-muted);
+  white-space: nowrap;
+}
+
+.oee-counts dd {
+  margin: 0;
+  color: var(--color-text);
+  font-variant-numeric: tabular-nums;
+  overflow-wrap: anywhere;
+}
+
+.oee-chart {
+  display: block;
+  width: 100%;
+  height: auto;
+  border-radius: var(--radius-sm);
+  background: var(--color-bg);
+}
+
+.oee-chart[hidden] {
+  display: none;
+}
+
+.oee-seg--downtime { fill: var(--color-danger); }
+.oee-seg--performance { fill: var(--color-warning); }
+.oee-seg--quality { fill: var(--color-accent); }
+.oee-seg--effective { fill: var(--color-success); }
+
+.oee-seg-label {
+  fill: var(--color-bg);
+  font-size: 11px;
+  font-weight: 600;
+}
+
+.oee-axis-label {
+  fill: var(--color-text-muted);
+  font-size: 11px;
+  font-variant-numeric: tabular-nums;
+}
+
+.oee-legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin: 6px 0 10px;
+  font-size: 0.76rem;
+  color: var(--color-text-secondary);
+}
+
+.oee-legend-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.oee-chip {
+  display: inline-block;
+  width: 12px;
+  height: 10px;
+  border-radius: 2px;
+}
+
+.oee-chip--downtime { background: var(--color-danger); }
+.oee-chip--performance { background: var(--color-warning); }
+.oee-chip--quality { background: var(--color-accent); }
+.oee-chip--effective { background: var(--color-success); }
+
+.oee-chart-note {
+  margin: 6px 0 10px;
+  padding: 8px 10px;
+  border: 1px solid var(--color-warning);
+  border-radius: var(--radius-sm);
+  background: var(--color-warning-soft);
+  color: var(--color-text);
+  font-size: 0.78rem;
+  line-height: 1.6;
+}
+
+.oee-loss-table,
+.oee-compare-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.78rem;
+  font-variant-numeric: tabular-nums;
+}
+
+.oee-loss-table th,
+.oee-loss-table td,
+.oee-compare-table th,
+.oee-compare-table td {
+  padding: 5px 6px;
+  border-bottom: 1px solid var(--color-border);
+  text-align: left;
+}
+
+.oee-loss-table thead th,
+.oee-compare-table thead th {
+  color: var(--color-text-muted);
+  font-weight: 600;
+}
+
+.oee-compare-wrap {
+  overflow-x: auto;
+}
+
+.oee-hint {
+  margin: 8px 0 0;
+  font-size: 0.76rem;
+  line-height: 1.6;
+  color: var(--color-text-muted);
+}
+
+.oee-error {
+  min-height: 1.2em;
+  margin: 0 0 6px;
+  font-size: 0.78rem;
+  color: var(--color-danger);
+}
+
+.oee-warnings {
+  margin: 0;
+  padding-left: 18px;
+  font-size: 0.78rem;
+  line-height: 1.6;
+  color: var(--color-warning);
+}
+
+.oee-warnings:empty {
+  display: none;
+}
+
+.oee-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  min-width: 0;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  padding: 16px;
+}
+
+.oee-field {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.oee-field-title {
+  display: block;
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--color-text-secondary);
+}
+
+.oee-input-label {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  font-size: 0.8rem;
+  color: var(--color-text-secondary);
+}
+
+.oee-input-label input,
+.oee-input-label select {
+  width: 100%;
+  min-width: 0;
+  min-height: 40px;
+  padding: 8px 10px;
+  border: 1px solid var(--color-border-strong);
+  border-radius: var(--radius-sm);
+  background: var(--color-bg);
+  color: var(--color-text);
+  font-size: 0.9rem;
+  font-variant-numeric: tabular-nums;
+}
+
+.oee-input-label input:focus-visible,
+.oee-input-label select:focus-visible {
+  outline: 2px solid var(--color-focus);
+  outline-offset: 1px;
+}
+
+.oee-input-label input[aria-invalid="true"] {
+  border-color: var(--color-danger);
+}
+
+.oee-example-note {
+  margin: 0;
+  font-size: 0.74rem;
+  line-height: 1.5;
+  color: var(--color-text-muted);
+}
+
+.oee-btn {
+  min-height: 40px;
+  padding: 9px 12px;
+  border: 1px solid var(--color-border-strong);
+  border-radius: var(--radius-sm);
+  background: var(--color-bg);
+  color: var(--color-text-secondary);
+  font-size: 0.88rem;
+  cursor: pointer;
+  transition: border-color var(--transition), color var(--transition);
+}
+
+.oee-btn:hover {
+  border-color: var(--color-primary);
+  color: var(--color-text);
+}
+
+.oee-btn:focus-visible {
+  outline: 2px solid var(--color-focus);
+  outline-offset: 1px;
+}
+
+.oee-a-state {
+  margin: 0;
+  font-size: 0.76rem;
+  color: var(--color-text-muted);
+}
+
+.oee-projection {
+  margin: 0;
+  font-size: 0.76rem;
+  line-height: 1.6;
+  color: var(--color-text-secondary);
+}
+
+.oee-explain {
+  font-size: 0.76rem;
+  line-height: 1.6;
+  color: var(--color-text-muted);
+}
+
+.oee-explain p {
+  margin: 0 0 6px;
+}
+
+.oee-explain strong {
+  color: var(--color-text-secondary);
+}
+
+.oee-visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}
+
+@media (max-width: 900px) {
+  .oee-layout {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 480px) {
+  .oee-card,
+  .oee-panel {
+    padding: 12px;
+  }
+
+  .oee-big-value {
+    font-size: 1.6rem;
+  }
+
+  .oee-apq,
+  .oee-counts {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 2px;
+  }
+
+  .oee-apq dd,
+  .oee-counts dd {
+    margin-bottom: 6px;
   }
 }

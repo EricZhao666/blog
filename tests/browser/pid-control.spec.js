@@ -141,9 +141,9 @@ async function setSlider(page, sel, value) {
     check('R1.1 导航「实验」入口保持原 href、当前页激活、标题正确',
       entry.navHref === '#/lab/robot-2r' && entry.active && /PID 控制系统交互实验室/.test(entry.title),
       JSON.stringify({ href: entry.navHref, title: entry.title }));
-    check('R1.2 双图表与全部读数项渲染；实验互链含列表/2R/PID 且当前页标注',
+    check('R1.2 双图表与全部读数项渲染；实验互链含列表/2R/PID/OEE 且当前页标注',
       entry.charts && entry.readout &&
-      entry.labLinks.join(',') === '#/lab,#/lab/robot-2r,#/lab/pid-control' &&
+      entry.labLinks.join(',') === '#/lab,#/lab/robot-2r,#/lab/pid-control,#/lab/oee-analysis' &&
       entry.currentHref === '#/lab/pid-control');
 
     await p1.evaluate(() => { location.hash = '#/lab'; });
@@ -152,8 +152,8 @@ async function setSlider(page, sel, value) {
       cards: Array.from(document.querySelectorAll('.lab-hub-card')).map(a => a.getAttribute('href')),
       title: document.title
     }));
-    check('R1.3 #/lab 实验列表：两张卡片分别深链 2R 与 PID',
-      hub.cards.join(',') === '#/lab/robot-2r,#/lab/pid-control' && /实验室/.test(hub.title), JSON.stringify(hub));
+    check('R1.3 #/lab 实验列表：三张卡片分别深链 2R、PID 与 OEE',
+      hub.cards.join(',') === '#/lab/robot-2r,#/lab/pid-control,#/lab/oee-analysis' && /实验室/.test(hub.title), JSON.stringify(hub));
 
     await p1.evaluate(() => { location.hash = '#/lab/robot-2r'; });
     await p1.waitForSelector('#robotStage', { timeout: 20000 });
