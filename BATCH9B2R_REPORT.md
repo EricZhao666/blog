@@ -1,10 +1,10 @@
 # BATCH9B2R_REPORT.md — Batch 9B-2R：知识索引构建与发布契约兼容修复
 
-状态：**B9B2R_PR_READY**（六套 CI 失败套件本地 RED→GREEN；生产代码遗漏真修；D1–D5 专项写入既有套件；最终以**最新提交**的 PR #38 CI 为准，不自动合并、不部署、不进入 9C-2）
+状态：**B9B2R_PR_READY**（六套 CI 失败套件本地 RED→GREEN；生产代码遗漏真修；D1–D5 专项写入既有套件；最新提交 CI 已确认全绿，见第 10 节；不自动合并、不部署、不进入 9C-2）
 
 分支：`feat/batch9b2-knowledge-graph`（沿用 PR #38，不新建分支）
 修复前 HEAD：`c9b80e9`（B9B2_PR_READY，CI tests #149/#150 = 78 PASS / 6 FAIL）
-修复提交：见 PR #38 最新提交（`fix(content): integrate link index into import rollback and release pipeline`）
+修复提交：`d5fc737` — `fix(content): integrate link index into import rollback and release pipeline`（CI tests #151/#152 通过）
 main 基线：`08aa7ba`
 未改动：SW `CACHE_VERSION=2026-11-24-3`、图谱 UI/可视化、WikiLink v1 语法、9B-1 推荐权重、知识库 schema、实验室数学、正式文章正文、测试调度器、`tests.yml` 默认命令。
 未执行：生产内容导入、部署、合并、站内任何正式文章改写。
@@ -115,7 +115,7 @@ test28 PASS 19/19   test33 PASS 78/78   test34 PASS 74/74
 
 ## 8. 剩余风险
 
-1. **CI 最终结论未回填**：本轮以最新提交的 PR #38 CI 为准；在 CI 跑完前不宣称 84 套全绿，也不引用 `c9b80e9` 的旧结果。
+1. **CI 结果只对代码提交成立**：`d5fc737` 的 tests #151/#152 与 content-gate #43 全绿（见第 10 节）；紧随其后的纯文档提交会触发新的一轮 CI，结论以该轮为准，不拿 `c9b80e9` 的失败结果或 `d5fc737` 的结果冒充后续提交。
 2. **fixture 依赖"索引权威源清单"**：六个 fixture 现在显式带上 6 个 js 源文件。若将来新增参与索引生成的权威源（如新的 `js/*.js`），fixture 需要同步补一行，否则会表现为"索引与 fixture 不一致"的失败（**失败是安全方向**，不会静默放过）。
 3. **`test25` / `test26` 依赖 PATH 里的 `git`**：本地未把 `C:\Program Files\Git\cmd` 加进 PATH 时，会出现 `WinError 2`（`git archive` / `rev-parse` 不可用），这是本机环境问题，不是代码回归；CI Ubuntu 自带 git，不受影响。本轮本地验证前已显式把 git 加入 PATH。
 4. **工作流哈希留档仍是"每行 sha + 路径"的逗号串**：已去掉截断，但未改成 JSON；`hashes` 输出目前只有留档作用（PR 正文未消费），改动风险最小。
@@ -133,4 +133,21 @@ test28 PASS 19/19   test33 PASS 78/78   test34 PASS 74/74
 | 文档与提交 | ≈5 min |
 | **合计** | **≈40 min 墙钟**（超过 30 min 检查点；优先保证了构建与发布正确性，未压缩验证） |
 
-平台成本：全程本地 Windows + 本地 Python/Node，未调用外部付费模型；CI 仅 `content-gate #42` PASS 记录，本轮未新增云端构建。测试资源占用：六套 110.1s（串行，峰值 1 worker）、受影响专项 38.8s、浏览器专项 29.9s。
+平台成本：本地 Windows + 本地 Python/Node 完成全部 RED/GREEN 与专项，未调用外部付费模型；
+云端成本只有 GitHub Actions 的两次 tests 运行（#151 12m32s、#152 12m24s）与一次 content-gate（#43 10s）。
+测试资源占用：六套 110.1s（串行，峰值 1 worker）、受影响专项 38.8s、浏览器专项 29.9s。
+
+## 10. 最新 CI 验收（PR #38，提交 `d5fc737`）
+
+| 运行 | 事件 | 结果 | 耗时 |
+|---|---|---|---|
+| tests **#151** | push（`d5fc737`） | **completed successfully** | 12m 32s |
+| tests **#152** | pull_request（#38 同步） | **completed successfully** | 12m 24s |
+| content-gate **#43** | pull_request | **completed successfully** | 10s |
+
+对照修复前：tests #149（push）/ #150（pull_request）均 12m6s–12m41s、78 PASS / 6 FAIL。
+本轮两个 tests 运行都是"同一 84 套矩阵"（本轮未新增套件、未改调度器与 `tests.yml` 命令），
+因此 #149/#150 里失败的 test25/26/27/28/33/34 在这两次运行中全部通过，CI 无失败套件。
+
+未引用 `c9b80e9` 的旧结果：上面三条 run 的 head 都是 `d5fc737`（PR 页面 Checks 标签显示
+`fix(content): integrate link index into import rollback and release p… d5fc737`）。
