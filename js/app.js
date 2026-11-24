@@ -269,7 +269,9 @@ const STATIC_META = {
   '/about': ['关于', '关于 Eric 与这个博客'],
   '/links': ['友情链接', '志同道合的技术博客与工具'],
   '/editor': ['编辑器', '在线撰写并发布文章'],
-  '/lab/robot-2r': ['二连杆机器人运动学演示', '平面 2R 机械臂交互演示：正运动学、解析逆运动学、肘上/肘下分支与工作空间边界']
+  '/lab': ['实验室', '交互实验列表：二连杆机器人运动学与 PID 控制系统'],
+  '/lab/robot-2r': ['二连杆机器人运动学演示', '平面 2R 机械臂交互演示：正运动学、解析逆运动学、肘上/肘下分支与工作空间边界'],
+  '/lab/pid-control': ['PID 控制系统交互实验室', '一阶被控对象离散 PID 阶跃响应：P/PI/PID 对比、控制饱和与积分抗饱和、时域指标']
 };
 
 const SITE_ORIGIN = 'https://ericzhao666.github.io/blog/';
@@ -568,6 +570,53 @@ function loadRobotLab() {
       return false;
     });
   return _robotLabPromise;
+}
+
+// Batch 9C-1B：PID 实验室脚本按需加载（数学模块 → UI 模块，顺序注入）。
+// 与 loadRobotLab 相同契约：缓存 Promise；失败清除以便重试，不阻塞首屏。
+let _pidLabPromise = null;
+function loadPidLab() {
+  if (window.PidSimulation && window.PidDemo) return Promise.resolve(true);
+  if (_pidLabPromise) return _pidLabPromise;
+  _pidLabPromise = loadScriptOnce('js/pid-simulation.js')
+    .then(function () { return loadScriptOnce('js/pid-demo.js'); })
+    .then(function () {
+      const ok = !!(window.PidSimulation && window.PidDemo);
+      if (!ok) _pidLabPromise = null;
+      return ok;
+    })
+    .catch(function (err) {
+      console.warn('PID 演示脚本加载失败:', err && err.message);
+      _pidLabPromise = null;
+      return false;
+    });
+  return _pidLabPromise;
+}
+
+// Batch 9C-1B：实验页顶部互链（不改动各演示模块本身；深链接保持不变）
+function renderLabLinks(active) {
+  const items = [
+    ['/lab', '实验列表'],
+    ['/lab/robot-2r', '二连杆运动学'],
+    ['/lab/pid-control', 'PID 控制']
+  ];
+  return '<nav class="lab-links" aria-label="实验导航">' + items.map(function (it) {
+    const cur = it[0] === active ? ' aria-current="page"' : '';
+    return '<a href="#' + it[0] + '"' + cur + '>' + it[1] + '</a>';
+  }).join('') + '</nav>';
+}
+
+// Batch 9C-1B：#/lab 实验列表页（纯静态，无脚本依赖）
+function renderLabHub() {
+  return renderLabLinks('/lab') +
+    '<h1 class="page-title">实验室</h1>' +
+    '<p class="page-desc">无需后端的交互演示，全部在浏览器本地计算。</p>' +
+    '<div class="lab-hub">' +
+    '<a class="lab-hub-card" href="#/lab/robot-2r"><strong>二连杆机器人运动学</strong>' +
+    '<span>平面 2R 机械臂：拖动目标求解析逆运动学，肘上/肘下分支与工作空间边界。</span></a>' +
+    '<a class="lab-hub-card" href="#/lab/pid-control"><strong>PID 控制系统</strong>' +
+    '<span>一阶对象离散 PID 阶跃响应：P/PI/PID 对比、饱和与积分抗饱和、时域指标。</span></a>' +
+    '</div>';
 }
 
 function loadData(key) {
@@ -7937,6 +7986,9 @@ async function router() {
       app.innerHTML = renderCodeDetail(id);
     } else if (hash === '/links') {
       app.innerHTML = renderLinks();
+    } else if (hash === '/lab') {
+      // Batch 9C-1B：实验列表（两个演示的清晰入口；纯静态渲染）
+      app.innerHTML = renderLabHub();
     } else if (hash === '/lab/robot-2r') {
       // Batch 9C-1A：二连杆运动学演示。脚本按需注入，路由 token 防止快速切换串页。
       app.innerHTML = renderLoading('机器人运动学演示');
@@ -7946,8 +7998,19 @@ async function router() {
         app.innerHTML = renderLoadError('机器人运动学演示');
         return;
       }
-      app.innerHTML = window.RobotDemo.renderPage();
+      app.innerHTML = renderLabLinks('/lab/robot-2r') + window.RobotDemo.renderPage();
       window.RobotDemo.mount(document.getElementById('robotDemoRoot'));
+    } else if (hash === '/lab/pid-control') {
+      // Batch 9C-1B：PID 控制实验室。与机器人演示相同的按需加载与降级契约。
+      app.innerHTML = renderLoading('PID 控制实验室');
+      const pidReady = await loadPidLab();
+      if (token !== _routeToken) return;
+      if (!pidReady) {
+        app.innerHTML = renderLoadError('PID 控制实验室');
+        return;
+      }
+      app.innerHTML = renderLabLinks('/lab/pid-control') + window.PidDemo.renderPage();
+      window.PidDemo.mount(document.getElementById('pidDemoRoot'));
     } else if (hash === '/editor') {
       app.innerHTML = renderEditor(null);
       setupEditorListeners();
