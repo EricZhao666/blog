@@ -11,7 +11,7 @@
 //   - vendor / 静态资源：stale-while-revalidate（先快后新）
 //   - 第三方（giscus 等）：不拦截
 // 每次发布请递增 CACHE_VERSION。
-const CACHE_VERSION = '2026-11-23-3';
+const CACHE_VERSION = '2026-11-24-1';
 // CACHE：安装期预缓存的核心资源（只随版本整体替换）
 // CACHE_RT：运行期按需缓存（页面/数据/静态笔记页），带条数上限防止无限增长
 const CACHE = 'blog-' + CACHE_VERSION;
@@ -62,7 +62,11 @@ const OPTIONAL_ASSETS = [
   // Batch 9C-1A：机器人演示的两个小脚本（合计 <30KB）。
   // 不进 install 必需清单；随 warmOptionalAssets 预热，保证首次离线访问 /lab/robot-2r 也可用。
   './js/robot-kinematics.js',
-  './js/robot-demo.js'
+  './js/robot-demo.js',
+  // Batch 9C-1B：PID 实验室的两个小脚本（合计 <40KB），同样随 warmOptionalAssets 预热，
+  // 保证首次离线访问 /lab/pid-control 也可用。缓存策略本身不变。
+  './js/pid-simulation.js',
+  './js/pid-demo.js'
 ];
 
 // 首屏资源（相对 scope）：首页渲染直接依赖，必须与外壳保持同一版本

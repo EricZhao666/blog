@@ -1,0 +1,39 @@
+id,area,suite,target,coverage,type,engines,items,result,evidence
+K-01,参数校验,pid-math,19 组非法参数/非对象/零增益/默认配置,非法一律拒绝且错误码正确；零增益合法；n=duration/dt；步数上限,jsdom,node,4,PASS,M1.1-M1.4
+K-02,对象离散与零输入,pid-math,ZOH 精确离散/解析阶跃对照/自由响应/manual 限幅,恒值 u 逐点匹配解析解（max 1.14e-14）；零输入衰减 2.0e-15；单步递推精确,jsdom,node,6,PASS,M2.1-M2.6
+K-03,仅 P 控制,pid-math,稳态误差精确解/单调性/未稳定处理,ess=r/(1+K·Kp)（1/3 与 0.8，<1e-9）；单调无超调；ess 超带如实判未稳定,jsdom,node,5,PASS,M3.1-M3.5
+K-04,PI 适用条件,pid-math,消除阶跃误差/饱和反例/负设定值,未饱和 ess 1.9e-8；持续饱和 ess≈0.5 无法消除；r=−1 收敛,jsdom,node,4,PASS,M4.1-M4.4
+K-05,PID 参数效应,pid-math,Kd 方向性/超调反例/Kp 上升/分项屏蔽,Kd 减缓上升（0.108→0.196s）；积分主导回路 Kd 增大超调（6.65→26.20%，不承诺 PID 更优）；kd=0→D≡0,jsdom,node,5,PASS,M5.1-M5.5
+K-06,控制饱和,pid-math,限幅逐点/饱和标记一致/输出上界,maxU=0.5 精确；sat 与 uRaw 越限逐点一致；yFinal≤K·uMax,jsdom,node,3,PASS,M6.1-M6.3
+K-07,抗饱和对比,pid-math,规范组 kp8 ki4 uMax1.2,超调 0.00% vs 13.56%；maxI 1.000 vs 2.607（windup）；调节更快；双方严格限幅,jsdom,node,4,PASS,M7.1-M7.4
+K-08,采样周期收敛,pid-math,dt 0.1/0.02/0.005 对齐比较,误差 1.62e-2→2.90e-3（<0.5×）；60s 稳态差 1.7e-9,jsdom,node,3,PASS,M8.1-M8.3
+K-09,确定性与状态,pid-math,同参重跑/模式切换/首拍约定,逐点完全一致；PID 后 P 与全新 P 一致；D[0]=0、I[0]=Ki·e0·dt,jsdom,node,3,PASS,M9.1-M9.3
+K-10,指标定义,pid-math,开环解析对照/未稳定/振荡尾带/无阶跃,rise=ln9·τ（2.19722）；settling≈−ln0.02·τ（3.913）；未稳定 null 不编造；振荡尾带判据,jsdom,node,8,PASS,M10.1-M10.7（含 M10.5b）
+K-11,数值保护,pid-math,极小 τ/极大 Kp/60 随机配置/I-D 范围,全部有限严格限幅（最大越限 0）；无 NaN,jsdom,node,4,PASS,M11.1-M11.4
+K-12,线性与非零初始,pid-math,r/限幅同倍放大/y0=0.5/上升时间独立重算,闭环线性逐点同倍（偏差 0）；y0≠0 收敛且 rise 与独立重算一致,jsdom,node,3,PASS,M12.1-M12.3
+R-01,入口与互链,pid-control,导航 href 不变/#/lab 列表/2R 深链接,实验导航保持 #/lab/robot-2r；列表两卡深链；2R 页正常且含 PID 互链,browser,chromium,4,PASS,R1.1-R1.4
+R-02,默认数值一致,pid-control,getState/页内独立重算/曲线端点反算,默认=DEFAULTS；独立重算 yΔ<1e-9；曲线末点反算=yFinal（抽稀≤800 端点保留）,browser,chromium,3,PASS,R2.1-R2.3
+R-03,参数调节,pid-control,Kp 输入/滑杆同步/设定值/对象增益,输入生效重算；滑杆↔数字同步；r=1.5→yFinal≈1.5；K=2→u≈r/K,browser,chromium,4,PASS,R3.1-R3.4
+R-04,模式与对比,pid-control,P/PI/对比三曲线三行表,P ess≈1/2.2 且 I≡0；PI ess<0.01；对比 P/PI/PID 数值齐全,browser,chromium,4,PASS,R4.1-R4.4
+R-05,饱和与抗饱和,pid-control,限幅 0.5 可视化/规范组 AW 对比/交叉约束,饱和竖带渲染+状态提示；AW 超调 0<13.56%；uMin≥uMax 拒绝（input 与 change 双层）,browser,chromium,4,PASS,R5.1-R5.4
+R-06,非法输入与默认,pid-control,非数字 Kp/负 τ/恢复默认,拒绝且 config 不变无 NaN；aria-invalid；默认全量恢复错误清空,browser,chromium,4,PASS,R6.1-R6.4
+R-07,有界计算,pid-control,30 次快速滑杆/最细网格,同步期间零重算（防抖）结束后恰一次到末值；dt0.005×30s n=6000 有界,browser,chromium,2,PASS,R7.1-R7.2
+R-08,未稳定显示,pid-control,慢对象 τ10+时长 6s,显示「未在仿真时间内稳定」settling=null 不编造,browser,chromium,1,PASS,R8.1
+R-09,390px 移动,pid-control,单列/触控高度/触摸切换,无溢出；面板下移；输入/按钮/滑杆≥40px；触摸切 PI 生效,browser,chromium,2,PASS,R9.1-R9.2
+R-10,深色主题,pid-control,令牌切换/数值不变,曲线 stroke 随主题变化无溢出；深色下独立重算一致,browser,chromium,2,PASS,R10.1-R10.2
+R-11,键盘无障碍,pid-control,滑杆方向键/Enter 激活/aria,ArrowRight Kp+0.05 重算；Enter 切模式；role/aria-label/live/标签齐全,browser,chromium,4,PASS,R11.1-R11.4
+R-12,离线,pid-control,SW 缓存/离线重载改参,两脚本入缓存；离线渲染+改参+独立重算一致,browser,chromium,2,PASS,R12.1-R12.2
+R-13,脚本降级,pid-control,pid-demo.js 与 pid-simulation.js 分别 404,加载失败+重试入口不白屏不抛错；首页文章列表不受影响,browser,chromium,4,PASS,R13×2 脚本×2 断言
+R-14,快速路由,pid-control,5 次切换含 2R/PID,单实例无串页数值正确无异常,browser,chromium,1,PASS,R14.1
+R-15,三引擎,pid-control,firefox/webkit 390px 对比模式,渲染/三曲线/独立重算 yΔ=0/无溢出/无异常,browser,firefox+webkit,4,PASS,R15.1-R15.2×2
+S-01,SW 快照契约,sw-snapshot-unit,CACHE_VERSION 2026-11-24-1,版本格式与递增；首屏 7 项/REQUIRED 8 项不变,browser,chromium,15,PASS,U0-U3d
+S-02,SW 一致性,sw-consistency,资源集合与缓存策略,OPTIONAL 新增两脚本存在性；策略不变,browser,chromium,37,PASS,37/37 93.6s
+S-03,SW 升级,sw-upgrade,版本换代清理,旧版本缓存清理与新版接管,browser,chromium,25,PASS,25/25 30.7s
+A-01,数据完整性,test18,文章数据拆分,元数据/正文/语料/哈希,jsdom,node,18,PASS,18/18 0.4s
+A-02,导航与 UI,ui-refresh,导航单行/入口/视觉契约,实验入口不破坏导航单行断言,browser,chromium,59,PASS,59/59 40.1s
+A-03,首页个人模块,personalized-home,模块顺序/偏好/降级,首页口径不受影响,jsdom,node,58,PASS,58/58 37.3s
+A-04,首页验收,home-experience,搜索交替/路由/视口/离线,首页不受影响,browser,chromium,41,PASS,41/41 30.8s
+A-05,性能无障碍,performance-accessibility,焦点/对比度/性能预算,新页面不劣化既有断言,browser,chromium,59,PASS,59/59 56.8s
+A-06,2R 数学回归,robot-math,FK/IK 全量,2R 算法零改动验证,jsdom,node,50,PASS,50/50 0.1s
+A-07,2R 浏览器回归,robot-kinematics,拖动/分支/离线/三引擎,互链新增不破坏既有验收,browser,chromium+firefox+webkit,44,PASS,44/44 21.5s
+N-01,完整回归,PR CI,默认 79 套串行,本地未跑全量；按任务书交 PR CI 执行,ci,chromium,79,PENDING,PR 创建后由 GitHub Actions tests 工作流验证

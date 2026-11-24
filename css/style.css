@@ -5247,3 +5247,479 @@ mark.search-hit {
     padding: 12px;
   }
 }
+
+/* ============================================
+   Batch 9C-1B：实验互链 / 实验列表 / PID 控制实验室
+   全部颜色走设计令牌，深浅主题自动适配
+   ============================================ */
+.lab-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 4px 0 12px;
+  font-size: 0.82rem;
+}
+
+.lab-links a {
+  padding: 5px 12px;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-pill);
+  color: var(--color-text-secondary);
+  text-decoration: none;
+  transition: border-color var(--transition), color var(--transition);
+}
+
+.lab-links a:hover {
+  border-color: var(--color-primary);
+  color: var(--color-text);
+}
+
+.lab-links a:focus-visible {
+  outline: 2px solid var(--color-focus);
+  outline-offset: 1px;
+}
+
+.lab-links a[aria-current="page"] {
+  background: var(--color-primary-light);
+  border-color: var(--color-primary);
+  color: var(--color-primary-dark);
+  font-weight: 600;
+}
+
+.lab-hub {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 16px;
+  margin-top: 16px;
+}
+
+.lab-hub-card {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 18px;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  color: var(--color-text);
+  text-decoration: none;
+  transition: border-color var(--transition);
+}
+
+.lab-hub-card:hover {
+  border-color: var(--color-primary);
+}
+
+.lab-hub-card:focus-visible {
+  outline: 2px solid var(--color-focus);
+  outline-offset: 2px;
+}
+
+.lab-hub-card strong {
+  font-size: 1rem;
+}
+
+.lab-hub-card span {
+  font-size: 0.85rem;
+  line-height: 1.6;
+  color: var(--color-text-secondary);
+}
+
+.pid-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 340px;
+  gap: 20px;
+  align-items: start;
+  margin-top: 16px;
+}
+
+.pid-charts-card {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  padding: 16px;
+}
+
+.pid-chart-title {
+  margin: 4px 0 8px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--color-text-secondary);
+}
+
+.pid-chart {
+  display: block;
+  width: 100%;
+  height: auto;
+  border-radius: var(--radius-sm);
+  background: var(--color-bg);
+}
+
+.pid-legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin: 6px 0 12px;
+  font-size: 0.76rem;
+  color: var(--color-text-secondary);
+}
+
+.pid-legend-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.pid-chip {
+  display: inline-block;
+  width: 14px;
+  height: 4px;
+  border-radius: 2px;
+}
+
+.pid-chip--p { background: var(--color-warning); }
+.pid-chip--pi { background: var(--color-accent); }
+.pid-chip--pid { background: var(--color-primary); }
+.pid-chip--setpoint {
+  background: transparent;
+  border-top: 2px dashed var(--color-text-muted);
+  height: 0;
+}
+.pid-chip--limit {
+  background: transparent;
+  border-top: 2px dashed var(--color-danger);
+  height: 0;
+}
+.pid-chip--sat { background: var(--color-danger-soft); height: 10px; }
+
+.pid-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  padding: 16px;
+}
+
+.pid-field-title {
+  display: block;
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--color-text-secondary);
+  margin-bottom: 6px;
+}
+
+.pid-field-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin-bottom: 8px;
+}
+
+.pid-field-row3 {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 8px;
+}
+
+.pid-gain-row {
+  display: grid;
+  grid-template-columns: 110px minmax(0, 1fr);
+  gap: 8px;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
+.pid-input-label {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.85rem;
+  color: var(--color-text-secondary);
+}
+
+.pid-input-label input,
+.pid-input-label select {
+  width: 100%;
+  min-width: 0;
+  min-height: 40px;
+  padding: 8px 10px;
+  border: 1px solid var(--color-border-strong);
+  border-radius: var(--radius-sm);
+  background: var(--color-bg);
+  color: var(--color-text);
+  font-size: 0.9rem;
+  font-variant-numeric: tabular-nums;
+}
+
+.pid-input-label input:focus-visible,
+.pid-input-label select:focus-visible {
+  outline: 2px solid var(--color-focus);
+  outline-offset: 1px;
+}
+
+.pid-input-label input[aria-invalid="true"] {
+  border-color: var(--color-danger);
+}
+
+.pid-range {
+  width: 100%;
+  min-height: 40px;
+  accent-color: var(--color-primary);
+  cursor: pointer;
+}
+
+.pid-range:focus-visible {
+  outline: 2px solid var(--color-focus);
+  outline-offset: 1px;
+}
+
+.pid-check {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 40px;
+  font-size: 0.85rem;
+  color: var(--color-text-secondary);
+  cursor: pointer;
+}
+
+.pid-check input {
+  width: 18px;
+  height: 18px;
+  accent-color: var(--color-primary);
+}
+
+.pid-check input:focus-visible {
+  outline: 2px solid var(--color-focus);
+  outline-offset: 1px;
+}
+
+.pid-modes {
+  display: flex;
+  gap: 8px;
+}
+
+.pid-modes button {
+  flex: 1;
+  min-height: 40px;
+  padding: 9px 10px;
+  border: 1px solid var(--color-border-strong);
+  border-radius: var(--radius-sm);
+  background: var(--color-bg);
+  color: var(--color-text-secondary);
+  font-size: 0.88rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background var(--transition), color var(--transition), border-color var(--transition);
+}
+
+.pid-modes button:hover {
+  border-color: var(--color-primary);
+  color: var(--color-text);
+}
+
+.pid-modes button:focus-visible {
+  outline: 2px solid var(--color-focus);
+  outline-offset: 1px;
+}
+
+.pid-modes button[aria-pressed="true"] {
+  background: var(--color-primary-light);
+  border-color: var(--color-primary);
+  color: var(--color-primary-dark);
+  font-weight: 600;
+}
+
+.pid-error {
+  min-height: 1.2em;
+  margin: 0;
+  font-size: 0.78rem;
+  color: var(--color-danger);
+}
+
+.pid-readout {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  gap: 6px 12px;
+  margin: 0;
+  font-size: 0.85rem;
+}
+
+.pid-readout dt {
+  color: var(--color-text-muted);
+  white-space: nowrap;
+}
+
+.pid-readout dd {
+  margin: 0;
+  color: var(--color-text);
+  font-variant-numeric: tabular-nums;
+  overflow-wrap: anywhere;
+}
+
+.pid-status {
+  display: inline-block;
+  padding: 2px 10px;
+  border-radius: var(--radius-pill);
+  font-size: 0.78rem;
+  font-weight: 600;
+}
+
+.pid-status--ok {
+  background: var(--color-success-soft);
+  color: var(--color-success);
+}
+
+.pid-status--warn {
+  background: var(--color-warning-soft);
+  color: var(--color-warning);
+}
+
+.pid-status--err {
+  background: var(--color-danger-soft);
+  color: var(--color-danger);
+}
+
+.pid-compare-wrap {
+  overflow-x: auto;
+}
+
+.pid-compare-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.78rem;
+  font-variant-numeric: tabular-nums;
+}
+
+.pid-compare-table th,
+.pid-compare-table td {
+  padding: 5px 6px;
+  border-bottom: 1px solid var(--color-border);
+  text-align: left;
+  white-space: nowrap;
+}
+
+.pid-compare-table thead th {
+  color: var(--color-text-muted);
+  font-weight: 600;
+}
+
+.pid-reset {
+  min-height: 40px;
+  padding: 9px 12px;
+  border: 1px solid var(--color-border-strong);
+  border-radius: var(--radius-sm);
+  background: var(--color-bg);
+  color: var(--color-text-secondary);
+  font-size: 0.88rem;
+  cursor: pointer;
+  transition: border-color var(--transition), color var(--transition);
+}
+
+.pid-reset:hover {
+  border-color: var(--color-primary);
+  color: var(--color-text);
+}
+
+.pid-reset:focus-visible {
+  outline: 2px solid var(--color-focus);
+  outline-offset: 1px;
+}
+
+.pid-explain {
+  font-size: 0.78rem;
+  line-height: 1.6;
+  color: var(--color-text-muted);
+}
+
+.pid-explain p {
+  margin: 0 0 6px;
+}
+
+.pid-explain strong {
+  color: var(--color-text-secondary);
+}
+
+.pid-hint {
+  margin: 8px 0 0;
+  font-size: 0.78rem;
+  line-height: 1.6;
+  color: var(--color-text-muted);
+}
+
+.pid-visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}
+
+/* ---- SVG 图表元素 ---- */
+.pid-grid {
+  stroke: var(--color-border);
+  stroke-width: 1;
+}
+
+.pid-tick {
+  fill: var(--color-text-muted);
+  font-size: 11px;
+  font-variant-numeric: tabular-nums;
+}
+
+.pid-axis-label {
+  fill: var(--color-text-secondary);
+  font-size: 12px;
+}
+
+.pid-band {
+  fill: var(--color-primary-light);
+  fill-opacity: 0.4;
+}
+
+.pid-setpoint {
+  stroke: var(--color-text-muted);
+  stroke-width: 1.5;
+  stroke-dasharray: 6 4;
+}
+
+.pid-limit {
+  stroke: var(--color-danger);
+  stroke-width: 1.2;
+  stroke-dasharray: 5 4;
+}
+
+.pid-sat-band {
+  fill: var(--color-danger-soft);
+  fill-opacity: 0.7;
+}
+
+.pid-curve {
+  fill: none;
+  stroke-width: 2;
+  stroke-linejoin: round;
+}
+
+.pid-curve--p { stroke: var(--color-warning); }
+.pid-curve--pi { stroke: var(--color-accent); }
+.pid-curve--pid { stroke: var(--color-primary); }
+
+@media (max-width: 900px) {
+  .pid-layout {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 480px) {
+  .pid-charts-card,
+  .pid-panel {
+    padding: 12px;
+  }
+
+  .pid-gain-row {
+    grid-template-columns: 96px minmax(0, 1fr);
+  }
+}
