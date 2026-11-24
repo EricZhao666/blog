@@ -1,0 +1,39 @@
+id,area,suite,target,coverage,type,engines,items,result,evidence
+L-01,共享语法契约,content-links,JS 扫描器 × 32 例 fixture,WikiLink/显示文本/中文/特殊字符/非法 id/空显示/竖线显示/未闭合/不支持类型/围栏/行内/双反引号/转义/HTML 属性/普通内链/href/编码课程链接/papers 查询/资料查询/外链忽略/链接文本内/链接目标内/重复去重/CRLF,jsdom,node,32,PASS,A 逐例
+L-02,共享语法契约,content-links,Python 镜像 × 同一 fixture,子进程跑 scripts/content_links.py 与 JS 逐例字节级同契约,jsdom,node+python,33,PASS,B0+B 逐例
+L-03,marked 扩展安全,content-links,真实 vendor/marked.min.js,合法→站内链接/显示文本优先/未解析不产生链接/XSS 转义/围栏/行内/转义/普通链接语义不变/课程类型保留原文/无 javascript:,jsdom,node,11,PASS,C1-C11
+L-04,构建确定性,content-links,临时 root 全链路,--sync 生成/schemaVersion/无时间戳/两次构建字节一致/--check/--dry-run 无待更新,jsdom,node+python,6,PASS,D1-D6
+L-05,完整性门禁,content-links,篡改索引,篡改后 --check 失败,jsdom,node+python,1,PASS,D7
+L-06,导入链与边语义,content-links,import_post --apply 隔离夹具,WikiLink 边/重复去重/markdown 与 wikilink 共存/自环排除/真实循环/失效诊断不造节点/围栏不构边/byTarget/bySource/导入后 --check,jsdom,node+python,11,PASS,D8-D18
+L-07,BuildLock 并发,content-links,手工占锁,锁占用 --sync 退出码 3/索引不被改动/释放后字节不变,jsdom,node+python,3,PASS,D19-D20
+G-01,节点与关系,knowledge-graph,真实索引 195 节点,去重/7 类/有向显式 6/系列 4/推断 514/无自环/签名去重/无向规范化/example 6/孤立 183/未解析 0,jsdom,node,12,PASS,G1-G12
+G-02,关系来源说明,knowledge-graph,nodeRelations,反向←引用本文/同系列非正文引用/推断算法推荐标注/正向本文引用→,jsdom,node,4,PASS,G13-G16
+G-03,筛选搜索一跳,knowledge-graph,filterModel/oneHop,类型筛选/关系筛选/大小写搜索/中文搜索/一跳中心邻居闭合,jsdom,node,7,PASS,G17-G23
+G-04,展示层裁剪,knowledge-graph,capEdges,≤300/真实关系永不裁/裁剪数如实/大上限不裁/极小上限仍保真实,jsdom,node,5,PASS,G24-G28
+G-05,确定性与循环,knowledge-graph,两次构建/布局/循环 fixture/Related 缺失,JSON 字节一致/坐标一致/全覆盖/双向循环保留/降级不误判,jsdom,node,5,PASS,G29-G33
+G-06,合成扩展,knowledge-graph,500 与 1000 节点,模型完整/预算<5s（实测 955ms/3292ms）/裁剪生效,jsdom,node,6,PASS,G-S500/G-S1000
+X-01,图谱加载与数据,graph-experience,真实 Chromium 1440px,节点 195/显式 6 带箭头/系列 4/统计行/裁剪标注 224/514/性能埋点/无异常,browser,chromium,7,PASS,R1.1-R1.7
+X-02,选择与关系来源,graph-experience,节点详情,标题跳转/反向方向来源/推断标注/关系跳转,browser,chromium,4,PASS,R2.1-R2.4
+X-03,筛选与搜索,graph-experience,chips+搜索,类型 18/仅显式 6/SLAM 定位/中文命中,browser,chromium,4,PASS,R3.1-R3.4
+X-04,一跳局部,graph-experience,局部视图,节点收缩/如实标注/aria-pressed,browser,chromium,1,PASS,R4.1
+X-05,视图操作,graph-experience,缩放平移重置,滚轮缩放/拖动平移/重置恢复初始,browser,chromium,3,PASS,R5.1-R5.3
+X-06,键盘等价视图,graph-experience,列表视图,SVG 隐藏/195 项/首项获焦/方向键/Enter 选中/无异常,browser,chromium,4,PASS,R6.1-R6.4
+X-07,移动触摸,graph-experience,390px hasTouch,无溢出/chips 可用/触摸点选/无异常,browser,chromium,3,PASS,R7.1-R7.3
+X-08,深色主题,graph-experience,data-theme=dark,颜色变量生效正常渲染,browser,chromium,1,PASS,R8.1
+X-09,WikiLink 渲染,graph-experience,HTTP 层隔离夹具正文,合法链接×3/未解析标注/围栏行内保留原文/XSS 转义/点击跳转/无异常,browser,chromium,6,PASS,R9.1-R9.6
+X-10,编辑器预览,graph-experience,#/editor,预览同契约（链接+未解析）/无异常,browser,chromium,2,PASS,R10.1-R10.2
+X-11,反向链接区,graph-experience,fixture 索引+真实数据,来源类型 WikiLink 标注/与相关阅读分离/跳转/无入边隐藏,browser,chromium,4,PASS,R11.1-R11.4
+X-12,降级,graph-experience,索引 500/脚本 500,正文正常反向隐藏/图谱降级提示/脚本降级/首页不受影响,browser,chromium,4,PASS,R12.1-R12.4
+X-13,离线,graph-experience,真实 SW 缓存,4 资源入缓存/离线重载 195 节点完整,browser,chromium,2,PASS,R13.1-R13.2
+X-14,生命周期,graph-experience,快速路由×6,单实例无串页/离开画布移除/无异常,browser,chromium,3,PASS,R14.1-R14.3
+X-15,首屏零新增,graph-experience,首页 hits 计数,4 个图谱资源零请求/文章列表正常,browser,chromium,2,PASS,R15.1-R15.2
+X-16,三引擎,graph-experience,firefox/webkit 390px,渲染选择无溢出/无异常,browser,firefox+webkit,4,PASS,R16.1-R16.2×2
+R-01,构建门禁,content-check/feed-check/split-check,权威源一致性,元数据/正文/搜索语料/清单/feed/RSS 全一致,python,python,3,PASS,定向回归 run2
+R-02,构建生命周期,test23/test31/build-lock,增删改/门禁契约/锁临界区,41+25 项及门禁全通过（最小 fixture root 兼容）,python,python,3,PASS,定向回归 run2
+R-03,搜索主题静态 SW,test7,jsdom 全站,ALL PASS（fetch 缺失防御降级）,jsdom,node,1,PASS,定向回归 run2
+R-04,推荐算法与展示,related-content/related-reading,9B-1 算法与相关阅读,权重未改/渲染理由跳转降级离线全通过,jsdom+browser,node+chromium,2,PASS,定向回归 run2
+R-05,知识库,knowledge-store/knowledge-center/knowledge-management,schema 与 UI,收藏/迁移/批量/导入/图谱入口不破坏既有断言,jsdom+browser,node+chromium,3,PASS,定向回归 run2
+R-06,首页,personalized-home/home-experience,个人模块与首页验收,47 项+浏览器验收全通过,jsdom+browser,node+chromium,2,PASS,定向回归 run2
+R-07,编辑器,editor-ux/test24,工具栏与发布队列,66/66+发布队列全通过（预览扩展不改变正式索引）,browser+jsdom,chromium+node,2,PASS,定向回归 run2
+R-08,UI 与 SW,ui-refresh/sw-consistency/browser,UI2.0/SW 一致性/离线,59/59+SW 快照与升级全通过（CACHE_VERSION 递增契约）,browser,chromium,3,PASS,定向回归 run2
+R-09,新增专项注册,content-links/knowledge-graph,run_tests 注册,81→84 套；full 组含新专项；未改调度器与 CI 命令,jsdom,node,2,PASS,定向回归 run2

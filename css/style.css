@@ -6135,3 +6135,165 @@ mark.search-hit {
     margin-bottom: 6px;
   }
 }
+
+/* ============================================================
+   Batch 9B-2：WikiLink / 反向链接 / 知识图谱
+   全部使用现有颜色变量，深色主题自动跟随 [data-theme="dark"]。
+   ============================================================ */
+:root {
+  --graph-post: #2563eb;
+  --graph-course: #0f766e;
+  --graph-paper: #7c3aed;
+  --graph-material: #b45309;
+  --graph-lib: #15803d;
+  --graph-project: #db2777;
+  --graph-note: #64748b;
+  --graph-edge-explicit: #2563eb;
+  --graph-edge-series: #64748b;
+  --graph-edge-inferred: #b45309;
+}
+[data-theme="dark"] {
+  --graph-post: #60a5fa;
+  --graph-course: #2dd4bf;
+  --graph-paper: #a78bfa;
+  --graph-material: #fbbf24;
+  --graph-lib: #4ade80;
+  --graph-project: #f472b6;
+  --graph-note: #94a3b8;
+  --graph-edge-explicit: #60a5fa;
+  --graph-edge-series: #94a3b8;
+  --graph-edge-inferred: #fbbf24;
+}
+
+/* WikiLink（正文内显式引用） */
+.wikilink { border-bottom: 1px dashed var(--color-primary); text-decoration: none; }
+.wikilink:hover { border-bottom-style: solid; }
+.wikilink-unresolved {
+  color: var(--color-danger);
+  background: var(--color-danger-soft);
+  border-bottom: 1px dotted var(--color-danger);
+  padding: 0 2px;
+  border-radius: 3px;
+  cursor: help;
+}
+
+/* 反向链接区（与 related-reading 分离） */
+.backlinks { margin-top: 26px; padding-top: 18px; border-top: 1px solid var(--color-border); }
+.backlinks[hidden] { display: none; }
+.backlinks-title { font-size: .95rem; font-weight: 700; margin-bottom: 10px; }
+.backlinks-list { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; }
+.backlink-item { display: flex; flex-wrap: wrap; align-items: baseline; gap: 8px; margin: 0; }
+.backlink-item a { color: var(--color-primary); text-decoration: none; }
+.backlink-item a:hover { text-decoration: underline; }
+.backlink-meta { font-size: .74rem; color: var(--color-text-muted); }
+
+/* 知识图谱页 */
+.graph-root { margin-top: 12px; }
+.graph-loading, .graph-degraded {
+  padding: 28px 16px; text-align: center; color: var(--color-text-muted);
+  border: 1px dashed var(--color-border-strong); border-radius: var(--radius);
+}
+.graph-degraded { color: var(--color-danger); background: var(--color-danger-soft); border-style: solid; }
+.graph-toolbar { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; margin-bottom: 10px; }
+.graph-chips { display: flex; flex-wrap: wrap; gap: 6px; }
+.graph-chip {
+  font-size: .76rem; padding: 4px 10px; border-radius: var(--radius-pill);
+  border: 1px solid var(--color-border-strong); background: var(--color-surface);
+  color: var(--color-text-secondary); cursor: pointer;
+}
+.graph-chip.on { border-color: var(--color-primary); background: var(--color-primary-light); color: var(--color-primary-dark); font-weight: 600; }
+.graph-chip:focus-visible, .graph-actions .editor-btn:focus-visible, .graph-list-item:focus-visible,
+.graph-search-input:focus-visible, .graph-rel-btn:focus-visible, .graph-detail-close:focus-visible {
+  outline: 2px solid var(--color-focus); outline-offset: 2px;
+}
+.graph-search { flex: 1 1 180px; min-width: 140px; }
+.graph-search-input {
+  width: 100%; padding: 6px 10px; font-size: .82rem;
+  border: 1px solid var(--color-border-strong); border-radius: var(--radius-sm);
+  background: var(--color-surface); color: var(--color-text);
+}
+.graph-actions { display: flex; gap: 6px; flex-wrap: wrap; }
+.graph-actions .editor-btn.on { border-color: var(--color-primary); color: var(--color-primary-dark); font-weight: 600; }
+.graph-notice { font-size: .76rem; color: var(--color-warning); background: var(--color-warning-soft); border-radius: var(--radius-xs); padding: 6px 10px; margin-bottom: 8px; }
+.graph-notice[hidden] { display: none; }
+.graph-stats { font-size: .76rem; color: var(--color-text-muted); margin-bottom: 8px; }
+.graph-stage { position: relative; display: grid; grid-template-columns: minmax(0, 1fr); gap: 12px; }
+.graph-svg {
+  width: 100%; height: 62vh; min-height: 340px; display: block;
+  background: var(--color-surface); border: 1px solid var(--color-border);
+  border-radius: var(--radius); cursor: grab;
+}
+.graph-svg:active { cursor: grabbing; }
+.graph-edge { stroke-width: 1.1; fill: none; opacity: .68; }
+.graph-edge-explicit { stroke: var(--graph-edge-explicit); stroke-width: 1.6; opacity: .9; }
+.graph-edge-series { stroke: var(--graph-edge-series); }
+.graph-edge-inferred { stroke: var(--graph-edge-inferred); stroke-dasharray: 4 3; opacity: .45; }
+.graph-arrow-head { fill: var(--graph-edge-explicit); }
+.graph-node { cursor: pointer; }
+.graph-dot { stroke: var(--color-surface); stroke-width: 1.2; }
+.graph-node-post .graph-dot { fill: var(--graph-post); }
+.graph-node-course .graph-dot { fill: var(--graph-course); }
+.graph-node-paper .graph-dot { fill: var(--graph-paper); }
+.graph-node-material .graph-dot { fill: var(--graph-material); }
+.graph-node-lib .graph-dot { fill: var(--graph-lib); }
+.graph-node-project .graph-dot { fill: var(--graph-project); }
+.graph-node-note .graph-dot { fill: var(--graph-note); }
+.graph-node.isolated .graph-dot { opacity: .5; }
+.graph-node.selected .graph-dot { stroke: var(--color-text); stroke-width: 2.4; }
+.graph-node.match .graph-dot { stroke: var(--color-warning); stroke-width: 2.4; }
+.graph-label {
+  font-size: 9px; fill: var(--color-text); text-anchor: middle;
+  paint-order: stroke; stroke: var(--color-surface); stroke-width: 3px; pointer-events: none;
+}
+.graph-list {
+  max-height: 62vh; overflow: auto; display: grid; gap: 4px;
+  border: 1px solid var(--color-border); border-radius: var(--radius);
+  background: var(--color-surface); padding: 8px;
+}
+.graph-list[hidden] { display: none; }
+.graph-list-item {
+  display: flex; flex-direction: column; align-items: flex-start; gap: 2px; text-align: left;
+  padding: 7px 10px; border: 1px solid transparent; border-radius: var(--radius-sm);
+  background: none; cursor: pointer; color: var(--color-text);
+}
+.graph-list-item:hover { background: var(--color-bg-soft); }
+.graph-list-item.selected { border-color: var(--color-primary); background: var(--color-primary-light); }
+.graph-list-title { font-size: .84rem; font-weight: 600; }
+.graph-list-meta { font-size: .72rem; color: var(--color-text-muted); }
+.graph-detail {
+  border: 1px solid var(--color-border); border-radius: var(--radius);
+  background: var(--color-surface); padding: 14px;
+}
+.graph-detail[hidden] { display: none; }
+.graph-detail-head { display: flex; align-items: flex-start; justify-content: space-between; gap: 8px; }
+.graph-detail-title { font-size: .98rem; font-weight: 700; margin: 0; }
+.graph-detail-close {
+  border: none; background: none; color: var(--color-text-muted); cursor: pointer;
+  font-size: .9rem; padding: 2px 6px; border-radius: var(--radius-xs);
+}
+.graph-detail-close:hover { background: var(--color-bg-soft); }
+.graph-detail-meta { font-size: .76rem; color: var(--color-text-muted); margin: 4px 0 8px; }
+.graph-detail-link { font-size: .82rem; color: var(--color-primary); text-decoration: none; }
+.graph-detail-link:hover { text-decoration: underline; }
+.graph-detail-nohref { font-size: .78rem; color: var(--color-warning); }
+.graph-detail-empty { font-size: .8rem; color: var(--color-text-muted); }
+.graph-detail-rels { list-style: none; margin: 10px 0 0; padding: 0; display: grid; gap: 8px; }
+.graph-detail-rel { margin: 0; }
+.graph-rel-btn {
+  border: none; background: none; padding: 0; cursor: pointer; text-align: left;
+  color: var(--color-primary); font-size: .82rem;
+}
+.graph-rel-btn:hover { text-decoration: underline; }
+.graph-rel-note { font-size: .72rem; color: var(--color-text-muted); margin-top: 2px; }
+.km-graph-link { text-decoration: none; display: inline-flex; align-items: center; }
+
+@media (min-width: 900px) {
+  .graph-stage { grid-template-columns: minmax(0, 1fr) 300px; }
+  .graph-detail { grid-column: 2; grid-row: 1 / span 2; align-self: start; max-height: 74vh; overflow: auto; }
+  .graph-svg, .graph-list { grid-column: 1; }
+}
+@media (max-width: 640px) {
+  .graph-svg { height: 52vh; min-height: 280px; }
+  .graph-toolbar { gap: 8px; }
+  .graph-chip { font-size: .72rem; padding: 3px 8px; }
+}
