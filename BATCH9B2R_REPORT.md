@@ -151,3 +151,45 @@ test28 PASS 19/19   test33 PASS 78/78   test34 PASS 74/74
 
 未引用 `c9b80e9` 的旧结果：上面三条 run 的 head 都是 `d5fc737`（PR 页面 Checks 标签显示
 `fix(content): integrate link index into import rollback and release p… d5fc737`）。
+
+## 11. 追加检查：`apply_add_plan` 的并发冲突边界（合并前专项）
+
+### 11.1 缺陷真实存在（用修复前代码实测复现）
+
+构造：两个新增计划 A、B 都基于**同一份初始状态**生成（`build_add_plan`，锁外）；B 先 `apply_add_plan`
+成功提交；再执行 A。用 `d5fc737` 的 `scripts/import_post.py` 跑同一场景，实测输出：
+
+```
+B 提交后正文存在: True
+[FAIL] 缺少正文文件: data/posts/conc-same.md
+[ROLLBACK-INCOMPLETE] 自动回滚未完全成功，请手工核对：回滚后 --check 仍失败：
+A 结果: ImportConflict: data/posts/conc-same.md.md 在导入过程中被创建，已中止
+A 执行后 B 正文是否还在: False
+```
+
+即：A 被 `write_new_body` 的"正文已存在"判定拦下（同 ID），但 `apply_add_plan` 的异常处理仍调用
+`_rollback(..., delete_body=True)`，**把 B 刚提交的正文删掉**；而 `js/data.js` / manifest 仍是 B 的版本，
+仓库因此不自洽（回滚后的 `--check` 失败，打印 ROLLBACK-INCOMPLETE）。不同 ID 情况下 A 的写入虽会被
+`_rebuild_and_write` 的 id 集合校验拦下并回滚，但本质上同样是"用过期计划改写别人已提交的权威状态"。
+
+### 11.2 修复（最小范围，只在锁内加复核与"只删自己创建的正文"）
+
+`apply_add_plan`（仍然只有一个 BuildLock，不嵌套）：
+
+1. 进锁后 `bc.collect(p)` 重新读取权威状态，与计划里的 `idsBefore`（计划生成时的 id 集合，新增字段）比较；
+   不一致 → `ImportConflict`，**零写入**，因此不会进入任何删除型回滚。
+2. 再显式检查 `pid in ids_now` 与 `os.path.exists(body_path)`：已被别的进程创建 → 同样 `ImportConflict` 零写入。
+3. 新增 `created_body` 标志：只有本进程 `write_new_body` 成功后才置 True，异常时
+   `_rollback(..., delete_body=created_body)`，**只删除本次实际创建的正文**。
+4. `apply_update_plan` 原本就在锁内复核 id 集合与原版本快照，未改。
+5. 顺手把 import_post 结束提示里的"4 个派生文件"改成按 `len(DERIVED_FILES)` 计算的动态数量（不再写死）。
+
+### 11.3 GREEN 证据（`tests/test33_import_post.py` I16，新增 11 项）
+
+| 场景 | 断言 | 结果 |
+|---|---|---|
+| 同 ID（`conc-same`） | A 计划过期 → `ImportConflict`；B 正文存在且内容完整；B 元数据未被覆盖；拒绝是零写入（B 提交后五项产物逐字节不变）；仓库 `--check` 通过 | PASS |
+| 不同 ID（`conc-a` / `conc-b`） | 同上五项，另加"A 的正文没有被成功写进来" | PASS |
+
+`test33` 由 78 项增至 **89 项，89/89 PASS**。D1（自己创建正文后失败 → 删除自己的正文并字节级恢复）、
+D2、D5（锁内备份与回滚、回滚后无残留锁）全部保持通过，未削弱。

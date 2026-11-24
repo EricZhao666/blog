@@ -429,6 +429,51 @@ try:
     check('D5 回滚后可正常开始下一次导入（无残留锁）', rc == 0, out.strip()[-70:])
     shutil.rmtree(d1_root, ignore_errors=True)
 
+    # ================================================================ I16 并发：两个计划都基于同一初始状态
+    # 构造：A、B 两个新增计划都从同一份初始状态生成 → B 先提交 → 再执行 A。
+    # A 的计划此时已过期：必须拒绝且**零写入**，尤其不能删除 B 刚写入的正文。
+    def concurrent_case(id_a, id_b):
+        root_ = make_repo()
+        p_ = ip.bc.paths(root_)
+        state0 = ip.bc.collect(p_)
+
+        def post(pid, body):
+            return {'id': pid, 'title': '并发 ' + pid, 'date': '2026-11-11',
+                    'tags': ['测试'], 'excerpt': pid + ' 摘要', 'content': body}
+
+        plan_a = ip.build_add_plan(root_, p_, state0, post(id_a, '# A\n\nA 正文。\n'))
+        plan_b = ip.build_add_plan(root_, p_, state0, post(id_b, '# B\n\nB 正文。\n'))
+        ip.apply_add_plan(root_, p_, plan_b)          # B 先提交成功
+        before_a = snapshot(root_)
+        conflict = None
+        try:
+            ip.apply_add_plan(root_, p_, plan_a)      # A 已过期
+        except ip.ImportConflict as e:
+            conflict = str(e)
+        return root_, before_a, conflict
+
+    for tag, id_a, id_b in [('同 id', 'conc-same', 'conc-same'), ('不同 id', 'conc-a', 'conc-b')]:
+        croot, cbefore, cconflict = concurrent_case(id_a, id_b)
+        b_body = os.path.join(croot, 'data', 'posts', id_b + '.md')
+        check('I16 %s：A 的计划过期 → 冲突拒绝' % tag, cconflict is not None, cconflict)
+        check('I16 %s：B 已提交正文仍然存在且内容完整' % tag,
+              os.path.isfile(b_body) and io.open(b_body, encoding='utf-8').read() == '# B\n\nB 正文。\n')
+        check('I16 %s：B 的元数据未被覆盖' % tag,
+              "id: '%s'" % id_b in io.open(os.path.join(croot, 'js', 'data.js'),
+                                           encoding='utf-8').read())
+        if id_a != id_b:
+            check('I16 %s：A 的正文没有被"成功"写进来' % tag,
+                  not os.path.exists(os.path.join(croot, 'data', 'posts', id_a + '.md')))
+        check('I16 %s：拒绝是零写入（B 提交后的五项产物逐字节不变）' % tag,
+              snapshot(croot) == cbefore,
+              sorted(r for r in DERIVED if cbefore.get(r) != snapshot(croot).get(r)))
+        r_check = subprocess.run([sys.executable, os.path.join(croot, 'scripts', 'build_content.py'),
+                                  '--root', croot, '--check'], cwd=croot, capture_output=True,
+                                 text=True, encoding='utf-8', errors='replace', env=ENV)
+        check('I16 %s：仓库仍自洽（--check 通过）' % tag, r_check.returncode == 0,
+              (r_check.stdout or r_check.stderr).strip()[-60:])
+        shutil.rmtree(croot, ignore_errors=True)
+
     # ================================================================ I14 参数互斥
     rc, out = run_cli(['--file', f1, '--apply', '--dry-run', '--root', tmpdir])
     check('I14 --apply 与 --dry-run 互斥', rc != 0, rc)
