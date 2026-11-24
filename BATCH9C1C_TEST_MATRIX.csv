@@ -38,4 +38,4 @@ A-07,2R 数学回归,robot-math,FK/IK 全量,2R 算法零改动验证,jsdom,node
 A-08,2R 浏览器回归,robot-kinematics,拖动/分支/离线/三引擎,互链新增不破坏既有验收,browser,chromium+firefox+webkit,44,PASS,44/44 21.9s
 A-09,PID 数学回归,pid-math,全量+新增 M3.6 离散 P 超调,53/53；口径修订不改动算法数值契约,jsdom,node,53,PASS,53/53 0.2s（含 M3.6 极点 −0.8964 超调 26.42%）
 A-10,PID 浏览器回归,pid-control,全量（含末段平均误差标注）,45/45；390px 断行回归已修复（块级标注+min-width:0）,browser,chromium+firefox+webkit,45,PASS,45/45（修复后重跑）
-N-01,完整回归,PR CI,默认 81 套串行,本地未跑全量；按任务书交 PR CI 执行,ci,chromium,81,PENDING,PR 创建后由 GitHub Actions tests 工作流验证
+N-01,完整回归,PR CI,默认 81 套串行,本地未跑全量；按任务书交 PR CI 执行,ci,chromium,81,PENDING,PR #37 已触发 CI；https://github.com/EricZhao666/blog/pull/37/checks

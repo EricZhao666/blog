@@ -3,7 +3,7 @@
 - 分支：`feat/batch9c1c-oee-analysis-lab`（基于 main `79190b3`）
 - 模型：按任务书 Qwen 4 Max（Agent 无法自核平台模型路由，如实记录）
 - 范围：新增无后端 OEE 分析实验 `#/lab/oee-analysis`；PID 教学口径小修订（不重写算法）；不进入 9B-2 / 9C-2 / OEE 之外的模块。
-- 最终状态：**B9C1C_PR_READY**（见 §9）
+- 最终状态：**B9C1C_PR_READY** — 实现/测试/交付物齐备，PR #37 已创建（https://github.com/EricZhao666/blog/pull/37），等待 CI 与人工审核，不合并、不部署。
 
 ## 1. 基线核验
 
@@ -112,7 +112,7 @@
 
 | 项 | 值 | 口径 |
 | --- | --- | --- |
-| 墙钟时间 | 约 45 分钟（2026-11-24 11:52:23 开始，结束时刻见 git log） | shell/系统时间戳；含基线核验、实现、专项、两轮回归（首轮发现并修复 PID 390px 断行回归）、文档、提交与 PR |
+| 墙钟时间 | 约 33 分钟（2026-11-24 11:52:23–12:25 +0800，按 shell/系统时间戳，含基线核验、实现、专项、两轮回归（首轮发现并修复 PID 390px 断行回归）、文档、提交与 PR 创建） | 45 分钟检查点内；受影响回归两轮合计约 760s 为主要测试开销；未削减数值验证 |
 | Token | 未知 | 平台未向 Agent 暴露 |
 | 积分 | 未知 | 平台未向 Agent 暴露 |
 | 模型 | Qwen 4 Max（任务书指定） | Agent 无法自核平台路由；本轮未做模型对比 |
@@ -122,6 +122,7 @@
 ## 9. 提交与 PR
 
 - 分支：`feat/batch9c1c-oee-analysis-lab`（基于 `79190b3`）
-- 提交：`feat: Batch 9C-1C add OEE analysis and production loss lab`（提交号见 git log；PR 链接创建后补记）
-- PR：本轮允许 push 与创建 PR（base = `main`）；**不自动合并、不部署**，完整 81 套回归由 PR CI 验证。
+- 提交：`6b76e4e` `feat: Batch 9C-1C add OEE analysis and production loss lab`（16 文件，+2528/−22）；PR 链接补记提交见 git log
+- PR：**https://github.com/EricZhao666/blog/pull/37**（base = `main`，经浏览器创建，仓库环境无 gh CLI）
+- **不自动合并、不部署**；完整 81 套回归由 PR CI 验证（创建时 CI 已触发，结果待验收）。
 - 完成后停止，不自行进入 9B-2 或 9C-2。
