@@ -474,6 +474,51 @@ try:
               (r_check.stdout or r_check.stderr).strip()[-60:])
         shutil.rmtree(croot, ignore_errors=True)
 
+    # ================================================================ I17 B 改了"另一篇"的元数据（id 列表不变）
+    # 新增计划会整份重写 js/data.js：若 A 在锁内不校验"完整内容版本"，
+    # 就会把 B 刚提交的标题/标签等元数据静默覆盖回旧值（且 --check 仍然自洽，不易发现）。
+    def bump_meta(root_, p_, pid, new_title):
+        st = ip.bc.collect(p_)
+        idx = ip.find_target_index(st, pid)
+        cur = st['metas'][idx]
+        ups = {'op': 'update', 'id': pid,
+               'original': {'title': cur['title'], 'date': cur['date'], 'tags': list(cur['tags']),
+                            'excerpt': cur['excerpt'], 'content': st['bodies'][pid]},
+               'post': {'id': pid, 'title': new_title, 'date': cur['date'],
+                        'tags': list(cur['tags']), 'excerpt': cur['excerpt'],
+                        'content': st['bodies'][pid]}}
+        ip.apply_update_plan(root_, p_, ip.build_update_plan(root_, p_, st, ups, idx))
+
+    i17_root = make_repo()
+    p17 = ip.bc.paths(i17_root)
+    st17 = ip.bc.collect(p17)
+    plan17 = ip.build_add_plan(i17_root, p17, st17, {
+        'id': 'i17-new', 'title': 'I17 新文章', 'date': '2026-11-12', 'tags': ['测试'],
+        'excerpt': 'I17', 'content': '# I17\n\n正文。\n'})
+    bump_meta(i17_root, p17, 'embodied-ai-notes', '被 B 改过的标题')
+    after_b = snapshot(i17_root)
+    data_js_b = io.open(os.path.join(i17_root, 'js', 'data.js'), encoding='utf-8').read()
+    check('I17 前置：B 的元数据修改确实生效', '被 B 改过的标题' in data_js_b)
+    conflict17 = None
+    try:
+        ip.apply_add_plan(i17_root, p17, plan17)
+    except ip.ImportConflict as e:
+        conflict17 = str(e)
+    check('I17 其它文章元数据被改 → A 的旧新增计划被拒绝', conflict17 is not None, conflict17)
+    check('I17 B 的标题修改仍在（未被 plan 里的 data.js 覆盖）',
+          '被 B 改过的标题' in io.open(os.path.join(i17_root, 'js', 'data.js'),
+                                       encoding='utf-8').read())
+    check('I17 B 修改后五项产物逐字节不变', snapshot(i17_root) == after_b,
+          sorted(r for r in DERIVED if after_b.get(r) != snapshot(i17_root).get(r)))
+    check('I17 A 的正文没有被写进来',
+          not os.path.exists(os.path.join(i17_root, 'data', 'posts', 'i17-new.md')))
+    r17 = subprocess.run([sys.executable, os.path.join(i17_root, 'scripts', 'build_content.py'),
+                          '--root', i17_root, '--check'], cwd=i17_root, capture_output=True,
+                         text=True, encoding='utf-8', errors='replace', env=ENV)
+    check('I17 仓库仍自洽（--check 通过）', r17.returncode == 0,
+          (r17.stdout or r17.stderr).strip()[-60:])
+    shutil.rmtree(i17_root, ignore_errors=True)
+
     # ================================================================ I14 参数互斥
     rc, out = run_cli(['--file', f1, '--apply', '--dry-run', '--root', tmpdir])
     check('I14 --apply 与 --dry-run 互斥', rc != 0, rc)

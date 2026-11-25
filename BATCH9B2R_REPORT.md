@@ -193,3 +193,34 @@ A 执行后 B 正文是否还在: False
 
 `test33` 由 78 项增至 **89 项，89/89 PASS**。D1（自己创建正文后失败 → 删除自己的正文并字节级恢复）、
 D2、D5（锁内备份与回滚、回滚后无残留锁）全部保持通过，未削弱。
+
+### 11.4 追加边界：B 改"另一篇"元数据（id 列表不变）→ 旧计划静默覆盖
+
+**RED（用 `fd4ecb1` 的 `scripts/import_post.py` 实测）**：A 生成新增计划；B 改另一篇已有文章的标题并成功提交
+（id 列表不变）；再执行 A：
+
+```
+B 提交后 data.js 含新标题: True
+A 结果: 未抛异常
+A 执行后 B 的标题还在: False
+A 的新正文存在: True
+```
+
+即：`idsBefore` 校验通过（id 没变），A 用**计划生成时**算出的整份 `js/data.js` 覆盖，B 的标题被静默丢失；
+随后派生数据又从这份旧 `data.js` 重建，`build_content --check` 仍然通过——属于"自洽但内容被回退"的隐性丢改动。
+更新路径同理：`verify_original` 只校验目标文章，覆盖不到"其他文章被改"。
+
+**修复**：新增 `_state_fingerprint(state)`（`metas` 全字段 + `tag_order` 的规范哈希，只覆盖会被计划写死的部分；
+正文类派生由 `_rebuild_and_write` 从磁盘重建）。`build_add_plan` / `build_update_plan` 把指纹写进计划；
+`apply_add_plan` / `apply_update_plan` 进锁后重读权威状态，指纹不一致即 `ImportConflict`、**零写入**。
+选择"拒绝过期计划"而不是"锁内重生成"：不引入第二套计划逻辑、不改 D1–D5 的回滚语义；用户重跑命令即在新状态上生成新计划。
+保留：`idsBefore` 的 id 集合校验、`verify_original` 的目标文章版本检查、`created_body` 只删自己创建的正文。
+
+**GREEN**：
+
+| 套件 | 新增断言 | 结果 |
+|---|---|---|
+| test33（新增路径 I17） | B 改另一篇标题 → A 旧新增计划被拒；B 标题仍在；五项产物逐字节不变；A 正文未写入；`--check` 通过 | **95/95 PASS** |
+| test34（更新路径 I17-U） | B 改另一篇标题 → A 旧更新计划被拒；B 标题仍在；目标文章未被 A 改动；五项产物逐字节不变；`--check` 通过 | **80/80 PASS** |
+
+受影响定向回归：`test33 / test34 / build-lock / content-links / content-check` = **5/5 PASS**（93.7s）。

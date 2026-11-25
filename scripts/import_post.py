@@ -47,6 +47,7 @@
 """
 import argparse
 import datetime
+import hashlib
 import json
 import os
 import re
@@ -443,6 +444,20 @@ def _extend_tag_order(tag_order, tags):
     return out
 
 
+def _state_fingerprint(state):
+    """计划所依据的权威状态指纹（元数据全字段 + TAG_ORDER）。
+
+    Batch 9B-2R（3）：新增/更新计划在锁外生成，落盘时会**整份重写 js/data.js**。
+    如果另一个进程在此期间改了任意一篇的元数据（id 列表不变），旧计划会把那份
+    修改静默覆盖回去。进锁后必须用这个指纹做"完整内容版本校验"，不一致即拒绝。
+    只读正文的派生（search-index/feed/manifest/索引）由 _rebuild_and_write 从磁盘重建，
+    因此指纹只需覆盖会随计划写死的部分：metas 与 tag_order。
+    """
+    payload = json.dumps({'metas': state['metas'], 'tagOrder': state['tag_order']},
+                         ensure_ascii=False, sort_keys=True, separators=(',', ':'))
+    return hashlib.sha256(payload.encode('utf-8')).hexdigest()
+
+
 def build_add_plan(root, p, state, post):
     """在内存里算出「新正文 + 新元数据 + 全部派生产物」，不写任何文件。"""
     pid = post['id']
@@ -466,6 +481,8 @@ def build_add_plan(root, p, state, post):
         'ids': [m['id'] for m in metas],
         # 计划生成时（锁外）的权威 id 集合：进锁后必须与它一致，否则计划已过期
         'idsBefore': [m['id'] for m in state['metas']],
+        # 计划生成时的权威状态指纹（元数据 + TAG_ORDER），用于拒绝"别的文章被改过"的过期计划
+        'stateFingerprint': _state_fingerprint(state),
     }
 
 
@@ -513,6 +530,8 @@ def build_update_plan(root, p, state, ups, index):
         'ids': [m['id'] for m in metas],
         'update': ups,
         'index': index,
+        'idsBefore': [m['id'] for m in state['metas']],
+        'stateFingerprint': _state_fingerprint(state),
     }
 
 
@@ -633,6 +652,10 @@ def apply_add_plan(root, p, plan):
         if ids_now != plan.get('idsBefore', plan['ids'][1:]):
             raise ImportConflict(
                 '文章列表在计划生成后已变化（id 集合不一致），计划已过期，已中止（未做任何写入）')
+        if _state_fingerprint(state_now) != plan.get('stateFingerprint'):
+            raise ImportConflict(
+                '其它文章的元数据在计划生成后已被修改，计划已过期（会整份重写 js/data.js），'
+                '已中止（未做任何写入）')
         if pid in ids_now or os.path.exists(sp.body_path(p, pid)):
             raise ImportConflict(
                 '%s 已由另一个进程创建，已中止（未做任何写入，不会删除他人正文）' % pid)
@@ -665,6 +688,9 @@ def apply_update_plan(root, p, plan):
         state_now = bc.collect(p)
         if [m['id'] for m in state_now['metas']] != plan['ids']:
             raise ImportConflict('文章列表在导入过程中发生变化（可能有其他进程在改），已中止')
+        if _state_fingerprint(state_now) != plan.get('stateFingerprint'):
+            raise ImportConflict(
+                '其它文章的元数据在计划生成后已被修改，计划已过期（会整份重写 js/data.js），已中止')
         ensure_canonical(p, state_now)
         index_now = find_target_index(state_now, pid)
         verify_original(state_now, p, ups, index_now)

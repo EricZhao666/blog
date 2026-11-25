@@ -51,3 +51,5 @@ RR-11,D5 BuildLock,test33/test34,锁内备份与回滚,"回滚时锁仍在；失
 RR-12,受影响专项,十套件,定向回归,"10/10 PASS（build-lock/test23/test29/test30/test31/content-check/split-check/feed-check/content-links/knowledge-graph）",python+jsdom,python+node,10,PASS,affected-run1.txt
 RR-13,浏览器图谱回归,graph-experience,54 项三引擎,"PASS（图谱 UI 与可视化未改动）",browser,chromium,54,PASS,graph-run1.txt
 RR-14,导入器并发边界,test33,I16 同 ID / 不同 ID 两计划,"B 先提交后 A 计划过期 → 冲突且零写入；B 正文/元数据/五项产物不变；A 不写入正文；--check 通过",python,python,11,PASS,test33 89/89
+RR-15,旧计划不得覆盖他人改动（新增路径）,test33,I17,"B 改另一篇元数据 → A 旧新增计划被拒；B 标题保留；五项产物逐字节不变；A 正文未写入",python,python,6,PASS,test33 95/95
+RR-16,旧计划不得覆盖他人改动（更新路径）,test34,I17-U,"B 改另一篇元数据 → A 旧更新计划被拒；B 标题保留；目标文章未被改动；五项产物逐字节不变",python,python,6,PASS,test34 80/80

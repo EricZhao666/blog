@@ -491,6 +491,46 @@ try:
           lock_at_rollback == [True], lock_at_rollback)
     shutil.rmtree(d2_root, ignore_errors=True)
 
+    # ================================================================ I17-U 更新计划 + B 改"另一篇"元数据
+    # 更新计划同样会整份重写 js/data.js：B 在 A 生成计划后改了另一篇的元数据并提交，
+    # A 必须校验完整内容版本并拒绝，不能把 B 的修改静默覆盖回旧值。
+    u17_root = make_repo()
+    pu = ip.bc.paths(u17_root)
+    stu = ip.bc.collect(pu)
+    target_title = next(m['title'] for m in stu['metas'] if m['id'] == TARGET)
+    ups_a = make_update(u17_root, TARGET, title='A 更新计划的标题')
+    plan_a = ip.build_update_plan(u17_root, pu, stu, ups_a, ip.find_target_index(stu, TARGET))
+    other = next(m['id'] for m in stu['metas'] if m['id'] != TARGET)
+    ups_b = make_update(u17_root, other, title='B 改的另一篇标题')
+    stb = ip.bc.collect(pu)
+    ip.apply_update_plan(u17_root, pu,
+                        ip.build_update_plan(u17_root, pu, stb, ups_b,
+                                             ip.find_target_index(stb, other)))
+    after_b = snapshot(u17_root)
+    js_b = io.open(os.path.join(u17_root, 'js', 'data.js'), encoding='utf-8').read()
+    check('I17-U 前置：B 修改另一篇标题确实生效', 'B 改的另一篇标题' in js_b)
+    conflict_u = None
+    try:
+        ip.apply_update_plan(u17_root, pu, plan_a)
+    except ip.ImportConflict as e:
+        conflict_u = str(e)
+    check('I17-U 其它文章元数据被改 → A 的旧更新计划被拒绝', conflict_u is not None, conflict_u)
+    check('I17-U B 的标题修改仍在（未被旧计划的 data.js 覆盖）',
+          'B 改的另一篇标题' in io.open(os.path.join(u17_root, 'js', 'data.js'),
+                                        encoding='utf-8').read())
+    check('I17-U 目标文章没有被 A 的过期计划改动',
+          target_title in io.open(os.path.join(u17_root, 'js', 'data.js'), encoding='utf-8').read()
+          and 'A 更新计划的标题' not in io.open(os.path.join(u17_root, 'js', 'data.js'),
+                                            encoding='utf-8').read())
+    check('I17-U B 提交后五项产物逐字节不变', snapshot(u17_root) == after_b,
+          sorted(r for r in DERIVED if after_b.get(r) != snapshot(u17_root).get(r)))
+    r_u17 = subprocess.run([sys.executable, os.path.join(u17_root, 'scripts', 'build_content.py'),
+                            '--root', u17_root, '--check'], cwd=u17_root, capture_output=True,
+                           text=True, encoding='utf-8', errors='replace', env=ENV)
+    check('I17-U 仓库仍自洽（--check 通过）', r_u17.returncode == 0,
+          (r_u17.stdout or r_u17.stderr).strip()[-60:])
+    shutil.rmtree(u17_root, ignore_errors=True)
+
     # ================================================================ U22 锁被占用
     root = make_repo()
     lock = os.path.join(root, '.content-build.lock')
