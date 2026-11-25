@@ -269,10 +269,11 @@ const STATIC_META = {
   '/about': ['关于', '关于 Eric 与这个博客'],
   '/links': ['友情链接', '志同道合的技术博客与工具'],
   '/editor': ['编辑器', '在线撰写并发布文章'],
-  '/lab': ['实验室', '交互实验列表：二连杆机器人运动学、PID 控制系统与 OEE 生产效率分析'],
+  '/lab': ['实验室', '交互实验列表：二连杆机器人运动学、PID 控制、OEE 生产效率分析与 SPC 统计过程控制'],
   '/lab/robot-2r': ['二连杆机器人运动学演示', '平面 2R 机械臂交互演示：正运动学、解析逆运动学、肘上/肘下分支与工作空间边界'],
   '/lab/pid-control': ['PID 控制系统交互实验室', '一阶被控对象离散 PID 阶跃响应：P/PI/PID 对比、控制饱和与积分抗饱和、时域指标'],
-  '/lab/oee-analysis': ['OEE 工业生产效率与损失分析实验室', 'OEE = A×P×Q 统一口径：多穴模具、时间损失守恒分解、A/B 改善情景与假设投影']
+  '/lab/oee-analysis': ['OEE 工业生产效率与损失分析实验室', 'OEE = A×P×Q 统一口径：多穴模具、时间损失守恒分解、A/B 改善情景与假设投影'],
+  '/lab/spc-analysis': ['SPC 统计过程控制与过程能力实验室', 'I-MR 控制图与 Cp/Cpk/Pp/Ppk：单列测量数据解析、四项异常规则、冻结基线、理论参数与实测数据分离']
 };
 
 const SITE_ORIGIN = 'https://ericzhao666.github.io/blog/';
@@ -615,6 +616,27 @@ function loadOeeLab() {
   return _oeeLabPromise;
 }
 
+// Batch 9C-2A：SPC 实验室脚本按需加载（数学模块 → UI 模块，顺序注入）。
+// 与 loadRobotLab/loadPidLab/loadOeeLab 相同契约：缓存 Promise；失败清除以便重试。
+let _spcLabPromise = null;
+function loadSpcLab() {
+  if (window.SpcCalculation && window.SpcDemo) return Promise.resolve(true);
+  if (_spcLabPromise) return _spcLabPromise;
+  _spcLabPromise = loadScriptOnce('js/spc-calculation.js')
+    .then(function () { return loadScriptOnce('js/spc-demo.js'); })
+    .then(function () {
+      const ok = !!(window.SpcCalculation && window.SpcDemo);
+      if (!ok) _spcLabPromise = null;
+      return ok;
+    })
+    .catch(function (err) {
+      console.warn('SPC 演示脚本加载失败:', err && err.message);
+      _spcLabPromise = null;
+      return false;
+    });
+  return _spcLabPromise;
+}
+
 // Batch 9B-2：内容引用契约 / 反向索引 / 知识图谱 —— 全部按需加载，绝不成为首页首屏前置条件。
 // 与 loadRobotLab/loadPidLab/loadOeeLab 相同契约：缓存 Promise；失败清除以便重试。
 let _contentLinksPromise = null;
@@ -770,7 +792,8 @@ function renderLabLinks(active) {
     ['/lab', '实验列表'],
     ['/lab/robot-2r', '二连杆运动学'],
     ['/lab/pid-control', 'PID 控制'],
-    ['/lab/oee-analysis', 'OEE 分析']
+    ['/lab/oee-analysis', 'OEE 分析'],
+    ['/lab/spc-analysis', 'SPC 分析']
   ];
   return '<nav class="lab-links" aria-label="实验导航">' + items.map(function (it) {
     const cur = it[0] === active ? ' aria-current="page"' : '';
@@ -790,6 +813,8 @@ function renderLabHub() {
     '<span>一阶对象离散 PID 阶跃响应：P/PI/PID 对比、饱和与积分抗饱和、时域指标。</span></a>' +
     '<a class="lab-hub-card" href="#/lab/oee-analysis"><strong>OEE 生产效率分析</strong>' +
     '<span>工业工程教学：A/P/Q 统一口径、多穴模具、时间损失守恒分解、A/B 改善情景。</span></a>' +
+    '<a class="lab-hub-card" href="#/lab/spc-analysis"><strong>SPC 统计过程控制</strong>' +
+    '<span>质量控制教学：粘贴单列测量值，计算 I-MR 控制图、四项异常规则、Cp/Cpk/Pp/Ppk 与实测超规比例。</span></a>' +
     '</div>';
 }
 
@@ -8224,6 +8249,17 @@ async function router() {
       }
       app.innerHTML = renderLabLinks('/lab/oee-analysis') + window.OeeDemo.renderPage();
       window.OeeDemo.mount(document.getElementById('oeeDemoRoot'));
+    } else if (hash === '/lab/spc-analysis') {
+      // Batch 9C-2A：SPC 实验室。与既有实验相同的按需加载、降级与 token 防串页契约。
+      app.innerHTML = renderLoading('SPC 统计过程控制实验室');
+      const spcReady = await loadSpcLab();
+      if (token !== _routeToken) return;
+      if (!spcReady) {
+        app.innerHTML = renderLoadError('SPC 统计过程控制实验室');
+        return;
+      }
+      app.innerHTML = renderLabLinks('/lab/spc-analysis') + window.SpcDemo.renderPage();
+      window.SpcDemo.mount(document.getElementById('spcDemoRoot'));
     } else if (hash === '/editor') {
       app.innerHTML = renderEditor(null);
       setupEditorListeners();

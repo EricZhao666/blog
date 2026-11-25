@@ -141,9 +141,9 @@ async function setSlider(page, sel, value) {
     check('R1.1 导航「实验」入口保持原 href、当前页激活、标题正确',
       entry.navHref === '#/lab/robot-2r' && entry.active && /PID 控制系统交互实验室/.test(entry.title),
       JSON.stringify({ href: entry.navHref, title: entry.title }));
-    check('R1.2 双图表与全部读数项渲染；实验互链含列表/2R/PID/OEE 且当前页标注',
+    check('R1.2 双图表与全部读数项渲染；实验互链含列表/2R/PID/OEE/SPC 且当前页标注',
       entry.charts && entry.readout &&
-      entry.labLinks.join(',') === '#/lab,#/lab/robot-2r,#/lab/pid-control,#/lab/oee-analysis' &&
+      entry.labLinks.join(',') === '#/lab,#/lab/robot-2r,#/lab/pid-control,#/lab/oee-analysis,#/lab/spc-analysis' &&
       entry.currentHref === '#/lab/pid-control');
 
     await p1.evaluate(() => { location.hash = '#/lab'; });
@@ -152,8 +152,9 @@ async function setSlider(page, sel, value) {
       cards: Array.from(document.querySelectorAll('.lab-hub-card')).map(a => a.getAttribute('href')),
       title: document.title
     }));
-    check('R1.3 #/lab 实验列表：三张卡片分别深链 2R、PID 与 OEE',
-      hub.cards.join(',') === '#/lab/robot-2r,#/lab/pid-control,#/lab/oee-analysis' && /实验室/.test(hub.title), JSON.stringify(hub));
+    check('R1.3 #/lab 实验列表：四张卡片分别深链 2R、PID、OEE 与 SPC',
+      hub.cards.join(',') === '#/lab/robot-2r,#/lab/pid-control,#/lab/oee-analysis,#/lab/spc-analysis' &&
+      /实验室/.test(hub.title), JSON.stringify(hub));
 
     await p1.evaluate(() => { location.hash = '#/lab/robot-2r'; });
     await p1.waitForSelector('#robotStage', { timeout: 20000 });
@@ -397,6 +398,8 @@ async function setSlider(page, sel, value) {
     check('R9.1 390px 无横向溢出、图表面板单列、触控高度 ≥40px',
       mobile.overflow && mobile.chartsW > 300 && mobile.panelBelow &&
       mobile.inputH >= 40 && mobile.btnH >= 40 && mobile.rangeH >= 40, JSON.stringify(mobile));
+    // 实验互链增加后页面更长，先滚动到按钮再取坐标，避免点在视口外的旧坐标上
+    await p7.locator('#pidModePI').scrollIntoViewIfNeeded();
     const btnBox = await p7.locator('#pidModePI').boundingBox();
     await p7.touchscreen.tap(btnBox.x + btnBox.width / 2, btnBox.y + btnBox.height / 2);
     await sleep(200);
