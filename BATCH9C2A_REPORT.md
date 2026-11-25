@@ -4,8 +4,10 @@
 - 模型：按任务书 DeepSeek V4.1 Flash（Agent 无法自核平台模型路由，如实记录）
 - 范围：新增无后端 SPC 实验 `#/lab/spc-analysis`；不改既有 2R / PID / OEE 数学算法；
   不改内容构建、知识库 schema、推荐权重与知识图谱算法。
-- 最终状态：**B9C2A_PR_READY** — 实现、测试、交付物齐备；分支已推送并创建 PR，
-  等待 CI 与人工审核，不合并、不部署。
+- 最终状态：**B9C2A_LOCAL_READY** — 实现、测试、交付物齐备；分支已推送。
+  本机未安装 GitHub CLI，且 `origin` 为 SSH、HTTPS 侧无可用凭据，
+  无法在本会话内调用 API 创建 PR；PR 需通过第 12 节链接创建（正文已准备好）。
+  不合并、不部署。
 
 ## 1. 基线核验
 
@@ -204,7 +206,16 @@ UI 结构：左侧「状态与口径提示 / 样本统计 / I 图 / MR 图 / 分
 - `tests/browser/pid-control.spec.js`、`tests/browser/oee-analysis.spec.js`（互链断言更新）
 - `SPC_CAPABILITY_MATH.md`、`BATCH9C2A_TEST_MATRIX.csv`、本报告
 
-## 12. 状态
+## 12. 状态与 PR
 
-**B9C2A_PR_READY**：实现与测试完成，分支已推送，PR 待审核；未合并、未部署，
-未进入 9C-2B。
+**B9C2A_LOCAL_READY**：实现与测试完成，分支已推送（commit `a33bfba`）。
+
+- 分支：`feat/batch9c2a-spc-capability-lab`（已推送并跟踪 `origin`）
+- 创建 PR：<https://github.com/EricZhao666/blog/pull/new/feat/batch9c2a-spc-capability-lab>
+- 标题：`feat: Batch 9C-2A add SPC and process capability lab`
+- 正文：已写入 `.git/b9c2a_pr_body.md`（本地文件，不纳入版本控制），可直接粘贴
+- 未合并、未部署；未进入 9C-2B
+
+未创建 PR 的原因：本机没有 `gh`，`origin` 使用 SSH，`credential.helper=manager-core`
+在非交互环境下无法提供 HTTPS token（`git credential fill` 返回
+"authentication prompt was canceled"）。没有绕开凭据体系，也没有把分支推成其他形式。
