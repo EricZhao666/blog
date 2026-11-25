@@ -206,9 +206,51 @@ UI 结构：左侧「状态与口径提示 / 样本统计 / I 图 / MR 图 / 分
 - `tests/browser/pid-control.spec.js`、`tests/browser/oee-analysis.spec.js`（互链断言更新）
 - `SPC_CAPABILITY_MATH.md`、`BATCH9C2A_TEST_MATRIX.csv`、本报告
 
+## 11.5 合并前统计契约修订（9C-2A-R1）
+
+两个定向检查均**复现**了问题，已修正并补针对性测试；未增加功能、未重构实验室。
+
+### 11.5.1 真正的冻结基线
+
+**复现**：`state` 只保存 `{start,end}`，`computeMeasured` 每次调用 `buildBaseline` 重算。
+把第 1 个基线样本从 10.0 改成 10.5 后，I 图 CL 由 10.025 变为 10.15、UCL 由
+10.8229 变为 11.0365，`limits.frozen` 仍为 `true`（静默重算且仍标冻结）。
+
+**修正**：
+
+- `buildBaseline` 返回完整统计快照：均值、\(\overline{MR}\)、\(\sigma_{within}\)、\(s\)、
+  I/MR 控制界限、样本身份指纹（FNV-1a over 序号+数值，按原顺序）。
+- `computeMeasured` 只校验并使用快照，不再重算；新增 `verifyBaseline`：
+  范围/样本数变化 → `baseline-missing`；值或顺序变化 → `baseline-modified`；
+  快照缺统计量 → `baseline-invalid`。
+- 失效时 `baselineState='invalid'`、`limits.frozen=false`、能力口径回到 `all-samples`，
+  界面显示危险色警告「基线已失效……请重新建立基线」，不删样本、不自动重建。
+- 「建立/更新基准」直接解析当前输入后建快照，并取消待执行的防抖定时器，
+  避免用尚未更新的旧 `state.values` 建立基线。
+- 兼容：仍接受 `{start,end}`（无指纹）并按历史方式临时构造快照，原有 92 项断言不变。
+
+### 11.5.2 控制界限浮点容差
+
+**复现**：旧口径 \(\varepsilon=10^{-12}\times\max(\cdots,1)\)。\(10^9\) 基准下容差为 \(10^{-3}\)：
+偏离 CL \(4\times10^{-4}\) 的 8 点被判为「等于中心线」（R2 = 0），越过 UCL \(8\times10^{-4}\)
+也未被判 R1；\(10^{-9}\) 尺度下因下限 1 形成 \(10^{-12}\) 死区。
+
+**修正**：\(\varepsilon = 8\varepsilon_{machine}\max(\lvert CL\rvert,\lvert UCL\rvert,\lvert LCL\rvert)\)，
+去掉绝对下限。\(10^9\) 处 \(\varepsilon\approx1.78\times10^{-6}\)（约为真实波动的 1/560），
+\(10^{-9}\) 处 \(\approx1.8\times10^{-24}\)。只用于「等于中心线/恰好等于界限」，不影响严格超界判定。
+
+### 11.5.3 修订后的测试
+
+| 套件 | 结果 |
+| --- | --- |
+| `spc-math` | **112/112 PASS**（原 92 + 新增 20：B7.1–B7.10、T1.1–T1.10） |
+| `spc-analysis` | **65/65 PASS**（原 62 + 新增 3：R6.7 追加样本界限不变、R6.8 修改基线样本失效告警、R6.9 防抖未触发时按当前输入建基线） |
+| `sw-snapshot-unit` | 15/15 PASS（`CACHE_VERSION` 保持 `2026-11-25-1`，候选未发布） |
+
 ## 12. 状态与 PR
 
-**B9C2A_LOCAL_READY**：实现与测试完成，分支已推送（commit `a33bfba`）。
+**B9C2A_LOCAL_READY**：实现与测试完成，分支已推送并包含 9C-2A-R1 修订
+（原始实现 `a33bfba`，修订见 §11.5）。
 
 - 分支：`feat/batch9c2a-spc-capability-lab`（已推送并跟踪 `origin`）
 - 创建 PR：<https://github.com/EricZhao666/blog/pull/new/feat/batch9c2a-spc-capability-lab>

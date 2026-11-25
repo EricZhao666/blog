@@ -442,6 +442,68 @@ async function setValue(page, sel, value) {
       badBaseline.err.slice(0, 40));
     await s4.ctx.close();
 
+    // ---------------------------------------------------------------- R6b 真冻结（统计快照）
+    const s4b = await newSession(browser, base);
+    const p4b = s4b.page;
+    await p4b.selectOption('#spcExample', 'drift');
+    await sleep(300);
+    await setValue(p4b, '#spcBaselineStart', 1);
+    await setValue(p4b, '#spcBaselineEnd', 20);
+    await p4b.click('#spcFreeze');
+    await sleep(250);
+    const frozen1 = await getState(p4b);
+    const text1 = await p4b.inputValue('#spcData');
+    await setData(p4b, text1 + '\n10.55');
+    const frozen2 = await getState(p4b);
+    check('R6.7 追加监测样本后 I/MR 界限逐位不变（快照冻结，不重算）',
+      frozen1.baselineState === 'frozen' && frozen2.baselineState === 'frozen' &&
+      frozen2.limits.i.ucl === frozen1.limits.i.ucl &&
+      frozen2.limits.i.cl === frozen1.limits.i.cl &&
+      frozen2.limits.mr.ucl === frozen1.limits.mr.ucl &&
+      frozen2.sampleCount === frozen1.sampleCount + 1,
+      JSON.stringify({ ucl: frozen1.limits.i.ucl, after: frozen2.limits.i.ucl }));
+
+    const firstVal = text1.split('\n')[0];
+    await setData(p4b, text1.replace(firstVal, '10.9'));
+    const broken = await getState(p4b);
+    const alertUi = await p4b.evaluate(() => {
+      const el = document.getElementById('spcBaselineAlert');
+      return {
+        hidden: el.hidden,
+        text: el.textContent,
+        stateText: document.getElementById('spcBaselineState').textContent,
+        stateAttr: document.getElementById('spcBaselineState').getAttribute('data-state')
+      };
+    });
+    check('R6.8 修改基线样本：显示失效警告、不再标冻结、能力口径改为全部样本',
+      broken.baselineState === 'invalid' && broken.limitsFrozen === false &&
+      broken.capBasis === 'all-samples' &&
+      broken.baselineIssue && broken.baselineIssue.kind === 'baseline-modified' &&
+      alertUi.hidden === false && /重新建立基线/.test(alertUi.text) &&
+      alertUi.stateAttr === 'invalid' && /基线已失效/.test(alertUi.stateText),
+      alertUi.text.slice(0, 60));
+    await s4b.ctx.close();
+
+    // 点击建立基线时以当前输入为准（不等 150ms 防抖）
+    const s4c = await newSession(browser, base);
+    const p4c = s4c.page;
+    await p4c.evaluate(() => {
+      const el = document.getElementById('spcData');
+      el.value = '10.0,10.2,9.8,10.1,9.9,10.3,9.7,10.0';
+      document.getElementById('spcBaselineStart').value = '1';
+      document.getElementById('spcBaselineEnd').value = '4';
+      el.dispatchEvent(new Event('input', { bubbles: true }));
+      // 立即点击：此刻防抖尚未触发，state.values 还是示例①的 60 个样本
+      document.getElementById('spcFreeze').click();
+    });
+    await sleep(150);
+    const syncState = await getState(p4c);
+    check('R6.9 防抖未触发时点击建立基线：使用当前输入的 8 个样本，而非旧 state.values',
+      syncState.sampleCount === 8 && syncState.baselineState === 'frozen' &&
+      syncState.baseline && syncState.baseline.count === 4 && syncState.baseline.start === 1,
+      JSON.stringify({ n: syncState.sampleCount, base: syncState.baseline && syncState.baseline.count }));
+    await s4c.ctx.close();
+
     // ---------------------------------------------------------------- R7 防抖
     const s5 = await newSession(browser, base);
     const p5 = s5.page;

@@ -308,6 +308,124 @@ const SPEC = { lsl: 9.5, usl: 10.5, target: 10.0, unit: 'mm' };
     !frac.ok && frac.error === 'invalid-range');
 }
 
+// ================================================================ B7 真冻结基线（统计快照）
+{
+  const values = [10.0, 10.2, 9.8, 10.1, 9.9, 10.3, 9.7, 10.0, 10.9, 11.1, 10.8];
+  const snap = S.buildBaseline(values, 1, 4);
+  check('B7.1 基线快照包含均值/MR均值/σ/s/控制界限/样本身份指纹',
+    snap.ok && typeof snap.fingerprint === 'string' && snap.fingerprint.length === 8 &&
+    near(snap.mean, 10.025, 1e-12) && near(snap.mrMean, 0.3, 1e-12) &&
+    near(snap.s, S.summarize(values.slice(0, 4)).s, 1e-15) &&
+    near(snap.sigmaWithin, 0.3 / 1.128, 1e-12) &&
+    near(snap.limits.i.ucl, 10.025 + 3 * 0.3 / 1.128, 1e-9));
+
+  const frozen = S.computeMeasured({ values, spec: SPEC, baseline: snap });
+  const ucl = frozen.limits.i.ucl;
+  const cl = frozen.limits.i.cl;
+  const mrucl = frozen.limits.mr.ucl;
+  check('B7.2 传入快照：baselineState=frozen，界限直接来自快照（不重算）',
+    frozen.baselineState === 'frozen' && frozen.limits.frozen === true &&
+    near(cl, snap.mean, 1e-15) && near(ucl, snap.limits.i.ucl, 1e-15));
+
+  const appended = values.concat([10.4, 10.6]);
+  const after = S.computeMeasured({ values: appended, spec: SPEC, baseline: snap });
+  check('B7.3 追加监测样本：I/MR 界限逐位不变，监测段计数增加',
+    after.baselineState === 'frozen' && after.limits.i.ucl === ucl &&
+    after.limits.i.cl === cl && after.limits.mr.ucl === mrucl &&
+    after.monitoring.count === 9);
+
+  const modified = values.slice();
+  modified[0] = 10.5;
+  const bad = S.computeMeasured({ values: modified, spec: SPEC, baseline: snap });
+  check('B7.4 修改基线样本：baselineState=invalid 且 limitsFrozen=false（不再标冻结）',
+    bad.ok && bad.baselineState === 'invalid' && bad.limits.frozen === false &&
+    bad.limitsBasis === 'all-samples');
+  check('B7.5 失效原因=baseline-modified，并明确要求重新建立基线',
+    bad.baselineIssue && bad.baselineIssue.kind === 'baseline-modified' &&
+    /重新建立基线/.test(bad.baselineIssue.message));
+
+  const removed = S.computeMeasured({ values: values.slice(0, 3), spec: SPEC, baseline: snap });
+  check('B7.6 样本被删除导致基线范围不存在：baseline-missing + invalid',
+    removed.ok && removed.baselineState === 'invalid' &&
+    removed.baselineIssue.kind === 'baseline-missing');
+
+  const reordered = values.slice();
+  const tmp = reordered[1]; reordered[1] = reordered[2]; reordered[2] = tmp;
+  const re = S.computeMeasured({ values: reordered, spec: SPEC, baseline: snap });
+  check('B7.7 基线样本重排：身份指纹变化 → baseline-modified（顺序也是身份的一部分）',
+    re.baselineState === 'invalid' && re.baselineIssue.kind === 'baseline-modified');
+
+  const monReordered = values.slice();
+  const tmp2 = monReordered[5]; monReordered[5] = monReordered[6]; monReordered[6] = tmp2;
+  const monRe = S.computeMeasured({ values: monReordered, spec: SPEC, baseline: snap });
+  check('B7.8 只重排监测段：基线仍有效，界限保持冻结',
+    monRe.baselineState === 'frozen' && monRe.limits.i.ucl === ucl);
+
+  check('B7.9 基线失效后能力指数改用全部样本口径，不沿用旧基线能力',
+    bad.capability.basis === 'all-samples' && bad.capability.cp !== frozen.capability.cp,
+    'cp ' + frozen.capability.cp + ' → ' + bad.capability.cp);
+
+  const cleared = S.computeMeasured({ values, spec: SPEC, baseline: null });
+  check('B7.10 清除基线：baselineState=none，界限为全样本实时估计',
+    cleared.baselineState === 'none' && cleared.limits.frozen === false &&
+    cleared.baseline === null && cleared.baselineIssue === null);
+}
+
+// ================================================================ T 浮点容差口径
+{
+  const lim1e9 = { i: { cl: 1e9, ucl: 1e9 + 0.01, lcl: 1e9 - 0.01 }, mr: { cl: 0.001, ucl: 0.003, lcl: 0 } };
+  const eightNear = [];
+  for (let i = 0; i < 8; i++) eightNear.push(1e9 + 0.0004);   // 偏离 CL 4e-4，远小于旧的 1e-3 容差
+  check('T1.1 1e9 基准 + 4e-4 偏移的 8 点仍判同侧（旧 1e-12×量级容差会漏报）',
+    S.detectViolations(eightNear, lim1e9).counts['i-run-same-side'] === 8);
+
+  check('T1.2 冻结界限下真实越过 UCL 8e-4 被判 R1（旧容差视作"等于界限"）',
+    S.detectViolations([1e9 + 0.0038],
+      { i: { cl: 1e9, ucl: 1e9 + 0.003, lcl: 1e9 - 0.003 }, mr: { cl: 1, ucl: 2, lcl: 0 } })
+      .counts['i-beyond-limits'] === 1);
+  check('T1.3 恰好等于 UCL 不误报（容差不能变成工程死区，也不能消失）',
+    S.detectViolations([1e9 + 0.003],
+      { i: { cl: 1e9, ucl: 1e9 + 0.003, lcl: 1e9 - 0.003 }, mr: { cl: 1, ucl: 2, lcl: 0 } })
+      .counts['i-beyond-limits'] === 0);
+
+  const clSmall = S.summarize([0.1, 0.2]).mean;   // 0.15000000000000002（舍入边界）
+  const limSmall = { i: { cl: clSmall, ucl: 0.3, lcl: 0 }, mr: { cl: 0.1, ucl: 0.2, lcl: 0 } };
+  const eightRound = [];
+  for (let i = 0; i < 8; i++) eightRound.push(0.15);
+  check('T1.4 普通小数舍入边界：0.15 与 0.1/0.2 的均值视为相等，不制造 8 点同侧假警报',
+    S.detectViolations(eightRound, limSmall).counts['i-run-same-side'] === 0);
+  const eightReal = [];
+  for (let i = 0; i < 8; i++) eightReal.push(0.1500001);
+  check('T1.5 1e-7 的真实偏移仍判同侧（容差不吞掉可测量差异）',
+    S.detectViolations(eightReal, limSmall).counts['i-run-same-side'] === 8);
+
+  check('T1.6 极小尺度 1e-9：越界 4e-13 仍判 R1（旧下限 1 → 容差 1e-12 会漏报）',
+    S.detectViolations([1.0009e-9],
+      { i: { cl: 1e-9, ucl: 1.0005e-9, lcl: 0.9995e-9 }, mr: { cl: 1e-12, ucl: 1.5e-12, lcl: 0 } })
+      .counts['i-beyond-limits'] === 1);
+  check('T1.7 极小尺度：恰好等于界限不误报',
+    S.detectViolations([1.0005e-9],
+      { i: { cl: 1e-9, ucl: 1.0005e-9, lcl: 0.9995e-9 }, mr: { cl: 1e-12, ucl: 1.5e-12, lcl: 0 } })
+      .counts['i-beyond-limits'] === 0);
+
+  check('T1.8 零波动边界：全 0 数据不产生任何规则命中（MR=0、UCL=0，严格大于不成立）',
+    Object.values(S.detectViolations([0, 0, 0, 0, 0, 0, 0, 0],
+      { i: { cl: 0, ucl: 0, lcl: 0 }, mr: { cl: 0, ucl: 0, lcl: 0 } }).counts).every(v => v === 0));
+
+  check('T1.9 MR 容差：MR 恰等于 UCL 不命中，超过 0.001 即命中',
+    S.detectViolations([0, 0.002],
+      { i: { cl: 0, ucl: 1, lcl: -1 }, mr: { cl: 0.001, ucl: 0.002, lcl: 0 } })
+      .counts['mr-beyond-limits'] === 0 &&
+    S.detectViolations([0, 0.003],
+      { i: { cl: 0, ucl: 1, lcl: -1 }, mr: { cl: 0.001, ucl: 0.002, lcl: 0 } })
+      .counts['mr-beyond-limits'] === 1);
+
+  check('T1.10 容差随量级缩放且远小于工程波动：tol(1e9)≈1.8e-6、tol(1e-9)≈1.8e-24',
+    S.boundaryTolerance(1e9) > 1e-7 && S.boundaryTolerance(1e9) < 1e-5 &&
+    S.boundaryTolerance(1e-9) < 1e-20 && S.CONSTANTS.relEps < 1e-14,
+    'tol(1e9)=' + S.boundaryTolerance(1e9));
+}
+
 // ================================================================ O 顺序影响
 {
   const a = S.summarize([10.0, 10.1, 10.3]);

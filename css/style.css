@@ -6675,6 +6675,22 @@ mark.search-hit {
   color: var(--color-text-secondary);
 }
 
+.spc-baseline-state[data-state="invalid"] {
+  color: var(--color-danger);
+  font-weight: 600;
+}
+
+.spc-baseline-alert {
+  margin: 0;
+  font-size: 0.76rem;
+  line-height: 1.55;
+  color: var(--color-danger);
+}
+
+.spc-baseline-alert[hidden] {
+  display: none;
+}
+
 .spc-explain {
   font-size: 0.74rem;
   line-height: 1.65;

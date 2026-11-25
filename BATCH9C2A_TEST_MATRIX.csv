@@ -14,7 +14,9 @@ M-12,数值稳定,spc-math,1e9±1e-3 与 1e-9 量级,均值精确回到 1e9；s 
 M-13,理论模式,spc-math,用户输入 μ/σ,Cp=Cpk=1.666667；Pp/Ppk 标记 not-applicable-theoretical；PPM 0.573303；无控制图；σ≤0 拒绝；规格颠倒仍不计算能力,node,node,6,PASS,E11.1-E11.6
 M-14,直方图,spc-math,分箱与视图,计数和等于样本数；视图覆盖规格界限；全等值只 1 个零宽箱,node,node,3,PASS,H12.1-H12.3
 M-15,确定性,spc-math,重复计算与输入不可变,两次结果 JSON 一致；不修改调用方数组,node,node,2,PASS,X13.1-X13.2
-M-16,性能,spc-math,5000 样本完整计算,104.9-123.6ms（阈值 500ms）；命中数与明细一致且索引在全量范围,node,node,2,PASS,F14.1-F14.2
+M-16,性能,spc-math,5000 样本完整计算,104.9-151.6ms（阈值 500ms）；命中数与明细一致且索引在全量范围,node,node,2,PASS,F14.1-F14.2
+M-17,真冻结基线,spc-math,快照/追加/修改/删除/重排,B7.1 快照含指纹与全部统计量；B7.3 追加样本界限逐位不变；B7.4-B7.7 修改/删除/重排基线样本→invalid+baseline-modified/missing；B7.8 只重排监测段仍冻结；B7.9 失效后能力改全样本口径；B7.10 清除恢复 none,node,node,10,PASS,B7.1-B7.10
+M-18,浮点容差,spc-math,1e9/小数舍入/1e-9/零波动/边界,1e9 下 4e-4 偏移判同侧（R2=8）且 8e-4 越界判 R1；恰好等于界限不误报；0.1/0.2 均值与 0.15 视为相等而 1e-7 偏移仍报警；1e-9 尺度越界 4e-13 可测；全 0 无命中；tol(1e9)=1.776e-6、tol(1e-9)=1.78e-24,node,node,10,PASS,T1.1-T1.10
 B-01,入口与互链,spc-analysis,导航/实验列表/既有实验,导航 href 保持 #/lab/robot-2r；互链 5 项；四张卡片；2R/PID/OEE 深链接正常（OEE 仍 76.00%）,browser,chromium,6,PASS,R1.1-R1.6
 B-02,默认数值,spc-analysis,示例①与图表语义,均值 10.001/s 0.013138；Cp 2.582538/Cpk 2.556712/Pp 2.537147/Ppk 2.511775；0 命中 0 超规；控制界限 2 条+规格界限 2 条+中心线 1 条；能力表 6 行,chromium,browser,6,PASS,R2.1-R2.6
 B-03,粘贴与校验,spc-analysis,自定义数据与非法定位,8 值粘贴 n=8/s=0.2；规格 9.5/10.5 → Cp=Cpk=0.548333/Pp=Ppk=0.833333；非法「第 3 行第 1 个」且结果清空；4 个重复值 s=0 且 Cp=null；2 样本提示过少,browser,chromium,9,PASS,R3.1-R3.9
@@ -30,6 +32,7 @@ B-12,离线,spc-analysis,SW 缓存与离线重载,两脚本进入缓存；离线
 B-13,脚本失败降级,spc-analysis,两个脚本分别 404,显示加载失败与重试；不白屏不抛错；首页 18 篇文章不受影响,browser,chromium,4,PASS,R13 四条
 B-14,快速路由,spc-analysis,6 次切换,SPC 单实例；OEE/PID 无残留；数值正确；无异常,browser,chromium,1,PASS,R14.1
 B-15,三引擎,spc-analysis,Firefox/WebKit 390px,示例④Cpk 2.206171、超规 3 个、独立重算偏差 0、无溢出、无异常,browser,firefox+webkit,4,PASS,R15.1-R15.2
+B-16,真冻结浏览器,spc-analysis,追加样本/修改基线/防抖竞态,R6.7 追加监测样本后 I/MR 界限逐位不变；R6.8 修改基线样本→危险色失效警告+不再标冻结+能力改全样本；R6.9 防抖未触发时点击建立基线使用当前 8 个样本而非旧 60 个,browser,chromium,3,PASS,R6.7-R6.9
 G-01,实验室组回归,lab,8 套串行,PASS 8 / FAIL 0；100.9s；spc-analysis 27.6s、spc-math 0.2s,runner,chromium+node,8 suites,PASS,tests/reports/b9c2a-lab-group.md
 G-02,全站巡检,audit,路由/死链/静态页/404,PASS 16.3s（新路由无死链）,runner,jsdom,1 suite,PASS,tests/reports/b9c2a-lab-math.md
 G-03,搜索与主题,test7,搜索/主题/静态页/SW/RSS,PASS 10.2s,runner,jsdom,1 suite,PASS,tests/reports/b9c2a-lab-math.md

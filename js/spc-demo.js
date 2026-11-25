@@ -227,6 +227,7 @@
       '<button type="button" id="spcClearBaseline" class="spc-btn">清除基准</button>' +
       '</div>' +
       '<p class="spc-baseline-state" id="spcBaselineState">未建立基准：控制界限由当前全部样本估计。</p>' +
+      '<p class="spc-baseline-alert" id="spcBaselineAlert" role="alert" hidden></p>' +
       '</div>' +
 
       '<div class="spc-explain">' +
@@ -745,7 +746,7 @@
       parsed: null,
       spec: { lsl: SC().DEFAULTS.lsl, usl: SC().DEFAULTS.usl, target: SC().DEFAULTS.target, unit: SC().DEFAULTS.unit },
       theory: { mean: SC().DEFAULTS.mean, sd: SC().DEFAULTS.sd },
-      baselineRange: null,
+      baselineSnapshot: null,
       result: null,
       error: '',
       computeCount: 0,
@@ -788,14 +789,6 @@
       };
     }
 
-    function readBaseline() {
-      var s = readNumber('spcBaselineStart');
-      var e = readNumber('spcBaselineEnd');
-      if (s === null || e === null) return state.baselineRange;
-      if (!isFinite(s) || !isFinite(e)) return state.baselineRange;
-      return { start: s, end: e };
-    }
-
     /** 解析并计算；任何失败都清空结果，绝不用旧结果冒充新输入。 */
     function runCompute() {
       timer = 0;
@@ -831,7 +824,7 @@
         r = SC().computeMeasured({
           values: parsed.values,
           spec: state.spec,
-          baseline: state.baselineRange
+          baseline: state.baselineSnapshot
         });
         if (!r.ok) {
           state.result = null;
@@ -939,14 +932,28 @@
 
     function renderBaselineState(r) {
       var el = $('spcBaselineState');
+      var alert = $('spcBaselineAlert');
       if (!el) return;
+      if (r.baselineState === 'invalid' && r.baselineIssue) {
+        // 失效必须显式暴露：不能继续标"已冻结"，也不能悄悄换一套界限
+        el.textContent = '基线已失效：第 ' + r.baselineIssue.start + '–' + r.baselineIssue.end +
+          ' 个样本已无法对应建立时的快照。当前控制界限为全部样本的实时估计（未冻结）。';
+        el.setAttribute('data-state', 'invalid');
+        if (alert) {
+          alert.textContent = r.baselineIssue.message;
+          alert.hidden = false;
+        }
+        return;
+      }
+      if (alert) alert.hidden = true;
+      el.removeAttribute('data-state');
       if (!r.baseline) {
         el.textContent = '未建立基准：控制界限由当前全部 ' + r.n + ' 个样本估计。';
         return;
       }
       el.textContent = '已冻结基线：第 ' + r.baseline.start + '–' + r.baseline.end + ' 个样本（' +
         r.baseline.count + ' 个），基准均值 ' + fmtSmart(r.baseline.mean) + '，σ_within ' +
-        fmtSmart(r.baseline.sigmaWithin) + '。控制界限固定，后续 ' +
+        fmtSmart(r.baseline.sigmaWithin) + '。控制界限来自建立时的快照，后续 ' +
         (r.monitoring ? r.monitoring.count : 0) + ' 个样本按固定界限监测。';
     }
 
@@ -1053,7 +1060,8 @@
       $('spcUnit').value = ex.spec.unit;
       $('spcExample').value = id;
       $('spcExampleNote').textContent = ex.note;
-      state.baselineRange = null;
+      state.baselineSnapshot = null;
+      $('spcBaselineAlert').hidden = true;
       $('spcBaselineStart').value = '1';
       $('spcBaselineEnd').value = String(Math.min(20, SC().exampleValues(id).length));
       runCompute();
@@ -1062,11 +1070,16 @@
 
     function onReset() {
       loadExample('centered');
-      state.baselineRange = null;
+      state.baselineSnapshot = null;
+      $('spcBaselineAlert').hidden = true;
       $('spcBaselineState').textContent = '未建立基准：控制界限由当前全部样本估计。';
       runCompute();
     }
 
+    /**
+     * 建立基线：直接解析**当前输入**，不等防抖。
+     * 否则快速粘贴后立即点按钮，会用尚未更新的旧 state.values 建基线。
+     */
     function onFreeze() {
       var s = readNumber('spcBaselineStart');
       var e = readNumber('spcBaselineEnd');
@@ -1074,21 +1087,33 @@
         setError('请填写基线起始与结束序号（整数），再用「建立/更新基准」。');
         return;
       }
-      // 先在数学层验证，避免把非法区间写入状态
-      var probe = SC().buildBaseline(state.values, s, e);
-      if (!probe.ok) {
-        setError(probe.message);
+      var parsed = SC().parseMeasurements($('spcData').value);
+      if (!parsed.ok) {
+        setError(parsed.message);
+        $('spcBaselineAlert').hidden = true;
         return;
       }
-      state.baselineRange = { start: s, end: e };
+      // 保存完整统计快照（均值/MR/σ/界限/样本身份），而不是只存区间
+      var snap = SC().buildBaseline(parsed.values, s, e);
+      if (!snap.ok) {
+        setError(snap.message);
+        $('spcBaselineAlert').hidden = true;
+        return;
+      }
+      if (timer) { global.clearTimeout(timer); timer = 0; }
+      state.values = parsed.values;
+      state.parsed = parsed;
+      state.baselineSnapshot = snap;
       setError('');
+      $('spcBaselineAlert').hidden = true;
       runCompute();
       setLive('已冻结基线：第 ' + s + '–' + e + ' 个样本');
     }
 
     function onClearBaseline() {
-      state.baselineRange = null;
+      state.baselineSnapshot = null;
       setError('');
+      $('spcBaselineAlert').hidden = true;
       runCompute();
       setLive('已清除基线：控制界限回到全部样本估计');
     }
@@ -1159,7 +1184,12 @@
       error: state.error,
       computeCount: state.computeCount,
       chartDrawn: state.chart.drawn,
-      chartTotal: state.chart.total
+      chartTotal: state.chart.total,
+      baselineState: (r && r.baselineState) || 'none',
+      baselineIssue: r && r.baselineIssue ? {
+        kind: r.baselineIssue.kind, start: r.baselineIssue.start,
+        end: r.baselineIssue.end, message: r.baselineIssue.message
+      } : null
     };
     if (!r || !r.ok) {
       return Object.assign(base, {

@@ -50,7 +50,17 @@
   var RULE_TREND_LENGTH = 6;       // 连续单调点数
   var SMALL_SAMPLE_LIMIT = 10;     // 少于 10 个样本：控制界限可靠性提示
   var CAPABILITY_SAMPLE_HINT = 30; // 少于 30 个样本：能力指数不确定性提示（常见实践，非硬标准）
-  var REL_EPS = 1e-12;
+  // 边界容差：只吸收浮点求和/表示误差（约数个 ulp），不是工程死区。
+  // 8 × Number.EPSILON ≈ 1.78e-15（相对量级）：
+  //   1e9 量级 → ≈1.8e-6；1e-3 波动仍是可判别信号，不会被当成"等于中心线"。
+  // 旧口径 1e-12 × 量级且下限为 1，在 1e9 基准下容差高达 1e-3，会吞掉真实越界。
+  var REL_EPS = 8 * Number.EPSILON;
+
+  /** 边界容差（按量级缩放）；只用于"等于中心线/恰好等于界限"的判定。 */
+  function boundaryTolerance(scale) {
+    var s = Math.abs(scale);
+    return Math.max(s * REL_EPS, Number.MIN_VALUE);
+  }
 
   // ---------------------------------------------------------------- 基础工具
 
@@ -386,8 +396,8 @@
     var mrLim = (limits && limits.mr) || {};
     var hasI = isFiniteNumber(iLim.ucl) && isFiniteNumber(iLim.lcl) && isFiniteNumber(iLim.cl);
     var hasMr = isFiniteNumber(mrLim.ucl) && isFiniteNumber(mrLim.cl);
-    var tolI = hasI ? Math.max(Math.abs(iLim.cl), Math.abs(iLim.ucl), Math.abs(iLim.lcl), 1) * REL_EPS : 0;
-    var tolMr = hasMr ? Math.max(Math.abs(mrLim.ucl), Math.abs(mrLim.cl), 1) * REL_EPS : 0;
+    var tolI = hasI ? boundaryTolerance(Math.max(Math.abs(iLim.cl), Math.abs(iLim.ucl), Math.abs(iLim.lcl))) : 0;
+    var tolMr = hasMr ? boundaryTolerance(Math.max(Math.abs(mrLim.ucl), Math.abs(mrLim.cl))) : 0;
 
     function sideOf(v) {
       var d = v - iLim.cl;
@@ -675,8 +685,27 @@
   // ---------------------------------------------------------------- 冻结基线
 
   /**
+   * 基线样本身份指纹：对「序号 + 数值（按原顺序）」做 FNV-1a。
+   * 任一样本被修改、删除或在基线段内重排都会改变指纹 →
+   * 用于判定"冻结的快照是否仍对应当前这份数据的基线段"。
+   */
+  function baselineFingerprint(values, start, end) {
+    var h = 2166136261;
+    for (var i = start - 1; i < end; i++) {
+      var s = (i + 1) + ':' + String(values[i]) + ';';
+      for (var j = 0; j < s.length; j++) {
+        h ^= s.charCodeAt(j);
+        h = Math.imul(h, 16777619);
+      }
+    }
+    return ('00000000' + (h >>> 0).toString(16)).slice(-8);
+  }
+
+  /**
    * 由指定样本段（1-based，含端点）建立冻结基线。
    * 基线至少 2 个样本才能估计移动极差；样本不足时拒绝建立，不给出虚假界限。
+   * 返回值是一次**统计快照**：调用方应保存整个对象并原样回传给 computeMeasured，
+   * 不要只保存 {start,end} 再让它每次重算（那会在基线样本被改动后静默改变界限）。
    */
   function buildBaseline(values, start, end) {
     var n = values.length;
@@ -714,9 +743,51 @@
       mrMean: st.mr.mean,
       sigmaWithin: lim.sigmaWithin,
       limits: { i: lim.i, mr: lim.mr },
+      fingerprint: baselineFingerprint(values, start, end),
       frozen: true,
       status: lim.status
     };
+  }
+
+  /**
+   * 校验冻结快照是否仍对应当前数据：不匹配时返回明确的失效原因，绝不静默重算。
+   * 返回 null 表示快照有效。
+   */
+  function verifyBaseline(values, snap) {
+    var n = values.length;
+    var start = snap.start;
+    var end = snap.end;
+    if (!isFiniteNumber(start) || !isFiniteNumber(end) ||
+        Math.floor(start) !== start || Math.floor(end) !== end ||
+        start < 1 || end < 1 || start > end || end > n) {
+      return {
+        kind: 'baseline-missing', start: start, end: end,
+        message: '基线已失效：原基线范围（第 ' + start + '–' + end +
+          ' 个样本）在当前数据中已不存在。请重新建立基线。'
+      };
+    }
+    if (end - start + 1 !== snap.count) {
+      return {
+        kind: 'baseline-missing', start: start, end: end,
+        message: '基线已失效：基线样本数由 ' + snap.count + ' 个变为 ' + (end - start + 1) +
+          ' 个。请重新建立基线。'
+      };
+    }
+    if (!isFiniteNumber(snap.mean) || !isFiniteNumber(snap.sigmaWithin) ||
+        !snap.limits || !isFiniteNumber(snap.limits.i && snap.limits.i.cl)) {
+      return {
+        kind: 'baseline-invalid', start: start, end: end,
+        message: '基线快照缺少统计量或控制界限，已失效。请重新建立基线。'
+      };
+    }
+    if (baselineFingerprint(values, start, end) !== snap.fingerprint) {
+      return {
+        kind: 'baseline-modified', start: start, end: end,
+        message: '基线已失效：第 ' + start + '–' + end +
+          ' 个样本的值或顺序已被修改，冻结界限不再对应当前数据。请重新建立基线。'
+      };
+    }
+    return null;
   }
 
   // ---------------------------------------------------------------- 图表抽样
@@ -797,34 +868,53 @@
       warnings.push('目标值 ' + spec.target + ' 落在规格界限之外，请核对该参数。');
     }
 
-    // 冻结基线：界限固定为基线段估计值，后续样本只做监测
+    // 冻结基线：必须使用调用方保存的**统计快照**（不重算）。
+    // 传入 {start,end} 但没有指纹时，按历史兼容构造一次快照（仅本次调用有效，不适合作冻结）。
     var baseline = null;
+    var baselineState = 'none';
+    var baselineIssue = null;
     var limits;
     var basis;
     if (input && input.baseline) {
-      var b = buildBaseline(values, input.baseline.start, input.baseline.end);
-      if (!b.ok) {
-        return { ok: false, mode: 'measured', error: b.error, message: b.message };
+      var snap = input.baseline;
+      if (typeof snap.fingerprint === 'string' && snap.fingerprint) {
+        baselineIssue = verifyBaseline(values, snap);
+      } else {
+        var built = buildBaseline(values, snap.start, snap.end);
+        if (!built.ok) {
+          return { ok: false, mode: 'measured', error: built.error, message: built.message };
+        }
+        snap = built;
       }
-      baseline = b;
-      limits = {
-        i: { cl: b.limits.i.cl, ucl: b.limits.i.ucl, lcl: b.limits.i.lcl },
-        mr: { cl: b.limits.mr.cl, ucl: b.limits.mr.ucl, lcl: b.limits.mr.lcl },
-        sigmaWithin: b.sigmaWithin,
-        status: b.status,
-        frozen: true
-      };
-      basis = 'baseline';
-      flags.push('baseline-frozen');
-      warnings.push('已冻结基线（第 ' + b.start + '–' + b.end + ' 个样本，共 ' + b.count +
-        ' 个）：控制界限固定，后续样本按固定界限检测，不会因为新增异常数据而重新计算界限。');
-    } else {
+      if (baselineIssue) {
+        baselineState = 'invalid';
+        flags.push('baseline-invalid');
+      } else {
+        baseline = snap;
+        baselineState = 'frozen';
+        limits = {
+          i: { cl: snap.limits.i.cl, ucl: snap.limits.i.ucl, lcl: snap.limits.i.lcl },
+          mr: { cl: snap.limits.mr.cl, ucl: snap.limits.mr.ucl, lcl: snap.limits.mr.lcl },
+          sigmaWithin: snap.sigmaWithin,
+          status: snap.status,
+          frozen: true
+        };
+        basis = 'baseline';
+        flags.push('baseline-frozen');
+        warnings.push('已冻结基线（第 ' + snap.start + '–' + snap.end + ' 个样本，共 ' + snap.count +
+          ' 个）：控制界限来自建立时的快照，新增监测样本或改动基线样本都不会自动改变它。');
+      }
+    }
+    if (!baseline) {
       var live = computeLimits(stats.mean, stats.mr.mean);
       limits = {
         i: live.i, mr: live.mr, sigmaWithin: live.sigmaWithin,
         status: live.status, frozen: false
       };
       basis = 'all-samples';
+      if (baselineIssue) {
+        warnings.push('基线已失效，当前控制界限为全部样本的实时估计（未冻结）。请重新建立基线。');
+      }
     }
 
     var det = detectViolations(values, limits);
@@ -894,6 +984,8 @@
       limits: limits,
       limitsBasis: basis,
       baseline: baseline,
+      baselineState: baselineState,       // none | frozen | invalid
+      baselineIssue: baselineIssue,        // {kind, start, end, message} | null
       monitoring: monitoring,
       violations: det.violations,
       violationCounts: det.counts,
@@ -1110,7 +1202,9 @@
     VERSION: VERSION,
     MAX_SAMPLES: MAX_SAMPLES,
     MAX_ABS_VALUE: MAX_ABS_VALUE,
-    CONSTANTS: { d2: D2, d3: D3, d4: D4, runLength: RULE_RUN_LENGTH, trendLength: RULE_TREND_LENGTH },
+    CONSTANTS: { d2: D2, d3: D3, d4: D4, runLength: RULE_RUN_LENGTH, trendLength: RULE_TREND_LENGTH, relEps: REL_EPS },
+    boundaryTolerance: boundaryTolerance,
+    baselineFingerprint: baselineFingerprint,
     DEFAULTS: DEFAULTS,
     EXAMPLES: EXAMPLES,
     RULES: RULES,
