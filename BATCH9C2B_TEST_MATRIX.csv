@@ -1,0 +1,31 @@
+id,area,suite,target,coverage,type,engines,items,result,evidence
+M-01,标量首步,kalman-math,x0=0/P0=1/Q=0.25/R=1/z=1,P⁻=1.25；K=0.5555555556；x=0.5555555556；P=0.5555555556；创新 1、S=2.25,node,node,5,PASS,K1.1-K1.5
+M-02,标量多步,kalman-math,第二帧 z=2,K=0.4461538462；x=1.2；P=0.4461538462,node,node,1,PASS,K1.6
+M-03,Q=0 与 R 有效性,kalman-math,Q=0/R=0/R<0/Q<0/P0<0/数值极限,Q=0 时 P 单调降 0.5→0.3333→0.25；R=0 与负值拒绝；R=1e-9/1e9 保持有限,node,node,7,PASS,K2.1-K2.7
+M-04,无测量传播,kalman-math,连续 3 步缺测,状态不变；P 每步 +Q（1.5/2/2.5）；无增益/创新；缺失不当作 0,node,node,3,PASS,K3.1-K3.3
+M-05,二维预测,kalman-math,dt=0.2/σ_a=0.2/P0=I,P⁻=[[1.040016,0.20016],[0.20016,1.0016]]；Q 分量公式正确；σ_a=0 与 dt≤0 边界,node,node,5,PASS,K4.1-K4.5
+M-06,二维更新/Joseph,kalman-math,位置与速度单传感器,K=[0.6753280485,0.1299726756]；x=[0.9428608534,1.1429699432]；Joseph P 与标准形式一致且对称 PSD,node,node,7,PASS,K5.1-K5.7
+M-07,联合 vs 顺序,kalman-math,对角 R 同时到达,两者 x=[1.1241379310,0.9287356322]、P 逐元素差 <1e-12；缺测量拒绝,node,node,5,PASS,K6.1-K6.5
+M-08,数值稳定,kalman-math,200 步 1e6 量级/1e-12 尺度,对称误差 2.7e-20；PSD 成立；全部有限；PSD 检查能识别负方差与不对称,node,node,6,PASS,K7.1-K7.6
+M-09,场景确定性,kalman-math,固定种子与参数独立性,同场景两次逐位一致；4 个场景齐备；改 Q/R 不改变测量序列但改变估计；缺失 16/13 且为 null,node,node,6,PASS,K8.1-K8.6
+M-10,传感器融合,kalman-math,仅位置/仅速度/融合/全关/噪声,仅速度位置方差 10.0477→12.9987；融合 RMSE 0.1698 优于仅位置 0.2233；R=0.1 增益 0.9910 vs R=10 0.5238；全关只预测,node,node,5,PASS,K9.1-K9.5
+M-11,缺失与门限,kalman-math,异常观测与 3σ 门限,关闭时异常被采纳 x=36.97；开启时拒绝更新但记录 gated 且保留 5 步；合法观测不受影响,node,node,4,PASS,K10.1-K10.4
+M-12,指标口径,kalman-math,RMSE/MAE/最大误差/计数,原始 RMSE=√5=2.2361（缺失不当作 0）；估计 RMSE 用全部 3 步；MAE=1.8333；标量速度指标为 null,node,node,7,PASS,K11.1-K11.7
+M-13,失配与初值,kalman-math,恒速/加速/RMSE/σ_a/P0,恒速估计 RMSE 0.1698<原始 0.5348；加速后 20 步平均创新 5.309、RMSE 3.377 vs 0.418；P0 0.01→K 0.3421、100→0.9950；σ_a 0.5 使失配 RMSE 降到 0.180,node,node,5,PASS,K12.1-K12.5
+M-14,非法输入,kalman-math,NaN/空/超限/参数错误,缺失参数/NaN/空序列拒绝；2001 步拒绝；dt/σ_a/R/初值越界分别拒绝；未知场景 null；置信带 6.08–13.92 且负方差不可用,node,node,7,PASS,K13.1-K13.7
+B-01,入口与互链,kalman-filter,导航/六项互链/五卡/既有实验,导航 href 不变；六项互链含当前页；五张卡片；2R/PID/OEE/SPC 深链接均正常,browser,chromium,7,PASS,K1.1-K1.4
+B-02,默认与两阶段,kalman-filter,预测→更新与指标,默认二维/恒速/60 步；预测 P⁻=11.000039 不改状态；更新 pos=1.5808246/vel=1.0747073/K=0.9565219；估计 RMSE 0.5808、原始 0.633,browser,chromium,6,PASS,K2.1-K2.6
+B-03,播放暂停重置,kalman-filter,自动播放 760ms/暂停/重置,播放推进到 6 步；暂停后 420ms 不再前进；重置 cursor=0、指标清空、图表隐藏,browser,chromium,2,PASS,K3.1-K3.2
+B-04,参数场景传感器,kalman-filter,R=5/场景切换/传感器开关,改 R 后归零且首步增益 0.6875；改 Q/R 不改测量序列；加速场景 80 步且标注合成；仅位置时 P00 10→10.0477；全关只预测 P00=11.0000,browser,chromium,6,PASS,K4.1-K4.6
+B-05,标量模式,kalman-filter,首步与布局,pos=9.2704194/K=0.6774194/P=0.3387097；速度图与传感器开关隐藏；速度指标 null,browser,chromium,2,PASS,K5.1-K5.2
+B-06,响应式,kalman-filter,390/768/1440,390 无溢出且图表容器内滚动、按钮≥40px、触摸推进；768 单列；1440 主区+380 面板并排,browser,chromium,4,PASS,K6.1-K6.4
+B-07,主题键盘无障碍,kalman-filter,深色/方向键/语义,深色下曲线颜色随令牌变化；ArrowUp 改 σ_a 并归零；方向键切换模式；role/aria/live/radiogroup/caption/label 齐备,browser,chromium,5,PASS,K7.1-K7.5
+B-08,离线与降级,kalman-filter,SW 缓存/404,两脚本进入缓存；离线重载首步数值一致；两个脚本分别 404 显示加载失败+重试且首页 18 篇不受影响,browser,chromium,4,PASS,K8.1-K8.4
+B-09,快速路由,kalman-filter,6 次切换,单实例；SPC/OEE 无残留；首步数值正确；无异常,browser,chromium,1,PASS,K9.1
+B-10,三引擎,kalman-filter,Firefox/WebKit 390px,首步 pos=1.5808246、K=0.9565219、图表绘制、无溢出、无异常,browser,firefox+webkit,4,PASS,K10.1-K10.2
+G-01,实验室组,lab,10 套串行,2R/PID/OEE/SPC/卡尔曼全 PASS；131.3s；kalman-filter 23.0s、kalman-math 0.1s,runner,chromium+node,10 suites,PASS,tests/reports/b9c2b-lab.md
+G-02,导航与 UI,audit+ui-refresh,全站巡检/五档视口/键盘,audit PASS；ui-refresh 59/59,runner,jsdom+chromium,2 suites,PASS,tests/reports/b9c2b-ui-nav.md
+G-03,无障碍与首页,performance-accessibility+home-experience,对照度/触控/视口/首页模块,59/59 PASS；home-experience PASS,runner,chromium,2 suites,PASS,tests/reports/b9c2b-ui-nav.md
+G-04,SW,browser+sw-consistency+sw-upgrade,安装/离线/更新/旧版升级,37/37、37/37、25/25 全 PASS（157.5s）,runner,chromium,3 suites,PASS,tests/reports/b9c2b-sw.md
+G-05,SW 快照契约,sw-snapshot-unit,版本递增/首屏 7 项/并发自愈,15/15 PASS；CACHE_VERSION 2026-11-25-2；首屏仍 7 项,node,node,15,PASS,node tests/browser/sw-snapshot-unit.spec.js
+G-06,既有测试口径,pid-control+oee-analysis+spc-analysis,互链 6 项/五卡,三套断言同步更新并全部 PASS,browser,chromium,3 suites,PASS,tests/reports/b9c2b-lab.md

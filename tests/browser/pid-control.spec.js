@@ -143,7 +143,7 @@ async function setSlider(page, sel, value) {
       JSON.stringify({ href: entry.navHref, title: entry.title }));
     check('R1.2 双图表与全部读数项渲染；实验互链含列表/2R/PID/OEE/SPC 且当前页标注',
       entry.charts && entry.readout &&
-      entry.labLinks.join(',') === '#/lab,#/lab/robot-2r,#/lab/pid-control,#/lab/oee-analysis,#/lab/spc-analysis' &&
+      entry.labLinks.join(',') === '#/lab,#/lab/robot-2r,#/lab/pid-control,#/lab/oee-analysis,#/lab/spc-analysis,#/lab/kalman-filter' &&
       entry.currentHref === '#/lab/pid-control');
 
     await p1.evaluate(() => { location.hash = '#/lab'; });
@@ -152,8 +152,8 @@ async function setSlider(page, sel, value) {
       cards: Array.from(document.querySelectorAll('.lab-hub-card')).map(a => a.getAttribute('href')),
       title: document.title
     }));
-    check('R1.3 #/lab 实验列表：四张卡片分别深链 2R、PID、OEE 与 SPC',
-      hub.cards.join(',') === '#/lab/robot-2r,#/lab/pid-control,#/lab/oee-analysis,#/lab/spc-analysis' &&
+    check('R1.3 #/lab 实验列表：五张卡片分别深链 2R、PID、OEE、SPC 与卡尔曼',
+      hub.cards.join(',') === '#/lab/robot-2r,#/lab/pid-control,#/lab/oee-analysis,#/lab/spc-analysis,#/lab/kalman-filter' &&
       /实验室/.test(hub.title), JSON.stringify(hub));
 
     await p1.evaluate(() => { location.hash = '#/lab/robot-2r'; });

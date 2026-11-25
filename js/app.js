@@ -269,11 +269,12 @@ const STATIC_META = {
   '/about': ['关于', '关于 Eric 与这个博客'],
   '/links': ['友情链接', '志同道合的技术博客与工具'],
   '/editor': ['编辑器', '在线撰写并发布文章'],
-  '/lab': ['实验室', '交互实验列表：二连杆机器人运动学、PID 控制、OEE 生产效率分析与 SPC 统计过程控制'],
+  '/lab': ['实验室', '交互实验列表：二连杆机器人运动学、PID 控制、OEE 生产效率分析、SPC 统计过程控制与卡尔曼滤波传感器融合'],
   '/lab/robot-2r': ['二连杆机器人运动学演示', '平面 2R 机械臂交互演示：正运动学、解析逆运动学、肘上/肘下分支与工作空间边界'],
   '/lab/pid-control': ['PID 控制系统交互实验室', '一阶被控对象离散 PID 阶跃响应：P/PI/PID 对比、控制饱和与积分抗饱和、时域指标'],
   '/lab/oee-analysis': ['OEE 工业生产效率与损失分析实验室', 'OEE = A×P×Q 统一口径：多穴模具、时间损失守恒分解、A/B 改善情景与假设投影'],
-  '/lab/spc-analysis': ['SPC 统计过程控制与过程能力实验室', 'I-MR 控制图与 Cp/Cpk/Pp/Ppk：单列测量数据解析、四项异常规则、冻结基线、理论参数与实测数据分离']
+  '/lab/spc-analysis': ['SPC 统计过程控制与过程能力实验室', 'I-MR 控制图与 Cp/Cpk/Pp/Ppk：单列测量数据解析、四项异常规则、冻结基线、理论参数与实测数据分离'],
+  '/lab/kalman-filter': ['卡尔曼滤波与传感器融合实验室', '标量随机游走与位置—速度二维状态滤波：预测/创新/增益/更新、Joseph 协方差更新、传感器融合与测量缺失']
 };
 
 const SITE_ORIGIN = 'https://ericzhao666.github.io/blog/';
@@ -637,6 +638,26 @@ function loadSpcLab() {
   return _spcLabPromise;
 }
 
+// Batch 9C-2B：卡尔曼滤波实验室脚本按需加载（数学模块 → UI 模块，顺序注入）。
+let _kalmanLabPromise = null;
+function loadKalmanLab() {
+  if (window.KalmanCalculation && window.KalmanDemo) return Promise.resolve(true);
+  if (_kalmanLabPromise) return _kalmanLabPromise;
+  _kalmanLabPromise = loadScriptOnce('js/kalman-calculation.js')
+    .then(function () { return loadScriptOnce('js/kalman-demo.js'); })
+    .then(function () {
+      const ok = !!(window.KalmanCalculation && window.KalmanDemo);
+      if (!ok) _kalmanLabPromise = null;
+      return ok;
+    })
+    .catch(function (err) {
+      console.warn('卡尔曼演示脚本加载失败:', err && err.message);
+      _kalmanLabPromise = null;
+      return false;
+    });
+  return _kalmanLabPromise;
+}
+
 // Batch 9B-2：内容引用契约 / 反向索引 / 知识图谱 —— 全部按需加载，绝不成为首页首屏前置条件。
 // 与 loadRobotLab/loadPidLab/loadOeeLab 相同契约：缓存 Promise；失败清除以便重试。
 let _contentLinksPromise = null;
@@ -793,7 +814,8 @@ function renderLabLinks(active) {
     ['/lab/robot-2r', '二连杆运动学'],
     ['/lab/pid-control', 'PID 控制'],
     ['/lab/oee-analysis', 'OEE 分析'],
-    ['/lab/spc-analysis', 'SPC 分析']
+    ['/lab/spc-analysis', 'SPC 分析'],
+    ['/lab/kalman-filter', '卡尔曼滤波']
   ];
   return '<nav class="lab-links" aria-label="实验导航">' + items.map(function (it) {
     const cur = it[0] === active ? ' aria-current="page"' : '';
@@ -815,6 +837,8 @@ function renderLabHub() {
     '<span>工业工程教学：A/P/Q 统一口径、多穴模具、时间损失守恒分解、A/B 改善情景。</span></a>' +
     '<a class="lab-hub-card" href="#/lab/spc-analysis"><strong>SPC 统计过程控制</strong>' +
     '<span>质量控制教学：粘贴单列测量值，计算 I-MR 控制图、四项异常规则、Cp/Cpk/Pp/Ppk 与实测超规比例。</span></a>' +
+    '<a class="lab-hub-card" href="#/lab/kalman-filter"><strong>卡尔曼滤波与传感器融合</strong>' +
+    '<span>状态估计教学：标量随机游走与位置—速度恒速模型，逐帧预测/更新、增益与协方差、位置/速度融合与测量缺失。</span></a>' +
     '</div>';
 }
 
@@ -8260,6 +8284,17 @@ async function router() {
       }
       app.innerHTML = renderLabLinks('/lab/spc-analysis') + window.SpcDemo.renderPage();
       window.SpcDemo.mount(document.getElementById('spcDemoRoot'));
+    } else if (hash === '/lab/kalman-filter') {
+      // Batch 9C-2B：卡尔曼滤波实验室。按需加载 + 降级 + token 防串页。
+      app.innerHTML = renderLoading('卡尔曼滤波与传感器融合实验室');
+      const kfReady = await loadKalmanLab();
+      if (token !== _routeToken) return;
+      if (!kfReady) {
+        app.innerHTML = renderLoadError('卡尔曼滤波与传感器融合实验室');
+        return;
+      }
+      app.innerHTML = renderLabLinks('/lab/kalman-filter') + window.KalmanDemo.renderPage();
+      window.KalmanDemo.mount(document.getElementById('kfDemoRoot'));
     } else if (hash === '/editor') {
       app.innerHTML = renderEditor(null);
       setupEditorListeners();

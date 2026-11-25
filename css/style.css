@@ -6741,6 +6741,97 @@ mark.search-hit {
   }
 }
 
+/* ============================================
+   Batch 9C-2B：卡尔曼滤波与传感器融合实验室
+   图表线型复用 SPC 的 SVG 基础样式（.spc-grid/.spc-axis/.spc-tick），
+   这里只定义卡尔曼专用线型与图例色块。
+   ============================================ */
+.kf-band {
+  fill: var(--color-primary-light);
+  opacity: 0.35;
+}
+
+.kf-truth {
+  fill: none;
+  stroke: var(--color-text-muted);
+  stroke-width: 1.7;
+  stroke-dasharray: 6 3;
+}
+
+.kf-meas {
+  fill: var(--color-text-muted);
+  opacity: 0.75;
+}
+
+.kf-est {
+  fill: none;
+  stroke: var(--color-primary);
+  stroke-width: 2;
+  stroke-linejoin: round;
+}
+
+.kf-err-pos,
+.kf-gain-pos,
+.kf-cov-pos {
+  fill: none;
+  stroke: var(--color-primary);
+  stroke-width: 1.6;
+}
+
+.kf-err-vel,
+.kf-gain-vel,
+.kf-cov-vel {
+  fill: none;
+  stroke: var(--color-accent);
+  stroke-width: 1.6;
+  stroke-dasharray: 5 3;
+}
+
+.kf-swatch {
+  display: inline-block;
+  width: 16px;
+  height: 0;
+  border-top: 2px solid transparent;
+  flex: none;
+}
+
+.kf-swatch--truth {
+  border-top: 2px dashed var(--color-text-muted);
+}
+
+.kf-swatch--est {
+  border-top: 2px solid var(--color-primary);
+}
+
+.kf-swatch--meas {
+  width: 8px;
+  height: 8px;
+  border-top: 0;
+  border-radius: 50%;
+  background: var(--color-text-muted);
+}
+
+.kf-swatch--band {
+  width: 16px;
+  height: 8px;
+  border-top: 0;
+  border-radius: 2px;
+  background: var(--color-primary-light);
+  opacity: 0.55;
+}
+
+.kf-swatch--errpos,
+.kf-swatch--gainpos,
+.kf-swatch--covpos {
+  border-top: 2px solid var(--color-primary);
+}
+
+.kf-swatch--errvel,
+.kf-swatch--gainvel,
+.kf-swatch--covvel {
+  border-top: 2px dashed var(--color-accent);
+}
+
 /* ============================================================
    Batch 9B-2：WikiLink / 反向链接 / 知识图谱
    全部使用现有颜色变量，深色主题自动跟随 [data-theme="dark"]。
