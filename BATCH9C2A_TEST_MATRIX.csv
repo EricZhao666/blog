@@ -1,0 +1,41 @@
+id,area,suite,target,coverage,type,engines,items,result,evidence
+M-01,数据解析,spc-math,空输入/混合分隔/全角分隔/非法 token 定位,空输入拒绝并给出示例入口；6 种分隔符混合解析；第 3 行第 1 个定位；NaN/Infinity/0x10/1e400 全拒绝,node,node,10,PASS,P1.1-P1.10
+M-02,描述统计,spc-math,8 值基础样例,均值 10；s=0.2；MR 均值 0.342857142857；σ_within 0.3039513678；空数组与单样本返回 null+status,node,node,8,PASS,S2.1-S2.8
+M-03,控制界限,spc-math,I 图与 MR 图界限,I UCL 10.9118541033 / LCL 9.0881458967；MR UCL 1.120114285714；d2=1.128 D4=3.267 D3=0；n=1 界限 null；MR=0 退化,node,node,5,PASS,L3.1-L3.5
+M-04,能力公式,spc-math,Cp/Cpu/Cpl/Cpk/Pp/Ppk,Cp=Cpk=0.5483333333；Pp=Ppk=0.8333333333；均值+0.4 后 Cp 不变 Cpk=0.109667；样本<30 标记,node,node,5,PASS,C4.1-C4.5
+M-05,负值口径,spc-math,均值超出规格,Cpk=-0.329000 保留；Ppk=-0.5 保留；标记 mean-outside-spec；不截断为 0,node,node,3,PASS,C4.6-C4.8
+M-06,边界与非法,spc-math,零波动/非法规格/规格边界,零波动 Cp 族 null；LSL≥USL 全 no-spec；等于界限算合格；超出 0.01 计超规 2/4,node,node,4,PASS,C4.9-C4.12
+M-07,异常规则,spc-math,四项规则及严格边界,R1 等于界限不命中；R2 8 点命中/7 点不命中/等于 CL 中断；R3 6 点命中/5 点不命中/相等中断；R4 严格大于；规则名称与定义齐备,node,node,11,PASS,R5.1-R5.11
+M-08,冻结基线,spc-math,基准段估计与固定界限,基线 mean 10.025/MR 0.3/σ 0.2659574468；UCL 10.8228723404/LCL 9.2271276596；冻结后与全样本界限不同；监测段 7 个样本；非法范围与 1 样本拒绝,node,node,10,PASS,B6.1-B6.10
+M-09,顺序影响,spc-math,同一组值不同生产顺序,MR 均值 0.15→0.25；σ_within 0.1329787→0.2216312；均值与 s 不变（因此从不排序）,node,node,2,PASS,O7.1-O7.2
+M-10,教学示例,spc-math,四例合成数据,示例①Cp 2.582538/Cpk 2.556712 且 0 信号；②Cp 2.240808/Cpk 0.847025；③Cpk 2.505651 但 R1=3/R2=39/R3=6/R4=2 且 0 超规；④超规 31-33、R4=2；固定种子两次一致,node,node,12,PASS,D8.1-D8.12
+M-11,抽样与全量分离,spc-math,5000 样本含未抽样位置异常,统计 n=5000 且超规 1 个；step=13；异常点强制绘制；异常列表记录第 1235 个；所有命中点进入绘制集合,node,node,5,PASS,G9.1-G9.5
+M-12,数值稳定,spc-math,1e9±1e-3 与 1e-9 量级,均值精确回到 1e9；s 误差<1e-6（受 ulp 限制）；MR 均值误差<1e-7；1e-9 量级不塌缩为 0,node,node,4,PASS,N10.1-N10.4
+M-13,理论模式,spc-math,用户输入 μ/σ,Cp=Cpk=1.666667；Pp/Ppk 标记 not-applicable-theoretical；PPM 0.573303；无控制图；σ≤0 拒绝；规格颠倒仍不计算能力,node,node,6,PASS,E11.1-E11.6
+M-14,直方图,spc-math,分箱与视图,计数和等于样本数；视图覆盖规格界限；全等值只 1 个零宽箱,node,node,3,PASS,H12.1-H12.3
+M-15,确定性,spc-math,重复计算与输入不可变,两次结果 JSON 一致；不修改调用方数组,node,node,2,PASS,X13.1-X13.2
+M-16,性能,spc-math,5000 样本完整计算,104.9-123.6ms（阈值 500ms）；命中数与明细一致且索引在全量范围,node,node,2,PASS,F14.1-F14.2
+B-01,入口与互链,spc-analysis,导航/实验列表/既有实验,导航 href 保持 #/lab/robot-2r；互链 5 项；四张卡片；2R/PID/OEE 深链接正常（OEE 仍 76.00%）,browser,chromium,6,PASS,R1.1-R1.6
+B-02,默认数值,spc-analysis,示例①与图表语义,均值 10.001/s 0.013138；Cp 2.582538/Cpk 2.556712/Pp 2.537147/Ppk 2.511775；0 命中 0 超规；控制界限 2 条+规格界限 2 条+中心线 1 条；能力表 6 行,chromium,browser,6,PASS,R2.1-R2.6
+B-03,粘贴与校验,spc-analysis,自定义数据与非法定位,8 值粘贴 n=8/s=0.2；规格 9.5/10.5 → Cp=Cpk=0.548333/Pp=Ppk=0.833333；非法「第 3 行第 1 个」且结果清空；4 个重复值 s=0 且 Cp=null；2 样本提示过少,browser,chromium,9,PASS,R3.1-R3.9
+B-04,示例切换,spc-analysis,②③④与自定义标记,②Cp 2.240808/Cpk 0.847025；③Cpk 2.505651 但 R1=3/R2=39/R3=6；④超规 3 个且列表显示第 31-33 个；编辑后下拉为 custom,browser,chromium,5,PASS,R4.1-R4.5
+B-05,理论模式,spc-analysis,模式切换与参数,Cp=Cpk=1.666667；Pp=null；隐藏控制图/异常/基线；PPM 0.573303；μ 偏移后 Cpk 0.666667；σ=0 拒绝,browser,chromium,5,PASS,R5.1-R5.5
+B-06,冻结基线,spc-analysis,建立/固定/监测/清除/拒绝,基线 1-20 后 CL 由 10.012917 变 10.00145；监测段 40 个；图中浅色带；能力卡注明基线；清除后恢复；1 样本拒绝,browser,chromium,6,PASS,R6.1-R6.6
+B-07,有界计算,spc-analysis,一次粘贴 40 个值,同步期间零重算；防抖后恰一次；n=40；无异常,browser,chromium,2,PASS,R7.1-R7.2
+B-08,390px,spc-analysis,移动布局与触摸,无页面横向溢出；单列；触控≥40px；图表容器内滚动；触摸建立基准生效,browser,chromium,3,PASS,R8.1-R8.3
+B-09,768/1440px,spc-analysis,平板与桌面布局,768 单列堆叠；1440 主区 592px+面板 380px 并排；均无溢出,browser,chromium,2,PASS,R9.1-R9.2
+B-10,深色主题,spc-analysis,令牌切换,控制界限与规格界限颜色均随主题变化且互不相同；数值正确,browser,chromium,2,PASS,R10.1-R10.2
+B-11,键盘与无障碍,spc-analysis,方向键/语义/标签,ArrowUp 改规格并重算；方向键切换模式并可切回；role/aria-label/live/radiogroup/3 个 caption/aria-describedby,browser,chromium,5,PASS,R11.1-R11.5
+B-12,离线,spc-analysis,SW 缓存与离线重载,两脚本进入缓存；离线重载后可粘贴新数据并独立重算 s=0.2,browser,chromium,2,PASS,R12.1-R12.2
+B-13,脚本失败降级,spc-analysis,两个脚本分别 404,显示加载失败与重试；不白屏不抛错；首页 18 篇文章不受影响,browser,chromium,4,PASS,R13 四条
+B-14,快速路由,spc-analysis,6 次切换,SPC 单实例；OEE/PID 无残留；数值正确；无异常,browser,chromium,1,PASS,R14.1
+B-15,三引擎,spc-analysis,Firefox/WebKit 390px,示例④Cpk 2.206171、超规 3 个、独立重算偏差 0、无溢出、无异常,browser,firefox+webkit,4,PASS,R15.1-R15.2
+G-01,实验室组回归,lab,8 套串行,PASS 8 / FAIL 0；100.9s；spc-analysis 27.6s、spc-math 0.2s,runner,chromium+node,8 suites,PASS,tests/reports/b9c2a-lab-group.md
+G-02,全站巡检,audit,路由/死链/静态页/404,PASS 16.3s（新路由无死链）,runner,jsdom,1 suite,PASS,tests/reports/b9c2a-lab-math.md
+G-03,搜索与主题,test7,搜索/主题/静态页/SW/RSS,PASS 10.2s,runner,jsdom,1 suite,PASS,tests/reports/b9c2a-lab-math.md
+G-04,SW 回归,browser+sw-consistency+sw-upgrade,安装/离线/更新/版本一致性/旧版升级,37/37、37/37、25/25 全 PASS（154.9s）,runner,chromium,3 suites,PASS,tests/reports/b9c2a-sw.md
+G-05,全站 UI,ui-refresh,页面/导航/双主题/五档视口/键盘/灯箱,59/59 PASS（37.8s）,runner,chromium,1 suite,PASS,tests/reports/b9c2a-ui-a11y.md
+G-06,性能与无障碍,performance-accessibility,可访问名称/对比度/触控目标/六档视口/资源清理,59/59 PASS（54.4s）,runner,chromium,1 suite,PASS,tests/reports/b9c2a-ui-a11y.md
+G-07,SW 快照契约,sw-snapshot-unit,版本递增/首屏 7 项/并发与自愈,15/15 PASS；CACHE_VERSION 2026-11-25-1；首屏仍 7 项,node,node,15,PASS,node tests/browser/sw-snapshot-unit.spec.js
+G-08,构建门禁,content-check/image-check/feed-check,内容/图片/RSS 一致性,三项均 OK（ERROR 0 / WARNING 0）,python,python,3,PASS,scripts/build_content.py --check 等
+G-09,既有测试口径,pid-control+oee-analysis,互链接口与实验列表,更新为含 SPC 的 5 项互链与 4 张卡片；PID 触摸改用 scrollIntoView 后取坐标；两套复跑 PASS,browser,chromium,2 suites,PASS,tests/reports/b9c2a-lab-browser.md

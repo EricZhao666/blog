@@ -11,7 +11,7 @@
 //   - vendor / 静态资源：stale-while-revalidate（先快后新）
 //   - 第三方（giscus 等）：不拦截
 // 每次发布请递增 CACHE_VERSION。
-const CACHE_VERSION = '2026-11-24-3';
+const CACHE_VERSION = '2026-11-25-1';
 // CACHE：安装期预缓存的核心资源（只随版本整体替换）
 // CACHE_RT：运行期按需缓存（页面/数据/静态笔记页），带条数上限防止无限增长
 const CACHE = 'blog-' + CACHE_VERSION;
@@ -71,6 +71,10 @@ const OPTIONAL_ASSETS = [
   // 保证首次离线访问 /lab/oee-analysis 也可用。缓存策略本身不变。
   './js/oee-calculation.js',
   './js/oee-demo.js',
+  // Batch 9C-2A：SPC 实验室的两个脚本（合计约 103KB），同样随 warmOptionalAssets 预热，
+  // 保证首次离线访问 /lab/spc-analysis 也可用。缓存策略本身不变。
+  './js/spc-calculation.js',
+  './js/spc-demo.js',
   // Batch 9B-2：WikiLink 契约（正文/预览按需）与知识图谱（#/graph 按需）+ 构建期引用索引。
   // 同样随 warmOptionalAssets 预热，保证首次离线访问 #/graph 与含 WikiLink 的正文可用。
   // 缓存策略本身不变；REQUIRED / FIRST_SCREEN 集合不变（图谱不是首屏前置条件）。

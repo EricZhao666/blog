@@ -6136,6 +6136,595 @@ mark.search-hit {
   }
 }
 
+/* ============================================
+   Batch 9C-2A：SPC 统计过程控制与过程能力实验室
+   全部颜色走设计令牌，深浅主题自动适配。
+   控制界限（统计）与规格界限（工程）必须视觉可分：
+   颜色 + 线型双编码，不只靠颜色。
+   ============================================ */
+.spc-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 380px;
+  gap: 20px;
+  align-items: start;
+  margin-top: 16px;
+}
+
+.spc-main {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  min-width: 0;
+}
+
+.spc-card {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  padding: 16px;
+  min-width: 0;
+}
+
+.spc-card-title {
+  margin: 0 0 10px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--color-text-secondary);
+}
+
+.spc-mode-line {
+  margin: 0 0 6px;
+  font-size: 0.84rem;
+  color: var(--color-text-secondary);
+}
+
+.spc-mode-hint {
+  margin-left: 6px;
+  font-size: 0.76rem;
+  color: var(--color-text-muted);
+}
+
+.spc-error {
+  margin: 0 0 6px;
+  font-size: 0.8rem;
+  line-height: 1.6;
+  color: var(--color-danger);
+}
+
+.spc-error:empty {
+  display: none;
+}
+
+.spc-warnings {
+  margin: 0;
+  padding-left: 18px;
+  font-size: 0.78rem;
+  line-height: 1.65;
+  color: var(--color-text-secondary);
+}
+
+.spc-warnings:empty {
+  display: none;
+}
+
+.spc-stats {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  gap: 5px 14px;
+  margin: 0;
+  font-size: 0.85rem;
+}
+
+.spc-stats dt {
+  color: var(--color-text-muted);
+  white-space: nowrap;
+}
+
+.spc-stats dd {
+  margin: 0;
+  color: var(--color-text);
+  font-variant-numeric: tabular-nums;
+  overflow-wrap: anywhere;
+}
+
+.spc-chart-wrap {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+.spc-chart {
+  display: block;
+  width: 100%;
+  min-width: 620px;
+  height: auto;
+  background: var(--color-bg);
+  border-radius: var(--radius-sm);
+}
+
+.spc-axis {
+  stroke: var(--color-border-strong);
+  stroke-width: 1;
+}
+
+.spc-grid {
+  stroke: var(--color-border);
+  stroke-width: 1;
+  stroke-dasharray: 2 4;
+}
+
+.spc-tick {
+  fill: var(--color-text-muted);
+  font-size: 10px;
+  font-variant-numeric: tabular-nums;
+}
+
+.spc-label {
+  font-size: 10.5px;
+  font-variant-numeric: tabular-nums;
+}
+
+.spc-label--limit {
+  fill: var(--color-primary);
+  font-weight: 600;
+}
+
+.spc-label--cl {
+  fill: var(--color-text-muted);
+}
+
+.spc-label--spec {
+  fill: var(--color-warning);
+  font-weight: 600;
+}
+
+.spc-line {
+  fill: none;
+}
+
+/* 控制界限：点划线（统计） */
+.spc-line--limit {
+  stroke: var(--color-primary);
+  stroke-width: 1.4;
+  stroke-dasharray: 7 3 1.5 3;
+}
+
+/* 中心线：实线 */
+.spc-line--cl {
+  stroke: var(--color-text-muted);
+  stroke-width: 1.5;
+}
+
+/* 规格界限：长虚线（工程要求） */
+.spc-line--spec {
+  stroke: var(--color-warning);
+  stroke-width: 1.4;
+  stroke-dasharray: 8 4;
+}
+
+.spc-line--mean {
+  stroke: var(--color-accent);
+  stroke-width: 1.4;
+  stroke-dasharray: 3 3;
+}
+
+.spc-series {
+  fill: none;
+  stroke: var(--color-primary-dark);
+  stroke-width: 1.5;
+  stroke-linejoin: round;
+  stroke-linecap: round;
+}
+
+.spc-dot {
+  fill: var(--color-primary);
+}
+
+.spc-dot--violation {
+  fill: var(--color-danger);
+  stroke: var(--color-surface);
+  stroke-width: 1;
+}
+
+.spc-band {
+  fill: var(--color-primary-light);
+  opacity: 0.6;
+}
+
+.spc-bar {
+  fill: var(--color-primary-light);
+  stroke: var(--color-primary);
+  stroke-width: 0.8;
+}
+
+.spc-fit {
+  fill: none;
+  stroke: var(--color-accent);
+  stroke-width: 1.7;
+  stroke-dasharray: 5 3;
+}
+
+.spc-legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px 14px;
+  margin: 8px 0 4px;
+  font-size: 0.74rem;
+  color: var(--color-text-secondary);
+}
+
+.spc-legend-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.spc-swatch {
+  display: inline-block;
+  width: 16px;
+  height: 0;
+  border-top: 2px solid transparent;
+  flex: none;
+}
+
+.spc-swatch--limit {
+  border-top: 2px dashed var(--color-primary);
+}
+
+.spc-swatch--cl {
+  border-top: 2px solid var(--color-text-muted);
+}
+
+.spc-swatch--spec {
+  border-top: 2px dashed var(--color-warning);
+}
+
+.spc-swatch--series {
+  border-top: 2px solid var(--color-primary-dark);
+}
+
+.spc-swatch--fit {
+  border-top: 2px dashed var(--color-accent);
+}
+
+.spc-swatch--mean {
+  border-top: 2px dotted var(--color-accent);
+}
+
+.spc-swatch--violation {
+  width: 9px;
+  height: 9px;
+  border-top: 0;
+  border-radius: 50%;
+  background: var(--color-danger);
+}
+
+.spc-swatch--bar {
+  width: 10px;
+  height: 10px;
+  border-top: 0;
+  background: var(--color-primary-light);
+  border: 1px solid var(--color-primary);
+}
+
+.spc-chart-note {
+  margin: 0;
+  font-size: 0.74rem;
+  line-height: 1.6;
+  color: var(--color-text-muted);
+}
+
+.spc-table-wrap {
+  overflow-x: auto;
+}
+
+.spc-limit-table,
+.spc-cap-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 8px;
+  font-size: 0.78rem;
+}
+
+.spc-limit-table th,
+.spc-limit-table td,
+.spc-cap-table th,
+.spc-cap-table td {
+  padding: 5px 8px;
+  border-bottom: 1px solid var(--color-border);
+  text-align: left;
+  vertical-align: top;
+}
+
+.spc-limit-table thead th,
+.spc-cap-table thead th {
+  color: var(--color-text-muted);
+  font-weight: 600;
+}
+
+.spc-limit-table td,
+.spc-cap-table td {
+  font-variant-numeric: tabular-nums;
+}
+
+.spc-cap-table th[scope="row"] {
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.spc-cap-note,
+.spc-hint {
+  margin: 8px 0 0;
+  font-size: 0.76rem;
+  line-height: 1.65;
+  color: var(--color-text-muted);
+}
+
+.spc-dist-facts {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  gap: 4px 12px;
+  margin: 10px 0 0;
+  font-size: 0.78rem;
+}
+
+.spc-dist-facts dt {
+  color: var(--color-text-muted);
+}
+
+.spc-dist-facts dd {
+  margin: 0;
+  font-variant-numeric: tabular-nums;
+  overflow-wrap: anywhere;
+}
+
+.spc-na {
+  color: var(--color-text-muted);
+  font-style: normal;
+}
+
+.spc-violations {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.spc-violation {
+  padding: 10px 12px;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  font-size: 0.8rem;
+  line-height: 1.6;
+}
+
+.spc-violation--none {
+  color: var(--color-text-muted);
+}
+
+.spc-violation--hit {
+  border-color: var(--color-danger);
+  background: var(--color-danger-soft);
+}
+
+.spc-violation strong {
+  color: var(--color-text);
+}
+
+.spc-violation-count {
+  margin-left: 8px;
+  padding: 1px 8px;
+  border-radius: var(--radius-pill);
+  font-size: 0.72rem;
+  background: var(--color-tag-bg);
+  color: var(--color-text-secondary);
+}
+
+.spc-violation--hit .spc-violation-count {
+  background: var(--color-danger);
+  color: #fff;
+}
+
+.spc-violation-def,
+.spc-violation-where {
+  margin: 4px 0 0;
+  font-size: 0.74rem;
+  color: var(--color-text-secondary);
+}
+
+.spc-violation-where {
+  font-variant-numeric: tabular-nums;
+}
+
+.spc-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  min-width: 0;
+  padding: 16px;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+}
+
+.spc-field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  min-width: 0;
+}
+
+.spc-field-title {
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--color-text-secondary);
+}
+
+.spc-input-label {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  font-size: 0.8rem;
+  color: var(--color-text-secondary);
+}
+
+.spc-input-label input,
+.spc-input-label select,
+.spc-textarea {
+  width: 100%;
+  min-width: 0;
+  min-height: 40px;
+  padding: 8px 10px;
+  border: 1px solid var(--color-border-strong);
+  border-radius: var(--radius-sm);
+  background: var(--color-bg);
+  color: var(--color-text);
+  font-size: 0.9rem;
+  font-family: inherit;
+  font-variant-numeric: tabular-nums;
+}
+
+.spc-textarea {
+  min-height: 132px;
+  resize: vertical;
+  font-family: var(--font-mono);
+  font-size: 0.82rem;
+  line-height: 1.6;
+}
+
+.spc-input-label input:focus-visible,
+.spc-input-label select:focus-visible,
+.spc-textarea:focus-visible,
+.spc-btn:focus-visible {
+  outline: 2px solid var(--color-focus);
+  outline-offset: 1px;
+}
+
+.spc-input-label input[aria-invalid="true"],
+.spc-textarea[aria-invalid="true"] {
+  border-color: var(--color-danger);
+}
+
+.spc-modes {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.spc-radio {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 40px;
+  padding: 6px 10px;
+  border: 1px solid var(--color-border-strong);
+  border-radius: var(--radius-sm);
+  font-size: 0.84rem;
+  color: var(--color-text-secondary);
+  cursor: pointer;
+}
+
+.spc-radio input {
+  width: 16px;
+  height: 16px;
+  accent-color: var(--color-primary);
+}
+
+.spc-mode-desc,
+.spc-example-note {
+  margin: 0;
+  font-size: 0.74rem;
+  line-height: 1.55;
+  color: var(--color-text-muted);
+}
+
+.spc-btn {
+  min-height: 40px;
+  padding: 9px 12px;
+  border: 1px solid var(--color-border-strong);
+  border-radius: var(--radius-sm);
+  background: var(--color-bg);
+  color: var(--color-text-secondary);
+  font-size: 0.86rem;
+  cursor: pointer;
+  transition: border-color var(--transition), color var(--transition);
+}
+
+.spc-btn:hover {
+  border-color: var(--color-primary);
+  color: var(--color-text);
+}
+
+.spc-btn-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+}
+
+.spc-range {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+}
+
+.spc-baseline-state {
+  margin: 0;
+  font-size: 0.74rem;
+  line-height: 1.55;
+  color: var(--color-text-secondary);
+}
+
+.spc-explain {
+  font-size: 0.74rem;
+  line-height: 1.65;
+  color: var(--color-text-muted);
+}
+
+.spc-explain p {
+  margin: 0 0 6px;
+}
+
+.spc-explain strong {
+  color: var(--color-text-secondary);
+}
+
+.spc-visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}
+
+@media (max-width: 900px) {
+  .spc-layout {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 480px) {
+  .spc-card,
+  .spc-panel {
+    padding: 12px;
+  }
+
+  .spc-stats {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 2px;
+  }
+
+  .spc-stats dd {
+    margin-bottom: 6px;
+  }
+
+  .spc-btn-row,
+  .spc-range {
+    grid-template-columns: 1fr;
+  }
+}
+
 /* ============================================================
    Batch 9B-2：WikiLink / 反向链接 / 知识图谱
    全部使用现有颜色变量，深色主题自动跟随 [data-theme="dark"]。
