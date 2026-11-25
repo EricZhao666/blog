@@ -123,6 +123,7 @@ GROUPS = {
         'test21', 'test22', 'test23', 'test25', 'test26', 'test27',
         'test28', 'test29', 'test30', 'test31', 'test33', 'test34',
         'test45', 'split-check', 'image-check', 'content-check', 'feed-check',
+        'content-links',
     ],
     'sw': ['test7', 'browser', 'sw-consistency', 'sw-upgrade'],
     'browser': [
@@ -130,13 +131,14 @@ GROUPS = {
         'papers-deeplink', 'editor-ux', 'editor-history', 'search-ux',
         'search-interaction', 'reading-experience', 'image-lightbox',
         'ui-refresh', 'performance-accessibility', 'robot-kinematics', 'pid-control',
-        'oee-analysis',
+        'oee-analysis', 'graph-experience',
     ],
     'lab': ['robot-math', 'robot-kinematics', 'pid-math', 'pid-control', 'oee-math', 'oee-analysis'],
     'knowledge': ['knowledge-store', 'knowledge-center', 'knowledge-import', 'knowledge-management',
                   'learning-stats', 'learning-analytics',
                   'personalized-home', 'home-experience',
-                  'related-content', 'related-reading', 'project-detail'],
+                  'related-content', 'related-reading', 'project-detail',
+                  'content-links', 'knowledge-graph', 'graph-experience'],
     'projects': ['project-detail', 'related-content', 'related-reading'],
     'full': [],
 }
@@ -300,6 +302,12 @@ TESTS = [
      'desc': 'B9C1C：OEE 数学与数据口径（统一口径/多穴/单位换算/损失守恒/边界与异常/Performance>100%/A-B 对比与假设投影/确定性）'},
     {'name': 'oee-analysis', 'file': 'tests/browser/oee-analysis.spec.js', 'kind': 'browser',
      'desc': 'B9C1C：OEE 实验室验收（数值一致/示例切换/多穴/A-B 对比/异常提示/390px/深色/键盘无障碍/离线/三引擎）'},
+    {'name': 'content-links', 'file': 'tests/test59_content_links.js', 'kind': 'jsdom',
+     'desc': 'B9B2：引用契约与构建索引（JS/Python 共享 fixture/marked 扩展安全/确定性两次构建/--check/--dry-run/--sync/诊断/自环循环去重）'},
+    {'name': 'knowledge-graph', 'file': 'tests/test60_knowledge_graph.js', 'kind': 'jsdom',
+     'desc': 'B9B2：图谱纯计算（节点去重/有向显式边/三类关系区分/孤立/筛选搜索/一跳/示例标记/确定性/合成500与1000节点扩展）'},
+    {'name': 'graph-experience', 'file': 'tests/browser/graph-experience.spec.js', 'kind': 'browser',
+     'desc': 'B9B2：图谱与反向链接浏览器验收（WikiLink 渲染/未解析/反向链接/筛选搜索/缩放平移/键盘列表/390px/深色/离线/降级/快速路由/三引擎）'},
 ]
 
 COUNT_RE = re.compile(r'共\s*(\d+)\s*项[，,]\s*PASS\s*(\d+)[，,]\s*FAIL\s*(\d+)')

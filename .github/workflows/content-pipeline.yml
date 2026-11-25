@@ -218,11 +218,17 @@ jobs:
       - name: 候选产物哈希（留档，供 PR 正文与人工核对）
         id: hashes
         run: |
+          # 完整派生产物清单（与 scripts/build_content.py 的 DERIVED_ARTIFACTS 一致，
+          # 由 tests/test27_content_workflow.py W13 校验两者不得分叉）
           cd "$RUNNER_TEMP/candidate"
-          for f in js/data.js data/search-index.json data/posts/manifest.json feed.xml; do
+          for f in js/data.js data/search-index.json data/posts/manifest.json feed.xml data/content-links.json; do
             printf '%s  %s\n' "$(sha256sum "$f" | cut -d' ' -f1)" "$f"
           done | tee "$RUNNER_TEMP/candidate-hashes.txt"
-          echo "hashes=$(paste -sd',' "$RUNNER_TEMP/candidate-hashes.txt" | cut -c1-300)" >> "$GITHUB_OUTPUT"
+          # 不截断：5 条 × (64 + 路径) ≈ 460 字符，远低于 GITHUB_OUTPUT 单值上限；
+          # 早期的 300 字符截断会在 4 条时就截掉尾部，等于宣称"完整清单"却少一项。
+          HASHES=$(paste -sd',' "$RUNNER_TEMP/candidate-hashes.txt")
+          echo "hash_list_length=${#HASHES}" >> "$GITHUB_STEP_SUMMARY" 2>/dev/null || true
+          echo "hashes=$HASHES" >> "$GITHUB_OUTPUT"
 
       - name: 推送前确认 main 未变化
         run: |
@@ -243,7 +249,8 @@ jobs:
           rsync -a --delete --exclude '.git' --exclude 'node_modules' \
             "$RUNNER_TEMP/candidate/" ./
           git checkout -B "$HEAD_BRANCH"
-          git add -A js/data.js data feed.xml content/ledger.json
+          # 显式点名全部派生产物（data/ 通配已覆盖引用索引，这里保留可读清单）
+          git add -A js/data.js data feed.xml data/content-links.json content/ledger.json
           if git diff --cached --quiet; then
             echo "没有变化：队列条目可能已被处理"
             exit 0

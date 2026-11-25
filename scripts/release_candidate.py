@@ -40,7 +40,10 @@ sys.path.insert(0, SCRIPT_DIR)
 import build_content as bc   # noqa: E402
 
 MARKER = '.release-candidate.json'
-ARTIFACTS = ['js/data.js', 'data/search-index.json', 'data/posts/manifest.json', 'feed.xml']
+# 完整派生产物清单统一取自 build_content.DERIVED_ARTIFACTS（Batch 9B-2R）：
+# 快照 / 过期检测 / 可重复性 / 标记里的 artifacts 都覆盖全部产物，
+# 避免"漏一项 → 索引过期也能拿到 CANDIDATE_READY"。
+ARTIFACTS = list(bc.DERIVED_ARTIFACTS)
 
 
 STAMP_RE = __import__('re').compile(r'<lastBuildDate>[^<]*</lastBuildDate>')

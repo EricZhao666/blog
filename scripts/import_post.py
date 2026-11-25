@@ -8,7 +8,8 @@
         data/posts/<id>.md     正文（Markdown）
         js/data.js             元数据（由生成器重新渲染整份文件）
     派生产物（B 类，复用 scripts/build_content.py 重建）
-        data/search-index.json / data/posts/manifest.json / feed.xml
+        data/search-index.json / data/posts/manifest.json / feed.xml / data/content-links.json
+        （清单统一取自 build_content.DERIVED_ARTIFACTS，备份/回滚不再另写死列表）
 
 两种操作：
 
@@ -46,6 +47,7 @@
 """
 import argparse
 import datetime
+import hashlib
 import json
 import os
 import re
@@ -82,7 +84,7 @@ WINDOWS_RESERVED = ({'con', 'prn', 'aux', 'nul'} |
                     {'com%d' % i for i in range(1, 10)} |
                     {'lpt%d' % i for i in range(1, 10)})
 
-DERIVED_FILES = ('js/data.js', 'data/search-index.json', 'data/posts/manifest.json', 'feed.xml')
+DERIVED_FILES = bc.DERIVED_ARTIFACTS
 
 CONTROL_CHARS = re.compile(r'[\x00-\x08\x0b\x0c\x0e-\x1f\x7f]')
 
@@ -442,6 +444,20 @@ def _extend_tag_order(tag_order, tags):
     return out
 
 
+def _state_fingerprint(state):
+    """计划所依据的权威状态指纹（元数据全字段 + TAG_ORDER）。
+
+    Batch 9B-2R（3）：新增/更新计划在锁外生成，落盘时会**整份重写 js/data.js**。
+    如果另一个进程在此期间改了任意一篇的元数据（id 列表不变），旧计划会把那份
+    修改静默覆盖回去。进锁后必须用这个指纹做"完整内容版本校验"，不一致即拒绝。
+    只读正文的派生（search-index/feed/manifest/索引）由 _rebuild_and_write 从磁盘重建，
+    因此指纹只需覆盖会随计划写死的部分：metas 与 tag_order。
+    """
+    payload = json.dumps({'metas': state['metas'], 'tagOrder': state['tag_order']},
+                         ensure_ascii=False, sort_keys=True, separators=(',', ':'))
+    return hashlib.sha256(payload.encode('utf-8')).hexdigest()
+
+
 def build_add_plan(root, p, state, post):
     """在内存里算出「新正文 + 新元数据 + 全部派生产物」，不写任何文件。"""
     pid = post['id']
@@ -463,6 +479,10 @@ def build_add_plan(root, p, state, post):
         'changes': bc.diff_artifacts(root, artifacts),
         'tag_order': tag_order,
         'ids': [m['id'] for m in metas],
+        # 计划生成时（锁外）的权威 id 集合：进锁后必须与它一致，否则计划已过期
+        'idsBefore': [m['id'] for m in state['metas']],
+        # 计划生成时的权威状态指纹（元数据 + TAG_ORDER），用于拒绝"别的文章被改过"的过期计划
+        'stateFingerprint': _state_fingerprint(state),
     }
 
 
@@ -510,6 +530,8 @@ def build_update_plan(root, p, state, ups, index):
         'ids': [m['id'] for m in metas],
         'update': ups,
         'index': index,
+        'idsBefore': [m['id'] for m in state['metas']],
+        'stateFingerprint': _state_fingerprint(state),
     }
 
 
@@ -612,27 +634,51 @@ def _rebuild_and_write(root, p, state, plan):
 
 
 def apply_add_plan(root, p, plan):
-    """真正落盘：正文 → 元数据 → 派生数据 → 回读校验；失败即回滚。"""
+    """真正落盘：正文 → 元数据 → 派生数据 → 回读校验；失败即回滚。
+
+    Batch 9B-2R：备份与回滚都必须在**同一个** BuildLock 临界区内完成。
+    否则出现这种竞态：进程 A 在锁外取备份 → 持锁写入并失败 → 释放锁 →
+    进程 B 持锁成功提交 → A 才回滚，把 B 刚提交的产物覆盖回旧字节。
+    回滚里的 run_check 是只读（--check 无锁），不会嵌套同一把锁。
+    """
     pid = plan['id']
     body_rel = 'data/posts/%s.md' % pid
-    backup = _backup(root, p, pid, with_body=False)
-    try:
-        with bc.BuildLock(p['lock']):
+    with bc.BuildLock(p['lock']):
+        # 计划是在锁外生成的（预览阶段）。进锁后必须重新读取权威状态并复核计划是否过期：
+        # 另一个进程可能已先提交新增/更新/删除，此时本计划不再成立。
+        # 过期即**拒绝且零写入**（因此不会走到任何"删除正文"的回滚路径）。
+        state_now = bc.collect(p)
+        ids_now = [m['id'] for m in state_now['metas']]
+        if ids_now != plan.get('idsBefore', plan['ids'][1:]):
+            raise ImportConflict(
+                '文章列表在计划生成后已变化（id 集合不一致），计划已过期，已中止（未做任何写入）')
+        if _state_fingerprint(state_now) != plan.get('stateFingerprint'):
+            raise ImportConflict(
+                '其它文章的元数据在计划生成后已被修改，计划已过期（会整份重写 js/data.js），'
+                '已中止（未做任何写入）')
+        if pid in ids_now or os.path.exists(sp.body_path(p, pid)):
+            raise ImportConflict(
+                '%s 已由另一个进程创建，已中止（未做任何写入，不会删除他人正文）' % pid)
+        backup = _backup(root, p, pid, with_body=False)
+        created_body = False
+        try:
             write_new_body(sp.body_path(p, pid), plan['body'])
+            created_body = True
             write_data_js(p['data_js'], plan['artifacts']['js/data.js'])
             # 不信任内存里的中间结果：从磁盘重新读一遍，再交给统一构建器生成派生数据
             state_now = bc.collect(p)
             _rebuild_and_write(root, p, state_now, plan)
-    except BaseException:
-        problems = _rollback(root, backup, body_rel, delete_body=True)
-        if problems:
-            print('[ROLLBACK-INCOMPLETE] 自动回滚未完全成功，请手工核对：' + '；'.join(problems),
-                  file=sys.stderr)
-        raise
+        except BaseException:
+            # 只删除**本次操作实际创建**的正文；本次没创建就不删（防止误删他人已提交的文件）
+            problems = _rollback(root, backup, body_rel, delete_body=created_body)
+            if problems:
+                print('[ROLLBACK-INCOMPLETE] 自动回滚未完全成功，请手工核对：' + '；'.join(problems),
+                      file=sys.stderr)
+            raise
 
 
 def apply_update_plan(root, p, plan):
-    """更新落盘：整个"复核 → 写入 → 校验"都在构建锁内，防止并发覆盖。"""
+    """更新落盘：整个"复核 → 写入 → 校验 → 回滚"都在构建锁内，防止并发覆盖。"""
     pid = plan['id']
     body_rel = 'data/posts/%s.md' % pid
     ups = plan['update']
@@ -642,6 +688,9 @@ def apply_update_plan(root, p, plan):
         state_now = bc.collect(p)
         if [m['id'] for m in state_now['metas']] != plan['ids']:
             raise ImportConflict('文章列表在导入过程中发生变化（可能有其他进程在改），已中止')
+        if _state_fingerprint(state_now) != plan.get('stateFingerprint'):
+            raise ImportConflict(
+                '其它文章的元数据在计划生成后已被修改，计划已过期（会整份重写 js/data.js），已中止')
         ensure_canonical(p, state_now)
         index_now = find_target_index(state_now, pid)
         verify_original(state_now, p, ups, index_now)
@@ -814,9 +863,10 @@ def main(argv=None):
                                     plan['id'], len(plan['manifest']['posts'])))
     print('下一步：')
     if plan['op'] == 'add':
-        print('  1) git diff 复核（只应出现 1 个新 md + 4 个派生文件）')
+        print('  1) git diff 复核（只应出现 1 个新 md + %d 个派生文件）' % len(DERIVED_FILES))
     else:
-        print('  1) git diff 复核（只应出现 1 个被改的 md + 4 个派生文件，其它文章不应变化）')
+        print('  1) git diff 复核（只应出现 1 个被改的 md + %d 个派生文件，其它文章不应变化）'
+              % len(DERIVED_FILES))
     print('  2) python scripts/build_content.py --check')
     print('  3) 提交分支并手动开 PR（见 BATCH8B1_REPORT.md「实际操作步骤」）')
     return 0

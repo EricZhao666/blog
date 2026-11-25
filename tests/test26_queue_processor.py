@@ -67,10 +67,13 @@ def run(args, cwd=None):
 
 def make_repo(tag):
     dst = os.path.join(TMP, tag)
+    # Batch 9B-2R：引用索引是第 5 个派生产物，fixture 必须带上生成器与全部权威源
     for rel in ['js/data.js', 'js/user-posts.js', 'data/search-index.json',
-                'data/posts/manifest.json', 'feed.xml', 'gen_feed.py',
-                'scripts/build_content.py', 'scripts/split_posts.py',
-                'scripts/process_content_queue.py']:
+                'data/posts/manifest.json', 'feed.xml', 'data/content-links.json',
+                'gen_feed.py', 'scripts/build_content.py', 'scripts/split_posts.py',
+                'scripts/process_content_queue.py', 'scripts/content_links.py',
+                'js/courses.js', 'js/course-notes.js', 'js/papers.js',
+                'js/codefiles.js', 'js/projects.js', 'js/note-slugs.js']:
         target = os.path.join(dst, rel.replace('/', os.sep))
         os.makedirs(os.path.dirname(target), exist_ok=True)
         shutil.copy2(os.path.join(ROOT, rel.replace('/', os.sep)), target)
@@ -104,7 +107,7 @@ def enqueue(repo, items, name='batch'):
 def merge_candidate(repo, cand):
     """模拟"候选 PR 已合并"：把候选的权威源与产物写回仓库根。"""
     for rel in ['js/data.js', 'data/search-index.json', 'data/posts/manifest.json',
-                'feed.xml', 'content/ledger.json']:
+                'feed.xml', 'data/content-links.json', 'content/ledger.json']:
         src = os.path.join(cand, rel.replace('/', os.sep))
         if os.path.isfile(src):
             dst = os.path.join(repo, rel.replace('/', os.sep))
@@ -290,6 +293,81 @@ check('Q15 失败后修好重试 → 成功且 ledger 只有一条',
       r1.returncode != 0 and r2.returncode == 0
       and len([e for e in ledger15['entries'] if e['id'] == 'queue-post-15']) == 1,
       (r1.returncode, r2.returncode))
+
+# ---------------------------------------------------------------- D4 正常生命周期（含索引）
+def idx_of(root):
+    return json.loads(read(os.path.join(root, 'data', 'content-links.json')))
+
+
+def edges_from(index, key):
+    return sorted((e['target'], e['via']) for e in index['explicit'] if e['source'] == key)
+
+
+def mds_of(root):
+    d = os.path.join(root, 'data', 'posts')
+    return {n: read(os.path.join(d, n)) for n in os.listdir(d) if n.endswith('.md')}
+
+
+repo4 = make_repo('d4')
+link_item = item('queue-link-1', content=(
+    '# 带引用的新文章\n\n引用旧文章 [[post:embodied-ai-notes]]，\n'
+    '以及站内链接：[旧笔记](#/post/embodied-ai-notes)。\n'))
+enqueue(repo4, [link_item])
+wd4a = os.path.join(TMP, 'cand-d4a')
+r = run(['--root', repo4, '--queue-dir', os.path.join(repo4, 'content', 'queue'),
+         '--work-dir', wd4a, '--now', NOW, '--today', '2026-11-10'])
+check('D4 新增带 WikiLink 的文章 → 候选就绪', r.returncode == 0 and 'CANDIDATE_READY' in r.stdout,
+      (r.stderr or '').strip()[-60:])
+i4a = idx_of(wd4a)
+check('D4 索引包含新文章节点', any(n['key'] == 'post:queue-link-1' for n in i4a['nodes']))
+check('D4 显式引用正确增加（wikilink + markdown 去重为 1 条目标）',
+      edges_from(i4a, 'post:queue-link-1') == [('post:embodied-ai-notes', 'markdown'),
+                                              ('post:embodied-ai-notes', 'wikilink')]
+      or edges_from(i4a, 'post:queue-link-1') == [('post:embodied-ai-notes', 'wikilink')],
+      edges_from(i4a, 'post:queue-link-1'))
+check('D4 反向索引同步更新（byTarget 记下新来源）',
+      'post:queue-link-1' in i4a['byTarget'].get('post:embodied-ai-notes', []),
+      i4a['byTarget'].get('post:embodied-ai-notes'))
+
+# 重复构建确定性：同一个候选目录再 --sync 两次，索引字节级不变
+build4 = os.path.join(wd4a, 'scripts', 'build_content.py')
+def synced_index_bytes():
+    subprocess.run([sys.executable, build4, '--root', wd4a, '--sync', '--now', NOW],
+                   cwd=wd4a, capture_output=True, text=True, encoding='utf-8',
+                   errors='replace', env=dict(os.environ, PYTHONIOENCODING='utf-8', PYTHONUTF8='1'))
+    return io.open(os.path.join(wd4a, 'data', 'content-links.json'), 'rb').read()
+
+b1 = synced_index_bytes()
+b2 = synced_index_bytes()
+check('D4 重复构建索引字节级一致', b1 == b2 and len(b1) > 0, (len(b1), len(b2)))
+
+# 其他文章正文一个字节都没动
+md_repo, md_cand = mds_of(repo4), mds_of(wd4a)
+touched = sorted(n for n in md_repo if md_repo[n] != md_cand.get(n))
+check('D4 只新增目标正文，其他文章正文完全未改', touched == []
+      and 'queue-link-1.md' in md_cand, touched)
+
+# 候选合并回仓库 → 用 modify 去掉引用 → 反向索引必须同步收缩
+merge_candidate(repo4, wd4a)
+os.remove(os.path.join(repo4, 'content', 'queue', 'queue-link-1.json'))
+enqueue(repo4, [item('queue-link-1', op='modify', content='# 带引用的新文章\n\n引用已移除。\n')])
+wd4b = os.path.join(TMP, 'cand-d4b')
+r = run(['--root', repo4, '--queue-dir', os.path.join(repo4, 'content', 'queue'),
+         '--work-dir', wd4b, '--now', NOW, '--today', '2026-11-10'])
+check('D4 引用移除的更新 → 候选就绪', r.returncode == 0, (r.stderr or '').strip()[-60:])
+i4b = idx_of(wd4b)
+check('D4 显式引用正确减少（该来源不再有边）', edges_from(i4b, 'post:queue-link-1') == [],
+      edges_from(i4b, 'post:queue-link-1'))
+check('D4 反向索引同步移除', 'post:queue-link-1' not in i4b['byTarget'].get('post:embodied-ai-notes', []))
+others = [e for e in i4b['explicit'] if e['source'] != 'post:queue-link-1']
+others_a = [e for e in i4a['explicit'] if e['source'] != 'post:queue-link-1']
+check('D4 其他文章的引用关系不受影响', others == others_a, len(others))
+r_chk = subprocess.run([sys.executable, os.path.join(wd4b, 'scripts', 'build_content.py'),
+                        '--root', wd4b, '--check', '--now', NOW], cwd=wd4b,
+                       capture_output=True, text=True, encoding='utf-8', errors='replace',
+                       env=dict(os.environ, PYTHONIOENCODING='utf-8', PYTHONUTF8='1'))
+check('D4 候选状态机与自检正常（--check 通过）', r_chk.returncode == 0,
+      (r_chk.stdout or r_chk.stderr).strip()[-60:])
 
 shutil.rmtree(TMP, ignore_errors=True)
 print('\n共 %d 项，PASS %d，FAIL %d' % (passed[0] + failed[0], passed[0], failed[0]))

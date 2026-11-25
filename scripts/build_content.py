@@ -13,6 +13,7 @@
         data/search-index.json        全文搜索语料（内置 + 旧编辑器文章，同一个 id 集合）
         data/posts/manifest.json      完整性锚点（哈希/字节/字符数）
         feed.xml                      RSS 2.0
+        data/content-links.json       引用索引（Batch 9B-2：显式引用/同系列/反向索引/诊断，确定性）
 
 统一文章契约（id 全局唯一，缺一即失败）
 ----------------------------------------
@@ -56,6 +57,7 @@ sys.path.insert(0, SCRIPT_DIR)
 
 import gen_feed as g          # noqa: E402  结构化 JS 字面量扫描 + RSS 渲染
 import split_posts as sp      # noqa: E402  元数据/正文解析 + 序列化（Batch 6 已验证）
+import content_links as cl    # noqa: E402  Batch 9B-2：引用契约 + 确定性反向索引（不执行代码）
 
 GENERATOR = 'scripts/build_content.py'
 LOCK_NAME = '.content-build.lock'
@@ -191,7 +193,24 @@ def build_artifacts(p, state, source_info):
         key=lambda x: x['date'], reverse=True)
     artifacts['feed.xml'] = g.build_feed(feed_posts, _parse_now(p)).encode('utf-8')
 
+    # Batch 9B-2：内容引用索引（显式引用 + 同系列 + 反向索引 + 诊断）。
+    # 确定性字节输出（无时间戳）；读取的都是正式权威源，临界区由调用方保证：
+    # --sync 在 BuildLock 内调用本函数；--check/--dry-run 保持只读无锁契约。
+    artifacts['data/content-links.json'] = cl.build_artifact(p, state)
+
     return artifacts, manifest
+
+
+# 全部 B 类派生产物（相对路径，固定顺序）。这里是**唯一权威清单**：
+# import_post 的备份/回滚、release_candidate 的快照/过期检测、CI 候选哈希
+# 都复用它，避免各处再手写"四个文件"造成遗漏（Batch 9B-2R）。
+DERIVED_ARTIFACTS = (
+    'js/data.js',
+    'data/search-index.json',
+    'data/posts/manifest.json',
+    'feed.xml',
+    'data/content-links.json',
+)
 
 
 def _parse_now(p):

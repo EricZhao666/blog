@@ -615,6 +615,155 @@ function loadOeeLab() {
   return _oeeLabPromise;
 }
 
+// Batch 9B-2：内容引用契约 / 反向索引 / 知识图谱 —— 全部按需加载，绝不成为首页首屏前置条件。
+// 与 loadRobotLab/loadPidLab/loadOeeLab 相同契约：缓存 Promise；失败清除以便重试。
+let _contentLinksPromise = null;
+let _contentLinksRegistered = false;
+let _contentLinksIndex = null;
+let _contentLinksIndexPromise = null;
+
+// WikiLink 目标解析：只允许公开权威数据（构建索引优先，回退内置 POSTS）。
+// 不读取个人收藏（IndexedDB）、浏览历史或 USER_POSTS，保证渲染与构建索引同一契约。
+function resolveWikiLinkTarget(key) {
+  if (_contentLinksIndex && _contentLinksIndex._byKey) {
+    const n = _contentLinksIndex._byKey[key];
+    return n ? { title: n.title } : null;
+  }
+  if (String(key).slice(0, 5) !== 'post:') return null;
+  const id = String(key).slice(5);
+  const posts = (typeof POSTS !== 'undefined') ? POSTS : [];
+  for (let i = 0; i < posts.length; i++) if (posts[i].id === id) return { title: posts[i].title };
+  return null;
+}
+
+function ensureContentLinks() {
+  if (_contentLinksRegistered) return Promise.resolve(true);
+  if (_contentLinksPromise) return _contentLinksPromise;
+  _contentLinksPromise = loadScriptOnce('js/content-links.js')
+    .then(function () {
+      if (!window.ContentLinks || typeof marked === 'undefined') return false;
+      marked.use(window.ContentLinks.markedExtension(resolveWikiLinkTarget));
+      _contentLinksRegistered = true;
+      // 注册前渲染的缓存可能把 WikiLink 当普通文本，失效重算（有界 FIFO，代价很小）
+      _renderMarkdownCache.clear();
+      return true;
+    })
+    .catch(function (err) {
+      console.warn('WikiLink 契约脚本加载失败（正文按原文降级显示）:', err && err.message);
+      _contentLinksPromise = null;
+      return false;
+    });
+  return _contentLinksPromise;
+}
+
+// 构建期引用索引（data/content-links.json）：反向链接与图谱共用一次 fetch。
+// 缺失/损坏 → 返回 null，调用方局部降级，不阻塞正文。
+function loadContentLinksIndex() {
+  if (_contentLinksIndex) return Promise.resolve(_contentLinksIndex);
+  if (_contentLinksIndexPromise) return _contentLinksIndexPromise;
+  // 防御：无 fetch 的环境（旧浏览器 / jsdom 测试）按索引缺失降级，不抛错阻塞路由
+  if (typeof fetch !== 'function') return Promise.resolve(null);
+  _contentLinksIndexPromise = fetch('data/content-links.json')
+    .then(function (r) { if (!r.ok) throw new Error('HTTP ' + r.status); return r.json(); })
+    .then(function (j) {
+      if (!j || j.schemaVersion !== 1 || !Array.isArray(j.nodes)) throw new Error('索引格式无效');
+      j._byKey = Object.create(null);
+      j.nodes.forEach(function (n) { j._byKey[n.key] = n; });
+      _contentLinksIndex = j;
+      return j;
+    })
+    .catch(function (err) {
+      console.warn('内容引用索引加载失败:', err && err.message);
+      _contentLinksIndexPromise = null;
+      return null;
+    });
+  return _contentLinksIndexPromise;
+}
+
+let _graphPromise = null;
+function loadKnowledgeGraph() {
+  if (window.KnowledgeGraph && window.GraphDemo) return Promise.resolve(true);
+  if (_graphPromise) return _graphPromise;
+  _graphPromise = loadScriptOnce('js/knowledge-graph.js')
+    .then(function () { return loadScriptOnce('js/graph-demo.js'); })
+    .then(function () {
+      const ok = !!(window.KnowledgeGraph && window.GraphDemo);
+      if (!ok) _graphPromise = null;
+      return ok;
+    })
+    .catch(function (err) {
+      console.warn('知识图谱脚本加载失败:', err && err.message);
+      _graphPromise = null;
+      return false;
+    });
+  return _graphPromise;
+}
+
+// Batch 9B-2：详情页「引用本文的内容」槽位（与 related-reading 完全分离；
+// 只展示构建索引里的真实显式引用，绝不掺入算法推荐或个人收藏）。
+function backlinksSlotHtml(type, refId) {
+  return '<section class="backlinks" data-backlinks="' + escapeHtml(type + ':' + refId) +
+    '" aria-label="引用本文的内容" hidden></section>';
+}
+
+function backlinksApply() {
+  const slots = document.querySelectorAll('[data-backlinks]');
+  if (!slots.length) return;
+  const token = _routeToken;
+  loadContentLinksIndex().then(function (idx) {
+    if (token !== _routeToken || !idx) return;   // 路由已切走 / 索引缺失：保持隐藏（局部降级）
+    const labels = (window.Related && Related.TYPE_LABELS) || {};
+    slots.forEach(function (slot) {
+      if (!slot.isConnected) return;
+      const key = slot.getAttribute('data-backlinks');
+      const sources = (idx.byTarget && idx.byTarget[key]) || [];
+      if (!sources.length) return;               // 无反向引用：合理隐藏
+      const viaMap = Object.create(null);
+      (idx.explicit || []).forEach(function (e) { if (e.target === key) viaMap[e.source] = e.via; });
+      const items = sources.map(function (sk) {
+        const n = idx._byKey[sk];
+        if (!n || !n.href) return '';
+        const via = viaMap[sk] === 'wikilink' ? 'WikiLink' : '正文链接';
+        return '<li class="backlink-item"><a href="' + escapeHtml(n.href) + '">' + escapeHtml(n.title) + '</a>' +
+          '<span class="backlink-meta">' + escapeHtml(labels[n.type] || n.type) + ' · ' + via + '</span></li>';
+      }).filter(Boolean).join('');
+      if (!items) return;
+      slot.innerHTML = '<h3 class="backlinks-title">🔗 引用本文的内容</h3>' +
+        '<ul class="backlinks-list">' + items + '</ul>';
+      slot.hidden = false;
+    });
+  });
+}
+
+// Batch 9B-2：#/graph 外壳与初始化（脚本与索引都到齐才挂载；任一失败明确降级）
+function renderGraphShell() {
+  return '<h1 class="page-title">🕸️ 知识图谱</h1>' +
+    '<p class="page-desc">全站内容节点与关系：显式引用（有向）· 同系列 · 推断关联（算法推荐，非正文引用）。全部本地计算，无后端。</p>' +
+    '<div id="graphRoot" class="graph-root" aria-busy="true"><div class="graph-loading" role="status">正在加载图谱数据…</div></div>';
+}
+
+function initGraphPage(token) {
+  const loadStart = performance.now();
+  Promise.all([loadKnowledgeGraph(), loadContentLinksIndex()]).then(function (res) {
+    if (token !== _routeToken) return;
+    const root = document.getElementById('graphRoot');
+    if (!root || !root.isConnected) return;
+    root.setAttribute('aria-busy', 'false');
+    const ok = res[0], idx = res[1];
+    if (!ok || !idx || typeof Related === 'undefined') {
+      root.innerHTML = '<div class="graph-degraded" role="alert">' +
+        escapeHtml(!ok ? '图谱脚本加载失败。' : (!idx ? '内容引用索引缺失或加载失败。' : '推荐算法模块未就绪。')) +
+        ' 图谱暂不可用，站点其他功能不受影响。</div>';
+      return;
+    }
+    window.GraphDemo.mount(root, idx, {
+      Related: window.Related,
+      isCurrent: function () { return token === _routeToken; }
+    });
+    if (window.__graphPerf) window.__graphPerf.loadMs = Math.round(performance.now() - loadStart);
+  });
+}
+
 // Batch 9C-1B：实验页顶部互链（不改动各演示模块本身；深链接保持不变）
 function renderLabLinks(active) {
   const items = [
@@ -2767,6 +2916,7 @@ function renderPostView(post, content) {
     </article>
     ${renderSeriesNav(post)}
     ${relatedSlotHtml('post', post.id)}
+    ${backlinksSlotHtml('post', post.id)}
     ${renderPostNav(post)}
     <div class="giscus-wrap">
       <h3 class="giscus-wrap-title">💬 评论与讨论</h3>
@@ -3159,6 +3309,7 @@ function renderCourseDetail(courseId) {
         </div>
       `}
       ${relatedSlotHtml('course', course.id)}
+      ${backlinksSlotHtml('course', course.id)}
       ${renderCourseNoteNav(course)}
     </div>
   `;
@@ -3957,6 +4108,7 @@ function renderProjectDetail(id) {
         ${tagHtml ? projectSectionHtml('技术方向', tagHtml) : ''}
         ${actions.length ? `<p class="project-actions">${actions.join('')}</p>` : ''}
         ${relatedSlotHtml('project', p.id)}
+        ${backlinksSlotHtml('project', p.id)}
         <p class="project-back"><a href="#/projects">← 返回项目作品集</a></p>
       </div>
     </div>
@@ -5378,6 +5530,15 @@ function updateEditorPreview() {
   var preview = document.getElementById('editorPreview');
   if (!content || !preview) return;
   var text = content.value || '';
+  // Batch 9B-2：预览与正式文章共用同一 marked WikiLink 扩展（同一语法契约）。
+  // 契约脚本未就绪时先按原文渲染，就绪后补一次重绘；预览绝不写入正式索引。
+  if (!_contentLinksRegistered && !_clPreviewPending) {
+    _clPreviewPending = true;
+    ensureContentLinks().then(function (ok) {
+      _clPreviewPending = false;
+      if (ok && preview.isConnected) updateEditorPreview();
+    });
+  }
   try {
     preview.innerHTML = renderMarkdown(text);
     enhanceCodeBlocks(preview);
@@ -5387,6 +5548,7 @@ function updateEditorPreview() {
     preview.innerHTML = '<p style="color:#e53e3e">\u9884\u89C8\u9519\u8BEF</p>';
   }
 }
+let _clPreviewPending = false;
 
 // --- 状态栏（Batch 8B-2）---
 // 统计随输入同步更新：这里只做一次字符串扫描，比同一事件里已有的 marked 渲染便宜得多，
@@ -6473,6 +6635,7 @@ function renderKnowledgeShell(tab) {
     '  <div class="km-head">' +
     '    <h1 class="page-title">📚 知识库</h1>' +
     '    <div class="km-head-actions">' +
+    '      <a class="editor-btn km-graph-link" href="#/graph">🕸️ 知识图谱</a>' +
     '      <button type="button" class="editor-btn" id="kmExport">导出 JSON</button>' +
     '      <button type="button" class="editor-btn" id="kmImportOpen">导入 JSON</button>' +
     (statsView ? '' : '      <button type="button" class="editor-btn" id="kmBulkToggle" aria-pressed="false">批量管理</button>') +
@@ -7763,6 +7926,8 @@ else setTimeout(kmBoot, 0);
 async function router() {
   closeImageLightbox(true);      // 路由切换：立即关闭并清理查看器，不恢复旧页面焦点
   const token = ++_routeToken;
+  // Batch 9B-2：离开图谱页立即清理 rAF / 定时器 / 监听器 / 拖动状态（幂等）
+  if (window.GraphDemo && typeof window.GraphDemo.unmount === 'function') window.GraphDemo.unmount();
   const hash = location.hash.slice(1) || '/';
   const app = document.getElementById('app');
   const searchBar = document.getElementById('searchBar');
@@ -7856,14 +8021,18 @@ async function router() {
     } else if (hash.startsWith('/post/')) {
       const id = hash.slice('/post/'.length);
       const post = getAllPosts().find(p => p.id === id);
+      // Batch 9B-2：WikiLink 契约脚本与正文并行按需加载（失败降级为原文，不阻塞正文）
+      const clReady = ensureContentLinks();
       if (!post || cachedPostContent(post) != null) {
+        await clReady;
+        if (token !== _routeToken) return;
         app.innerHTML = renderPost(id);
       } else {
         // 正文按需加载：先给加载态，到齐后再渲染；期间路由若已切走则丢弃结果
         app.innerHTML = renderPostLoading(post);
         let bodyFailed = false;
         try {
-          await loadPostBody(id);
+          await Promise.all([loadPostBody(id), clReady]);
         } catch (err) {
           bodyFailed = true;
           console.warn('文章正文加载失败:', err && err.message);
@@ -7872,6 +8041,10 @@ async function router() {
         app.innerHTML = bodyFailed ? renderPostError(id) : renderPost(id);
       }
       loadGiscus(id);
+    } else if (hash === '/graph') {
+      // Batch 9B-2：全站知识图谱（脚本/索引按需加载，退出路由时由 router 统一清理）
+      app.innerHTML = renderGraphShell();
+      initGraphPage(token);
     } else if (isKnowledgeRoute(hash)) {
       const tab = kmTabFromHash(hash);
       app.innerHTML = renderKnowledgeShell(tab);
@@ -7915,9 +8088,12 @@ async function router() {
         }
       }
       const notesReady = dataReady('notes');
+      await ensureContentLinks();
+      if (token !== _routeToken) return;
       app.innerHTML = renderCourseDetail(id);
       if (!notesReady) {
-        loadData('notes').then(function () {
+        loadData('notes').then(async function () {
+          await ensureContentLinks();
           if (token !== _routeToken) return;                 // 路由已切换：不覆盖新页面
           if ((location.hash.slice(1) || '/') !== hash) return;
           app.innerHTML = renderCourseDetail(id);
@@ -7928,6 +8104,7 @@ async function router() {
           buildReadingTools();
           // 整页重绘后相关阅读的挂载点被替换，需要重新填充（路由 token 已在上面校验）
           relatedApply(hash);
+          backlinksApply();
           // 笔记映射（NOTE_PAGES）此时才到位：canonical / og:url 必须跟着重算，
           // 否则首访课程页整次会话都指向站点根（见 Batch 7A-02）。
           updateMetaForRoute(hash);
@@ -8088,6 +8265,8 @@ async function router() {
   kmMount(hash);
   // 相关阅读：只挂一次，计算在 related.js 里完成
   relatedApply(hash);
+  // Batch 9B-2：反向链接（真实显式引用）与相关阅读分离，索引缺失时局部降级
+  backlinksApply();
   // 记录本条历史条目对应的关键词：后退回来时据此恢复搜索上下文
   rememberEntryState(hash);
   perfMark('art:html-end');

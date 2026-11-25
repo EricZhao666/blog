@@ -187,9 +187,13 @@ check('W10c 候选基于 main 切分支（不是直接 merge 队列分支）',
 # ------------------------------------------------------------------ C. 候选完整性
 def make_cand(tag):
     dst = os.path.join(TMP, tag)
+    # Batch 9B-2R：完整候选必须包含第 5 个派生产物（引用索引）及其生成器/权威源
     for rel in ['js/data.js', 'js/user-posts.js', 'data/search-index.json',
-                'data/posts/manifest.json', 'feed.xml', 'gen_feed.py',
-                'scripts/build_content.py', 'scripts/split_posts.py']:
+                'data/posts/manifest.json', 'feed.xml', 'data/content-links.json',
+                'gen_feed.py', 'scripts/build_content.py', 'scripts/split_posts.py',
+                'scripts/content_links.py',
+                'js/courses.js', 'js/course-notes.js', 'js/papers.js',
+                'js/codefiles.js', 'js/projects.js', 'js/note-slugs.js']:
         target = os.path.join(dst, rel.replace('/', os.sep))
         os.makedirs(os.path.dirname(target), exist_ok=True)
         shutil.copy2(os.path.join(ROOT, rel.replace('/', os.sep)), target)
@@ -215,11 +219,33 @@ r = bc_check(c1)
 check('W11b 候选缺派生文件 → --check 失败（不完整不得发布）', r.returncode != 0,
       (r.stderr or r.stdout).strip()[:50])
 
+c1b = make_cand('cand1b')
+os.remove(os.path.join(c1b, 'data', 'content-links.json'))
+r = bc_check(c1b)
+check('W11c 候选缺引用索引 → --check 失败（第 5 个产物同样不可缺）',
+      r.returncode != 0 and 'content-links' in (r.stdout + r.stderr),
+      (r.stderr or r.stdout).strip()[:60])
+
 c2 = make_cand('cand2')
 feed = os.path.join(c2, 'feed.xml')
 io.open(feed, 'w', encoding='utf-8', newline='\n').write('<rss></rss>\n')
 r = bc_check(c2)
 check('W12 候选 feed 被篡改 → --check 失败', r.returncode != 0, (r.stderr or r.stdout).strip()[:50])
+
+# ------------------------------------------------------------------ D. 产物清单一致性
+# 工作流的哈希留档不得与 Python 侧的权威清单分叉（Batch 9B-2R）。
+sys.path.insert(0, os.path.join(ROOT, 'scripts'))
+import build_content as _bc  # noqa: E402
+
+hash_step = wf.split('候选产物哈希')[1].split('- name: 推送前确认')[0]
+missing = [rel for rel in _bc.DERIVED_ARTIFACTS if rel not in hash_step]
+check('W13 CI 候选哈希清单覆盖全部派生产物', missing == [], missing)
+check('W13b 哈希摘要不再做字符级截断',
+      'cut -c1-' not in hash_step, hash_step.count('cut'))
+gate_step = wf.split('git add -A')[1].split('\n')[0]
+missing_add = [rel for rel in ['js/data.js', 'feed.xml', 'data/content-links.json']
+               if rel not in gate_step]
+check('W13c 候选提交显式覆盖引用索引', missing_add == [], gate_step.strip()[:60])
 
 shutil.rmtree(TMP, ignore_errors=True)
 print('\n共 %d 项，PASS %d，FAIL %d' % (passed[0] + failed[0], passed[0], failed[0]))
