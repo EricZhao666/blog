@@ -191,6 +191,10 @@ UI：左侧「当前步（阶段/预测/观测/创新/增益/更新/协方差）
 | `kalman-filter` | **48/48 PASS**（原 43 + K4.7–K4.8、K6.5–K6.7） |
 | `sw-snapshot-unit` | 15/15，`CACHE_VERSION` 保持 `2026-11-25-2` |
 
+lab 组 10/10、SW 3 套、UI/无障碍/首页 4 套均在修订前的 `82dedc8` 上完成；
+本次修订只涉及卡尔曼计算/UI 与其两套测试，已复跑 `kalman-math` + `kalman-filter`
+（PASS 2 / FAIL 0，32.7s），其余实验室代码未改动。
+
 ## 12. 状态
 
 **B9C2B_LOCAL_READY**：实现与测试完成，分支已推送。
