@@ -228,7 +228,9 @@
     var out = [];
     for (var i = 0; i < src.length; i++) {
       var s = src[i];
-      var xPred = x, pPred = p + o.q;
+      // 初始状态与首个观测处于同一时刻 t0：第 0 步不注入过程噪声，
+      // 从第 1 步（t0+dt）开始才做 x⁻=x、P⁻=P+Q 的预测。
+      var xPred = x, pPred = i === 0 ? p : p + o.q;
       var z = s.zPos;
       var rec = {
         k: s.k, t: s.t,
@@ -260,7 +262,14 @@
       rec.pos = x; rec.p = p;
       out.push(rec);
     }
-    return { ok: true, steps: out, metrics: metricsScalar(out), mode: 'scalar' };
+    var sceneMetaS = o.scenario ? scenarioData(o.scenario) : null;
+    return {
+      ok: true, steps: out, metrics: metricsScalar(out), mode: 'scalar',
+      dtActual: sceneMetaS ? sceneMetaS.dt : null,
+      dtAssumed: null,
+      dtMismatch: false,
+      warnings: []
+    };
   }
 
   // ---------------------------------------------------------------- 二维位置—速度
@@ -398,13 +407,21 @@
       var s = src[i];
       var dt = o.dt;
       var F = [[1, dt], [0, 1]];
-      var xPred = [x[0] + dt * x[1], x[1]];
       var qa = o.sigmaA * o.sigmaA;
       var Q = [
         [qa * Math.pow(dt, 4) / 4, qa * Math.pow(dt, 3) / 2],
         [qa * Math.pow(dt, 3) / 2, qa * dt * dt]
       ];
-      var PPred = add2(mul2(mul2(F, P), transpose2(F)), Q);
+      // 第 0 步：初始状态与首个观测同在 t0，直接以先验做更新（不推进 dt）。
+      // 第 1..n-1 步：先从 t(k-1) 预测到 t(k)=t(k-1)+dt，再更新。
+      var xPred, PPred;
+      if (i === 0) {
+        xPred = [x[0], x[1]];
+        PPred = [[P[0][0], P[0][1]], [P[1][0], P[1][1]]];
+      } else {
+        xPred = [x[0] + dt * x[1], x[1]];
+        PPred = add2(mul2(mul2(F, P), transpose2(F)), Q);
+      }
 
       var rec = {
         k: s.k, t: s.t,
@@ -462,7 +479,18 @@
       rec.updated = rec.updatedPos || rec.updatedVel;
       out.push(rec);
     }
-    return { ok: true, steps: out, metrics: metrics2D(out), mode: 'matrix' };
+    var sceneMeta = o.scenario ? scenarioData(o.scenario) : null;
+    var dtActual = sceneMeta ? sceneMeta.dt : null;
+    var dtMismatch = !!sceneMeta && Math.abs(sceneMeta.dt - o.dt) > 1e-12;
+    var warnings = [];
+    if (dtMismatch) {
+      warnings.push('采样时间不一致：场景真实 dt=' + dtActual + '，滤波器假设 dt=' + o.dt +
+        '。这属于模型失配，估计与协方差不可按真实时间解读。');
+    }
+    return {
+      ok: true, steps: out, metrics: metrics2D(out), mode: 'matrix',
+      dtActual: dtActual, dtAssumed: o.dt, dtMismatch: dtMismatch, warnings: warnings
+    };
   }
 
   // ---------------------------------------------------------------- 指标
@@ -485,36 +513,44 @@
   }
 
   function metricsScalar(steps) {
-    var posErr = [], raw = [], valid = 0;
+    var posErr = [], posErrValid = [], raw = [], valid = 0;
     for (var i = 0; i < steps.length; i++) {
       var s = steps[i];
       posErr.push(s.pos - s.truePos);
       if (s.zPos !== null && s.zPos !== undefined) {
         valid++;
-        raw.push(s.zPos - s.truePos);        // 只用有测量的索引，缺失不当作 0
+        raw.push(s.zPos - s.truePos);              // 只用有测量的索引，缺失不当作 0
+        posErrValid.push(s.pos - s.truePos);       // 与 raw 同索引的估计误差
       }
     }
-    var est = errStats(posErr);
-    var rawStats = errStats(raw);
     return {
-      pos: { est: est, raw: rawStats },
-      vel: { est: { n: 0, rmse: null, mae: null, maxAbs: null }, raw: { n: 0, rmse: null, mae: null, maxAbs: null } },
+      pos: { est: errStats(posErr), estValid: errStats(posErrValid), raw: errStats(raw) },
+      vel: {
+        est: { n: 0, rmse: null, mae: null, maxAbs: null },
+        estValid: { n: 0, rmse: null, mae: null, maxAbs: null },
+        raw: { n: 0, rmse: null, mae: null, maxAbs: null }
+      },
       counts: { total: steps.length, validPos: valid, missingPos: steps.length - valid, validVel: 0, missingVel: steps.length }
     };
   }
 
   function metrics2D(steps) {
-    var posErr = [], velErr = [], rawP = [], rawV = [], validP = 0, validV = 0;
+    var posErr = [], velErr = [], rawP = [], rawV = [], estPValid = [], estVValid = [];
+    var validP = 0, validV = 0;
     for (var i = 0; i < steps.length; i++) {
       var s = steps[i];
       posErr.push(s.pos - s.truePos);
       velErr.push(s.vel - s.trueVel);
-      if (s.zPos !== null && s.zPos !== undefined) { validP++; rawP.push(s.zPos - s.truePos); }
-      if (s.zVel !== null && s.zVel !== undefined) { validV++; rawV.push(s.zVel - s.trueVel); }
+      if (s.zPos !== null && s.zPos !== undefined) {
+        validP++; rawP.push(s.zPos - s.truePos); estPValid.push(s.pos - s.truePos);
+      }
+      if (s.zVel !== null && s.zVel !== undefined) {
+        validV++; rawV.push(s.zVel - s.trueVel); estVValid.push(s.vel - s.trueVel);
+      }
     }
     return {
-      pos: { est: errStats(posErr), raw: errStats(rawP) },
-      vel: { est: errStats(velErr), raw: errStats(rawV) },
+      pos: { est: errStats(posErr), estValid: errStats(estPValid), raw: errStats(rawP) },
+      vel: { est: errStats(velErr), estValid: errStats(estVValid), raw: errStats(rawV) },
       counts: {
         total: steps.length,
         validPos: validP, missingPos: steps.length - validP,

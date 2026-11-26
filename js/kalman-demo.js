@@ -240,8 +240,9 @@
       '</div>' +
       '<div class="spc-range">' +
       '<label class="spc-input-label" for="kfSigmaA">加速度 σ_a<input id="kfSigmaA" type="number" min="0" step="0.01"></label>' +
-      '<label class="spc-input-label" for="kfDt">采样周期 dt<input id="kfDt" type="number" min="0.01" step="0.05"></label>' +
+      '<label class="spc-input-label" for="kfDt">滤波器假设 dt<input id="kfDt" type="number" min="0.01" step="0.05"></label>' +
       '</div>' +
+      '<p class="spc-hint" id="kfDtNote"></p>' +
       '<div class="spc-range">' +
       '<label class="spc-input-label" for="kfRpos">位置 R<input id="kfRpos" type="number" min="0.001" step="0.1"></label>' +
       '<label class="spc-input-label" for="kfRvel">速度 R<input id="kfRvel" type="number" min="0.001" step="0.1"></label>' +
@@ -548,14 +549,16 @@
       }
       function cell(v) { return v === null || v === undefined ? '—' : fmtSmart(v); }
       body.innerHTML =
-        '<tr><th scope="row">估计 RMSE</th><td>' + cell(met.pos.est.rmse) + '</td><td>' + cell(met.vel.est.rmse) + '</td></tr>' +
+        '<tr><th scope="row">估计 RMSE（全部步）</th><td>' + cell(met.pos.est.rmse) + '</td><td>' + cell(met.vel.est.rmse) + '</td></tr>' +
+        '<tr><th scope="row">同索引估计 RMSE</th><td>' + cell(met.pos.estValid.rmse) + '</td><td>' + cell(met.vel.estValid.rmse) + '</td></tr>' +
         '<tr><th scope="row">原始测量 RMSE</th><td>' + cell(met.pos.raw.rmse) + '</td><td>' + cell(met.vel.raw.rmse) + '</td></tr>' +
         '<tr><th scope="row">平均绝对误差</th><td>' + cell(met.pos.est.mae) + '</td><td>' + cell(met.vel.est.mae) + '</td></tr>' +
         '<tr><th scope="row">最大绝对误差</th><td>' + cell(met.pos.est.maxAbs) + '</td><td>' + cell(met.vel.est.maxAbs) + '</td></tr>' +
         '<tr><th scope="row">有效测量数</th><td>' + met.counts.validPos + '</td><td>' + met.counts.validVel + '</td></tr>' +
         '<tr><th scope="row">缺失数</th><td>' + met.counts.missingPos + '</td><td>' + met.counts.missingVel + '</td></tr>';
-      $('kfMetricsNote').textContent = '原始测量 RMSE 只在有测量的时间索引上计算（缺失不当作 0）；' +
-        '估计 RMSE 使用已推进的全部步。共 ' + met.counts.total + ' 步。';
+      $('kfMetricsNote').textContent = '三种口径：①「估计 RMSE（全部步）」评价含缺失阶段的整体跟踪；' +
+        '②「同索引估计 RMSE」与③「原始测量 RMSE」都只在有测量的索引上计算，可直接公平对比；' +
+        '缺失不当作 0。共 ' + met.counts.total + ' 步。';
     }
 
     function render() {
@@ -574,6 +577,24 @@
       var scene = KC.scenarioData(state.sceneId);
       if (!scene) { renderEmpty('场景不存在。'); return; }
       $('kfSceneNote').textContent = scene.note + '（合成数据，种子 ' + scene.seed + '）';
+
+      var dtNote = $('kfDtNote');
+      if (dtNote) {
+        if (m) {
+          dtNote.textContent = '标量随机游走模型不使用 dt（状态直接按样本序号递推）。';
+          dtNote.removeAttribute('data-state');
+        } else {
+          var actual = state.result ? state.result.dtActual : scene.dt;
+          var assumed = readNum('kfDt');
+          var mismatch = actual !== null && assumed !== null && Math.abs(actual - assumed) > 1e-12;
+          dtNote.textContent = '场景真实采样周期 dt=' + fmtSmart(actual) +
+            '；滤波器假设 dt=' + fmtSmart(assumed) +
+            (mismatch ? ' → 两者不一致，按模型失配处理（估计不代表真实时间演化）' : '（一致）') +
+            '。初始状态与第 1 个观测同在 t0；从第 2 个观测起，每次预测推进 dt。';
+          if (mismatch) dtNote.setAttribute('data-state', 'invalid');
+          else dtNote.removeAttribute('data-state');
+        }
+      }
 
       renderStep();
       renderCharts();
@@ -655,11 +676,24 @@
 
     function onGateChange() {
       var g = readNum('kfGate');
-      state.gate = g === null ? 0 : g;
-      if (state.gate < 0 || !isFinite(state.gate)) {
-        setError('创新门限必须 ≥ 0（0 表示关闭）。');
+      if (g === null) g = 0;
+      if (!isFinite(g) || g < 0) {
+        // 非法门限：停止播放，并让旧结果失效——不能继续展示上一组参数的计算结果
+        stopPlay();
+        state.gate = -1;
+        state.result = null;
+        state.cursor = 0;
+        state.pending = false;
+        state.chartDrawn = 0;
+        $('kfGate').setAttribute('aria-invalid', 'true');
+        setError('创新门限必须 ≥ 0（0 表示关闭）。当前结果已失效，请修正后重新计算。');
+        renderEmpty('创新门限非法：旧结果已失效，请修正门限后重新计算。');
+        $('kfProgress').textContent = '0 / 0 步（参数非法）';
+        setLive('参数非法，已停止播放并清除结果');
         return;
       }
+      $('kfGate').removeAttribute('aria-invalid');
+      state.gate = g;
       compute();
     }
 
@@ -745,10 +779,15 @@
           pos: next.predPos, vel: m ? null : next.predVel,
           pPos: m ? next.predP : next.predP00
         } : null,
+        dtActual: r ? r.dtActual : null,
+        dtAssumed: r ? r.dtAssumed : null,
+        dtMismatch: !!(r && r.dtMismatch),
         metrics: met ? {
-          posEstRmse: met.pos.est.rmse, posRawRmse: met.pos.raw.rmse,
+          posEstRmse: met.pos.est.rmse, posValidRmse: met.pos.estValid.rmse,
+          posRawRmse: met.pos.raw.rmse,
           posMae: met.pos.est.mae, posMaxAbs: met.pos.est.maxAbs,
-          velEstRmse: met.vel.est.rmse, velRawRmse: met.vel.raw.rmse,
+          velEstRmse: met.vel.est.rmse, velValidRmse: met.vel.estValid.rmse,
+          velRawRmse: met.vel.raw.rmse,
           velMae: met.vel.est.mae, velMaxAbs: met.vel.est.maxAbs,
           validPos: met.counts.validPos, missingPos: met.counts.missingPos,
           validVel: met.counts.validVel, missingVel: met.counts.missingVel,

@@ -6691,6 +6691,11 @@ mark.search-hit {
   display: none;
 }
 
+.spc-hint[data-state="invalid"] {
+  color: var(--color-danger);
+  font-weight: 600;
+}
+
 .spc-explain {
   font-size: 0.74rem;
   line-height: 1.65;

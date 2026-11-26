@@ -46,10 +46,15 @@ function mean(arr) { return arr.reduce((a, b) => a + b, 0) / arr.length; }
     near(up1.innovation, 1, 1e-15) && near(up1.s, 2.25, 1e-15));
 
   const run = K.runScalar({ steps: stepsOf([1, 2]), x0: 0, p0: 1, q: 0.25, r: 1 });
-  check('K1.6 第二步：K=0.4461538462、x=1.2、P=0.4461538462（独立手算）',
-    run.ok && near(run.steps[1].gain, 0.446153846153846, 1e-15) &&
-    near(run.steps[1].pos, 1.2, 1e-15) && near(run.steps[1].p, 0.446153846153846, 1e-15),
-    'x=' + run.steps[1].pos);
+  check('K1.6 首步不注入 Q（先验=观测时刻）：K=0.5、x=0.5、P=0.5',
+    run.ok && near(run.steps[0].gain, 0.5, 1e-15) &&
+    near(run.steps[0].pos, 0.5, 1e-15) && near(run.steps[0].p, 0.5, 1e-15),
+    'x=' + run.steps[0].pos);
+  check('K1.7 第二步才预测：P⁻=0.75、K=0.4285714286、x=1.1428571429、P=0.4285714286',
+    near(run.steps[1].predP, 0.75, 1e-15) &&
+    near(run.steps[1].gain, 0.42857142857142855, 1e-15) &&
+    near(run.steps[1].pos, 1.1428571428571428, 1e-15) &&
+    near(run.steps[1].p, 0.42857142857142855, 1e-15));
 }
 
 // ================================================================ K2 Q=0 与 R 有效性
@@ -77,9 +82,10 @@ function mean(arr) { return arr.reduce((a, b) => a + b, 0) / arr.length; }
 {
   const src = stepsOf([null, null, null]);
   const run = K.runScalar({ steps: src, x0: 5, p0: 1, q: 0.5, r: 1 });
-  check('K3.1 连续 3 步无测量：状态保持 5，P 每次 +Q（1.5 / 2 / 2.5）',
+  check('K3.1 连续 3 步无测量：首步不推进，之后每步 +Q（P=1 / 1.5 / 2）',
     run.ok && run.steps[0].pos === 5 && run.steps[2].pos === 5 &&
-    near(run.steps[0].p, 1.5, 1e-15) && near(run.steps[2].p, 2.5, 1e-15));
+    near(run.steps[0].p, 1, 1e-15) && near(run.steps[1].p, 1.5, 1e-15) &&
+    near(run.steps[2].p, 2, 1e-15));
   check('K3.2 无测量步不产生增益/创新，updated=false 且 missing=true',
     run.steps.every(s => s.gain === null && s.innovation === null && !s.updated && s.missing));
   check('K3.3 无测量不消耗 R，也不把缺失当作 0 参与更新',
@@ -220,8 +226,8 @@ function mean(arr) { return arr.reduce((a, b) => a + b, 0) / arr.length; }
     isFinite(posOnly.steps[59].vel));
 
   const velOnly = K.run2D(Object.assign({}, base, { sensors: { pos: false, vel: true } }));
-  check('K9.2 仅速度：绝对位置不可完全确定，位置方差持续增大（10.05 → 12.999）',
-    velOnly.ok && velOnly.steps[0].P[0][0] > 10 &&
+  check('K9.2 仅速度：绝对位置不可完全确定，位置方差持续增大（10 → 12.899）',
+    velOnly.ok && velOnly.steps[0].P[0][0] >= 10 &&
     velOnly.steps[59].P[0][0] > velOnly.steps[0].P[0][0] + 2,
     velOnly.steps[0].P[0][0] + ' → ' + velOnly.steps[59].P[0][0]);
 
@@ -230,9 +236,9 @@ function mean(arr) { return arr.reduce((a, b) => a + b, 0) / arr.length; }
   check('K9.3 位置+速度融合的位置 RMSE 优于仅位置（同一场景与参数）',
     fused < posOnly.metrics.pos.est.rmse,
     fused + ' < ' + posOnly.metrics.pos.est.rmse);
-  check('K9.4 不同传感器噪声：位置 R 越小，首步位置增益越大（0.9910 vs 0.5238）',
-    near(K.run2D(Object.assign({}, base, { rPos: 0.1 })).steps[0].gainPos, 0.9909910226948807, 1e-12) &&
-    near(K.run2D(Object.assign({}, base, { rPos: 10 })).steps[0].gainPos, 0.5238104095788513, 1e-12));
+  check('K9.4 不同传感器噪声：位置 R 越小，首步位置增益越大（0.990099 vs 0.5）',
+    near(K.run2D(Object.assign({}, base, { rPos: 0.1 })).steps[0].gainPos, 10 / 10.1, 1e-12) &&
+    near(K.run2D(Object.assign({}, base, { rPos: 10 })).steps[0].gainPos, 10 / 20, 1e-12));
 
   const noSensor = K.run2D(Object.assign({}, base, { sensors: { pos: false, vel: false } }));
   check('K9.5 两个传感器都关闭：只做预测，协方差按 Q 增长且无更新',
@@ -281,32 +287,48 @@ function mean(arr) { return arr.reduce((a, b) => a + b, 0) / arr.length; }
     m2.counts.validPos === 74 && m2.counts.missingPos === 16 &&
     m2.counts.validVel === 77 && m2.counts.missingVel === 13 &&
     m2.pos.raw.n === 74 && m2.vel.raw.n === 77);
+
+  // 三种口径必须分开：全部步 / 同索引估计 / 同索引原始测量
+  const tri = K.metricsScalar([
+    { pos: 0.5, truePos: 0, zPos: 1 },
+    { pos: 2, truePos: 0, zPos: null },
+    { pos: 3, truePos: 0, zPos: 3 }
+  ]);
+  check('K11.8 三口径：全部步估计 √(13.25/3)=2.1016；同索引估计 √(9.25/2)=2.1503；同索引原始 √5=2.2361',
+    near(tri.pos.est.rmse, Math.sqrt(13.25 / 3), 1e-12) &&
+    near(tri.pos.estValid.rmse, Math.sqrt(9.25 / 2), 1e-12) &&
+    near(tri.pos.raw.rmse, Math.sqrt(5), 1e-12),
+    [tri.pos.est.rmse, tri.pos.estValid.rmse, tri.pos.raw.rmse].map(v => v.toFixed(4)).join(' / '));
+  check('K11.9 同索引估计与原始测量使用完全相同的 2 个索引（缺失不参与任何一侧）',
+    tri.pos.estValid.n === 2 && tri.pos.raw.n === 2 && tri.counts.validPos === 2);
 }
 
 // ================================================================ K12 噪声、失配、初值
 {
   const cruise = K.run2D({ scenario: 'cruise', p0: 0, v0: 0, p0Var: 10, v0Var: 4, sigmaA: 0.05, dt: 0.5, rPos: 0.5, rVel: 0.2 });
-  check('K12.1 恒速场景：位置估计 RMSE 0.169789 < 原始测量 RMSE 0.534762（滤波有效）',
-    near(cruise.metrics.pos.est.rmse, 0.16978937339194047, 1e-9) &&
+  check('K12.1 恒速场景：位置估计 RMSE 0.166713 < 原始测量 RMSE 0.534762（滤波有效）',
+    near(cruise.metrics.pos.est.rmse, 0.16671265452270023, 1e-9) &&
     cruise.metrics.pos.est.rmse < cruise.metrics.pos.raw.rmse,
     cruise.metrics.pos.est.rmse + ' < ' + cruise.metrics.pos.raw.rmse);
 
   const accel = K.run2D({ scenario: 'accel', p0: 0.5, v0: 1.0, p0Var: 10, v0Var: 4, sigmaA: 0.05, dt: 0.5, rPos: 0.5, rVel: 0.2 });
   const tail = accel.steps.slice(-20).map(s => s.innovationPos);
   check('K12.2 模型失配：加速场景后 20 步平均创新 5.309（持续同号，非白噪声）',
-    near(mean(tail), 5.308992300945239, 1e-9),
+    near(mean(tail), 5.309004749822869, 1e-9),
     'mean innov=' + mean(tail));
   check('K12.3 失配导致位置 RMSE 3.377 远大于原始测量 0.418（曲线平滑≠准确）',
-    accel.metrics.pos.est.rmse > 3 && accel.metrics.pos.est.rmse > accel.metrics.pos.raw.rmse * 5);
+    near(accel.metrics.pos.est.rmse, 3.3769726231219006, 1e-9) &&
+    accel.metrics.pos.est.rmse > accel.metrics.pos.raw.rmse * 5);
 
   const lowP = K.run2D({ scenario: 'cruise', p0: 0, v0: 0, p0Var: 0.01, v0Var: 1, sigmaA: 0.05, dt: 0.5, rPos: 0.5, rVel: 0.2 });
   const highP = K.run2D({ scenario: 'cruise', p0: 0, v0: 0, p0Var: 100, v0Var: 1, sigmaA: 0.05, dt: 0.5, rPos: 0.5, rVel: 0.2 });
-  check('K12.4 初始协方差影响首步增益：P0 小→0.3421，P0 大→0.9950',
-    near(lowP.steps[0].gainPos, 0.34213907591098325, 1e-12) &&
-    near(highP.steps[0].gainPos, 0.9950372227678261, 1e-12));
+  check('K12.4 初始协方差影响首步增益：P0 小→0.0196078，P0 大→0.9950249',
+    near(lowP.steps[0].gainPos, 0.0196078431372549, 1e-12) &&
+    near(highP.steps[0].gainPos, 0.9950248756218906, 1e-12));
 
   const mismatch = K.run2D({ scenario: 'accel', p0: 0.5, v0: 1.0, p0Var: 10, v0Var: 4, sigmaA: 0.5, dt: 0.5, rPos: 0.5, rVel: 0.2 });
-  check('K12.5 提高 σ_a（更信任加速）能降低失配场景的位置 RMSE（3.377 → 更小）',
+  check('K12.5 提高 σ_a（更信任加速）能降低失配场景的位置 RMSE（3.377 → 0.180）',
+    near(mismatch.metrics.pos.est.rmse, 0.18025070897754714, 1e-9) &&
     mismatch.metrics.pos.est.rmse < accel.metrics.pos.est.rmse,
     accel.metrics.pos.est.rmse + ' → ' + mismatch.metrics.pos.est.rmse);
 }
@@ -332,6 +354,37 @@ function mean(arr) { return arr.reduce((a, b) => a + b, 0) / arr.length; }
   check('K13.7 置信带：10 ± 1.96×2 = [6.08, 13.92]，方差为负时不可用',
     near(conf.lower, 6.08, 1e-12) && near(conf.upper, 13.92, 1e-12) &&
     K.confidenceBand(1, -1).ok === false);
+}
+
+// ================================================================ K14 采样时间一致性
+{
+  const base = { scenario: 'cruise', p0: 0, v0: 2, p0Var: 10, v0Var: 4, sigmaA: 0.05, dt: 0.5, rPos: 0.5, rVel: 0.2 };
+  const d = K.scenarioData('cruise');
+  check('K14.1 场景时间戳 t_i = i·dt（dt=0.5，逐点精确）',
+    d.dt === 0.5 && d.steps.every((s, i) => near(s.t, i * 0.5, 1e-12)) &&
+    d.steps[0].t === 0);
+
+  const nm = K.run2D(Object.assign({}, base, { sensors: { pos: false, vel: false } }));
+  check('K14.2 第 0 步：初始状态与首个观测同在 t0，预测值=先验（不推进 dt）',
+    nm.steps[0].predPos === 0 && nm.steps[0].predP00 === 10 &&
+    nm.steps[0].pos === 0 && nm.steps[0].t === 0);
+  check('K14.3 无测量预测：4 步后位置 = p0+(4−1)·dt·v0 = 3（只推进 3 个区间）',
+    near(nm.steps[3].pos, 3, 1e-12) && near(nm.steps[3].vel, 2, 1e-12),
+    'p=' + nm.steps[3].pos);
+  check('K14.4 第 1 步预测才按 dt 推进：位置 2→3、协方差含 Q',
+    near(nm.steps[1].predPos, 1, 1e-12) && nm.steps[1].predP00 > nm.steps[0].predP00);
+
+  const sc = K.runScalar({ steps: stepsOf([null, null, null]), x0: 5, p0: 1, q: 0.5, r: 1 });
+  check('K14.5 标量同样：首步 P=1，之后每步 +Q（1.5 / 2）',
+    near(sc.steps[0].p, 1, 1e-15) && near(sc.steps[1].p, 1.5, 1e-15) &&
+    near(sc.steps[2].p, 2, 1e-15));
+
+  const okDt = K.run2D(base);
+  const badDt = K.run2D(Object.assign({}, base, { dt: 0.4 }));
+  check('K14.6 dt 一致时无标记；假设 dt=0.4 与真实 0.5 不一致 → dtMismatch + 明确警告',
+    okDt.dtActual === 0.5 && okDt.dtMismatch === false && okDt.warnings.length === 0 &&
+    badDt.dtActual === 0.5 && badDt.dtAssumed === 0.4 && badDt.dtMismatch === true &&
+    /模型失配/.test(badDt.warnings[0]), badDt.warnings[0] || '');
 }
 
 console.log('\n合计 ' + (pass + fail) + ' 项，PASS ' + pass + '，FAIL ' + fail);

@@ -149,21 +149,21 @@ async function click(page, id) {
 
     await click(p1, 'kfPredict');
     const stP = await getState(p1);
-    check('K2.3 预测一步：pending=true，预测位置 0、P⁻=11.000039（不更新状态）',
-      stP.pending === true && stP.cursor === 0 && near(stP.pendingPred.pPos, 11.0000390625, 1e-9) &&
+    check('K2.3 预测一步：pending=true，第 1 个观测时刻的预测=先验（x⁻=0、P⁻=10，不推进 dt）',
+      stP.pending === true && stP.cursor === 0 && near(stP.pendingPred.pPos, 10, 1e-12) &&
       near(stP.pendingPred.pos, 0, 1e-12),
       JSON.stringify(stP.pendingPred));
 
     await click(p1, 'kfStep');
     const st1 = await getState(p1);
-    check('K2.4 应用更新：pos=1.5808246、vel=1.0747073、K=0.9565219（独立手算）',
+    check('K2.4 应用更新：pos=1.5552381、vel=1.0647619、K=0.9523810（独立手算）',
       st1.cursor === 1 && st1.pending === false &&
-      near(st1.pos, 1.5808245596526065, 1e-9) &&
-      near(st1.vel, 1.0747073026616127, 1e-9) &&
-      near(st1.gainPos, 0.9565218868142432, 1e-9),
+      near(st1.pos, 1.555238095238095, 1e-9) &&
+      near(st1.vel, 1.0647619047619048, 1e-9) &&
+      near(st1.gainPos, 0.9523809523809523, 1e-9),
       JSON.stringify({ pos: st1.pos, gain: st1.gainPos }));
-    check('K2.5 指标出现：位置估计 RMSE 0.5808246、原始测量 RMSE 0.633（同一步）',
-      near(st1.metrics.posEstRmse, 0.5808245596526065, 1e-9) &&
+    check('K2.5 指标出现：位置估计 RMSE 0.5552381、原始测量 RMSE 0.633（同一步）',
+      near(st1.metrics.posEstRmse, 0.5552380952380951, 1e-9) &&
       near(st1.metrics.posRawRmse, 0.633, 1e-9) &&
       st1.metrics.validPos === 1 && st1.metrics.missingPos === 0,
       JSON.stringify(st1.metrics));
@@ -204,8 +204,8 @@ async function click(page, id) {
     await click(p1, 'kfPredict');
     await click(p1, 'kfStep');
     const lowGain = await getState(p1);
-    check('K4.2 R=5 时首步增益 0.6875，小于默认 R=0.5 的 0.9565',
-      near(lowGain.gainPos, 0.6875007629375905, 1e-9) && lowGain.gainPos < 0.9566,
+    check('K4.2 R=5 时首步增益 0.6666667，小于默认 R=0.5 的 0.9523810',
+      near(lowGain.gainPos, 10 / 15, 1e-12) && lowGain.gainPos < 0.9524,
       'gain=' + lowGain.gainPos);
 
     const sceneBefore = await p1.evaluate(() => {
@@ -231,22 +231,47 @@ async function click(page, id) {
     await p1.uncheck('#kfSensorPos');
     await sleep(180);
     await click(p1, 'kfStep');
+    await click(p1, 'kfStep');
     const velOnly = await getState(p1);
-    check('K4.5 关闭位置传感器：只更新速度，位置未观测 → 方差只按预测增长（10 → 10.0477）',
+    check('K4.5 关闭位置传感器：只更新速度，位置未观测 → 第 2 步起方差只按预测增长（10 → >10）',
       velOnly.sensors.pos === false && velOnly.gainPos === null &&
-      velOnly.pPos > 10 && velOnly.pPos < 11, 'P00=' + velOnly.pPos);
+      velOnly.pPos > 10 && velOnly.pPos < 12, 'P00=' + velOnly.pPos);
     await p1.uncheck('#kfSensorVel');
     await sleep(180);
     await click(p1, 'kfStep');
+    await click(p1, 'kfStep');
     const noSensor = await getState(p1);
-    check('K4.6 两个传感器都关闭：仅预测，无增益，协方差继续增长',
+    check('K4.6 两个传感器都关闭：仅预测，无增益，协方差按 Q 增长',
       noSensor.gainPos === null && noSensor.gainVel === null &&
-      noSensor.pPos > velOnly.pPos && s1.errors.length === 0,
+      noSensor.pPos > 10 && s1.errors.length === 0,
       'P00=' + noSensor.pPos);
+
+    // 非法门限：播放中也不能继续展示旧参数的结果
+    await click(p1, 'kfPlay');
+    await sleep(320);
+    await setValue(p1, '#kfGate', -1);
+    const badGate = await getState(p1);
+    const gateUi = await p1.evaluate(() => ({
+      err: document.getElementById('kfError').textContent,
+      inv: document.getElementById('kfGate').getAttribute('aria-invalid'),
+      prog: document.getElementById('kfProgress').textContent,
+      step: document.getElementById('kfStepBody').textContent
+    }));
+    check('K4.7 播放中输入非法门限：停止播放并清空结果（不继续展示旧参数结果）',
+      badGate.playing === false && badGate.total === 0 && badGate.metrics === null &&
+      badGate.cursor === 0 && /必须 ≥ 0/.test(gateUi.err) && /失效/.test(gateUi.err) &&
+      gateUi.inv === 'true' && /参数非法/.test(gateUi.prog) && /失效|非法/.test(gateUi.step),
+      JSON.stringify({ playing: badGate.playing, total: badGate.total }));
+    await setValue(p1, '#kfGate', 2);
+    const goodGate = await getState(p1);
+    check('K4.8 恢复合法门限后正常计算（回到起点重新推进），aria-invalid 清除',
+      goodGate.total > 0 && goodGate.cursor === 0 && goodGate.error === '' &&
+      (await p1.evaluate(() => document.getElementById('kfGate').getAttribute('aria-invalid'))) === null);
 
     // ---------------------------------------------------------------- K5 标量模式
     await p1.check('#kfSensorPos');
     await p1.check('#kfSensorVel');
+    await setValue(p1, '#kfGate', 0);
     await p1.selectOption('#kfScene', 'constant');
     await sleep(180);
     await setValue(p1, '#kfX0', 10);
@@ -257,10 +282,10 @@ async function click(page, id) {
     await sleep(200);
     await click(p1, 'kfStep');
     const scalar = await getState(p1);
-    check('K5.1 标量首步：pos=9.2704194、K=0.6774194、P=0.3387097（独立手算）',
-      scalar.mode === 'scalar' && near(scalar.pos, 9.27041935483871, 1e-9) &&
-      near(scalar.gainPos, 0.6774193548387097, 1e-12) &&
-      near(scalar.pPos, 0.33870967741935476, 1e-12),
+    check('K5.1 标量首步：pos=9.282、K=0.6666667、P=0.3333333（首步不注入 Q）',
+      scalar.mode === 'scalar' && near(scalar.pos, 9.282, 1e-9) &&
+      near(scalar.gainPos, 0.6666666666666666, 1e-12) &&
+      near(scalar.pPos, 0.33333333333333337, 1e-12),
       JSON.stringify({ pos: scalar.pos, gain: scalar.gainPos }));
     check('K5.2 标量模式隐藏速度图与传感器开关，指标中速度不可用',
       (await p1.evaluate(() => document.getElementById('kfVelCard').hidden)) &&
@@ -318,6 +343,47 @@ async function click(page, id) {
       desktop.side && desktop.mainW > 550 && desktop.panelW > 320 && desktop.overflow,
       JSON.stringify(desktop));
     await s4.ctx.close();
+
+    // ---------------------------------------------------------------- K6b 三口径 RMSE 与采样时间
+    const s8 = await newSession(browser, base);
+    const p8 = s8.page;
+    const dt0 = await getState(p8);
+    const dtNote0 = await p8.evaluate(() => document.getElementById('kfDtNote').textContent);
+    check('K6.5 默认场景真实 dt 与滤波器假设 dt 一致（0.50），时间戳 t_i=i·dt',
+      near(dt0.dtActual, 0.5, 1e-12) && dt0.dtMismatch === false &&
+      /一致/.test(dtNote0) && !/不一致/.test(dtNote0), dtNote0.slice(0, 60));
+
+    await p8.selectOption('#kfScene', 'missing');
+    await sleep(200);
+    await p8.evaluate(() => {
+      const b = document.getElementById('kfStep');
+      for (let i = 0; i < 45; i++) b.click();
+    });
+    await sleep(250);
+    const tri = await getState(p8);
+    const triText = await p8.evaluate(() => ({
+      table: document.getElementById('kfMetricsBody').textContent,
+      note: document.getElementById('kfMetricsNote').textContent
+    }));
+    check('K6.6 缺失场景 45 步：三种口径分开且缺失不当作 0',
+      tri.cursor === 45 && tri.metrics &&
+      Number.isFinite(tri.metrics.posEstRmse) &&
+      Number.isFinite(tri.metrics.posValidRmse) &&
+      Number.isFinite(tri.metrics.posRawRmse) &&
+      Math.abs(tri.metrics.posEstRmse - tri.metrics.posValidRmse) > 1e-6 &&
+      tri.metrics.validPos + tri.metrics.missingPos === 45 &&
+      tri.metrics.missingPos === 16 &&
+      /同索引估计 RMSE/.test(triText.table) && /三种口径/.test(triText.note),
+      JSON.stringify({ est: tri.metrics.posEstRmse, valid: tri.metrics.posValidRmse, raw: tri.metrics.posRawRmse }));
+
+    await setValue(p8, '#kfDt', 0.4);
+    const dtBad = await getState(p8);
+    const dtNoteBad = await p8.evaluate(() => document.getElementById('kfDtNote').textContent);
+    check('K6.7 假设 dt=0.4 与真实 0.5 不一致：标记模型失配并说明估计不可按真实时间解读',
+      dtBad.dtMismatch === true && dtBad.dtActual === 0.5 && dtBad.dtAssumed === 0.4 &&
+      /模型失配/.test(dtNoteBad) && /0\.5/.test(dtNoteBad) && /0\.4/.test(dtNoteBad),
+      dtNoteBad.slice(0, 70));
+    await s8.ctx.close();
 
     // ---------------------------------------------------------------- K7 深色 / 键盘 / 无障碍
     const s5 = await newSession(browser, base);
@@ -391,7 +457,7 @@ async function click(page, id) {
       await click(p6, 'kfStep');
       const st = await getState(p6);
       offlineInfo = { cursor: st.cursor, pos: st.pos };
-      offlineOk = st.cursor === 1 && near(st.pos, 1.5808245596526065, 1e-9);
+      offlineOk = st.cursor === 1 && near(st.pos, 1.555238095238095, 1e-9);
     } catch (e) { offlineInfo = String(e.message).split('\n')[0]; }
     check('K8.2 离线重载：页面可用且首步数值与在线一致', offlineOk, JSON.stringify(offlineInfo));
     await s6.ctx.setOffline(false);
@@ -437,7 +503,7 @@ async function click(page, id) {
     const fastSt = await getState(p7);
     check('K9.1 快速切换 6 次路由：单实例、无串页、数值正确、无异常',
       fast.roots === 1 && fast.spc === 0 && fast.oee === 0 &&
-      fastSt.cursor === 1 && near(fastSt.pos, 1.5808245596526065, 1e-9) &&
+      fastSt.cursor === 1 && near(fastSt.pos, 1.555238095238095, 1e-9) &&
       s7.errors.length === 0, JSON.stringify(fast));
     await s7.ctx.close();
 
@@ -464,14 +530,14 @@ async function click(page, id) {
           overflow: document.documentElement.scrollWidth <= window.innerWidth + 1,
           path: !!document.querySelector('#kfChartPos .kf-est')
         }));
-        check('K10.1 ' + eng.name + ' 390px：首步 pos=1.5808246、增益 0.9565219、图表绘制、无溢出',
-          st.cursor === 1 && near(st.pos, 1.5808245596526065, 1e-9) &&
-          near(st.gainPos, 0.9565218868142432, 1e-9) && r.path && r.overflow,
+        check('K10.1 ' + eng.name + ' 390px：首步 pos=1.5552381、增益 0.9523810、图表绘制、无溢出',
+          st.cursor === 1 && near(st.pos, 1.555238095238095, 1e-9) &&
+          near(st.gainPos, 0.9523809523809523, 1e-9) && r.path && r.overflow,
           JSON.stringify({ pos: st.pos, overflow: r.overflow }));
         check('K10.2 ' + eng.name + ' 无运行时异常', errs.length === 0, errs.slice(0, 2).join(' | ') || 'none');
         await ctx.close();
       } catch (e) {
-        check('K10.1 ' + eng.name + ' 390px：首步 pos=1.5808246、增益 0.9565219、图表绘制、无溢出', false,
+        check('K10.1 ' + eng.name + ' 390px：首步 pos=1.5552381、增益 0.9523810、图表绘制、无溢出', false,
           String(e.message).split('\n')[0]);
       } finally {
         await eb.close();

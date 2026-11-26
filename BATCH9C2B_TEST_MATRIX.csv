@@ -29,3 +29,7 @@ G-03,无障碍与首页,performance-accessibility+home-experience,对照度/触�
 G-04,SW,browser+sw-consistency+sw-upgrade,安装/离线/更新/旧版升级,37/37、37/37、25/25 全 PASS（157.5s）,runner,chromium,3 suites,PASS,tests/reports/b9c2b-sw.md
 G-05,SW 快照契约,sw-snapshot-unit,版本递增/首屏 7 项/并发自愈,15/15 PASS；CACHE_VERSION 2026-11-25-2；首屏仍 7 项,node,node,15,PASS,node tests/browser/sw-snapshot-unit.spec.js
 G-06,既有测试口径,pid-control+oee-analysis+spc-analysis,互链 6 项/五卡,三套断言同步更新并全部 PASS,browser,chromium,3 suites,PASS,tests/reports/b9c2b-lab.md
+M-15,RMSE 三口径,kalman-math,缺失数据下的公平对比,全部步 √(13.25/3)=2.1016；同索引估计 √(9.25/2)=2.1503；同索引原始 √5=2.2361；三者索引集明确且缺失不当作 0,node,node,2,PASS,K11.8-K11.9
+M-16,采样时间,kalman-math,时间戳/首步/dt 失配,t_i=i·dt；第 0 步预测=先验且不推进 dt；4 步无测量 p=p0+3dt·v0；dt 0.4 vs 0.5 → dtMismatch+模型失配警告,node,node,6,PASS,K14.1-K14.6
+B-11,非法门限,kalman-filter,播放中输入 -1,立即停止播放；total=0、metrics=null、aria-invalid、提示结果失效；修正后正常计算并清除标记,browser,chromium,2,PASS,K4.7-K4.8
+B-12,三口径与 dt,kalman-filter,缺失场景 45 步/假设 dt=0.4,三种 RMSE 同时存在且互不相同；缺失 16/45；默认 dt 标注一致；改为 0.4 后标注模型失配,browser,chromium,3,PASS,K6.5-K6.7
