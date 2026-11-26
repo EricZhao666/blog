@@ -1,0 +1,43 @@
+id,area,suite,target,coverage,type,engines,items,result,evidence
+M-01,坐标与地图模型,path-planning-math,索引 r*cols+c / 行列方向 / 尺寸上限,3×4 地图 idx(1,2)=6；rowOf/colOf 不互换；越界 -1；0 行/81 行/非整数拒绝；80×80 可用,node,node,5,PASS,P1.1-P1.5
+M-02,字符地图解析,path-planning-math,'.'/'#'/'2'-'9' 与非法输入,障碍/权重/普通地面解析正确；行宽不一致与非法字符拒绝；minWeight 取可通行格最小值,node,node,5,PASS,P1.6-P1.10
+M-03,代价定义,path-planning-math,cost=base×weight(目标格),进入权重 5 记 5、合计 6；反向行走 5+1=6（代价不对称）；几何长度不含权重；独立重算一致,node,node,4,PASS,P2.1-P2.4
+M-04,权重合法性,path-planning-math,<1 / NaN / Infinity / 置障复位,权重 0.5 拒绝；NaN 与 Infinity 拒绝；权重 1 允许；置障后权重回到 1；图上无非正权边,node,node,5,PASS,P2.5-P2.9
+M-05,Dijkstra 手算,path-planning-math,3×3 四邻域 (0,0)→(2,2),代价 4、5 节点、扩展 9、发现 9、trace=9、末步为终点；1×5 直线代价 4,node,node,6,PASS,P3.1-P3.6
+M-06,不可达与非法输入,path-planning-math,阻断/被占/越界/非法邻域,1×5 中间阻断 → unreachable + 代价 null + 扩展 1/发现 1；起终点被占与越界分别拒绝；邻域 6 拒绝,node,node,8,PASS,P3.7-P3.14
+M-07,八邻域与穿角,path-planning-math,对角 √2 与正交伴随格规则,2×2 对角 √2；相邻正交格被挡时对角边不存在 → 代价 2（两侧各测一次）；3×3 对角 2√2；整列阻挡仍不可达,node,node,6,PASS,P4.1-P4.6
+M-08,启发函数几何值,path-planning-math,Manhattan/Euclidean/Octile/Zero,Manhattan(3,4)=7；Euclidean=5；Octile=1+3√2；Zero=0,node,node,4,PASS,P5.1-P5.4
+M-09,启发函数适用条件,path-planning-math,四/八邻域匹配,四邻域四种全允许；八邻域禁止 Manhattan；八邻域用 Manhattan 直接拒绝（非次优解）；未知名称拒绝,node,node,4,PASS,P5.5-P5.8
+M-10,可采纳性与一致性,path-planning-math,逐格与逐边验证（独立参考）,反向 Bellman-Ford 给出真实剩余代价，所有允许组合 h(n) ≤ 真实值；每条边 h(u) ≤ cost(u,v)+h(v)；minWeight=3 时 h 放大 3 倍,node,node,3,PASS,P5.9-P5.11
+M-11,独立 BFS 验证,path-planning-math,无权四邻域最少步数,8 组固定种子地图上 Dijkstra 代价 = 独立 BFS 步数（含不可达一致）,node,node,1,PASS,P6.1
+M-12,独立 Bellman-Ford 验证,path-planning-math,加权地图全边松弛,8 种子 × 四/八邻域：Dijkstra 与 A* 都等于 Bellman-Ford；参考实现自检,node,node,2,PASS,P6.2/P6.5
+M-13,高代价绕行,path-planning-math,几何最短 ≠ 代价最低,权重 9 的 3×7 带：最优 18（18 步）、路径 19 节点；直穿 10 步需 34（3×1+3×9+4×1）,node,node,2,PASS,P6.3-P6.4
+M-14,A* 契约,path-planning-math,f=g+h 与零启发等价,3×3 Manhattan 同为 4 且扩展 5<9；12×12 八邻域 11√2、A* 扩展 12 vs Dijkstra 144；零启发与 Dijkstra 代价/扩展/发现/路径逐一相同；Euclidean 与 Octile 低估仍最优,node,node,7,PASS,P7.1-P7.7
+M-15,最优代价一致,path-planning-math,同地图同约束,5 场景 + 8 随机地图 × 2 运动模型：A* 与 Dijkstra 代价一致；不可达一致；非法输入不伪造结果,node,node,4,PASS,P8.1-P8.4
+M-16,过期条目与同分,path-planning-math,惰性删除与确定性排序,对角先以 12.7279 入队后被 10 改进；父节点指向更优来源；松弛 9 > 发现 4；重复运行逐位一致；同分路径 0,1,2,5,8,node,node,8,PASS,P9.1-P9.8
+M-17,记录与统计口径,path-planning-math,trace 自洽/扩展与发现,逐步重放 open/closed 数量与记录一致（四/八邻域）；发现 ≥ 扩展；峰值 open ≤ 发现；pathNodes 与 geometricLength 分离；trace 上限 8000 未触发,node,node,7,PASS,P10.1-P10.7
+M-18,路径合法性,path-planning-math,相邻/障碍/对角/穿角/重复,合法路径通过；跳过节点 not-adjacent；穿障碍 blocked；四邻域对角 diagonal-not-allowed；穿角 corner-cut；重复 duplicate；起终点不符 bad-goal,node,node,7,PASS,P11.1-P11.7
+M-19,代价重算与回溯,path-planning-math,独立重算 / 父指针,6 组随机地图 pathCost = 搜索累计代价；路径无重复且首尾正确；人为成环父指针返回 null,node,node,3,PASS,P11.8-P11.10
+M-20,浮点比较,path-planning-math,相对容差,√2 与 11 位近似相等；1 vs 1.001 不等；null 语义；√2 累加不漂移到 1e-9 以上,node,node,4,PASS,P12.1-P12.4
+M-21,教学场景,path-planning-math,5 场景 + 固定种子随机,场景 id 唯一且都有预期说明；覆盖五类；载入为独立副本；墙体 19、不可达、穿角 2；随机图可复现且起终点可通行,node,node,11,PASS,P13.1-P13.11
+M-22,规模与性能,path-planning-math,80×80,6400 格可创建；最坏一次求解 <5s 且代价 79√2；未触发裁剪上限,node,node,3,PASS,P14.1-P14.3
+B-01,入口与互链,path-planning,导航 / 七项互链 / 默认规划,导航 href 仍指向 #/lab/robot-2r；互链七项且当前页标注；29 个控件齐备；默认 14×11 自动规划；代价 19、20 节点、障碍 8,browser,chromium,5,PASS,P1.1-P1.5
+B-02,算法对比与文案,path-planning,两列指标 / 扩展与发现,A/B 同代价 19、sameCost；发现 ≥ 扩展且 A* 扩展更少；表格 10 行指标齐全；页脚声明单次耗时不能推广；路径可被纯函数独立校验,browser,chromium,5,PASS,P2.1-P2.5
+B-03,教学场景,path-planning,开放/高代价/穿角/不可达,12×12 八邻域 11√2 且 A* 扩展 12 vs 144；高代价 18（21 格高代价）；穿角 2；不可达无路径且两算法一致并有文字说明,browser,chromium,6,PASS,P3.1-P3.6
+B-04,地图编辑与失效,path-planning,障碍/地形/清除/起终点,加障碍后 ab=null、视图清空、标记失效；重规划 19→21；权重 9 落在通道 → 27 直穿改绕行 21；置障权重复位；清除恢复；改起点后代价 17；拒绝把终点改成障碍,browser,chromium,10,PASS,P4.1-P4.10
+B-05,回放控制,path-planning,重置/单步/播放/暂停/速度,重置后 cursor=0、overlay=0、路径隐藏；单步 +1 且只展开当前步；速度 10 → 62ms；播放推进且 playing=true；暂停后 400ms 不前进；播完自动复位并显示路径,browser,chromium,6,PASS,P5.1-P5.6
+B-06,算法切换,path-planning,切 Dijkstra / 切回 A*,切换后重规划且代价不变；Dijkstra 回放记录 144 > A* 12；切回 A* 后 trace 与扩展数一致,browser,chromium,3,PASS,P6.1-P6.3
+B-07,非法参数,path-planning,权重 0 / 种子 -3 / 八邻域 Manhattan,权重 0 被拒绝且 aria-invalid、地图与结果不变；恢复 5 后可落笔；种子 -3 拒绝；固定种子可复现；八邻域选项不含 Manhattan、四邻域恢复四项,browser,chromium,6,PASS,P7.1-P7.6
+B-08,无障碍与信息通道,path-planning,语义 / 图例 / 键盘,SVG role=application+tabindex+aria-label+describedby；live region；caption；3 组 radiogroup；label 齐全；图例文字覆盖八类；S/G 字母 + 斜纹 + 权重数字；Home/End/方向键/Enter 全可用；live 文本更新,browser,chromium,5,PASS,P8.1-P8.5
+B-09,响应式与主题,path-planning,768 / 390 / 深色,768 无溢出且路径绘制；390 单列、栅格 332px、按钮 ≥40px、154 格；深色下路径与标记颜色随令牌切换；触摸点击可编辑；无异常,browser,chromium,5,PASS,P9.1-P9.5
+B-10,旧实验与实验中心,path-planning,六卡 / 七链 / 首页,六个实验室路由都能渲染；实验中心六张卡片；旧实验互链 7 项；首页文章卡片与搜索框正常；无异常,browser,chromium,4,PASS,P10.1-P10.4
+B-11,快速路由,path-planning,6 次交替切换,单实例、SPC/卡尔曼无残留、154 格、代价 19；新实例 playing=false 且 cursor 在末尾,browser,chromium,2,PASS,P11.1-P11.2
+B-12,脚本降级,path-planning,两个脚本分别 404,均显示"加载失败 + 重试"、无 pageerror；回首页仍可用,browser,chromium,4,PASS,P12.1-P12.2
+B-13,离线（SW 预热）,path-planning,缓存 + 断网重载,两脚本进入 SW 缓存；断网 reload 后可重置与单步且代价 19,browser,chromium,2,PASS,P13.1-P13.2
+B-14,三引擎,path-planning,Firefox / WebKit 390px,代价 19、20 节点、154 格、路径绘制、无溢出；单步回放可用；无运行时异常,browser,firefox+webkit,6,PASS,P14.1-P14.3
+G-01,实验室组,lab,12 套串行,2R/PID/OEE/SPC/卡尔曼/路径规划（数学+浏览器）全 PASS；184.0s；path-planning 28.6s、path-planning-math 0.2s,runner,chromium+node,12 suites,PASS,tests/reports/batch9c2c-lab.md
+G-02,导航与 UI,audit+ui-refresh,全站巡检/五档视口/键盘,audit PASS；ui-refresh 59/59 PASS,runner,jsdom+chromium,2 suites,PASS,tests/reports/batch9c2c-ui.md
+G-03,无障碍与首页,performance-accessibility+home-experience,对照度/触控/视口/首页模块,performance-accessibility 59/59；home-experience PASS,runner,chromium,2 suites,PASS,tests/reports/batch9c2c-ui.md
+G-04,内容校验,content-check,构建产物一致性,content-check PASS,runner,python,1 suite,PASS,tests/reports/batch9c2c-ui.md
+G-05,SW,browser+sw-consistency+sw-upgrade,安装/离线/更新/旧版升级,37/37、37/37、25/25 全 PASS；CACHE_VERSION 2026-11-25-3；首屏仍 7 项,runner,chromium,3 suites,PASS,tests/reports/batch9c2c-sw.md
+G-06,既有测试口径同步,pid-control+oee-analysis+spc-analysis+kalman-filter,互链 7 项/六卡,四套断言同步更新并全部 PASS,runner,chromium,4 suites,PASS,tests/reports/batch9c2c-lab.md

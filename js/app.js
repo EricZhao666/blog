@@ -269,12 +269,13 @@ const STATIC_META = {
   '/about': ['关于', '关于 Eric 与这个博客'],
   '/links': ['友情链接', '志同道合的技术博客与工具'],
   '/editor': ['编辑器', '在线撰写并发布文章'],
-  '/lab': ['实验室', '交互实验列表：二连杆机器人运动学、PID 控制、OEE 生产效率分析、SPC 统计过程控制与卡尔曼滤波传感器融合'],
+  '/lab': ['实验室', '交互实验列表：二连杆机器人运动学、PID 控制、OEE 生产效率分析、SPC 统计过程控制、卡尔曼滤波传感器融合与栅格路径规划'],
   '/lab/robot-2r': ['二连杆机器人运动学演示', '平面 2R 机械臂交互演示：正运动学、解析逆运动学、肘上/肘下分支与工作空间边界'],
   '/lab/pid-control': ['PID 控制系统交互实验室', '一阶被控对象离散 PID 阶跃响应：P/PI/PID 对比、控制饱和与积分抗饱和、时域指标'],
   '/lab/oee-analysis': ['OEE 工业生产效率与损失分析实验室', 'OEE = A×P×Q 统一口径：多穴模具、时间损失守恒分解、A/B 改善情景与假设投影'],
   '/lab/spc-analysis': ['SPC 统计过程控制与过程能力实验室', 'I-MR 控制图与 Cp/Cpk/Pp/Ppk：单列测量数据解析、四项异常规则、冻结基线、理论参数与实测数据分离'],
-  '/lab/kalman-filter': ['卡尔曼滤波与传感器融合实验室', '标量随机游走与位置—速度二维状态滤波：预测/创新/增益/更新、Joseph 协方差更新、传感器融合与测量缺失']
+  '/lab/kalman-filter': ['卡尔曼滤波与传感器融合实验室', '标量随机游走与位置—速度二维状态滤波：预测/创新/增益/更新、Joseph 协方差更新、传感器融合与测量缺失'],
+  '/lab/path-planning': ['A* 与 Dijkstra 路径规划实验室', '二维栅格地图上的全局静态路径规划：四/八邻域、地形权重与对角穿角规则、Dijkstra 与 A* 的搜索过程回放与指标对比']
 };
 
 const SITE_ORIGIN = 'https://ericzhao666.github.io/blog/';
@@ -658,6 +659,27 @@ function loadKalmanLab() {
   return _kalmanLabPromise;
 }
 
+// Batch 9C-2C：路径规划实验室脚本按需加载（纯计算模块 → UI 模块，顺序注入）。
+// 与既有实验相同的契约：缓存 Promise；失败清除以便重试，不阻塞首屏。
+let _pathPlanningLabPromise = null;
+function loadPathPlanningLab() {
+  if (window.PathPlanning && window.PathPlanningDemo) return Promise.resolve(true);
+  if (_pathPlanningLabPromise) return _pathPlanningLabPromise;
+  _pathPlanningLabPromise = loadScriptOnce('js/path-planning.js')
+    .then(function () { return loadScriptOnce('js/path-planning-demo.js'); })
+    .then(function () {
+      const ok = !!(window.PathPlanning && window.PathPlanningDemo);
+      if (!ok) _pathPlanningLabPromise = null;
+      return ok;
+    })
+    .catch(function (err) {
+      console.warn('路径规划演示脚本加载失败:', err && err.message);
+      _pathPlanningLabPromise = null;
+      return false;
+    });
+  return _pathPlanningLabPromise;
+}
+
 // Batch 9B-2：内容引用契约 / 反向索引 / 知识图谱 —— 全部按需加载，绝不成为首页首屏前置条件。
 // 与 loadRobotLab/loadPidLab/loadOeeLab 相同契约：缓存 Promise；失败清除以便重试。
 let _contentLinksPromise = null;
@@ -815,7 +837,8 @@ function renderLabLinks(active) {
     ['/lab/pid-control', 'PID 控制'],
     ['/lab/oee-analysis', 'OEE 分析'],
     ['/lab/spc-analysis', 'SPC 分析'],
-    ['/lab/kalman-filter', '卡尔曼滤波']
+    ['/lab/kalman-filter', '卡尔曼滤波'],
+    ['/lab/path-planning', '路径规划']
   ];
   return '<nav class="lab-links" aria-label="实验导航">' + items.map(function (it) {
     const cur = it[0] === active ? ' aria-current="page"' : '';
@@ -839,6 +862,8 @@ function renderLabHub() {
     '<span>质量控制教学：粘贴单列测量值，计算 I-MR 控制图、四项异常规则、Cp/Cpk/Pp/Ppk 与实测超规比例。</span></a>' +
     '<a class="lab-hub-card" href="#/lab/kalman-filter"><strong>卡尔曼滤波与传感器融合</strong>' +
     '<span>状态估计教学：标量随机游走与位置—速度恒速模型，逐帧预测/更新、增益与协方差、位置/速度融合与测量缺失。</span></a>' +
+    '<a class="lab-hub-card" href="#/lab/path-planning"><strong>A* 与 Dijkstra 路径规划</strong>' +
+    '<span>二维栅格上的全局静态规划：可编辑障碍与高代价地形、四/八邻域与穿角规则、逐步回放搜索过程、同地图算法对比。</span></a>' +
     '</div>';
 }
 
@@ -7977,6 +8002,8 @@ async function router() {
   const token = ++_routeToken;
   // Batch 9B-2：离开图谱页立即清理 rAF / 定时器 / 监听器 / 拖动状态（幂等）
   if (window.GraphDemo && typeof window.GraphDemo.unmount === 'function') window.GraphDemo.unmount();
+  // Batch 9C-2C：离开路径规划页同样清理回放定时器、事件监听与拖动状态（幂等）
+  if (window.PathPlanningDemo && typeof window.PathPlanningDemo.unmount === 'function') window.PathPlanningDemo.unmount();
   const hash = location.hash.slice(1) || '/';
   const app = document.getElementById('app');
   const searchBar = document.getElementById('searchBar');
@@ -8295,6 +8322,17 @@ async function router() {
       }
       app.innerHTML = renderLabLinks('/lab/kalman-filter') + window.KalmanDemo.renderPage();
       window.KalmanDemo.mount(document.getElementById('kfDemoRoot'));
+    } else if (hash === '/lab/path-planning') {
+      // Batch 9C-2C：路径规划实验室。按需加载 + 降级 + token 防串页，与既有实验同一契约。
+      app.innerHTML = renderLoading('A* 与 Dijkstra 路径规划实验室');
+      const ppReady = await loadPathPlanningLab();
+      if (token !== _routeToken) return;
+      if (!ppReady) {
+        app.innerHTML = renderLoadError('A* 与 Dijkstra 路径规划实验室');
+        return;
+      }
+      app.innerHTML = renderLabLinks('/lab/path-planning') + window.PathPlanningDemo.renderPage();
+      window.PathPlanningDemo.mount(document.getElementById('ppDemoRoot'));
     } else if (hash === '/editor') {
       app.innerHTML = renderEditor(null);
       setupEditorListeners();

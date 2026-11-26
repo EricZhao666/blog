@@ -6837,6 +6837,226 @@ mark.search-hit {
   border-top: 2px dashed var(--color-accent);
 }
 
+/* ============================================
+   Batch 9C-2C：A* 与 Dijkstra 路径规划实验室
+   复用 SPC 的卡片/面板/按钮/统计表样式，这里只加栅格与图例。
+   颜色不是唯一信息通道：障碍物有斜纹、高代价地形有点阵+数字、
+   Open/Closed 用空心/实心区分、起终点带 S/G 字母。
+   ============================================ */
+.pp-grid-wrap {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+.pp-grid {
+  display: block;
+  width: 100%;
+  min-width: 300px;
+  height: auto;
+  background: var(--color-bg);
+  border-radius: var(--radius-sm);
+  touch-action: none;
+  user-select: none;
+  -webkit-user-select: none;
+  cursor: crosshair;
+}
+
+.pp-grid:focus-visible {
+  outline: 2px solid var(--color-focus);
+  outline-offset: 2px;
+}
+
+.pp-cell {
+  fill: var(--color-surface);
+  stroke: var(--color-border);
+  stroke-width: 0.6;
+}
+
+.pp-cell--blocked {
+  fill: url(#ppHatch);
+  stroke: var(--color-border-strong);
+}
+
+.pp-cell--cost {
+  fill: url(#ppDot);
+}
+
+.pp-hatch-line {
+  stroke: var(--color-border-strong);
+  stroke-width: 1.4;
+}
+
+.pp-dot-dot {
+  fill: var(--color-text-muted);
+  opacity: 0.5;
+}
+
+.pp-cost-label {
+  fill: var(--color-text-secondary);
+  font-family: var(--font-mono);
+  font-weight: 600;
+  pointer-events: none;
+}
+
+.pp-state--open {
+  fill: none;
+  stroke: var(--color-primary);
+  stroke-width: 1.4;
+}
+
+.pp-state--closed {
+  fill: var(--color-primary);
+  opacity: 0.42;
+  stroke: none;
+}
+
+.pp-current {
+  fill: none;
+  stroke: var(--color-warning);
+  stroke-width: 2.4;
+  stroke-dasharray: 4 2;
+  pointer-events: none;
+}
+
+.pp-cursor {
+  fill: none;
+  stroke: var(--color-text);
+  stroke-width: 1.8;
+  stroke-dasharray: 2 2;
+  pointer-events: none;
+}
+
+.pp-path-halo {
+  fill: none;
+  stroke: var(--color-surface);
+  stroke-width: 6;
+  stroke-linejoin: round;
+  stroke-linecap: round;
+  opacity: 0.9;
+  pointer-events: none;
+}
+
+.pp-path {
+  fill: none;
+  stroke: var(--color-accent);
+  stroke-width: 3;
+  stroke-linejoin: round;
+  stroke-linecap: round;
+  pointer-events: none;
+}
+
+.pp-start {
+  fill: var(--color-success);
+  pointer-events: none;
+}
+
+.pp-goal {
+  fill: var(--color-danger);
+  pointer-events: none;
+}
+
+.pp-marker-text {
+  fill: var(--color-surface);
+  font-family: var(--font-sans);
+  font-weight: 700;
+  pointer-events: none;
+}
+
+.pp-legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px 14px;
+  margin: 10px 0 4px;
+  font-size: 0.74rem;
+  color: var(--color-text-secondary);
+}
+
+.pp-legend-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.pp-swatch {
+  display: inline-block;
+  width: 16px;
+  height: 10px;
+  flex: none;
+  border-radius: 2px;
+  border: 1px solid var(--color-border-strong);
+}
+
+.pp-swatch--block {
+  background-image: repeating-linear-gradient(45deg,
+    var(--color-border-strong) 0 1px, transparent 1px 4px);
+}
+
+.pp-swatch--cost {
+  background-image: radial-gradient(var(--color-text-muted) 0.9px, transparent 1.1px);
+  background-size: 5px 5px;
+}
+
+.pp-swatch--open {
+  width: 11px;
+  height: 11px;
+  border: 2px solid var(--color-primary);
+  background: transparent;
+}
+
+.pp-swatch--closed {
+  width: 11px;
+  height: 11px;
+  border: 2px solid transparent;
+  background: var(--color-primary);
+  opacity: 0.55;
+}
+
+.pp-swatch--current {
+  width: 11px;
+  height: 11px;
+  border: 2px dashed var(--color-warning);
+  background: transparent;
+}
+
+.pp-swatch--path {
+  height: 0;
+  border: 0;
+  border-top: 3px solid var(--color-accent);
+  border-radius: 0;
+}
+
+.pp-swatch--start,
+.pp-swatch--goal {
+  width: 11px;
+  height: 11px;
+  border: 0;
+  border-radius: 50%;
+}
+
+.pp-swatch--start {
+  background: var(--color-success);
+}
+
+.pp-swatch--goal {
+  background: var(--color-danger);
+}
+
+.pp-path-text {
+  margin: 0;
+  font-family: var(--font-mono);
+  font-size: 0.78rem;
+  line-height: 1.7;
+  color: var(--color-text-secondary);
+  overflow-wrap: anywhere;
+}
+
+@media (max-width: 480px) {
+  .pp-legend {
+    font-size: 0.7rem;
+    gap: 5px 10px;
+  }
+}
+
 /* ============================================================
    Batch 9B-2：WikiLink / 反向链接 / 知识图谱
    全部使用现有颜色变量，深色主题自动跟随 [data-theme="dark"]。
