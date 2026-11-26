@@ -209,7 +209,12 @@
 
 ## 15. 状态
 
-**B9C2C_PR_READY**：实现、测试与文档完成，分支已推送，PR 已创建（未合并、未部署）。
+**B9C2C_PR_READY**：实现、测试与文档完成，分支已推送。
 
-- PR：见本轮回复中给出的真实链接（由 `git push` 输出生成）。
-- 未进入 9C-2D。
+- 提交：`85c0298 feat: Batch 9C-2C add A-star and Dijkstra path planning lab`
+- 分支：`feat/batch9c2c-path-planning-lab`（已推送并设置 tracking）
+- PR 创建链接（GitHub 在 push 输出中给出）：
+  <https://github.com/EricZhao666/blog/pull/new/feat/batch9c2c-path-planning-lab>
+- 未自动创建 PR 的原因：本机无 `gh` CLI，环境无 `GH_TOKEN` / `GITHUB_TOKEN`，
+  `origin` 为 SSH 且 HTTPS 侧无凭据；未绕开凭据体系，因此按契约提供**真实可用的创建链接**。
+- 未合并、未部署；未进入 9C-2D。
