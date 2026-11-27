@@ -1,0 +1,16 @@
+id,area,suite,target,coverage,type,engines,items,result,evidence
+M-01,梯形规划,motion-profile-math,三段梯形/二段三角形/临界/零位移,ta/tv/td 解析时长、峰值速度、未修正残差 <1e-11、零位移 T=0,node,node,8,PASS,M1.1-M1.8
+M-02,七段 S 曲线,motion-profile-math,7/6/5/4 段与正反向退化,6 组工况识别、tc/tv 退化标志、vPeak/aPeak 校验,node,node,18,PASS,M2.*
+M-03,临界边界与零位移,motion-profile-math,L_full / L_a_thresh / zero-distance / 耗时比较,临界闭合、零位移静止、S曲线耗时>=梯形,node,node,4,PASS,M2.B1-M2.B4
+M-04,分段连续性与约束,motion-profile-math,边界 q/v/a 连续性、采样包络与单调性,相邻段边界误差 <=1e-10；全程 |v|<=vMax, |a|<=aMax, |j|<=jMax 且单调,node,node,12,PASS,M3.*/M4.*
+M-05,未修正终点残差,motion-profile-math,rawEndPos / rawEndVel / rawEndAcc,不做强制归零下全部工况残差 <=1e-9,node,node,6,PASS,M5.*
+M-06,独立数值积分,motion-profile-math,4000 步梯形积分交叉验证,速度积分与目标位移误差 <1e-5,node,node,6,PASS,M6.*
+M-07,非法输入与确定性,motion-profile-math,非正约束/NaN/Infinity/重复求解一致,拒绝非法参数；同输入 JSON 逐位一致,node,node,6,PASS,M7.1-M7.6
+M-08,数值尺度反例与随机性质,motion-profile-math,1e-15/1e-16 反例、极端拒绝、采样边界、静止保持、梯形口径、60 组随机,node,node,14,PASS,M8.1-M8.14
+B-01,路由与默认渲染,motion-profile,导航/8项互链/7张卡片/四联SVG/7行分段表,路由标题、#/lab 卡片、SVG 曲线与分段表渲染,browser,chromium,5,PASS,M1.1-M1.5
+B-02,预设工况与退化,motion-profile,6/5/4/反向工况与残差,切换预设正确识别退化形态且残差 <1e-9,browser,chromium,4,PASS,M2.*
+B-03,脏状态/非法禁用/采样/严格Jerk,motion-profile,dirty提示/非法清结果禁用/恢复/严格Jerk/采样周期,编辑未应用提示、非法禁用回放、调整dt不改T、梯形冲激/不适用口径,browser,chromium,6,PASS,M3.0-M3.5
+B-04,显示切换与回放,motion-profile,仅S曲线/单步/播放暂停/归零,切换曲线显示、游标推进不改总时长、归零复位,browser,chromium,4,PASS,M4.1-M4.4
+B-05,视口与深色主题,motion-profile,390/768/1440 无溢出 + 深色对比,三档视口无横向溢出、深色模式可读,browser,chromium,4,PASS,M5.390-M5.dark
+B-06,离线/降级/快速路由,motion-profile,SW离线/脚本阻断降级/快速切页,SW 缓存离线可算、脚本缺失提示降级、无串页与异常,browser,chromium,3,PASS,M6.1-M6.3
+B-07,三引擎兼容,motion-profile,Firefox / WebKit（CI未安装时按SKIP）,本地三引擎全通过；CI 缺可选引擎安全 SKIP,browser,chromium+firefox+webkit,4,PASS,M7.*
