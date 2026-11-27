@@ -612,6 +612,43 @@ async function run() {
       await ctx.close();
     }
 
+async function waitForCachedAssets(page, urls, timeoutMs) {
+  const limit = timeoutMs || 15000;
+  const deadline = Date.now() + limit;
+  while (true) {
+    const hits = await page.evaluate(async (targets) => {
+      const out = {};
+      if (typeof caches === 'undefined') {
+        for (const u of targets) out[u] = false;
+        return out;
+      }
+      for (const u of targets) out[u] = !!(await caches.match(u));
+      return out;
+    }, urls);
+    if (urls.every(u => hits[u])) {
+      return { ready: true, hits };
+    }
+    if (Date.now() >= deadline) {
+      const diag = await page.evaluate(async (targets) => {
+        const reg = navigator.serviceWorker ? await navigator.serviceWorker.getRegistration() : null;
+        const cacheNames = typeof caches !== 'undefined' ? await caches.keys() : [];
+        const finalHits = {};
+        for (const u of targets) {
+          finalHits[u] = typeof caches !== 'undefined' ? !!(await caches.match(u)) : false;
+        }
+        return {
+          swController: !!(navigator.serviceWorker && navigator.serviceWorker.controller),
+          swActiveState: reg && reg.active ? reg.active.state : null,
+          cacheNames: cacheNames,
+          hits: finalHits
+        };
+      }, urls);
+      return { ready: false, diag, error: 'waitForCachedAssets timeout after ' + limit + 'ms' };
+    }
+    await sleep(100);
+  }
+}
+
     // ---------------------------------------------------------------- P13 离线（SW 预热）
     const s6 = await newSession(browser, base, { sw: true });
     const p6 = s6.page;
@@ -619,11 +656,12 @@ async function run() {
     await p6.waitForFunction(() => !!navigator.serviceWorker.controller, null, { timeout: 30000 });
     await p6.evaluate(() => { location.hash = '#/lab/path-planning'; });
     await waitReady(p6);
-    const cached = await p6.evaluate(async () => ({
-      math: !!(await caches.match('/blog/js/path-planning.js')),
-      ui: !!(await caches.match('/blog/js/path-planning-demo.js'))
-    }));
-    check('P13.1 两个路径规划脚本进入 SW 缓存（OPTIONAL 预热）', cached.math && cached.ui, JSON.stringify(cached));
+    const cacheRes = await waitForCachedAssets(p6, ['/blog/js/path-planning.js', '/blog/js/path-planning-demo.js'], 15000);
+    const cached = cacheRes.ready
+      ? { math: cacheRes.hits['/blog/js/path-planning.js'], ui: cacheRes.hits['/blog/js/path-planning-demo.js'] }
+      : cacheRes.diag;
+    check('P13.1 两个路径规划脚本进入 SW 缓存（OPTIONAL 预热）',
+      cacheRes.ready && cached.math && cached.ui, JSON.stringify(cached));
     await sleep(400);
     await s6.ctx.setOffline(true);
     let offlineOk = false, offlineInfo = null;
