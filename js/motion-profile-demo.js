@@ -1,11 +1,13 @@
 /* 梯形与七段 S 曲线运动轨迹规划 —— 交互 UI（纯 SVG，无第三方图形库）
  *
  * 设计要点：
- *   1. 计算与回放解耦：参数变更或点击"计算规划"时一次性完成梯形与七段 S 曲线求解，
- *      播放/拖动时间游标仅对已求解轨迹做 evaluateProfile() 求值，绝不改变规划结果。
- *   2. 非法输入（如 vMax <= 0、aMax <= 0、jMax <= 0 或非数值）立即显示明确错误提示，
- *      同时保留上一次有效结果或安全降级，不崩溃、不静默夹取。
- *   3. 路由离开时调用 unmount() 幂等清理动画定时器与全局引用。
+ *   1. 计算与回放解耦：参数变更并点击"计算规划"时一次性完成梯形与七段 S 曲线求解；
+ *      采样周期 dt 与播放/拖动时间游标仅影响显示与回放，绝不改变解析轨迹。
+ *   2. 参数非法时清除当前结果并禁用回放控件，禁止播放失效轨迹；
+ *      参数已编辑但尚未应用时，明确提示当前显示对应旧参数。
+ *   3. 不连续曲线（梯形 a(t) 与 S 曲线 j(t)）使用严格阶跃折线绘制，
+ *      并在较短轨迹结束后保持静止状态（q=q1, v=0, a=0, j=0）。
+ *   4. 路由离开时调用 unmount() 幂等清理动画定时器与全局引用。
  */
 (function (global) {
   'use strict';
@@ -19,7 +21,7 @@
   }
 
   function fmt(v, digits) {
-    if (v === null || v === undefined || !isFinite(v)) return '∞ / 无界';
+    if (v === null || v === undefined || !isFinite(v)) return '—';
     var d = digits === undefined ? 4 : digits;
     return Number(v).toFixed(d);
   }
@@ -36,8 +38,9 @@
     var scenes = MP.scenarioList();
     return '<div id="mpDemoRoot">' +
       '<p class="spc-mode-line"><strong id="mpModeLabel">梯形与七段 S 曲线运动轨迹规划</strong>' +
-      '<span class="spc-mode-hint">（单轴点对点：同时对比三段梯形速度规划与七段加加速度有界 S 曲线，含全退化工况与未修正终点残差；全部计算在本机完成）</span></p>' +
+      '<span class="spc-mode-hint">（单轴点对点一致单位制：位置 u、时间 s、速度 u/s、加速度 u/s²、加加速度 u/s³；全部计算在本机完成）</span></p>' +
       '<p class="spc-error" id="mpError" aria-live="polite"></p>' +
+      '<p class="spc-hint" id="mpStaleNotice" aria-live="polite" hidden></p>' +
       '<div class="spc-layout">' +
       '<div class="spc-main">' +
 
@@ -50,10 +53,10 @@
       '<span class="mp-legend-item"><span class="mp-swatch mp-swatch-limit"></span>约束上下界</span>' +
       '</div></div>' +
       '<div class="mp-charts-grid">' +
-      '<div class="mp-chart-box"><div class="mp-chart-label">位置 q(t)</div><svg id="mpChartPos" class="mp-svg" viewBox="0 0 560 150" role="img" aria-label="位置随时间变化曲线"></svg></div>' +
-      '<div class="mp-chart-box"><div class="mp-chart-label">速度 v(t)</div><svg id="mpChartVel" class="mp-svg" viewBox="0 0 560 150" role="img" aria-label="速度随时间变化曲线"></svg></div>' +
-      '<div class="mp-chart-box"><div class="mp-chart-label">加速度 a(t)</div><svg id="mpChartAcc" class="mp-svg" viewBox="0 0 560 150" role="img" aria-label="加速度随时间变化曲线"></svg></div>' +
-      '<div class="mp-chart-box"><div class="mp-chart-label">加加速度 j(t)</div><svg id="mpChartJerk" class="mp-svg" viewBox="0 0 560 150" role="img" aria-label="加加速度随时间变化曲线"></svg></div>' +
+      '<div class="mp-chart-box"><div class="mp-chart-label">位置 q(t) [u]</div><svg id="mpChartPos" class="mp-svg" viewBox="0 0 560 150" role="img" aria-label="位置随时间变化曲线"></svg></div>' +
+      '<div class="mp-chart-box"><div class="mp-chart-label">速度 v(t) [u/s]</div><svg id="mpChartVel" class="mp-svg" viewBox="0 0 560 150" role="img" aria-label="速度随时间变化曲线"></svg></div>' +
+      '<div class="mp-chart-box"><div class="mp-chart-label">加速度 a(t) [u/s²]</div><svg id="mpChartAcc" class="mp-svg" viewBox="0 0 560 150" role="img" aria-label="加速度随时间变化曲线"></svg></div>' +
+      '<div class="mp-chart-box"><div class="mp-chart-label">加加速度 j(t) [u/s³]</div><svg id="mpChartJerk" class="mp-svg" viewBox="0 0 560 150" role="img" aria-label="加加速度随时间变化曲线"></svg></div>' +
       '</div>' +
       '<div class="mp-playback-bar">' +
       '<button type="button" class="spc-btn spc-btn-primary" id="mpPlay">播放</button>' +
@@ -77,10 +80,10 @@
       '</section>' +
 
       '<section class="spc-card">' +
-      '<h2 class="spc-card-title">S 曲线分段时长与边界状态</h2>' +
+      '<h2 class="spc-card-title">S 曲线分段时长与边界状态（边界采样：内部右极限，终点左极限）</h2>' +
       '<div class="mp-table-wrap"><table class="spc-table mp-table">' +
       '<caption class="spc-visually-hidden">七段 S 曲线各段起止时间与边界运动学状态</caption>' +
-      '<thead><tr><th scope="col">段</th><th scope="col">时长 Δt (s)</th><th scope="col">t₀ → t₁ (s)</th><th scope="col">Jerk</th><th scope="col">段末速度 v</th><th scope="col">段末加速度 a</th></tr></thead>' +
+      '<thead><tr><th scope="col">段</th><th scope="col">时长 Δt (s)</th><th scope="col">t₀ → t₁ (s)</th><th scope="col">Jerk (u/s³)</th><th scope="col">段末速度 v (u/s)</th><th scope="col">段末加速度 a (u/s²)</th></tr></thead>' +
       '<tbody id="mpSegBody"></tbody>' +
       '</table></div>' +
       '</section>' +
@@ -102,15 +105,15 @@
       '<section class="spc-card">' +
       '<h2 class="spc-card-title">运动约束参数</h2>' +
       '<div class="mp-form-grid">' +
-      '<label class="spc-field-label" for="mpQ0">起点 q₀</label>' +
+      '<label class="spc-field-label" for="mpQ0">起点 q₀ (u)</label>' +
       '<input id="mpQ0" class="spc-input" type="number" step="any" value="0">' +
-      '<label class="spc-field-label" for="mpQ1">终点 q₁</label>' +
+      '<label class="spc-field-label" for="mpQ1">终点 q₁ (u)</label>' +
       '<input id="mpQ1" class="spc-input" type="number" step="any" value="120">' +
-      '<label class="spc-field-label" for="mpVMax">最大速度 vMax (&gt; 0)</label>' +
+      '<label class="spc-field-label" for="mpVMax">最大速度 vMax (u/s, &gt; 0)</label>' +
       '<input id="mpVMax" class="spc-input" type="number" step="any" value="40">' +
-      '<label class="spc-field-label" for="mpAMax">最大加速度 aMax (&gt; 0)</label>' +
+      '<label class="spc-field-label" for="mpAMax">最大加速度 aMax (u/s², &gt; 0)</label>' +
       '<input id="mpAMax" class="spc-input" type="number" step="any" value="80">' +
-      '<label class="spc-field-label" for="mpJMax">最大加加速度 jMax (&gt; 0)</label>' +
+      '<label class="spc-field-label" for="mpJMax">最大加加速度 jMax (u/s³, &gt; 0)</label>' +
       '<input id="mpJMax" class="spc-input" type="number" step="any" value="400">' +
       '</div>' +
       '<div class="mp-btn-row">' +
@@ -120,13 +123,15 @@
       '</section>' +
 
       '<section class="spc-card">' +
-      '<h2 class="spc-card-title">曲线显示</h2>' +
+      '<h2 class="spc-card-title">显示与采样设置</h2>' +
+      '<label class="spc-field-label" for="mpSampleDt">显示采样周期 dt (s，仅影响显示，上限 ' + MP.MAX_SAMPLES + ' 点)</label>' +
+      '<input id="mpSampleDt" class="spc-input" type="number" step="any" min="0.0001" value="0.02">' +
       '<div class="mp-radio-group" role="radiogroup" aria-label="曲线显示模式">' +
       '<label class="spc-radio"><input type="radio" name="mpView" id="mpViewBoth" value="both" checked> 同时对比</label>' +
       '<label class="spc-radio"><input type="radio" name="mpView" id="mpViewSCurve" value="scurve"> 仅 S 曲线</label>' +
       '<label class="spc-radio"><input type="radio" name="mpView" id="mpViewTrap" value="trap"> 仅梯形</label>' +
       '</div>' +
-      '<p class="spc-hint">梯形规划的加加速度在分段切换处为理想冲激，图表中以分段平台区间参考展示。</p>' +
+      '<p class="spc-hint">梯形规划在分段切换处存在理想加速度阶跃与冲激 jerk；较短轨迹完成后进入静止保持状态。</p>' +
       '</section>' +
 
       '</aside>' +
@@ -144,15 +149,19 @@
       root: root,
       sceneId: 'full-7seg',
       viewMode: 'both',
+      sampleDt: 0.02,
       params: { q0: 0, q1: 120, vMax: 40, aMax: 80, jMax: 400 },
       result: null,
+      invalid: false,
+      dirty: false,
       planCount: 0,
       cursorTime: 0,
       playing: false,
       rafId: 0,
       lastTick: 0,
       destroyed: false,
-      lastError: ''
+      lastError: '',
+      lastSampleCount: 0
     };
 
     function $(id) { return root.querySelector('#' + id); }
@@ -161,6 +170,41 @@
       state.lastError = msg || '';
       var el = $('mpError');
       if (el) el.textContent = state.lastError;
+    }
+
+    function setDirty(flag) {
+      state.dirty = !!flag;
+      var el = $('mpStaleNotice');
+      if (el) {
+        el.hidden = !state.dirty || state.invalid;
+        el.textContent = state.dirty && !state.invalid
+          ? '参数已修改但尚未应用，当前显示结果对应旧参数（请点击“计算规划”更新）。'
+          : '';
+      }
+    }
+
+    function setControlsEnabled(enabled) {
+      ['mpPlay', 'mpStep', 'mpResetCursor', 'mpTimeSlider'].forEach(function (id) {
+        var el = $(id);
+        if (el) el.disabled = !enabled;
+      });
+    }
+
+    function clearVisualsOnInvalid() {
+      ['mpChartPos', 'mpChartVel', 'mpChartAcc', 'mpChartJerk'].forEach(function (id) {
+        var svg = $(id);
+        if (svg) svg.innerHTML = '';
+      });
+      var stats = $('mpCursorStats');
+      if (stats) stats.innerHTML = '<div class="spc-stat"><dt>状态</dt><dd>参数非法，已清除轨迹（请修正后重新计算）</dd></div>';
+      var tbody = $('mpCompareBody');
+      if (tbody) tbody.innerHTML = '<tr><td colspan="3">当前参数非法，无有效规划结果。</td></tr>';
+      var segBody = $('mpSegBody');
+      if (segBody) segBody.innerHTML = '<tr><td colspan="6">当前参数非法，无有效分段数据。</td></tr>';
+      var note = $('mpCompareNote');
+      if (note) note.textContent = '';
+      var readout = $('mpTimeReadout');
+      if (readout) readout.textContent = 't = —';
     }
 
     function syncInputsFromParams() {
@@ -195,7 +239,40 @@
       if (btn) btn.textContent = '播放';
     }
 
-    function drawChart(svgId, key, sPts, tPts, tMax, limitAbs, showS, showT) {
+    // 为分段常值曲线（S 曲线 jerk、梯形 acceleration）构建严格阶跃折线路径，并在 T < tMax 后保持 0
+    function buildStepPath(profile, key, tMax, tx, ty) {
+      if (!profile || !profile.ok) return '';
+      if (profile.totalTime <= 0 || !profile.segments.length) {
+        return 'M' + tx(0).toFixed(2) + ',' + ty(0).toFixed(2) + ' L' + tx(tMax).toFixed(2) + ',' + ty(0).toFixed(2);
+      }
+      var cmds = [];
+      var segs = profile.segments;
+      var firstVal = null;
+      for (var i = 0; i < segs.length; i++) {
+        var seg = segs[i];
+        if (seg.dt <= 0) continue;
+        var val = key === 'j' ? profile.dir * seg.j : profile.dir * seg.a0;
+        var x0 = tx(seg.t0).toFixed(2);
+        var x1 = tx(seg.t1).toFixed(2);
+        var yv = ty(val).toFixed(2);
+        if (firstVal === null) {
+          firstVal = val;
+          cmds.push('M' + x0 + ',' + yv);
+        } else {
+          cmds.push('L' + x0 + ',' + yv);
+        }
+        cmds.push('L' + x1 + ',' + yv);
+      }
+      if (tMax > profile.totalTime) {
+        var xEnd = tx(profile.totalTime).toFixed(2);
+        var yZero = ty(0).toFixed(2);
+        cmds.push('L' + xEnd + ',' + yZero);
+        cmds.push('L' + tx(tMax).toFixed(2) + ',' + yZero);
+      }
+      return cmds.join(' ');
+    }
+
+    function drawChart(svgId, key, sPts, tPts, sc, tr, tMax, limitAbs, showS, showT) {
       var svg = $(svgId);
       if (!svg) return;
       var W = 560, H = 150, padL = 46, padR = 14, padT = 12, padB = 22;
@@ -213,7 +290,7 @@
 
       var yMin = Math.min.apply(null, vals);
       var yMax = Math.max.apply(null, vals);
-      if (Math.abs(yMax - yMin) < 1e-9) {
+      if (Math.abs(yMax - yMin) < 1e-18) {
         yMin -= 1;
         yMax += 1;
       } else {
@@ -231,12 +308,10 @@
       };
 
       var html = '';
-      // 零线与网格
       var y0 = ty(0);
       html += '<line x1="' + padL + '" y1="' + padT + '" x2="' + padL + '" y2="' + (H - padB) + '" class="mp-axis"/>';
       html += '<line x1="' + padL + '" y1="' + y0.toFixed(1) + '" x2="' + (W - padR) + '" y2="' + y0.toFixed(1) + '" class="mp-axis-zero"/>';
 
-      // 约束上下界
       if (limitAbs !== null && limitAbs !== undefined && isFinite(limitAbs) && limitAbs > 0) {
         var yp = ty(limitAbs).toFixed(1);
         var yn = ty(-limitAbs).toFixed(1);
@@ -244,26 +319,37 @@
         html += '<line x1="' + padL + '" y1="' + yn + '" x2="' + (W - padR) + '" y2="' + yn + '" class="mp-limit-line"/>';
       }
 
-      function buildPath(pts) {
+      function buildContinuousPath(pts, profile) {
         if (!pts.length) return '';
-        return pts.map(function (pt, idx) {
+        var d = pts.map(function (pt, idx) {
           var v = isFinite(pt[key]) ? pt[key] : 0;
           return (idx === 0 ? 'M' : 'L') + tx(pt.t).toFixed(2) + ',' + ty(v).toFixed(2);
-        }).join(' ');
+        });
+        if (profile && profile.totalTime < tMax) {
+          var holdVal = key === 'q' ? profile.q1 : 0;
+          d.push('L' + tx(tMax).toFixed(2) + ',' + ty(holdVal).toFixed(2));
+        }
+        return d.join(' ');
       }
 
-      if (showT && tPts.length && key !== 'j') {
-        html += '<path d="' + buildPath(tPts) + '" class="mp-curve-trap" fill="none"/>';
+      if (showT && tr) {
+        if (key === 'a') {
+          html += '<path d="' + buildStepPath(tr, 'a', tMax, tx, ty) + '" class="mp-curve-trap" fill="none"/>';
+        } else if (key !== 'j' && tPts.length) {
+          html += '<path d="' + buildContinuousPath(tPts, tr) + '" class="mp-curve-trap" fill="none"/>';
+        }
       }
-      if (showS && sPts.length) {
-        html += '<path d="' + buildPath(sPts) + '" class="mp-curve-scurve" fill="none"/>';
+      if (showS && sc) {
+        if (key === 'j') {
+          html += '<path d="' + buildStepPath(sc, 'j', tMax, tx, ty) + '" class="mp-curve-scurve" fill="none"/>';
+        } else if (sPts.length) {
+          html += '<path d="' + buildContinuousPath(sPts, sc) + '" class="mp-curve-scurve" fill="none"/>';
+        }
       }
 
-      // 时间游标
       var cx = tx(state.cursorTime).toFixed(2);
       html += '<line x1="' + cx + '" y1="' + padT + '" x2="' + cx + '" y2="' + (H - padB) + '" class="mp-cursor-line"/>';
 
-      // Y 轴刻度标签
       html += '<text x="' + (padL - 5) + '" y="' + (padT + 8) + '" class="mp-tick-y">' + fmt(yMax, 1) + '</text>';
       html += '<text x="' + (padL - 5) + '" y="' + (H - padB) + '" class="mp-tick-y">' + fmt(yMin, 1) + '</text>';
       html += '<text x="' + padL + '" y="' + (H - 6) + '" class="mp-tick-x">0</text>';
@@ -274,20 +360,22 @@
 
     function renderCursorAndCharts() {
       var res = state.result;
-      if (!res || !res.ok) return;
+      if (!res || !res.ok || state.invalid) return;
       var sc = res.scurve;
       var tr = res.trapezoidal;
       var tMax = Math.max(sc.totalTime, tr.totalTime);
 
-      var sPts = MP.sampleProfile(sc, 220);
-      var tPts = MP.sampleProfile(tr, 220);
+      var sPts = MP.sampleProfile(sc, { dt: state.sampleDt });
+      var tPts = MP.sampleProfile(tr, { dt: state.sampleDt });
+      state.lastSampleCount = sPts.length;
+
       var showS = state.viewMode === 'both' || state.viewMode === 'scurve';
       var showT = state.viewMode === 'both' || state.viewMode === 'trap';
 
-      drawChart('mpChartPos', 'q', sPts, tPts, tMax, null, showS, showT);
-      drawChart('mpChartVel', 'v', sPts, tPts, tMax, res.vMax, showS, showT);
-      drawChart('mpChartAcc', 'a', sPts, tPts, tMax, res.aMax, showS, showT);
-      drawChart('mpChartJerk', 'j', sPts, tPts, tMax, res.jMax, showS, false);
+      drawChart('mpChartPos', 'q', sPts, tPts, sc, tr, tMax, null, showS, showT);
+      drawChart('mpChartVel', 'v', sPts, tPts, sc, tr, tMax, res.vMax, showS, showT);
+      drawChart('mpChartAcc', 'a', sPts, tPts, sc, tr, tMax, res.aMax, showS, showT);
+      drawChart('mpChartJerk', 'j', sPts, tPts, sc, tr, tMax, res.jMax, showS, false);
 
       var slider = $('mpTimeSlider');
       if (slider) {
@@ -295,39 +383,45 @@
       }
       var readout = $('mpTimeReadout');
       if (readout) {
-        readout.textContent = 't = ' + fmt(state.cursorTime, 3) + ' s / ' + fmt(tMax, 3) + ' s';
+        readout.textContent = 't = ' + fmt(state.cursorTime, 3) + ' s / ' + fmt(tMax, 3) + ' s（采样点 ' + sPts.length + '）';
       }
 
-      var sNow = MP.evaluateProfile(sc, Math.min(state.cursorTime, sc.totalTime));
-      var tNow = MP.evaluateProfile(tr, Math.min(state.cursorTime, tr.totalTime));
+      // 不将游标夹取到较短轨迹总时长，从而在 t > T 时正确显示静止保持状态
+      var sNow = MP.evaluateProfile(sc, state.cursorTime);
+      var tNow = MP.evaluateProfile(tr, state.cursorTime);
       var stats = $('mpCursorStats');
       if (stats && sNow && tNow) {
         stats.innerHTML =
           '<div class="spc-stat"><dt>S 曲线当前段</dt><dd>' + esc(sNow.segmentLabel) + '</dd></div>' +
-          '<div class="spc-stat"><dt>S 曲线 q / v</dt><dd>' + fmt(sNow.q, 3) + ' / ' + fmt(sNow.v, 3) + '</dd></div>' +
-          '<div class="spc-stat"><dt>S 曲线 a / j</dt><dd>' + fmt(sNow.a, 3) + ' / ' + fmt(sNow.j, 1) + '</dd></div>' +
+          '<div class="spc-stat"><dt>S 曲线 q / v</dt><dd>' + fmt(sNow.q, 3) + ' u / ' + fmt(sNow.v, 3) + ' u/s</dd></div>' +
+          '<div class="spc-stat"><dt>S 曲线 a / j</dt><dd>' + fmt(sNow.a, 3) + ' u/s² / ' + fmt(sNow.j, 1) + ' u/s³</dd></div>' +
           '<div class="spc-stat"><dt>梯形当前段</dt><dd>' + esc(tNow.segmentLabel) + '</dd></div>' +
-          '<div class="spc-stat"><dt>梯形 q / v / a</dt><dd>' + fmt(tNow.q, 3) + ' / ' + fmt(tNow.v, 3) + ' / ' + fmt(tNow.a, 3) + '</dd></div>';
+          '<div class="spc-stat"><dt>梯形 q / v / a</dt><dd>' + fmt(tNow.q, 3) + ' u / ' + fmt(tNow.v, 3) + ' u/s / ' + fmt(tNow.a, 3) + ' u/s²</dd></div>';
       }
     }
 
     function renderTables() {
       var res = state.result;
-      if (!res || !res.ok) return;
+      if (!res || !res.ok || state.invalid) return;
       var sc = res.scurve;
       var tr = res.trapezoidal;
+
+      var trapJerkText = tr.absDistance === 0 ? '0（零位移无冲击）' : '理想冲激（不适用有限峰值）';
+      var trapAccResText = tr.absDistance === 0
+        ? '0'
+        : '不适用（存在末端阶跃，左极限 ' + fmt(tr.endAccLeftLimit, 3) + ' u/s²）';
 
       var tbody = $('mpCompareBody');
       if (tbody) {
         var rows = [
           ['退化形态', sc.regimeLabel, tr.regimeLabel],
           ['总运动时长 T (s)', fmt(sc.totalTime, 4), fmt(tr.totalTime, 4)],
-          ['峰值速度 |v|peak', fmt(sc.vPeak, 4), fmt(tr.vPeak, 4)],
-          ['峰值加速度 |a|peak', fmt(sc.aPeak, 4), fmt(tr.aPeak, 4)],
-          ['峰值加加速度 |j|peak', fmt(sc.jPeak, 2), '∞（分段阶跃）'],
-          ['终点位置未修正残差 |q(T)-q₁|', fmtSci(sc.endPosResidual), fmtSci(tr.endPosResidual)],
-          ['终点速度未修正残差 |v(T)|', fmtSci(sc.endVelResidual), fmtSci(tr.endVelResidual)],
-          ['终点加速度未修正残差 |a(T)|', fmtSci(sc.endAccResidual), fmtSci(tr.endAccResidual)]
+          ['峰值速度 |v|peak (u/s)', fmt(sc.vPeak, 4), fmt(tr.vPeak, 4)],
+          ['峰值加速度 |a|peak (u/s²)', fmt(sc.aPeak, 4), fmt(tr.aPeak, 4)],
+          ['峰值加加速度 |j|peak (u/s³)', fmt(sc.jPeak, 2), trapJerkText],
+          ['终点位置未修正残差 |q(T)-q₁| (u)', fmtSci(sc.endPosResidual), fmtSci(tr.endPosResidual)],
+          ['终点速度未修正残差 |v(T)| (u/s)', fmtSci(sc.endVelResidual), fmtSci(tr.endVelResidual)],
+          ['终点加速度连续性残差 (u/s²)', fmtSci(sc.endAccResidual), trapAccResText]
         ];
         tbody.innerHTML = rows.map(function (r) {
           return '<tr><th scope="row">' + esc(r[0]) + '</th><td>' + esc(r[1]) + '</td><td>' + esc(r[2]) + '</td></tr>';
@@ -337,7 +431,7 @@
       var note = $('mpCompareNote');
       if (note) {
         note.textContent = 'S 曲线相对梯形增加平滑过渡耗时 ΔT = ' + fmt(res.timeDelta, 4) +
-          ' s（比值 ' + fmt(res.timeRatio, 3) + '×），同时消除了加速度突变与无限加加速度冲击。';
+          ' s（比值 ' + fmt(res.timeRatio, 3) + '×），同时消除了加速度阶跃与无限加加速度冲激。';
       }
 
       var segBody = $('mpSegBody');
@@ -365,10 +459,18 @@
       var res = MP.compareProfiles(params);
       if (!res.ok) {
         stopPlay();
+        state.result = null;
+        state.invalid = true;
+        setDirty(false);
+        setControlsEnabled(false);
         setError(res.message);
+        clearVisualsOnInvalid();
         return false;
       }
       setError('');
+      state.invalid = false;
+      setDirty(false);
+      setControlsEnabled(true);
       state.params = {
         q0: res.q0,
         q1: res.q1,
@@ -386,7 +488,7 @@
     }
 
     function tick(now) {
-      if (state.destroyed || !state.playing || !state.result) return;
+      if (state.destroyed || !state.playing || !state.result || state.invalid) return;
       var tMax = Math.max(state.result.scurve.totalTime, state.result.trapezoidal.totalTime);
       if (tMax <= 0) {
         stopPlay();
@@ -421,11 +523,35 @@
       applyScene($('mpScene').value);
     });
 
+    ['mpQ0', 'mpQ1', 'mpVMax', 'mpAMax', 'mpJMax'].forEach(function (id) {
+      var el = $(id);
+      if (el) {
+        el.addEventListener('input', function () {
+          if (state.result && !state.invalid) setDirty(true);
+        });
+      }
+    });
+
+    $('mpSampleDt').addEventListener('change', function () {
+      var val = Number($('mpSampleDt').value);
+      if (!isFinite(val) || val <= 0) {
+        $('mpSampleDt').value = String(state.sampleDt);
+        return;
+      }
+      state.sampleDt = val;
+      if (state.result && !state.invalid) renderCursorAndCharts();
+    });
+
     $('mpApply').addEventListener('click', function () {
       var parsed = readInputs();
       if (!parsed.ok) {
         stopPlay();
+        state.result = null;
+        state.invalid = true;
+        setDirty(false);
+        setControlsEnabled(false);
         setError(parsed.message);
+        clearVisualsOnInvalid();
         return;
       }
       solveAndRender(parsed.params);
@@ -441,14 +567,14 @@
         el.addEventListener('change', function () {
           if (el.checked) {
             state.viewMode = el.value;
-            renderCursorAndCharts();
+            if (state.result && !state.invalid) renderCursorAndCharts();
           }
         });
       }
     });
 
     $('mpPlay').addEventListener('click', function () {
-      if (!state.result) return;
+      if (!state.result || state.invalid) return;
       if (state.playing) {
         stopPlay();
         return;
@@ -463,7 +589,7 @@
     });
 
     $('mpStep').addEventListener('click', function () {
-      if (!state.result) return;
+      if (!state.result || state.invalid) return;
       stopPlay();
       var tMax = Math.max(state.result.scurve.totalTime, state.result.trapezoidal.totalTime);
       if (tMax <= 0) return;
@@ -472,13 +598,14 @@
     });
 
     $('mpResetCursor').addEventListener('click', function () {
+      if (!state.result || state.invalid) return;
       stopPlay();
       state.cursorTime = 0;
       renderCursorAndCharts();
     });
 
     $('mpTimeSlider').addEventListener('input', function () {
-      if (!state.result) return;
+      if (!state.result || state.invalid) return;
       stopPlay();
       var tMax = Math.max(state.result.scurve.totalTime, state.result.trapezoidal.totalTime);
       state.cursorTime = (Number($('mpTimeSlider').value) / 1000) * tMax;
@@ -506,9 +633,13 @@
     return {
       sceneId: _current.sceneId,
       viewMode: _current.viewMode,
+      sampleDt: _current.sampleDt,
+      lastSampleCount: _current.lastSampleCount,
       planCount: _current.planCount,
       cursorTime: _current.cursorTime,
       playing: _current.playing,
+      invalid: _current.invalid,
+      dirty: _current.dirty,
       lastError: _current.lastError,
       scurveRegime: r && r.ok ? r.scurve.regime : null,
       trapRegime: r && r.ok ? r.trapezoidal.regime : null,
@@ -516,7 +647,10 @@
       trapTotalTime: r && r.ok ? r.trapezoidal.totalTime : null,
       scurveEndPosResidual: r && r.ok ? r.scurve.endPosResidual : null,
       scurveEndVelResidual: r && r.ok ? r.scurve.endVelResidual : null,
-      scurveEndAccResidual: r && r.ok ? r.scurve.endAccResidual : null
+      scurveEndAccResidual: r && r.ok ? r.scurve.endAccResidual : null,
+      trapEndAccLeftLimit: r && r.ok ? r.trapezoidal.endAccLeftLimit : null,
+      trapEndAccResidual: r && r.ok ? r.trapezoidal.endAccResidual : null,
+      trapJPeak: r && r.ok ? r.trapezoidal.jPeak : null
     };
   }
 

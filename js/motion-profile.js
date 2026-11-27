@@ -2,33 +2,34 @@
  *
  * 范围：单轴点对点（Rest-to-Rest，v0 = v1 = 0, a0 = a1 = 0）运动轨迹规划。
  *   1. 三段梯形速度规划（Trapezoidal）：加速度有界 |a| <= aMax，速度有界 |v| <= vMax；
- *      位移不足时自动退化为二段三角形（Tv = 0）。
+ *      位移不足时自动退化为二段三角形（Tv = 0）。非零位移终点存在理想加速度阶跃，
+ *      因此区分“终点加速度左极限”与“结束后静止状态”，jPeak 为 null（理想冲激）。
  *   2. 七段对称 S 曲线规划（7-Segment S-Curve）：加加速度有界 |j| <= jMax，
  *      加速度有界 |a| <= aMax，速度有界 |v| <= vMax；
- *      严格覆盖全部退化工况：
- *        - zero-distance（D = 0）
- *        - 7-seg（达 vMax 且达 aMax，Tv > 0, Tc > 0）
- *        - 6-seg（未达 vMax 但达 aMax，Tv = 0, Tc > 0）
- *        - 5-seg（达 vMax 但未达 aMax，Tv >= 0, Tc = 0）
- *        - 4-seg（未达 vMax 且未达 aMax，Tv = 0, Tc = 0）
+ *      采用尺度相关相对容差 REL_EPS = 1e-12 判定退化条件，避免固定绝对容差掩盖小位移。
  *
- * 数值契约：
+ * 数值与采样契约：
  *   - 分段边界状态 (t_k, p_k, v_k, a_k) 由上一段闭式积分精确递推。
- *   - 终点状态 rawEndPos / rawEndVel / rawEndAcc 直接由分段公式求值，不做强制归零或夹取，
- *     以便外部观测真实的未修正数值残差。
+ *   - 终点状态 rawEndPos / rawEndVel / rawEndAcc 直接由分段公式求值，不做强制归零或夹取。
+ *   - evaluateProfile(profile, t)：在 [0, T) 内对内部阶段边界取右极限；在 t = T 取左极限；
+ *     在 t > T 进入静止保持状态（q = q1, v = 0, a = 0, j = 0, finished = true）。
+ *   - sampleProfile(profile, opts)：必包含所有有效阶段边界与终点 T，总点数上限 MAX_SAMPLES = 2000。
  */
 (function (global) {
   'use strict';
 
-  var VERSION = 1;
-  var EPS = 1e-12;
+  var VERSION = 2;
+  var REL_EPS = 1e-12;
   var MAX_ABS_VAL = 1e9;
+  var MIN_POS_PARAM = 1e-18;
+  var MAX_SAMPLES = 2000;
 
   var ERROR_TEXT = {
     'invalid-distance': '位移参数非法：起点、终点或位移必须是有限数值，且绝对值不超过 1e9。',
-    'invalid-vmax': '最大速度 vMax 非法：必须是大于 0 的有限数值。',
-    'invalid-amax': '最大加速度 aMax 非法：必须是大于 0 的有限数值。',
-    'invalid-jmax': '最大加加速度 jMax 非法：必须是大于 0 的有限数值。'
+    'invalid-vmax': '最大速度 vMax 非法：必须是 (1e-18, 1e9] 范围内的有限正数。',
+    'invalid-amax': '最大加速度 aMax 非法：必须是 (1e-18, 1e9] 范围内的有限正数。',
+    'invalid-jmax': '最大加加速度 jMax 非法：必须是 (1e-18, 1e9] 范围内的有限正数。',
+    'extreme-scale': '参数尺度极端：非零位移或中间时间超出 IEEE 754 可靠表示范围（|D| >= 1e-18 且总时长需有限正数）。'
   };
 
   function err(code, detail) {
@@ -59,25 +60,33 @@
     var aMax = Number(o.aMax);
     var jMax = o.jMax !== undefined ? Number(o.jMax) : 100;
 
-    if (!isFiniteNum(q0) || !isFiniteNum(q1) || Math.abs(q1 - q0) > MAX_ABS_VAL || Math.abs(q0) > MAX_ABS_VAL || Math.abs(q1) > MAX_ABS_VAL) {
+    if (!isFiniteNum(q0) || !isFiniteNum(q1) || Math.abs(q0) > MAX_ABS_VAL || Math.abs(q1) > MAX_ABS_VAL) {
       return err('invalid-distance');
     }
-    if (!isFiniteNum(vMax) || vMax <= 0 || vMax > MAX_ABS_VAL) {
+    var distance = q1 - q0;
+    var absDistance = Math.abs(distance);
+    if (!isFiniteNum(distance) || absDistance > MAX_ABS_VAL) {
+      return err('invalid-distance');
+    }
+    if (absDistance > 0 && absDistance < MIN_POS_PARAM) {
+      return err('extreme-scale', 'absDistance=' + absDistance);
+    }
+    if (!isFiniteNum(vMax) || vMax < MIN_POS_PARAM || vMax > MAX_ABS_VAL) {
       return err('invalid-vmax');
     }
-    if (!isFiniteNum(aMax) || aMax <= 0 || aMax > MAX_ABS_VAL) {
+    if (!isFiniteNum(aMax) || aMax < MIN_POS_PARAM || aMax > MAX_ABS_VAL) {
       return err('invalid-amax');
     }
-    if (requireJerk && (!isFiniteNum(jMax) || jMax <= 0 || jMax > MAX_ABS_VAL)) {
+    if (requireJerk && (!isFiniteNum(jMax) || jMax < MIN_POS_PARAM || jMax > MAX_ABS_VAL)) {
       return err('invalid-jmax');
     }
     return {
       ok: true,
       q0: q0,
       q1: q1,
-      distance: q1 - q0,
-      absDistance: Math.abs(q1 - q0),
-      dir: (q1 - q0) >= 0 ? 1 : -1,
+      distance: distance,
+      absDistance: absDistance,
+      dir: distance >= 0 ? 1 : -1,
       vMax: vMax,
       aMax: aMax,
       jMax: jMax
@@ -95,6 +104,9 @@
       var dt = sp.dt;
       var j = sp.j;
       var aStart = sp.aFixed !== undefined ? sp.aFixed : a;
+      if (!isFiniteNum(dt) || dt < 0 || !isFiniteNum(j) || !isFiniteNum(aStart)) {
+        return null;
+      }
       segments.push({
         index: i + 1,
         label: sp.label,
@@ -111,19 +123,34 @@
         v = v + aStart * dt + 0.5 * j * dt * dt;
         a = aStart + j * dt;
         t = t + dt;
+        if (!isFiniteNum(p) || !isFiniteNum(v) || !isFiniteNum(a) || !isFiniteNum(t)) {
+          return null;
+        }
       } else {
         a = aStart;
       }
     }
+    var rawEndPos = q0 + dir * p;
+    var rawEndVel = dir * v;
+    var rawEndAcc = dir * a;
+    if (!isFiniteNum(rawEndPos) || !isFiniteNum(rawEndVel) || !isFiniteNum(rawEndAcc)) {
+      return null;
+    }
     return {
       segments: segments,
       totalTime: t,
-      rawEndPos: q0 + dir * p,
-      rawEndVel: dir * v,
-      rawEndAcc: dir * a
+      rawEndPos: rawEndPos,
+      rawEndVel: rawEndVel,
+      rawEndAcc: rawEndAcc
     };
   }
 
+  /**
+   * 轨迹求值：
+   *   - 0 <= t < T：按右连续语义取分段值（内部边界取后一段的右极限）。
+   *   - t === T：取最后有效段的终点左极限（包含梯形末端未修正加速度左极限）。
+   *   - t > T：进入运动结束后的静止保持状态（q = q1, v = 0, a = 0, j = 0, finished = true）。
+   */
   function evaluateProfile(profile, t) {
     if (!profile || !profile.ok) return null;
     var T = profile.totalTime;
@@ -139,21 +166,54 @@
         a: 0,
         j: 0,
         segmentIndex: 0,
-        segmentLabel: '零位移'
+        segmentLabel: '零位移',
+        finished: true
       };
     }
 
     var tc = Number(t);
     if (!isFinite(tc) || tc < 0) tc = 0;
-    if (tc > T) tc = T;
 
-    var seg = segs[segs.length - 1];
-    for (var i = 0; i < segs.length; i++) {
-      if (segs[i].dt > 0 && tc <= segs[i].t1 + EPS) {
-        seg = segs[i];
-        break;
+    if (tc > T) {
+      return {
+        t: tc,
+        q: profile.q1,
+        v: 0,
+        a: 0,
+        j: 0,
+        segmentIndex: 0,
+        segmentLabel: '运动结束（静止保持）',
+        finished: true
+      };
+    }
+
+    var activeSegs = [];
+    for (var k = 0; k < segs.length; k++) {
+      if (segs[k].dt > 0) activeSegs.push(segs[k]);
+    }
+    if (!activeSegs.length) {
+      return {
+        t: tc,
+        q: q0,
+        v: 0,
+        a: 0,
+        j: 0,
+        segmentIndex: 0,
+        segmentLabel: '零位移',
+        finished: true
+      };
+    }
+
+    var seg = activeSegs[activeSegs.length - 1];
+    if (tc < T) {
+      for (var i = 0; i < activeSegs.length; i++) {
+        if (tc < activeSegs[i].t1) {
+          seg = activeSegs[i];
+          break;
+        }
       }
     }
+
     var tau = tc - seg.t0;
     if (tau < 0) tau = 0;
     if (tau > seg.dt) tau = seg.dt;
@@ -169,7 +229,8 @@
       a: dir * a,
       j: dir * seg.j,
       segmentIndex: seg.index,
-      segmentLabel: seg.label
+      segmentLabel: seg.label,
+      finished: false
     };
   }
 
@@ -194,7 +255,7 @@
         dir: 1,
         vMax: vMax,
         aMax: aMax,
-        jMax: Infinity,
+        jMax: null,
         ta: 0,
         tv: 0,
         td: 0,
@@ -206,6 +267,7 @@
         rawEndPos: p.q0,
         rawEndVel: 0,
         rawEndAcc: 0,
+        endAccLeftLimit: 0,
         endPosResidual: 0,
         endVelResidual: 0,
         endAccResidual: 0
@@ -213,15 +275,18 @@
     }
 
     var lCrit = (vMax * vMax) / aMax;
+    if (!isFiniteNum(lCrit)) return err('extreme-scale');
+
     var ta, tv, td, vPeak, regime, regimeLabel;
 
-    if (L >= lCrit - EPS) {
+    if (L >= lCrit * (1 - REL_EPS)) {
       ta = vMax / aMax;
       td = ta;
       tv = Math.max(0, (L - lCrit) / vMax);
       vPeak = vMax;
-      regime = tv > EPS ? '3-seg-trapezoid' : '2-seg-triangle-boundary';
-      regimeLabel = tv > EPS ? '三段梯形（达最大速度）' : '临界三角形（恰好达最大速度）';
+      var hasCruise = tv > ta * REL_EPS;
+      regime = hasCruise ? '3-seg-trapezoid' : '2-seg-triangle-boundary';
+      regimeLabel = hasCruise ? '三段梯形（达最大速度）' : '临界三角形（恰好达最大速度）';
     } else {
       vPeak = Math.sqrt(L * aMax);
       ta = vPeak / aMax;
@@ -237,6 +302,10 @@
       { label: '匀减速段', dt: td, j: 0, aFixed: -aMax }
     ], p.q0, p.dir);
 
+    if (!built || built.totalTime <= 0) {
+      return err('extreme-scale');
+    }
+
     return {
       ok: true,
       algorithm: 'trapezoidal',
@@ -249,21 +318,22 @@
       dir: p.dir,
       vMax: vMax,
       aMax: aMax,
-      jMax: Infinity,
+      jMax: null,
       ta: ta,
       tv: tv,
       td: td,
       totalTime: built.totalTime,
       vPeak: vPeak,
       aPeak: aMax,
-      jPeak: Infinity,
+      jPeak: null, // 非零位移梯形规划在边界处为理想冲激，无有限 jerk 峰值
       segments: built.segments,
       rawEndPos: built.rawEndPos,
       rawEndVel: built.rawEndVel,
       rawEndAcc: built.rawEndAcc,
+      endAccLeftLimit: built.rawEndAcc,
       endPosResidual: Math.abs(built.rawEndPos - p.q1),
       endVelResidual: Math.abs(built.rawEndVel),
-      endAccResidual: 0
+      endAccResidual: null // 梯形结束处存在理想加速度阶跃，不适用连续性残差
     };
   }
 
@@ -309,15 +379,19 @@
       };
     }
 
-    var hitsAMaxForVMax = vMax * jMax >= aMax * aMax - EPS;
+    var vjProd = vMax * jMax;
+    var aSq = aMax * aMax;
+    if (!isFiniteNum(vjProd) || !isFiniteNum(aSq)) return err('extreme-scale');
+
+    var hitsAMaxForVMax = vjProd >= aSq * (1 - REL_EPS);
     var lFull = hitsAMaxForVMax
       ? vMax * (vMax / aMax + aMax / jMax)
       : 2 * vMax * Math.sqrt(vMax / jMax);
+    if (!isFiniteNum(lFull)) return err('extreme-scale');
 
     var tj, tc, tv, aPeak, vPeak, regime, regimeLabel;
 
-    if (L >= lFull - EPS) {
-      // 巡航段存在（或恰处于 Tv=0 边界）：达到 vMax
+    if (L >= lFull * (1 - REL_EPS)) {
       if (hitsAMaxForVMax) {
         tj = aMax / jMax;
         tc = Math.max(0, vMax / aMax - tj);
@@ -330,13 +404,17 @@
       vPeak = vMax;
       tv = Math.max(0, (L - lFull) / vMax);
 
-      if (tc > EPS && tv > EPS) {
+      var timeScaleA = Math.max(tj, tc);
+      var hasTc = tc > timeScaleA * REL_EPS;
+      var hasTv = tv > Math.max(timeScaleA, tv) * REL_EPS;
+
+      if (hasTc && hasTv) {
         regime = '7-seg-full';
         regimeLabel = '完整七段 S 曲线（达 vMax 与 aMax）';
-      } else if (tc <= EPS && tv > EPS) {
+      } else if (!hasTc && hasTv) {
         regime = '5-seg-no-const-acc';
         regimeLabel = '五段退化（达 vMax，未达 aMax）';
-      } else if (tc > EPS && tv <= EPS) {
+      } else if (hasTc && !hasTv) {
         regime = '6-seg-boundary';
         regimeLabel = '六段临界（恰好达 vMax 与 aMax，无巡航）';
       } else {
@@ -344,21 +422,19 @@
         regimeLabel = '四段临界（恰好达 vMax，未达 aMax，无巡航）';
       }
     } else {
-      // 无巡航段（Tv = 0）：未达到 vMax
       tv = 0;
       var lAThresh = (2 * aMax * aMax * aMax) / (jMax * jMax);
-      if (L >= lAThresh - EPS) {
-        // 达到 aMax 但未达到 vMax -> 6 段
+      if (isFiniteNum(lAThresh) && L >= lAThresh * (1 - REL_EPS)) {
         tj = aMax / jMax;
         var disc = tj * tj + (4 * L) / aMax;
         var u = 0.5 * (-tj + Math.sqrt(Math.max(0, disc)));
         tc = Math.max(0, u - tj);
         aPeak = aMax;
         vPeak = aMax * (tj + tc);
-        regime = tc > EPS ? '6-seg-no-cruise' : '4-seg-a-boundary';
-        regimeLabel = tc > EPS ? '六段退化（达 aMax，未达 vMax，无巡航）' : '四段临界（恰好达 aMax，无匀加与巡航）';
+        var hasTcNoCruise = tc > tj * REL_EPS;
+        regime = hasTcNoCruise ? '6-seg-no-cruise' : '4-seg-a-boundary';
+        regimeLabel = hasTcNoCruise ? '六段退化（达 aMax，未达 vMax，无巡航）' : '四段临界（恰好达 aMax，无匀加与巡航）';
       } else {
-        // 既未达到 aMax 也未达到 vMax -> 4 段
         tj = Math.cbrt(L / (2 * jMax));
         tc = 0;
         aPeak = jMax * tj;
@@ -379,6 +455,10 @@
       { label: '6. 匀减速 (0)', dt: tc, j: 0 },
       { label: '7. 减减速 (+J)', dt: tj, j: jMax }
     ], p.q0, p.dir);
+
+    if (!built || built.totalTime <= 0) {
+      return err('extreme-scale');
+    }
 
     return {
       ok: true,
@@ -412,19 +492,59 @@
     };
   }
 
-  function sampleProfile(profile, count) {
+  /**
+   * 采样曲线：
+   *   - opts 可传入数字（采样数）或对象 { count, dt }。
+   *   - 必定包含 t=0、所有有效阶段的边界点 t1 与终点 T。
+   *   - 采样总数上限 MAX_SAMPLES = 2000，防止过大数组阻塞渲染。
+   */
+  function sampleProfile(profile, opts) {
     if (!profile || !profile.ok) return [];
-    var n = Math.max(2, Math.min(2000, Math.floor(count || 200)));
     var T = profile.totalTime;
-    var pts = [];
     if (T <= 0) {
-      pts.push(evaluateProfile(profile, 0));
-      pts.push(evaluateProfile(profile, 0));
-      return pts;
+      return [evaluateProfile(profile, 0), evaluateProfile(profile, 0)];
     }
-    for (var i = 0; i <= n; i++) {
-      var t = (T * i) / n;
-      pts.push(evaluateProfile(profile, t));
+
+    var count = 200;
+    if (typeof opts === 'number') {
+      count = opts;
+    } else if (opts && typeof opts === 'object') {
+      if (opts.dt !== undefined && isFiniteNum(Number(opts.dt)) && Number(opts.dt) > 0) {
+        count = Math.ceil(T / Number(opts.dt));
+      } else if (opts.count !== undefined) {
+        count = Number(opts.count);
+      }
+    }
+    var n = Math.max(2, Math.min(MAX_SAMPLES - 10, Math.floor(count || 200)));
+
+    var times = [0, T];
+    var segs = profile.segments || [];
+    for (var i = 0; i < segs.length; i++) {
+      if (segs[i].dt > 0) {
+        times.push(segs[i].t0);
+        times.push(segs[i].t1);
+      }
+    }
+    for (var k = 1; k < n; k++) {
+      times.push((T * k) / n);
+    }
+
+    times.sort(function (a, b) { return a - b; });
+    var unique = [];
+    var tol = T * REL_EPS;
+    for (var u = 0; u < times.length; u++) {
+      if (!unique.length || times[u] - unique[unique.length - 1] > tol) {
+        unique.push(times[u]);
+      }
+    }
+    if (unique[unique.length - 1] < T) unique[unique.length - 1] = T;
+    if (unique.length > MAX_SAMPLES) {
+      unique = unique.slice(0, MAX_SAMPLES - 1).concat([T]);
+    }
+
+    var pts = [];
+    for (var m = 0; m < unique.length; m++) {
+      pts.push(evaluateProfile(profile, unique[m]));
     }
     return pts;
   }
@@ -480,6 +600,12 @@
         params: { q0: 0, q1: 2, vMax: 40, aMax: 80, jMax: 200 }
       },
       {
+        id: 'strict-jerk',
+        name: '严格 Jerk 限制（超平滑慢启动）',
+        note: '受严格 jMax = 25 约束，全程不进入匀加速平台，平滑过渡耗时明显大于梯形规划。',
+        params: { q0: 0, q1: 80, vMax: 30, aMax: 60, jMax: 25 }
+      },
+      {
         id: 'reverse-motion',
         name: '反向负位移（q0 > q1）',
         note: '从 50 运动到 -30（D = -80），检验符号方向与终点残差。',
@@ -490,6 +616,9 @@
 
   var api = {
     VERSION: VERSION,
+    MAX_SAMPLES: MAX_SAMPLES,
+    MIN_POS_PARAM: MIN_POS_PARAM,
+    MAX_ABS_VAL: MAX_ABS_VAL,
     ERROR_TEXT: ERROR_TEXT,
     validateParams: validateParams,
     planTrapezoidal: planTrapezoidal,

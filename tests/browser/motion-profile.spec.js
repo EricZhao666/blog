@@ -149,26 +149,50 @@ async function selectScene(page, id) {
         JSON.stringify({ regime: st.scurveRegime, res: st.scurveEndPosResidual }));
     }
 
-    // ---------------------------------------------------------------- M3 参数输入、零位移、非法输入、恢复预设
+    // ---------------------------------------------------------------- M3 参数输入、零位移、脏状态提示、非法输入、采样周期、恢复预设
     await p1.fill('#mpQ0', '10');
     await p1.fill('#mpQ1', '10');
+    const stDirty = await getState(p1);
+    check('M3.0 编辑参数未点击应用时标记 dirty 并显示旧参数提示',
+      stDirty.dirty === true && !(await p1.isHidden('#mpStaleNotice')));
+
     await p1.click('#mpApply');
     await sleep(120);
     const stZero = await getState(p1);
     check('M3.1 零位移输入 (q0=q1=10) 识别为 zero-distance 且 T=0',
-      stZero.scurveRegime === 'zero-distance' && stZero.scurveTotalTime === 0,
+      stZero.scurveRegime === 'zero-distance' && stZero.scurveTotalTime === 0 && !stZero.dirty,
       JSON.stringify(stZero));
 
     await p1.fill('#mpVMax', '-5');
     await p1.click('#mpApply');
     await sleep(120);
     const errText = await p1.textContent('#mpError');
-    check('M3.2 非法 vMax <= 0 显示明确错误提示', /vMax|非法/.test(errText), errText);
+    const stInv = await getState(p1);
+    const playDisabled = await p1.isDisabled('#mpPlay');
+    check('M3.2 非法 vMax <= 0 显示错误、清除旧结果并禁用回放',
+      /vMax|非法/.test(errText) && stInv.invalid === true && stInv.scurveTotalTime === null && playDisabled,
+      JSON.stringify({ errText, invalid: stInv.invalid, playDisabled }));
 
     await p1.click('#mpReset');
     await sleep(120);
     const stReset = await getState(p1);
-    check('M3.3 恢复预设后错误清除并恢复有效规划', stReset.lastError === '' && stReset.scurveTotalTime > 0);
+    check('M3.3 恢复预设后错误清除、控件恢复可用并恢复有效规划',
+      stReset.lastError === '' && !stReset.invalid && stReset.scurveTotalTime > 0 && !(await p1.isDisabled('#mpPlay')));
+
+    // ---------------------------------------------------------------- M3.4 严格 Jerk 场景与梯形终点口径、采样周期
+    await selectScene(p1, 'strict-jerk');
+    const stJerk = await getState(p1);
+    const cmpText = await p1.textContent('#mpCompareBody');
+    check('M3.4 严格 Jerk 限制工况识别为 5-seg-no-const-acc 且梯形标注理想冲激/不适用',
+      stJerk.scurveRegime === '5-seg-no-const-acc' && /理想冲激/.test(cmpText) && /不适用/.test(cmpText));
+
+    const prevT = stJerk.scurveTotalTime;
+    await p1.fill('#mpSampleDt', '0.005');
+    await p1.dispatchEvent('#mpSampleDt', 'change');
+    await sleep(100);
+    const stDt = await getState(p1);
+    check('M3.5 调整采样周期只更新采样点数，不改变解析总时长',
+      stDt.lastSampleCount > stJerk.lastSampleCount && near(stDt.scurveTotalTime, prevT, 1e-12));
 
     // ---------------------------------------------------------------- M4 显示切换与播放/单步/归零/游标（不影响计算结果）
     await selectScene(p1, 'full-7seg');
@@ -261,11 +285,16 @@ async function selectScene(page, id) {
     check('M6.3 快速路由切换不串页，且无未捕获异常', noLeak && s1.errors.length === 0, s1.errors.join(' | ') || 'none');
     await s1.ctx.close();
 
-    // ---------------------------------------------------------------- M7 三引擎（Firefox / WebKit）
+    // ---------------------------------------------------------------- M7 三引擎（Firefox / WebKit；CI 仅装 Chromium 时未安装引擎按 SKIP 处理）
     for (const [bName, bType] of [['firefox', firefox], ['webkit', webkit]]) {
       let b2 = null;
       try {
         b2 = await bType.launch({ headless: true });
+      } catch (e) {
+        console.log('SKIP ' + bName + ' 不可用：' + String(e && e.message || e).split('\n')[0]);
+        continue;
+      }
+      try {
         const s2 = await newSession(b2, base);
         const st2 = await getState(s2.page);
         check('M7.' + bName + ' 引擎加载并求解七段 S 曲线与梯形一致',
@@ -273,9 +302,9 @@ async function selectScene(page, id) {
           JSON.stringify({ regime: st2.scurveRegime, res: st2.scurveEndPosResidual }));
         await s2.ctx.close();
       } catch (e) {
-        check('M7.' + bName + ' 引擎可用', false, e && e.message);
+        check('M7.' + bName + ' 引擎测试失败', false, e && e.message);
       } finally {
-        if (b2) await b2.close();
+        await b2.close();
       }
     }
   } catch (e) {

@@ -43,3 +43,26 @@
   - 受影响回归：`audit`（`14.5s`）、`pid-control`（`20.6s`）、`oee-analysis`（`14.9s`）、`spc-analysis`（`20.8s`）、`kalman-filter`（`18.9s`）、`path-planning`（`22.4s`）、`sw-consistency`（`86.5s`，37/37）全部 **PASS**。
   - `python scripts/build_content.py --check`：**PASS**。
   - 完整 92 套回归交由 PR CI 执行。
+
+---
+
+## 4. Batch 9C-2D-R 数学边界与交付完整性修订
+
+1. **数值尺度与退化条件（Task 1）**：
+   - 移除固定绝对容差 `EPS = 1e-12` 对不同量纲临界分支的直接比较，改为尺度相关相对容差 `REL_EPS = 1e-12 * scale`。
+   - 独立复现并修复反例 A（`q1=1e-15, vMax=1e-7, aMax=0.1` -> 正确进入 `2-seg-triangle`，尺度残差 $\le 10^{-12}|D|$）与反例 B（`q1=1e-16, vMax=1e-10, aMax=1, jMax=1` -> 正确进入 `4-seg-jerk-only`，尺度残差 $\le 10^{-12}|D|$）。
+   - 对无法可靠表示的极端尺度（$|D| \in (0, 10^{-18})$、约束 $\notin (10^{-18}, 10^9]$、非有限中间值）明确拒绝，并新增 60 组固定种子多尺度随机性质测试。
+2. **采样边界、阶跃绘制与静止保持（Task 2）**：
+   - `sampleProfile` 必包含所有有效阶段边界与终点 $T$，支持用户可调采样周期 `#mpSampleDt`（上限 `MAX_SAMPLES = 2000`，仅影响显示/回放）。
+   - `evaluateProfile` 明确边界极限（内部右极限、终点左极限），并在 $t > T$ 进入静止保持状态；SVG 对梯形 $a(t)$ 与 S 曲线 $j(t)$ 使用严格阶跃折线绘制。
+3. **梯形终点指标口径（Task 3）**：
+   - 区分梯形终点加速度左极限（`endAccLeftLimit`）与结束后静止状态；非零位移梯形 `endAccResidual = null`（界面标注“不适用”）、`jPeak = null`（界面标注“理想冲激（不适用有限峰值）”）；零位移时均正确显示 `0`。
+4. **非法输入、脏参数提示、单位、教学场景与测试矩阵（Task 4）**：
+   - 参数非法时清除结果并禁用播放/单步/归零/游标控件；参数编辑未应用时显示旧参数提示；补充一致单位制标注、独立 `strict-jerk` 教学场景与 [BATCH9C2D_TEST_MATRIX.csv](BATCH9C2D_TEST_MATRIX.csv)。
+5. **CI 兼容性与三引擎 Skip 契约（Task 5）**：
+   - 确认 PR CI 失败于 `ubuntu-latest`（`ubuntu-26.04`）安装 Chromium 时 `packages.microsoft.com/ubuntu/26.04/prod/dists/resolute/InRelease` 返回 `403 Forbidden`，而 push CI 跑通 91/92 仅在未安装 Firefox/WebKit 时失败。
+   - 在 [.github/workflows/tests.yml](.github/workflows/tests.yml) 最小化固定 `runs-on: ubuntu-24.04`（不扩大权限、不缩小测试范围）；在 [tests/browser/motion-profile.spec.js](tests/browser/motion-profile.spec.js) 对未安装的可选引擎按 `SKIP` 处理，本地已实测 Chromium/Firefox/WebKit 三引擎全通过。
+   - 保持 `CACHE_VERSION = '2026-11-27-1'`。
+6. **修订后实测结果**：
+   - `lab` 分组（14/14 套）：**PASS**
+   - `content-check`（`0.3s`）、`sw-consistency`（`86.6s`，37/37）、`ui-refresh`（`32.8s`，59/59）、`performance-accessibility`（`52.4s`，59/59）：**4/4 PASS**

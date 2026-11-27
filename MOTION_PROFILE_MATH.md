@@ -69,3 +69,12 @@ $$L_{\text{crit}} = \frac{v_{\max}^2}{a_{\max}}$$
 $$a(\tau) = a_k + J_k \tau, \quad v(\tau) = v_k + a_k \tau + \frac{1}{2} J_k \tau^2, \quad p(\tau) = p_k + v_k \tau + \frac{1}{2} a_k \tau^2 + \frac{1}{6} J_k \tau^3$$
 终点处 `rawEndPos = q0 + s * p(T)`、`rawEndVel = s * v(T)`、`rawEndAcc = s * a(T)` **不做任何强制归零或夹取**，直接记录并展示真实数值残差：
 $$\varepsilon_q = |q_{\text{raw}}(T) - q_1|, \qquad \varepsilon_v = |v_{\text{raw}}(T)|, \qquad \varepsilon_a = |a_{\text{raw}}(T)|$$
+
+---
+
+## 5. 数值尺度、采样边界与运动结束语义（Batch 9C-2D-R）
+
+- **尺度相关临界判定**：所有分支比较（$L \ge L_{\text{crit}}$、$v_{\max} j_{\max} \ge a_{\max}^2$、$L \ge L_{\text{full}}$、$L \ge L_{a,\text{thresh}}$、零段长判定）均采用相对容差 $\text{REL\_EPS} = 10^{-12} \times \text{scale}$，彻底消除固定绝对容差对小位移/小约束工况（如 $10^{-15}$、$10^{-16}$）的误判；极端尺度（$|D| \in (0, 10^{-18})$ 或数值溢出）直接拒绝。
+- **采样点集合与上限**：`sampleProfile(profile, { dt })` 必定包含 $t = 0$、全部有效阶段边界 $t_1$ 与终点 $T$，受 `MAX_SAMPLES = 2000` 上限约束（仅影响显示与回放，不改变解析轨迹）。
+- **边界极限与静止保持**：`evaluateProfile(profile, t)` 在 $[0, T)$ 内对内部阶段边界取右极限，在 $t = T$ 取终点左极限，在 $t > T$ 进入静止保持状态（$q = q_1, v = 0, a = 0, j = 0$）。
+- **梯形终点口径**：非零位移梯形轨迹在 $t = T$ 存在理想加速度阶跃，因此区分“终点加速度左极限 `endAccLeftLimit`”与“静止状态”，`endAccResidual = null`、`jPeak = null`（理想冲激，不虚构为 $0$ 或 $\infty$）；零位移时两者均为 $0$。

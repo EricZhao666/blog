@@ -173,3 +173,83 @@ for (const c of scurveCases) {
 console.log('\n合计 ' + (pass + fail) + ' 项，PASS ' + pass + '，FAIL ' + fail);
 if (failures.length) console.log('失败项：' + failures.join(' / '));
 process.exit(fail ? 1 : 0);
+
+// ---------------------------------------------------------------- M8 Batch 9C-2D-R：数值尺度反例、极端参数、采样边界、静止保持与梯形口径
+{
+  // 反例 A：小位移梯形不被 1e-12 绝对容差掩盖
+  const exA = MP.planTrapezoidal({ q0: 0, q1: 1e-15, vMax: 1e-7, aMax: 0.1 });
+  check('M8.1 反例 A：planTrapezoidal(1e-15) 正确进入 2-seg-triangle',
+    exA.ok && exA.regime === '2-seg-triangle', JSON.stringify({ regime: exA.regime, rawEndPos: exA.rawEndPos }));
+  check('M8.2 反例 A：尺度相关位置残差 <= 1e-12 * |D|',
+    exA.endPosResidual <= 1e-12 * 1e-15, 'posRes=' + exA.endPosResidual);
+
+  // 反例 B：极小位移 S 曲线不被 1e-12 绝对容差掩盖
+  const exB = MP.planSCurve({ q0: 0, q1: 1e-16, vMax: 1e-10, aMax: 1, jMax: 1 });
+  check('M8.3 反例 B：planSCurve(1e-16) 正确进入 4-seg-jerk-only',
+    exB.ok && exB.regime === '4-seg-jerk-only', JSON.stringify({ regime: exB.regime, rawEndPos: exB.rawEndPos }));
+  check('M8.4 反例 B：尺度相关位置残差 <= 1e-12 * |D|',
+    exB.endPosResidual <= 1e-12 * 1e-16, 'posRes=' + exB.endPosResidual);
+
+  // 极端尺度拒绝
+  check('M8.5 极端小位移 1e-25 被拒绝', !MP.planSCurve({ q0: 0, q1: 1e-25, vMax: 1, aMax: 1, jMax: 1 }).ok);
+  check('M8.6 极端小约束 1e-25 被拒绝', !MP.planSCurve({ q0: 0, q1: 1, vMax: 1e-25, aMax: 1, jMax: 1 }).ok);
+  check('M8.7 超大位移 1e12 被拒绝', !MP.planTrapezoidal({ q0: 0, q1: 1e12, vMax: 10, aMax: 10 }).ok);
+
+  // 梯形终点口径与零位移口径
+  const trNZ = MP.planTrapezoidal({ q0: 0, q1: 120, vMax: 40, aMax: 80 });
+  const trZ = MP.planTrapezoidal({ q0: 5, q1: 5, vMax: 40, aMax: 80 });
+  check('M8.8 非零位移梯形 jPeak=null, endAccResidual=null, endAccLeftLimit=-80',
+    trNZ.jPeak === null && trNZ.endAccResidual === null && near(trNZ.endAccLeftLimit, -80));
+  check('M8.9 零位移梯形 jPeak=0, endAccResidual=0, endAccLeftLimit=0',
+    trZ.jPeak === 0 && trZ.endAccResidual === 0 && trZ.endAccLeftLimit === 0);
+
+  // 采样必须包含所有有效阶段边界及终点，且受 MAX_SAMPLES 上限保护
+  const scFull = MP.planSCurve({ q0: 0, q1: 120, vMax: 40, aMax: 80, jMax: 400 });
+  const pts = MP.sampleProfile(scFull, { count: 25 });
+  const boundaryHit = scFull.segments.every(s => pts.some(p => Math.abs(p.t - s.t1) <= scFull.totalTime * 1e-12));
+  check('M8.10 sampleProfile 包含全部有效阶段边界与终点 T', boundaryHit && pts[pts.length - 1].t === scFull.totalTime);
+  const capped = MP.sampleProfile(scFull, { dt: 1e-6 });
+  check('M8.11 sampleProfile 点数受 MAX_SAMPLES 上限保护', capped.length <= MP.MAX_SAMPLES && capped.length > 100);
+
+  // 边界极限语义与 t > T 静止保持状态
+  const tSeg1End = scFull.segments[0].t1;
+  const evInternal = MP.evaluateProfile(scFull, tSeg1End);
+  const evEnd = MP.evaluateProfile(trNZ, trNZ.totalTime);
+  const evHold = MP.evaluateProfile(trNZ, trNZ.totalTime + 0.5);
+  check('M8.12 内部边界采用右极限（段1末切入段2 j=0）', evInternal.segmentIndex === 2 && evInternal.j === 0);
+  check('M8.13 终点 t=T 取左极限（梯形末端 a=-80），t>T 进入静止保持（v=0, a=0, finished=true）',
+    near(evEnd.a, -80) && evHold.finished === true && near(evHold.q, 120) && evHold.v === 0 && evHold.a === 0 && evHold.j === 0);
+
+  // 固定种子随机性质测试（多尺度、四类退化、临界两侧、正反向）
+  let seed = 20261127;
+  const rnd = () => { seed = (seed * 1664525 + 1013904223) >>> 0; return seed / 4294967296; };
+  let propOk = true;
+  let propFailInfo = '';
+  const scales = [1e-6, 1e-2, 1, 1e3];
+  for (let i = 0; i < 60; i++) {
+    const sc = scales[i % scales.length];
+    const dir = (i % 3 === 0) ? -1 : 1;
+    const q0 = (rnd() - 0.5) * 10 * sc;
+    const L = (i % 10 === 0) ? 0 : (0.05 + rnd() * 20) * sc;
+    const q1 = q0 + dir * L;
+    const vMax = (0.5 + rnd() * 5) * sc;
+    const aMax = (0.5 + rnd() * 10) * sc;
+    const jMax = (0.5 + rnd() * 20) * sc;
+    const res = MP.planSCurve({ q0, q1, vMax, aMax, jMax });
+    if (!res.ok) { propOk = false; propFailInfo = 'not ok at i=' + i; break; }
+    const posTol = Math.max(1e-12 * Math.max(1, Math.abs(q0), Math.abs(q1)), 1e-12 * L);
+    const velTol = 1e-11 * vMax;
+    const accTol = 1e-11 * aMax;
+    if (res.endPosResidual > posTol || res.endVelResidual > velTol || res.endAccResidual > accTol) {
+      propOk = false; propFailInfo = 'residual at i=' + i + ' pos=' + res.endPosResidual; break;
+    }
+    if (res.vPeak > vMax * (1 + 1e-12) || res.aPeak > aMax * (1 + 1e-12)) {
+      propOk = false; propFailInfo = 'bound exceeded at i=' + i; break;
+    }
+  }
+  check('M8.14 固定种子 60 组多尺度随机性质测试（残差/约束/全工况）', propOk, propFailInfo || '60/60');
+}
+
+console.log('\n[9C-2D-R] 扩展后合计 ' + (pass + fail) + ' 项，PASS ' + pass + '，FAIL ' + fail);
+if (failures.length) console.log('扩展失败项：' + failures.join(' / '));
+process.exit(fail ? 1 : 0);
