@@ -248,6 +248,16 @@ process.exit(fail ? 1 : 0);
     }
   }
   check('M8.14 固定种子 60 组多尺度随机性质测试（残差/约束/全工况）', propOk, propFailInfo || '60/60');
+
+  // 反例：大 T 下短阶段边界不可被 T*REL_EPS 去重删除
+  const bigT = MP.planSCurve({ q0: 0, q1: 1e9, vMax: 1, aMax: 100, jMax: 1e9 });
+  const bigPts = MP.sampleProfile(bigT, { count: 20 });
+  const bigCapped = MP.sampleProfile(bigT, { dt: 1e3 });
+  const allBigBoundsPreserved = bigT.segments.every(s => s.dt <= 0 || bigPts.some(p => p.t === s.t1)) &&
+    bigT.segments.every(s => s.dt <= 0 || bigCapped.some(p => p.t === s.t1));
+  check('M8.15 大尺度 T≈1e9s 下 7 个短阶段边界全部保留且受 MAX_SAMPLES 上限约束',
+    bigT.ok && bigT.regime === '7-seg-full' && allBigBoundsPreserved && bigCapped.length <= MP.MAX_SAMPLES,
+    JSON.stringify({ pts: bigPts.length, capped: bigCapped.length }));
 }
 
 console.log('\n[9C-2D-R] 扩展后合计 ' + (pass + fail) + ' 项，PASS ' + pass + '，FAIL ' + fail);

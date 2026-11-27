@@ -495,8 +495,8 @@
   /**
    * 采样曲线：
    *   - opts 可传入数字（采样数）或对象 { count, dt }。
-   *   - 必定包含 t=0、所有有效阶段的边界点 t1 与终点 T。
-   *   - 采样总数上限 MAX_SAMPLES = 2000，防止过大数组阻塞渲染。
+   *   - 必定保留 t=0、所有有效阶段的边界点与终点 T（不可被去重或裁剪删除）。
+   *   - 仅对普通显示采样点做去重或上限裁剪，总点数上限 MAX_SAMPLES = 2000。
    */
   function sampleProfile(profile, opts) {
     if (!profile || !profile.ok) return [];
@@ -517,34 +517,58 @@
     }
     var n = Math.max(2, Math.min(MAX_SAMPLES - 10, Math.floor(count || 200)));
 
-    var times = [0, T];
+    // 1. 收集不可裁剪的必保留阶段边界（只做精确值去重）
+    var rawMand = [0, T];
     var segs = profile.segments || [];
     for (var i = 0; i < segs.length; i++) {
       if (segs[i].dt > 0) {
-        times.push(segs[i].t0);
-        times.push(segs[i].t1);
+        rawMand.push(segs[i].t0);
+        rawMand.push(segs[i].t1);
       }
     }
-    for (var k = 1; k < n; k++) {
-      times.push((T * k) / n);
+    rawMand.sort(function (a, b) { return a - b; });
+    var mandatory = [];
+    for (var mIdx = 0; mIdx < rawMand.length; mIdx++) {
+      if (!mandatory.length || rawMand[mIdx] !== mandatory[mandatory.length - 1]) {
+        mandatory.push(rawMand[mIdx]);
+      }
     }
 
-    times.sort(function (a, b) { return a - b; });
-    var unique = [];
+    // 2. 生成普通显示采样点（避开必保留边界的容差邻域），并在超限时仅裁剪普通点
     var tol = T * REL_EPS;
-    for (var u = 0; u < times.length; u++) {
-      if (!unique.length || times[u] - unique[unique.length - 1] > tol) {
-        unique.push(times[u]);
+    var grid = [];
+    for (var k = 1; k < n; k++) {
+      var tk = (T * k) / n;
+      var nearMand = false;
+      for (var j = 0; j < mandatory.length; j++) {
+        if (Math.abs(tk - mandatory[j]) <= tol) {
+          nearMand = true;
+          break;
+        }
+      }
+      if (!nearMand && (!grid.length || tk - grid[grid.length - 1] > tol)) {
+        grid.push(tk);
       }
     }
-    if (unique[unique.length - 1] < T) unique[unique.length - 1] = T;
-    if (unique.length > MAX_SAMPLES) {
-      unique = unique.slice(0, MAX_SAMPLES - 1).concat([T]);
+
+    var maxGrid = Math.max(0, MAX_SAMPLES - mandatory.length);
+    if (grid.length > maxGrid) {
+      var trimmed = [];
+      if (maxGrid > 0) {
+        for (var g = 0; g < maxGrid; g++) {
+          var pick = Math.floor((g * grid.length) / maxGrid);
+          trimmed.push(grid[pick]);
+        }
+      }
+      grid = trimmed;
     }
+
+    var allTimes = mandatory.concat(grid);
+    allTimes.sort(function (a, b) { return a - b; });
 
     var pts = [];
-    for (var m = 0; m < unique.length; m++) {
-      pts.push(evaluateProfile(profile, unique[m]));
+    for (var m = 0; m < allTimes.length; m++) {
+      pts.push(evaluateProfile(profile, allTimes[m]));
     }
     return pts;
   }

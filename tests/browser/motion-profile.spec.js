@@ -285,13 +285,18 @@ async function selectScene(page, id) {
     check('M6.3 快速路由切换不串页，且无未捕获异常', noLeak && s1.errors.length === 0, s1.errors.join(' | ') || 'none');
     await s1.ctx.close();
 
-    // ---------------------------------------------------------------- M7 三引擎（Firefox / WebKit；CI 仅装 Chromium 时未安装引擎按 SKIP 处理）
+    // ---------------------------------------------------------------- M7 三引擎（Firefox / WebKit；仅在明确未安装可执行文件时按 SKIP 处理）
     for (const [bName, bType] of [['firefox', firefox], ['webkit', webkit]]) {
       let b2 = null;
       try {
         b2 = await bType.launch({ headless: true });
       } catch (e) {
-        console.log('SKIP ' + bName + ' 不可用：' + String(e && e.message || e).split('\n')[0]);
+        const msg = String(e && e.message || e);
+        if (/Executable doesn't exist|Please run the following command to download|playwright install/i.test(msg)) {
+          console.log('SKIP ' + bName + ' 未安装：' + msg.split('\n')[0]);
+          continue;
+        }
+        check('M7.' + bName + ' 引擎启动失败', false, msg.split('\n')[0]);
         continue;
       }
       try {

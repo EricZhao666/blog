@@ -66,3 +66,13 @@
 6. **修订后实测结果**：
    - `lab` 分组（14/14 套）：**PASS**
    - `content-check`（`0.3s`）、`sw-consistency`（`86.6s`，37/37）、`ui-refresh`（`32.8s`，59/59）、`performance-accessibility`（`52.4s`，59/59）：**4/4 PASS**
+
+---
+
+## 5. Batch 9C-2D-R 最终收尾（`a0237eb` 之后）
+
+1. **`sampleProfile` 阶段边界不可裁剪保护**：
+   - 修复 `{q0:0, q1:1e9, vMax:1, aMax:100, jMax:1e9}` 下 `T * REL_EPS = 1e-3` 导致 `tj = 1e-7` 阶段边界被去重删除的问题。
+   - 改为先收集所有有效阶段边界（仅做精确值去重）作为不可裁剪集合，再生成普通显示采样点并在超过 `MAX_SAMPLES = 2000` 时仅裁剪普通采样点，新增回归 `M8.15` 验证通过。
+2. **可选浏览器启动异常收紧**：
+   - [tests/browser/motion-profile.spec.js](tests/browser/motion-profile.spec.js) 仅在明确匹配未安装可执行文件提示时记录 `SKIP`；已安装引擎启动失败、依赖异常或页面测试异常均真实失败。
