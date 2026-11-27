@@ -73,18 +73,63 @@ async function readRelated(page) {
         href: a ? a.getAttribute('href') : '',
         reason: reason ? reason.textContent : '',
         type: type ? type.textContent : '',
-        kmButtons: li.querySelectorAll('[data-km-toggle]').length
+        kmButtons: li.querySelectorAll('[data-km-toggle]').length,
+        favButtons: li.querySelectorAll('[data-km-toggle="fav"]').length,
+        laterButtons: li.querySelectorAll('[data-km-toggle="later"]').length,
+        kmReady: li.hasAttribute('data-km-ready') || !!li.querySelector('[data-km-ready="1"]')
       };
     });
     return {
       exists: true,
+      hash: location.hash,
       hidden: box.hidden,
+      filled: box.getAttribute('data-related-filled') === '1',
       source: box.getAttribute('data-related'),
       count: items.length,
       items: items,
       html: box.innerHTML
     };
   });
+}
+
+// 有截止时间的真实状态等待：等待当前文章推荐卡片非空且每卡挂载 1 收藏 + 1 待读按钮
+async function waitForRelatedActionsReady(page, expectedSource, timeoutMs) {
+  const limit = timeoutMs || 10000;
+  try {
+    await page.waitForFunction((src) => {
+      const box = document.querySelector('[data-related]');
+      if (!box || box.hidden) return false;
+      if (src && box.getAttribute('data-related') !== src) return false;
+      if (box.getAttribute('data-related-filled') !== '1') return false;
+      const items = Array.from(box.querySelectorAll('.related-reading-item'));
+      if (!items.length) return false;
+      return items.every(li =>
+        li.querySelectorAll('[data-km-toggle="fav"]').length === 1 &&
+        li.querySelectorAll('[data-km-toggle="later"]').length === 1
+      );
+    }, expectedSource || null, { timeout: limit });
+  } catch (e) {
+    const diag = await page.evaluate(() => {
+      const box = document.querySelector('[data-related]');
+      const items = box ? Array.from(box.querySelectorAll('.related-reading-item')) : [];
+      return {
+        hash: location.hash,
+        exists: !!box,
+        hidden: box ? box.hidden : null,
+        source: box ? box.getAttribute('data-related') : null,
+        filled: box ? box.getAttribute('data-related-filled') : null,
+        cardCount: items.length,
+        buttonCounts: items.map(li => ({
+          total: li.querySelectorAll('[data-km-toggle]').length,
+          fav: li.querySelectorAll('[data-km-toggle="fav"]').length,
+          later: li.querySelectorAll('[data-km-toggle="later"]').length,
+          kmReady: li.hasAttribute('data-km-ready') || !!li.querySelector('[data-km-ready="1"]')
+        }))
+      };
+    });
+    return { ready: false, diag, error: e && e.message ? e.message : String(e) };
+  }
+  return { ready: true, snapshot: await readRelated(page) };
 }
 
 (async function main() {
@@ -123,9 +168,12 @@ async function readRelated(page) {
       r1.items[0] && r1.items[0].reason);
 
     // R2 与知识管理按钮兼容
+    const r2Ready = await waitForRelatedActionsReady(p1, 'post:vla-model-intro', 10000);
+    const r2Snap = r2Ready.ready ? r2Ready.snapshot : null;
     check('R2.1 推荐卡片复用现有收藏/待读按钮（每卡 2 个）',
-      r1.items.every(i => i.kmButtons === 2), r1.items.map(i => i.kmButtons).join(','));
-    const targetHref = r1.items[0].href;
+      r2Ready.ready && r2Snap.count > 0 && r2Snap.items.every(i => i.favButtons === 1 && i.laterButtons === 1 && i.kmButtons === 2),
+      r2Ready.ready ? r2Snap.items.map(i => i.kmButtons).join(',') : JSON.stringify(r2Ready.diag));
+    const targetHref = (r2Snap && r2Snap.items[0] ? r2Snap.items[0].href : r1.items[0].href);
     const hashBefore = await p1.evaluate(() => location.hash);
     await p1.locator('.related-reading-item [data-km-toggle="fav"]').first().click();
     await sleep(350);
