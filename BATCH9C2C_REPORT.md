@@ -290,7 +290,7 @@ Bellman-Ford 一致），修复前 **A\* 返回 13.071067811865477**。
 - 提交：
   - `85c0298 feat: Batch 9C-2C add A-star and Dijkstra path planning lab`
   - `7e18047 docs: record Batch 9C-2C commit hash and PR link`
-  - 修订 R1 的提交见 `git log -1`（优先队列不可变快照 + P15 回归）
+  - `4d9bc53 fix: Batch 9C-2C use immutable heap entries in Dijkstra and A-star`（修订 R1 + P15 回归）
 - 分支：`feat/batch9c2c-path-planning-lab`（已推送并设置 tracking）
 - PR 创建链接（GitHub 在 push 输出中给出）：
   <https://github.com/EricZhao666/blog/pull/new/feat/batch9c2c-path-planning-lab>
