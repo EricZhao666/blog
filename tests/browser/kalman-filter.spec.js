@@ -111,8 +111,8 @@ async function click(page, id) {
     check('K1.1 导航「实验」保持原 href，页面标题正确',
       entry.navHref === '#/lab/robot-2r' && /卡尔曼滤波与传感器融合实验室/.test(entry.title),
       JSON.stringify({ href: entry.navHref }));
-    check('K1.2 六项实验互链与当前页标注，五张图的容器与全部控件齐备',
-      entry.links.join(',') === '#/lab,#/lab/robot-2r,#/lab/pid-control,#/lab/oee-analysis,#/lab/spc-analysis,#/lab/kalman-filter' &&
+    check('K1.2 七项实验互链（含路径规划）与当前页标注，五张图的容器与全部控件齐备',
+      entry.links.join(',') === '#/lab,#/lab/robot-2r,#/lab/pid-control,#/lab/oee-analysis,#/lab/spc-analysis,#/lab/kalman-filter,#/lab/path-planning' &&
       entry.current === '#/lab/kalman-filter' && entry.cards);
 
     await p1.evaluate(() => { location.hash = '#/lab'; });
@@ -121,8 +121,8 @@ async function click(page, id) {
       cards: Array.from(document.querySelectorAll('.lab-hub-card')).map(a => a.getAttribute('href')),
       title: document.title
     }));
-    check('K1.3 #/lab 五张卡片：2R / PID / OEE / SPC / 卡尔曼均可深链',
-      hub.cards.join(',') === '#/lab/robot-2r,#/lab/pid-control,#/lab/oee-analysis,#/lab/spc-analysis,#/lab/kalman-filter' &&
+    check('K1.3 #/lab 六张卡片：2R / PID / OEE / SPC / 卡尔曼 / 路径规划均可深链',
+      hub.cards.join(',') === '#/lab/robot-2r,#/lab/pid-control,#/lab/oee-analysis,#/lab/spc-analysis,#/lab/kalman-filter,#/lab/path-planning' &&
       /实验室/.test(hub.title), JSON.stringify(hub.cards));
 
     for (const [hash, sel, label] of [
