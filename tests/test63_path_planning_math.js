@@ -31,6 +31,21 @@ function gridOf(lines) {
   if (!r.ok) throw new Error('parse failed: ' + r.error);
   return r.grid;
 }
+
+/** 数值规格建图：0=障碍，1=普通地面，>1=地形权重（用于表示权重 ≥10 的地图）。 */
+function gridFromSpec(spec) {
+  const rows = spec.length, cols = spec[0].length;
+  const g = P.makeGrid(rows, cols).grid;
+  for (let r = 0; r < rows; r++) {
+    for (let c = 0; c < cols; c++) {
+      const v = spec[r][c], i = r * cols + c;
+      if (v === 0) g.blocked[i] = 1;
+      else g.weights[i] = v;
+    }
+  }
+  P.refreshMinWeight(g);
+  return g;
+}
 function runD(g, opts) { return P.runDijkstra(g, opts); }
 function runA(g, opts) { return P.runAStar(g, opts); }
 
@@ -704,6 +719,100 @@ function randomMap(seed, rows, cols, blockedP, weightP) {
     d.status === 'found' && near(d.cost, 79 * Math.SQRT2, 1e-9) && elapsed < 5000,
     elapsed + 'ms / cost=' + d.cost.toFixed(6));
   check('P14.3 80×80 记录未触发裁剪上限（6400 < 8000）', d.traceTruncated === false);
+}
+
+// ================================================================ P15 优先队列不变式（9C-2C 合并前修订）
+//
+// 缺陷形态：堆条目只保存节点索引，比较器读外部可变的 dist/gScore。松弛把某个节点的
+// 代价改小以后，它在堆里的**旧条目**键也跟着变小，但堆结构没有执行 decrease-key，
+// 于是"父键 ≤ 子键"被破坏，出队可能不是当前最小值。
+// 下面两个地图是修复前由实际模块跑出的确定性反例（A* 返回次优代价）。
+{
+  // 反例一：5×6 全高代价地形，八邻域；修复前 A* 返回 13.071067811865477
+  const gA = gridOf(['..7.93', '27348.', '.748.9', '9.4.2.', '7.9.3.']);
+  const dA = runD(gA, { start: 0, goal: gA.size - 1, neighborhood: 8 });
+  const aA = runA(gA, { start: 0, goal: gA.size - 1, neighborhood: 8 });
+  check('P15.1 堆序反例一（5×6 加权八邻域）：A* 与 Dijkstra 同为 12.828427124746192（修复前 A* 曾为 13.0710678）',
+    near(dA.cost, 12.828427124746192, 1e-12) && near(aA.cost, dA.cost, 1e-12), aA.cost);
+  check('P15.2 反例一的路径代价可被独立重算，且等于 Bellman-Ford 参考值',
+    near(P.pathCost(gA, aA.path), aA.cost, 1e-9) &&
+    near(bellmanFord(gA, 0, gA.size - 1, 8).cost, aA.cost, 1e-9));
+
+  // 反例二：含权重 10（单字符地图无法表示，用数值规格）；修复前 A* 返回 10.485281374238571
+  const gB = gridFromSpec([
+    [1, 3, 6, 0, 2, 0],
+    [4, 1, 7, 2, 3, 1],
+    [1, 10, 3, 1, 1, 4],
+    [1, 0, 1, 1, 0, 4],
+    [1, 1, 1, 1, 10, 1],
+    [0, 1, 0, 7, 1, 1]
+  ]);
+  const dB = runD(gB, { start: 0, goal: gB.size - 1, neighborhood: 8 });
+  const aB = runA(gB, { start: 0, goal: gB.size - 1, neighborhood: 8 });
+  check('P15.3 堆序反例二（含权重 10 的 6×6）：A* 与 Dijkstra 同为 10.242640687119286（修复前 A* 曾为 10.4852814）',
+    near(dB.cost, 10.242640687119286, 1e-12) && near(aB.cost, dB.cost, 1e-12), aB.cost);
+
+  // 堆序不变式：出队的键必须单调不减（Dijkstra 看 g，A* 看 f）。
+  // 容差 1e-12 只吸收"同分路径浮点求和顺序"带来的 1 ULP 级差异。
+  let monoD = true, monoA = true, whyD = '', whyA = '';
+  const badReexpand = [];
+  for (let seed = 101; seed <= 220; seed++) {
+    const gm = randomMap(seed, 10, 10, 0.12, 0.5);
+    for (const nbh of [4, 8]) {
+      const d = runD(gm, { start: 0, goal: gm.size - 1, neighborhood: nbh });
+      const a = runA(gm, { start: 0, goal: gm.size - 1, neighborhood: nbh });
+      let prev = -Infinity;
+      for (const st of d.trace) {
+        if (st.g < prev - 1e-12) { monoD = false; whyD = 'seed' + seed + '/nbh' + nbh; }
+        prev = st.g;
+      }
+      prev = -Infinity;
+      for (const st of a.trace) {
+        if (st.f < prev - 1e-12) { monoA = false; whyA = 'seed' + seed + '/nbh' + nbh; }
+        prev = st.f;
+      }
+      // 同一节点再次扩展必须是"更小的 g"，绝不能是相同或更差的键
+      for (const res of [d, a]) {
+        const seen = new Map();
+        for (const st of res.trace) {
+          if (seen.has(st.node) && !(st.g < seen.get(st.node))) {
+            badReexpand.push('seed' + seed + '/nbh' + nbh + '/节点' + st.node);
+          }
+          seen.set(st.node, st.g);
+        }
+      }
+    }
+  }
+  check('P15.4 Dijkstra 出队键 g 单调不减（120 张随机加权地图 × 2 运动模型）', monoD, whyD);
+  check('P15.5 A* 出队键 f 单调不减（一致启发函数下的最小出队判据）', monoA, whyA);
+  check('P15.6 同一节点被再次扩展时一定是更小的 g（否则即非最小出队）',
+    badReexpand.length === 0, badReexpand.slice(0, 2).join(' | '));
+
+  // 堆序正确性之外，最终代价仍要与独立参考一致（两类判据分开，互不替代）
+  let costOk = true, costWhy = '';
+  for (let seed = 101; seed <= 180; seed++) {
+    const gm = randomMap(seed, 9, 9, 0.15, 0.45);
+    for (const nbh of [4, 8]) {
+      const ref = bellmanFord(gm, 0, gm.size - 1, nbh);
+      const d = runD(gm, { start: 0, goal: gm.size - 1, neighborhood: nbh });
+      const a = runA(gm, { start: 0, goal: gm.size - 1, neighborhood: nbh });
+      if (ref.reachable) {
+        if (!near(d.cost, ref.cost, 1e-9) || !near(a.cost, ref.cost, 1e-9)) {
+          costOk = false; costWhy = 'seed' + seed + '/nbh' + nbh;
+        }
+      } else if (d.found || a.found) {
+        costOk = false; costWhy = 'seed' + seed + '/nbh' + nbh + ' 可达性';
+      }
+    }
+  }
+  check('P15.7 同一批地图上最终代价仍等于独立 Bellman-Ford（80 张 × 2 模型）', costOk, costWhy);
+
+  // 统计口径未被修复改变
+  check('P15.8 修复后统计口径不变：扩展 ≤ 发现、松弛 ≥ 发现−1、trace 长度 = 扩展数',
+    dA.expandedNodes <= dA.discoveredNodes && dA.relaxedEdges >= dA.discoveredNodes - 1 &&
+    dA.trace.length === dA.expandedNodes &&
+    aA.expandedNodes <= aA.discoveredNodes && aA.trace.length === aA.expandedNodes,
+    JSON.stringify({ de: dA.expandedNodes, dd: dA.discoveredNodes, ae: aA.expandedNodes }));
 }
 
 // ================================================================ 汇总

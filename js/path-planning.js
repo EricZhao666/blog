@@ -475,21 +475,29 @@
       };
     }
 
+    // 计时口径（两个算法一致）：从数组分配、填初值、初始入队到搜索结束。
+    // 不含 DOM 绘制、回放等待，也不含 compare() 里另一个算法的时间。
+    var t0 = nowMs();
+
     var dist = new Float64Array(size);
     for (var i = 0; i < size; i++) dist[i] = Infinity;
     var parent = new Int32Array(size);
     for (i = 0; i < size; i++) parent[i] = -1;
     var state = new Uint8Array(size);   // 0=未发现 1=open 2=closed
 
+    /* 堆条目必须是不可变快照 {node, g}：比较器只读条目自身，不读外部可变的 dist。
+     * 若比较器读 dist，松弛改变代价后旧条目的键会"悄悄变小"，而堆结构并未执行
+     * decrease-key，出队最小性会被破坏（9C-2C 修订已用确定性反例验证：
+     * 5×6 加权八邻域地图上 A* 曾返回 13.0710678 而最优为 12.8284271）。 */
     var heap = new Heap(function (a, b) {
-      if (dist[a] !== dist[b]) return dist[a] < dist[b];
-      return a < b;
+      if (a.g !== b.g) return a.g < b.g;
+      return a.node < b.node;
     });
 
     dist[start] = 0;
     parent[start] = -1;
     state[start] = 1;
-    heap.push(start);
+    heap.push({ node: start, g: 0 });
 
     var discovered = 1;
     var expanded = 0;
@@ -500,11 +508,12 @@
     var trace = [];
     var truncated = false;
     var found = false;
-    var t0 = nowMs();
 
     while (heap.size()) {
-      var u = heap.pop();
-      if (state[u] === 2) continue;            // 过期条目：该节点已关闭
+      var entry = heap.pop();
+      var u = entry.node;
+      if (state[u] === 2) continue;            // 该节点已关闭（同一节点的旧条目）
+      if (entry.g > dist[u]) continue;         // 过期条目：入堆后键已被更小的值取代
       state[u] = 2;
       openCount--;
       closedCount++;
@@ -538,7 +547,7 @@
             closedCount--;
             openCount++;
           }
-          heap.push(ni);
+          heap.push({ node: ni, g: nd });
           pushes.push(ni);
         }
       });
@@ -581,9 +590,6 @@
     var start = v.start, goal = v.goal, nbh = v.neighborhood, heur = v.heuristic;
     var size = grid.size;
 
-    var hScore = new Float64Array(size);
-    for (var i = 0; i < size; i++) hScore[i] = heuristicValue(heur, grid, i, goal);
-
     if (start === goal) {
       return {
         ok: true, found: true, status: 'found', algorithm: 'astar',
@@ -594,24 +600,31 @@
       };
     }
 
+    // 计时口径与 Dijkstra 一致：包含本算法自身的初始化（hScore 预计算、gScore 填值、
+    // 初始入队）与搜索循环，不含 DOM 绘制与回放等待。
+    var t0 = nowMs();
+
+    var hScore = new Float64Array(size);
+    for (var i = 0; i < size; i++) hScore[i] = heuristicValue(heur, grid, i, goal);
+
     var gScore = new Float64Array(size);
     for (i = 0; i < size; i++) gScore[i] = Infinity;
     var parent = new Int32Array(size);
     for (i = 0; i < size; i++) parent[i] = -1;
     var state = new Uint8Array(size);
 
+    /* 条目是 {node, g, h, f} 快照：比较器只读条目，不读可变的 gScore/hScore，
+     * 因此堆序与入堆时的键严格一致，不存在"旧条目键变小"导致的非最小出队。 */
     var heap = new Heap(function (a, b) {
-      var fa = gScore[a] + hScore[a];
-      var fb = gScore[b] + hScore[b];
-      if (fa !== fb) return fa < fb;
-      if (hScore[a] !== hScore[b]) return hScore[a] < hScore[b];
-      return a < b;
+      if (a.f !== b.f) return a.f < b.f;
+      if (a.h !== b.h) return a.h < b.h;
+      return a.node < b.node;
     });
 
     gScore[start] = 0;
     parent[start] = -1;
     state[start] = 1;
-    heap.push(start);
+    heap.push({ node: start, g: 0, h: hScore[start], f: hScore[start] });
 
     var discovered = 1;
     var expanded = 0;
@@ -622,11 +635,12 @@
     var trace = [];
     var truncated = false;
     var found = false;
-    var t0 = nowMs();
 
     while (heap.size()) {
-      var u = heap.pop();
-      if (state[u] === 2) continue;
+      var entry = heap.pop();
+      var u = entry.node;
+      if (state[u] === 2) continue;          // 该节点已关闭（同一节点的旧条目）
+      if (entry.g > gScore[u]) continue;     // 过期条目：入堆后键已被更小的值取代
       state[u] = 2;
       openCount--;
       closedCount++;
@@ -662,7 +676,7 @@
             closedCount--;
             openCount++;
           }
-          heap.push(ni);
+          heap.push({ node: ni, g: nd, h: hScore[ni], f: nd + hScore[ni] });
           pushes.push(ni);
         }
       });
