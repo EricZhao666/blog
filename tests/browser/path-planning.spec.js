@@ -140,8 +140,8 @@ async function run() {
     check('P1.1 导航「实验」保持原 href，页面标题正确',
       entry.navHref === '#/lab/robot-2r' && /路径规划实验室/.test(entry.title),
       JSON.stringify({ href: entry.navHref }));
-    check('P1.2 七项实验互链（含路径规划）与当前页标注，全部控件齐备',
-      entry.links.join(',') === '#/lab,#/lab/robot-2r,#/lab/pid-control,#/lab/oee-analysis,#/lab/spc-analysis,#/lab/kalman-filter,#/lab/path-planning' &&
+    check('P1.2 八项实验互链（含运动轨迹规划）与当前页标注，全部控件齐备',
+      entry.links.join(',') === '#/lab,#/lab/robot-2r,#/lab/pid-control,#/lab/oee-analysis,#/lab/spc-analysis,#/lab/kalman-filter,#/lab/path-planning,#/lab/motion-profile' &&
       entry.current === '#/lab/path-planning' && entry.controls,
       entry.links.join(','));
 
@@ -540,13 +540,13 @@ async function run() {
     await p4.evaluate(() => { location.hash = '#/lab'; });
     await p4.waitForSelector('.lab-hub', { timeout: 20000 });
     const hub = await p4.evaluate(() => Array.from(document.querySelectorAll('.lab-hub-card')).map(a => a.getAttribute('href')));
-    check('P10.1 实验中心六张卡片，五个旧实验与新实验都能深链渲染',
-      oldOk && hub.length === 6 && hub[5] === '#/lab/path-planning', oldDetail || hub.join(','));
+    check('P10.1 实验中心七张卡片，旧实验与新实验都能深链渲染',
+      oldOk && hub.length === 7 && hub[5] === '#/lab/path-planning' && hub[6] === '#/lab/motion-profile', oldDetail || hub.join(','));
 
     await p4.evaluate(() => { location.hash = '#/lab/robot-2r'; });
     await p4.waitForSelector('#robotStage', { timeout: 20000 });
     const linkCount = await p4.evaluate(() => document.querySelectorAll('.lab-links a').length);
-    check('P10.2 旧实验页面互链同步为 7 项（不破坏原有深链接）', linkCount === 7, String(linkCount));
+    check('P10.2 旧实验页面互链同步为 8 项（不破坏原有深链接）', linkCount === 8, String(linkCount));
 
     await p4.evaluate(() => { location.hash = '#/'; });
     await p4.waitForSelector('#searchInput', { state: 'visible', timeout: 20000 });

@@ -143,7 +143,7 @@ async function setSlider(page, sel, value) {
       JSON.stringify({ href: entry.navHref, title: entry.title }));
     check('R1.2 双图表与全部读数项渲染；实验互链含列表/2R/PID/OEE/SPC/卡尔曼/路径规划且当前页标注',
       entry.charts && entry.readout &&
-      entry.labLinks.join(',') === '#/lab,#/lab/robot-2r,#/lab/pid-control,#/lab/oee-analysis,#/lab/spc-analysis,#/lab/kalman-filter,#/lab/path-planning' &&
+      entry.labLinks.join(',') === '#/lab,#/lab/robot-2r,#/lab/pid-control,#/lab/oee-analysis,#/lab/spc-analysis,#/lab/kalman-filter,#/lab/path-planning,#/lab/motion-profile' &&
       entry.currentHref === '#/lab/pid-control');
 
     await p1.evaluate(() => { location.hash = '#/lab'; });
@@ -152,8 +152,8 @@ async function setSlider(page, sel, value) {
       cards: Array.from(document.querySelectorAll('.lab-hub-card')).map(a => a.getAttribute('href')),
       title: document.title
     }));
-    check('R1.3 #/lab 实验列表：六张卡片分别深链 2R、PID、OEE、SPC、卡尔曼与路径规划',
-      hub.cards.join(',') === '#/lab/robot-2r,#/lab/pid-control,#/lab/oee-analysis,#/lab/spc-analysis,#/lab/kalman-filter,#/lab/path-planning' &&
+    check('R1.3 #/lab 实验列表：七张卡片分别深链 2R、PID、OEE、SPC、卡尔曼、路径规划与运动轨迹规划',
+      hub.cards.join(',') === '#/lab/robot-2r,#/lab/pid-control,#/lab/oee-analysis,#/lab/spc-analysis,#/lab/kalman-filter,#/lab/path-planning,#/lab/motion-profile' &&
       /实验室/.test(hub.title), JSON.stringify(hub));
 
     await p1.evaluate(() => { location.hash = '#/lab/robot-2r'; });

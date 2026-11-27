@@ -178,7 +178,7 @@ async function setValue(page, sel, value) {
       JSON.stringify({ href: entry.navHref, title: entry.title }));
     check('R1.2 数据输入/三图/能力/异常/基线控件齐全，互链含卡尔曼与路径规划且当前页标注',
       entry.allCards &&
-      entry.labLinks.join(',') === '#/lab,#/lab/robot-2r,#/lab/pid-control,#/lab/oee-analysis,#/lab/spc-analysis,#/lab/kalman-filter,#/lab/path-planning' &&
+      entry.labLinks.join(',') === '#/lab,#/lab/robot-2r,#/lab/pid-control,#/lab/oee-analysis,#/lab/spc-analysis,#/lab/kalman-filter,#/lab/path-planning,#/lab/motion-profile' &&
       entry.current === '#/lab/spc-analysis');
 
     await p1.evaluate(() => { location.hash = '#/lab'; });
@@ -187,8 +187,8 @@ async function setValue(page, sel, value) {
       cards: Array.from(document.querySelectorAll('.lab-hub-card')).map(a => a.getAttribute('href')),
       title: document.title
     }));
-    check('R1.3 #/lab 实验列表六张卡片：2R / PID / OEE / SPC / 卡尔曼 / 路径规划均可深链',
-      hub.cards.join(',') === '#/lab/robot-2r,#/lab/pid-control,#/lab/oee-analysis,#/lab/spc-analysis,#/lab/kalman-filter,#/lab/path-planning' &&
+    check('R1.3 #/lab 实验列表七张卡片：2R / PID / OEE / SPC / 卡尔曼 / 路径规划 / 运动轨迹规划均可深链',
+      hub.cards.join(',') === '#/lab/robot-2r,#/lab/pid-control,#/lab/oee-analysis,#/lab/spc-analysis,#/lab/kalman-filter,#/lab/path-planning,#/lab/motion-profile' &&
       /实验室/.test(hub.title), JSON.stringify(hub));
 
     await p1.evaluate(() => { location.hash = '#/lab/robot-2r'; });
